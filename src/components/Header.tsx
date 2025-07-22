@@ -30,7 +30,7 @@ export async function Header() {
 
   return (
     <section className="w-full py-3 lg:px-10 flex
-        items-center justify-between">
+        items-center justify-between z-20">
       <h1 className="text-neutral-300">
         JAMLA.ma | LOGO
       </h1>

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Languages } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 
 // Add as many languages as you want here
 const locales = [
@@ -89,7 +90,16 @@ export function SwitchLanguage() {
                       'text-gray-700 dark:hover:bg-neutral-900 hover:bg-neutral-300'
                   }`}
                 >
-                  <img src={flag} width={30} className='rounded-lg overflow-hidden'/>
+                  <div
+                    className='relative w-6 h-6 overflow-hidden rounded-lg'
+                  >
+                    <Image 
+                      src={flag}
+                      fill
+                      alt={`${short} flag`}
+                      className='object-contain'
+                    />
+                  </div>
                   <span className="font-medium">{short}</span>
                 </button>
               </Link>
