@@ -1,0 +1,23 @@
+{
+  "header": {
+    "nav": {
+      "home": "Home",
+      "about": "About",
+      "howitworks": "How It Works",
+      "catalogue": "Catalogue",
+      "contact": "Contact"
+    },
+    "buttons": {
+      "beSeller": "Be Seller Now",
+      "login": "Login"
+    }
+  },
+  "hero": {
+    "title_line1": "Start your business with zero capital",
+    "title_line2": "🛍️ Global products ready. Guaranteed profits.",
+    "description": "Choose from a catalog of trending products, and we'll handle storage, delivery, and customer service... All you need to do is focus on selling and earning.",
+    "cta-trying": "Try the platform for free",
+    "cta-howitworks": "How It Works",
+    "footer_note": "Join over 2000 sellers making daily sales without needing capital or a registered company."
+  }
+}
