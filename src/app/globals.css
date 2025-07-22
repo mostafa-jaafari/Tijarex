@@ -25,3 +25,6 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+.bebas-neue {
+  font-family: var(--font-bebas-neue), Arial, Helvetica, sans-serif;
+}

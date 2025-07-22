@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { SwitchLanguage } from "./SwitchLanguage";
 import { getTranslations } from "next-intl/server";
+import { HeaderMenur } from "./HeaderMenu";
 
 export async function Header() {
   const t = await getTranslations("header");
-
   const NaviGation_Links = [
     {
       name: t("nav.home"),
@@ -29,13 +29,15 @@ export async function Header() {
   ];
 
   return (
-    <section className="w-full py-3 lg:px-10 flex
+    <section 
+      dir="ltr"
+      className="w-full py-3 lg:px-10 md:px-10 px-6 flex
         items-center justify-between z-20">
       <h1 className="text-neutral-300">
         JAMLA.ma | LOGO
       </h1>
 
-      <ul className="flex items-center gap-6 font-bold">
+      <ul className="hidden md:flex lg:flex items-center gap-6 font-bold">
         {NaviGation_Links.map((link, idx) => (
           <Link
             key={idx}
@@ -48,19 +50,25 @@ export async function Header() {
         ))}
       </ul>
 
-      <div className="flex items-center gap-4">
-        <SwitchLanguage />
+      <div 
+        className="flex items-center gap-2">
+        <div
+          className="hidden md:flex lg:flex"
+        >
+          <SwitchLanguage />
+        </div>
         <button 
-            className="bg-blue-600 py-2 cursor-pointer 
-                px-6 text-neutral-300 rounded-full">
+            className="lg:text-normal md:text-md text-sm bg-blue-600 py-2 cursor-pointer 
+            px-6 text-neutral-300 rounded-full">
           {t("buttons.beSeller")}
         </button>
         <button 
-            className="border border-neutral-800 
-                rounded-full py-2 cursor-pointer 
-                px-6 text-neutral-300">
+            className="lg:text-normal md:text-md text-sm border border-neutral-800 
+            rounded-full py-2 cursor-pointer 
+            px-6 text-neutral-300">
           {t("buttons.login")}
         </button>
+        <HeaderMenur />
       </div>
     </section>
   );

@@ -9,6 +9,7 @@ import { getMessages } from "next-intl/server";
 
 const bebas_neue = Bebas_Neue({
   subsets: ['latin'],
+  variable: '--font-bebas-neue',
   weight: ['400'],
 })
 const cairo = Cairo({
@@ -17,7 +18,7 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: 'Modify | My Print on Demand Platform',
+  title: 'Home | Jamla.ma',
   description: 'Build your brand easily with MODIFY.ma',
 }
 
@@ -39,7 +40,7 @@ export default async function RootLayout({
       <body
         className={`w-full overflow-x-hidden 
           bg-white dark:bg-[#0a0a0a] 
-          ${cairo.className} antialiased`}
+          ${cairo.className} ${bebas_neue.variable} antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}

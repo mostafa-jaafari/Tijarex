@@ -18,5 +18,23 @@
     "cta-trying": "Join Free & Start Selling!",
     "cta-howitworks": "How It Works",
     "footer_note": "Join over 2000 sellers making daily sales without needing capital or a registered company."
-  }
+  },
+  "statistics": [
+    {
+      "count": 100,
+      "label": "Moroccan Products"
+    },
+    {
+      "count": 250,
+      "label": "Sellers active"
+    },
+    {
+      "count": 99,
+      "label": "Products available"
+    },
+    {
+      "count": 160,
+      "label": "Order delivered per day"
+    }
+  ]
 }
