@@ -114,5 +114,9 @@
         "description": "Get paid securely and promptly after every successful sale."
       }
     ]
+  },
+  "featuredproducts": {
+    "featured_title": "Featured Products",
+    "featured_description": "Discover a variety of products including clothing, accessories, and much more — all in one place."
   }
 }

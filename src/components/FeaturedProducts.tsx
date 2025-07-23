@@ -4,10 +4,12 @@ import { useState } from "react";
 import BlurText from "./Animations/BlurText";
 import { FakeProducts } from "./FakeProducts";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 
 
 export function FeaturedProducts() {
+    const t = useTranslations("featuredproducts");
     const [selectedTabCategorie, setSelectedTabCategorie] = useState("all");
     const Categories_Tabs = [
         {
@@ -37,7 +39,7 @@ export function FeaturedProducts() {
                 lg:px-20 flex-col items-center"
         >
             <BlurText
-                text="Test Title"
+                text={t("title")}
                 delay={50}
                 animateBy="words"
                 direction="top"
@@ -45,7 +47,7 @@ export function FeaturedProducts() {
                     text-center mb-8 text-4xl"
             />
             <p className="mb-6 text-neutral-500">
-                Short Test Description
+                {t("description")}
             </p>
             <div
                 className="w-full flex justify-center"
@@ -84,7 +86,9 @@ export function FeaturedProducts() {
                             return (
                                 <div
                                     key={product.id}
-                                    className="w-full flex flex-col items-center mb-8"
+                                    className="transition-all duration-300 cursor-pointer
+                                        hover:shadow-xl hover:-translate-y-5 p-2 
+                                        rounded-lg w-full flex flex-col items-center mb-8"
                                 >
                                     <div
                                         className="relative w-full h-60 mb-4 
