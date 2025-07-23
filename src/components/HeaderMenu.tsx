@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { SwitchLanguage } from "./SwitchLanguage";
 
 
 
@@ -50,7 +51,7 @@ export function HeaderMenur(){
     }, []);
     return (
         <section
-            className="relative md:hidden lg:hidden"
+            className="relative lg:hidden"
         >
             {!openMunu && (
                 <span
@@ -67,18 +68,18 @@ export function HeaderMenur(){
                 >
                     <div
                         ref={MenuRef}
-                        className="h-screen w-56 sm:w-80 bg-black
+                        className="border-l border-neutral-800 h-screen w-56 sm:w-80 bg-black
                             transition-transform duration-500"
                     >
                         <div
                             className="border-b border-neutral-800 px-6 flex
                                 justify-between items-center py-4"
                         >
-                            <h1
-                                className="text-white"
+                            <div
+                                className="md:hidden lg:flex"
                             >
-                                Menu
-                            </h1>
+                                <SwitchLanguage />
+                            </div>
                             <span
                                 onClick={() => setOpenMenu(!openMunu)}
                                 className="text-white cursor-pointer"

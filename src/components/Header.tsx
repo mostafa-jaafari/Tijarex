@@ -37,7 +37,9 @@ export async function Header() {
         JAMLA.ma | LOGO
       </h1>
 
-      <ul className="hidden md:flex lg:flex items-center gap-6 font-bold">
+      <ul 
+        className="hidden md:hidden lg:flex items-center 
+          gap-3">
         {NaviGation_Links.map((link, idx) => (
           <Link
             key={idx}
