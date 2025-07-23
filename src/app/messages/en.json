@@ -92,5 +92,27 @@
         "sellerlink": "Complete support included"
       }
     ]
+  },
+  "howItWorks": {
+    "title": "Discover How Easy It Is",
+    "subtitle": "A simple guide that walks you through every step to success.",
+    "steps": [
+      {
+        "title": "Create Your Account",
+        "description": "Sign up quickly with just a few clicks and join our seller community."
+      },
+      {
+        "title": "Select Trending Products",
+        "description": "Browse and pick the best products that match your audience and style."
+      },
+      {
+        "title": "Start Selling Seamlessly",
+        "description": "List your products and watch your sales grow effortlessly."
+      },
+      {
+        "title": "Receive Your Payments Fast",
+        "description": "Get paid securely and promptly after every successful sale."
+      }
+    ]
   }
 }
