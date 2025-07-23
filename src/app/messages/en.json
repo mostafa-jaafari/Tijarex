@@ -36,5 +36,61 @@
       "count": 160,
       "label": "Order delivered per day"
     }
-  ]
+  ],
+  "whyChooseUs": {
+    "title": "No Risk. Just Results.",
+    "subtitle": "Skip the risks, keep the profits. Jamla.ma makes e-commerce simple, fast, and stress-free.",
+    "tabs": {
+      "traditional": "traditional e-commerce",
+      "jamla": "jamla.ma"
+    },
+    "labels": {
+      "traditional": "traditional",
+      "jamla": "jamla.ma"
+    },
+    "cards": [
+      {
+        "id": "zero-investment",
+        "title": "Zero Investment",
+        "description": "Start earning immediately without any upfront costs or inventory investment.",
+        "traditional": "$3,000+ startup costs",
+        "sellerlink": "$0 to start"
+      },
+      {
+        "id": "instant-setup",
+        "title": "Instant Setup",
+        "description": "Get your store running in minutes, not weeks of development and setup.",
+        "traditional": "2-6 weeks setup time",
+        "sellerlink": "2 minutes to start"
+      },
+      {
+        "id": "no-risk",
+        "title": "No Risk",
+        "description": "No inventory to manage, no shipping hassles, no customer service headaches.",
+        "traditional": "High inventory risk",
+        "sellerlink": "Zero risk guarantee"
+      },
+      {
+        "id": "fast-payouts",
+        "title": "Instant Payouts",
+        "description": "Receive your earnings within 24-48 hours of confirmed sales.",
+        "traditional": "30-90 days payment",
+        "sellerlink": "24-48 hour payouts"
+      },
+      {
+        "id": "built-in-audience",
+        "title": "Built-in Audience",
+        "description": "Access our marketplace of active buyers looking for products to purchase.",
+        "traditional": "Build audience from zero",
+        "sellerlink": "Ready buyer network"
+      },
+      {
+        "id": "full-support",
+        "title": "Full Support",
+        "description": "We handle all customer service, returns, and technical support for you.",
+        "traditional": "Handle everything yourself",
+        "sellerlink": "Complete support included"
+      }
+    ]
+  }
 }
