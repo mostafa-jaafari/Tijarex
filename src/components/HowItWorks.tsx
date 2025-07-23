@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import FadeContent from "./Animations/FadeContent";
 import BlurText from "./Animations/BlurText";
 
 
@@ -62,7 +61,6 @@ export function HowItWorks() {
                             key={idx}
                             className="w-full flex flex-col items-center mb-8"
                         >
-                            <FadeContent blur={true} duration={1500} easing="ease-out" initialOpacity={0}>
                             <div
                                 className="relative lg:w-full md:w-full sm:w-full w-60 h-60 mb-4 
                                     rounded-lg overflow-hidden border 
@@ -96,7 +94,6 @@ export function HowItWorks() {
                                 >
                                 {item.description}
                             </p>
-                            </FadeContent>
                         </div>
                     )
                 })}
