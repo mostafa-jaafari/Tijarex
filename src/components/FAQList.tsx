@@ -1,7 +1,6 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import BlurText from "./Animations/BlurText";
 import { useState } from "react";
 import { BadgeCheck, ChevronDown } from "lucide-react";
 
@@ -66,15 +65,13 @@ export function FAQList() {
             className="w-full flex lg:py-40 py-20 md:py-40 px-6 
                 lg:px-20 flex-col items-center"
         >
-            <BlurText
-                text={t("title")}
-                delay={50}
-                animateBy="words"
-                direction="top"
+            <h1
                 className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
                     text-center mb-4
                     ${locale === "ar" ? "" : "bebas-neue"}`}
-            />
+            >
+                {t("title")}
+            </h1>
             <div className="w-full ">
                 {FAQList.map((faq, index) => (
                     <CustimizedFAQContainer

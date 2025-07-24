@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { TriangleAlert, DollarSign, Rocket, ShieldCheck, Clock, Users, Headset, CheckCircle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import BlurText from "./Animations/BlurText";
 
 type ComparisonItem = {
   id: string;
@@ -50,15 +49,13 @@ export function WhyChooseUs() {
       id="WhyUs"
         className="w-full min-h-screen flex py-20 px-6 
             lg:px-20 flex-col justify-center items-center">
-      <BlurText
-          text={t("title")}
-          delay={50}
-          animateBy="words"
-          direction="top"
+      <h1
           className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
               text-center mb-4 px-6
               ${locale === "ar" ? "" : "bebas-neue"}`}
-      />
+      >
+        {t("title")}
+      </h1>
       <p className="mb-6 text-neutral-500 text-center px-6">
         {t("subtitle")}
       </p>

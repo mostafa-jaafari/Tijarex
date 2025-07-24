@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import BlurText from "./Animations/BlurText";
 import { FakeProducts } from "./FakeProducts";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
@@ -40,15 +39,13 @@ export function FeaturedProducts() {
             className="w-full min-h-screen flex py-20 px-6 
                 lg:px-20 flex-col items-center"
         >
-            <BlurText
-                text={t("featuredproducts.title")}
-                delay={50}
-                animateBy="words"
-                direction="top"
+            <h1
                 className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
                     text-center mb-4
                     ${locale === "ar" ? "" : "bebas-neue"}`}
-            />
+            >
+                {t("featuredproducts.title")}
+            </h1>
             <p className="mb-6 text-neutral-500 text-center">
                 {t("featuredproducts.description")}
             </p>
