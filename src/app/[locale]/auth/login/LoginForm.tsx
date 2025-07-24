@@ -7,11 +7,11 @@ import Image from "next/image";
 export function LoginForm(){
     return (
         <section
-            className="w-full h-screen px-30 flex flex-col 
+            className="w-full h-screen px-6 lg:px-20 flex flex-col 
                 justify-center items-center"
         >
             <form
-                className="w-full border border-neutral-900 
+                className="w-full sm:w-[500px] md:w-[500px] lg:w-full border border-neutral-900 
                     shadow-xl shadow-neutral-900/20 p-6 
                     rounded-lg"
             >

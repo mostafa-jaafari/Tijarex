@@ -13,7 +13,7 @@ export default function page() {
             <LoginForm />
         </div>
         <div
-            className='relative h-screen w-full'
+            className='relative h-screen w-full lg:flex hidden'
         >
             <Image
                 src="https://images.pexels.com/photos/26761029/pexels-photo-26761029.jpeg"
