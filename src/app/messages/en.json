@@ -3,10 +3,10 @@
   "header": {
     "nav": {
       "home": "Home",
-      "about": "About",
+      "featuredproducts": "Featured products",
       "howitworks": "How It Works",
-      "catalogue": "Catalogue",
-      "contact": "Contact"
+      "catalogue": "Why us",
+      "faq": "FAQ?"
     },
     "buttons": {
       "beSeller": "Be Seller Now",

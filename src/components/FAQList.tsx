@@ -62,7 +62,8 @@ export function FAQList() {
     const locale = useLocale();
     return (
         <section
-        className="w-full flex lg:py-40 py-20 md:py-40 px-6 
+            id="FAQList"
+            className="w-full flex lg:py-40 py-20 md:py-40 px-6 
                 lg:px-20 flex-col items-center"
         >
             <BlurText

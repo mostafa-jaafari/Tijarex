@@ -3,10 +3,10 @@
     "header": {
     "nav": {
         "home": "الرئيسية",
-        "about": "من نحن",
+        "featuredproducts": "المنتجات المميزة",
         "howitworks": "كيف يعمل",
-        "catalogue": "الكتالوج",
-        "contact": "تواصل معنا"
+        "catalogue": "لماذا نحن",
+        "faq": "الاسئلة الشائعة"
     },
     "buttons": {
         "beSeller": "كن بائعًا الآن",

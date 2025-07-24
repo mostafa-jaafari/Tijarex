@@ -47,6 +47,7 @@ export function WhyChooseUs() {
 
   return (
     <section 
+      id="WhyUs"
         className="w-full min-h-screen flex py-20 px-6 
             lg:px-20 flex-col justify-center items-center">
       <BlurText

@@ -36,6 +36,7 @@ export function FeaturedProducts() {
     const locale = useLocale();
     return (
         <section
+            id="FeaturedProducts"
             className="w-full min-h-screen flex py-20 px-6 
                 lg:px-20 flex-col items-center"
         >

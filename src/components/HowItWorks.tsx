@@ -34,6 +34,7 @@ export function HowItWorks() {
     const locale = useLocale();
     return (
         <section
+            id="HowItWorks"
             className="w-full min-h-screen flex py-20 px-6 
                 lg:px-20 flex-col justify-center items-center bg-blue-50"
         >

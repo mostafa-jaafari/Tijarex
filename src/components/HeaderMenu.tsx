@@ -20,19 +20,19 @@ export function HeaderMenur(){
     },
     {
       name: t("nav.catalogue"),
-      href: "/catalogue",
+      href: "#WhyUs",
     },
     {
       name: t("nav.howitworks"),
-      href: "/howitworks",
+      href: "#HowItWorks",
     },
     {
-      name: t("nav.about"),
-      href: "/about",
+      name: t("nav.featuredproducts"),
+      href: "#FeaturedProducts",
     },
     {
-      name: t("nav.contact"),
-      href: "/contact",
+      name: t("nav.faq"),
+      href: "#FAQList",
     },
   ];
 
