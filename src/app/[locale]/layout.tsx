@@ -39,7 +39,6 @@ export default async function RootLayout({
   const IsArabic = locale === 'ar';
   return (
     <html dir={IsArabic ? "rtl" : "ltr"} lang={locale} className="scroll-smooth">
-      <Analytics />
       <body
         className={`w-full overflow-x-hidden 
           bg-white dark:bg-[#0a0a0a] 
@@ -47,6 +46,7 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
+          <Analytics />
         </NextIntlClientProvider>
         <ScrollToTop />
       </body>
