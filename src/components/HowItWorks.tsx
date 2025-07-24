@@ -60,7 +60,7 @@ export function HowItWorks() {
                             className="w-full flex flex-col items-center mb-8"
                         >
                             <div
-                                className="relative lg:w-full md:w-full sm:w-full w-60 h-60 mb-4 
+                                className="relative lg:w-full md:w-full sm:w-full w-80 h-80 mb-4 
                                     rounded-lg overflow-hidden border 
                                     border-neutral-200 shadow-lg"
                             >

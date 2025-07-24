@@ -59,17 +59,19 @@ export async function Header() {
         >
           <SwitchLanguage />
         </div>
-        <button 
+        <Link
+          href="/auth/register" 
             className="lg:text-normal md:text-md text-sm bg-blue-600 py-2 cursor-pointer 
             px-6 text-neutral-300 rounded-full">
           {t("buttons.beSeller")}
-        </button>
-        <button 
+        </Link>
+        <Link
+          href="/auth/login" 
             className="lg:text-normal md:text-md text-sm border border-neutral-800 
             rounded-full py-2 cursor-pointer 
             px-6 text-neutral-300">
           {t("buttons.login")}
-        </button>
+        </Link>
         <HeaderMenur />
       </div>
     </section>

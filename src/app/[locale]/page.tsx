@@ -15,7 +15,7 @@ export default async function Home() {
   // const locale = await getLocale();
   // const IsArabic = locale === 'ar';
   return (
-    <main className="w-full">
+    <main className="w-full overflow-x-hidden">
       <section
         className="w-full bg-black min-h-screen"
       >
