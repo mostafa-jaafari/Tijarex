@@ -1,4 +1,5 @@
 {
+  "globalcta": "Add to Cart",
   "header": {
     "nav": {
       "home": "Home",
@@ -143,5 +144,11 @@
   "testimonials": {
     "title": "Our Clients Speak... and We Listen",
     "subtitle": "Here’s what our clients say about their experience with Jamla.ma."
+  },
+  "lastcalltoaction": {
+    "title": "Start your business with a smart way",
+    "description1": "Products and prices that boost your sales—start with confidence.",
+    "description2": "Pick your quantity and launch your shop today—no hassle, no large commitments.",
+    "button": "Join Free & Start Selling!"
   }
 }

@@ -4,12 +4,12 @@ import { useState } from "react";
 import BlurText from "./Animations/BlurText";
 import { FakeProducts } from "./FakeProducts";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 
 
 export function FeaturedProducts() {
-    const t = useTranslations("featuredproducts");
+    const t = useTranslations("");
     const [selectedTabCategorie, setSelectedTabCategorie] = useState("all");
     const Categories_Tabs = [
         {
@@ -33,21 +33,23 @@ export function FeaturedProducts() {
         selectedTabCategorie === "all"
             ? FakeProducts.slice(0, 4)
             : FakeProducts.filter((product) => product.category === selectedTabCategorie);
+    const locale = useLocale();
     return (
         <section
             className="w-full min-h-screen flex py-20 px-6 
                 lg:px-20 flex-col items-center"
         >
             <BlurText
-                text={t("title")}
+                text={t("featuredproducts.title")}
                 delay={50}
                 animateBy="words"
                 direction="top"
-                className="text-3xl font-bold text-neutral-800 
-                    text-center mb-8 text-4xl"
+                className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
+                    text-center mb-4
+                    ${locale === "ar" ? "" : "bebas-neue"}`}
             />
-            <p className="mb-6 text-neutral-500">
-                {t("description")}
+            <p className="mb-6 text-neutral-500 text-center">
+                {t("featuredproducts.description")}
             </p>
             <div
                 className="w-full flex justify-center"
@@ -60,7 +62,8 @@ export function FeaturedProducts() {
                             <button
                             key={idx}
                             onClick={() => setSelectedTabCategorie(tab.name)}
-                            className={`px-4 py-2 rounded-full cursor-pointer
+                            className={`lg:px-4 px-2 md:px-4 py-2 rounded-full 
+                                cursor-pointer
                                 ${selectedTabCategorie === tab.name ? "bg-blue-500 text-white" : "text-blue-700 hover:bg-blue-100"}`}
                                 >
                                 {tab.label}
@@ -87,7 +90,7 @@ export function FeaturedProducts() {
                                 <div
                                     key={product.id}
                                     className="group hover:shadow-xl p-2 rounded-lg 
-                                        w-full flex flex-col items-center mb-8 border
+                                        w-full mb-8 border flex flex-col items-strat
                                         border-neutral-100 hover:border-neutral-200"
                                 >
                                     <div
@@ -104,6 +107,7 @@ export function FeaturedProducts() {
                                         />
                                     </div>
                                     <span
+                                        dir="ltr"
                                         className="w-full px-4 text-start mb-2"
                                     >
                                         <h1
@@ -114,16 +118,18 @@ export function FeaturedProducts() {
                                         <p className="text-neutral-600 mb-2 text-sm">
                                             {product.description}
                                         </p>
-                                    </span>
-                                    <span className="text-blue-700 font-semibold">
-                                        ${product.price.toFixed(2)}
+                                        <ins 
+                                            dir="ltr"
+                                            className="no-underline text-blue-700 font-semibold">
+                                            ${product.price.toFixed(2)}
+                                        </ins>
                                     </span>
                                     <button
                                         className="mt-4 w-full py-2 bg-blue-500 
                                             text-white rounded-lg hover:rounded-2xl
                                             hover:bg-blue-600 
                                             cursor-pointer transition-colors duration-300">
-                                        Add to Cart
+                                        {t("globalcta")}
                                     </button>
                                 </div>
                             )

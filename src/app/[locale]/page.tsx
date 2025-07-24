@@ -1,9 +1,11 @@
 import { FAQList } from "@/components/FAQList";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
+import Footer from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { HeroStatistics } from "@/components/HeroStatistics";
 import { HowItWorks } from "@/components/HowItWorks";
+import { LastCallToAction } from "@/components/LastCallToAction";
 import { Testimonials } from "@/components/Testimonials";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 // import { getLocale } from "next-intl/server";
@@ -27,6 +29,8 @@ export default async function Home() {
       <FeaturedProducts />
       <Testimonials />
       <FAQList />
+      <LastCallToAction />
+      <Footer />
     </main>
   );
 }

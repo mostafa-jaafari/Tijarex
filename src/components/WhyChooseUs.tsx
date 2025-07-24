@@ -54,11 +54,11 @@ export function WhyChooseUs() {
           delay={50}
           animateBy="words"
           direction="top"
-          className={`text-3xl font-bold text-neutral-800 
-              text-center mb-8 text-4xl
+          className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
+              text-center mb-4 px-6
               ${locale === "ar" ? "" : "bebas-neue"}`}
       />
-      <p className="mb-6 text-neutral-500">
+      <p className="mb-6 text-neutral-500 text-center px-6">
         {t("subtitle")}
       </p>
 

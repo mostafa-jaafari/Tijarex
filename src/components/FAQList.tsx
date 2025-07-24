@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import BlurText from "./Animations/BlurText";
 import { useState } from "react";
 import { BadgeCheck, ChevronDown } from "lucide-react";
@@ -20,10 +20,10 @@ const CustimizedFAQContainer = ({ question, answer }: CustimizedFAQContainerProp
                     cursor-pointer p-4 text-blue-400
                     ${isOpenFAQ ? "border-blue-400  rounded-t-lg " : "text-neutral-500 border-neutral-300 rounded-lg"}`}
             >
-                {question} <ChevronDown size={20} className={isOpenFAQ ? "" : ""} />
+                {question} <ChevronDown size={20} className={isOpenFAQ ? "rotate-180 transition-all duration-300" : "transition-all duration-300"} />
             </div>
             <div
-                className={`flex items-center gap-2 w-full bg-blue-400 rounded-b-lg mb-2 
+                className={`flex items-start gap-2 w-full bg-blue-400 rounded-b-lg mb-2 
                     overflow-hidden text-white transition-all duration-300 ease-in-out`}
                 style={{
                     padding: isOpenFAQ ? "1rem" : "0",
@@ -59,10 +59,10 @@ export function FAQList() {
             answer: t("questions.3.answer"),
         }
     ];
-
+    const locale = useLocale();
     return (
         <section
-        className="w-full min-h-screen flex py-20 px-6 
+        className="w-full flex lg:py-40 py-20 md:py-40 px-6 
                 lg:px-20 flex-col items-center"
         >
             <BlurText
@@ -70,8 +70,9 @@ export function FAQList() {
                 delay={50}
                 animateBy="words"
                 direction="top"
-                className="text-3xl font-bold text-neutral-800 
-                    text-center mb-8 text-4xl"
+                className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
+                    text-center mb-4
+                    ${locale === "ar" ? "" : "bebas-neue"}`}
             />
             <div className="w-full ">
                 {FAQList.map((faq, index) => (

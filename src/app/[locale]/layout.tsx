@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 
 const bebas_neue = Bebas_Neue({
@@ -45,6 +46,7 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
+        <ScrollToTop />
       </body>
     </html>
   );
