@@ -1,3 +1,4 @@
+import { FAQList } from "@/components/FAQList";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
@@ -23,6 +24,7 @@ export default async function Home() {
       <WhyChooseUs />
       <HowItWorks />
       <FeaturedProducts />
+      <FAQList />
     </main>
   );
 }

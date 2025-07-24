@@ -86,35 +86,45 @@ export function FeaturedProducts() {
                             return (
                                 <div
                                     key={product.id}
-                                    className="transition-all duration-300 cursor-pointer
-                                        hover:shadow-xl hover:-translate-y-5 p-2 
-                                        rounded-lg w-full flex flex-col items-center mb-8"
+                                    className="group hover:shadow-xl p-2 rounded-lg 
+                                        w-full flex flex-col items-center mb-8 border
+                                        border-neutral-100 hover:border-neutral-200"
                                 >
                                     <div
                                         className="relative w-full h-60 mb-4 
                                             rounded-lg overflow-hidden border 
-                                            border-neutral-200 shadow-lg"
+                                            border-neutral-200 shadow-lg cursor-pointer"
                                     >
                                         <Image
                                             src={product.image}
                                             fill
                                             loading="lazy"
                                             alt={product.title}
-                                            className="object-cover w-full h-full"
+                                            className="group-hover:scale-110 transition-all duration-300 object-cover w-full h-full"
                                         />
                                     </div>
                                     <span
-                                        className="w-full px-4 text-start text-xl
-                                            font-bold text-neutral-800 mb-2"
+                                        className="w-full px-4 text-start mb-2"
                                     >
-                                        {product.title}
+                                        <h1
+                                            className="text-xl font-bold text-neutral-800"
+                                        >
+                                            {product.title}
+                                        </h1>
+                                        <p className="text-neutral-600 mb-2 text-sm">
+                                            {product.description}
+                                        </p>
                                     </span>
-                                    <p className="text-neutral-600 mb-2">
-                                        {product.description}
-                                    </p>
                                     <span className="text-blue-700 font-semibold">
                                         ${product.price.toFixed(2)}
                                     </span>
+                                    <button
+                                        className="mt-4 w-full py-2 bg-blue-500 
+                                            text-white rounded-lg hover:rounded-2xl
+                                            hover:bg-blue-600 
+                                            cursor-pointer transition-colors duration-300">
+                                        Add to Cart
+                                    </button>
                                 </div>
                             )
                         })}

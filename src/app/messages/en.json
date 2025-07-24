@@ -116,7 +116,28 @@
     ]
   },
   "featuredproducts": {
-    "featured_title": "Featured Products",
-    "featured_description": "Discover a variety of products including clothing, accessories, and much more — all in one place."
+    "title": "Featured Products",
+    "description": "Discover a variety of products including clothing, accessories, and much more — all in one place."
+  },
+  "faqlist": {
+    "title": "Frequently Asked Questions",
+    "questions": [
+      {
+        "question": "How do I start selling on Jamla.ma?",
+        "answer": "Simply create an account, choose your products, and start listing them in our marketplace."
+      },
+      {
+        "question": "Do I need to invest money to start?",
+        "answer": "No, you can start selling without any upfront investment or inventory costs."
+      },
+      {
+        "question": "How do I get paid?",
+        "answer": "You will receive your earnings within 24-48 hours after each sale."
+      },
+      {
+        "question": "What support do you provide?",
+        "answer": "We handle all customer service, returns, and technical support for you."
+      }
+    ]
   }
 }
