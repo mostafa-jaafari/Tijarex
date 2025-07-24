@@ -6,6 +6,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { Analytics } from "@vercel/analytics/next"
 
 
 const bebas_neue = Bebas_Neue({
@@ -38,6 +39,7 @@ export default async function RootLayout({
   const IsArabic = locale === 'ar';
   return (
     <html dir={IsArabic ? "rtl" : "ltr"} lang={locale} className="scroll-smooth">
+      <Analytics />
       <body
         className={`w-full overflow-x-hidden 
           bg-white dark:bg-[#0a0a0a] 
