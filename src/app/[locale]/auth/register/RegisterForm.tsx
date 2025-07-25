@@ -5,12 +5,33 @@ import { useState } from "react";
 
 export function RegisterForm(){
     const [selectedChoice, setSelectedChoice] = useState<string>("");
+    const [inputsCredentials, setInputsCredentials] = useState({
+        fullname: "",
+        phonenumber: "",
+        email: "",
+        password: "",
+        confirmpassword: "",
+        howyouheartaboutus: selectedChoice,
+        confirmtermsandconditions: false,
+    })
+
+    const handleChangeInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.target;
+        setInputsCredentials(prev => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value
+        }));
+    }
+    const handleCreateAccount = async () => {
+        // 
+    }
     return (
         <section
             className="w-full h-screen px-6 lg:px-20 flex flex-col 
                 justify-center items-center"
         >
             <form
+                onSubmit={handleCreateAccount}
                 className="w-full sm:w-[500px] md:w-[500px] lg:w-full border border-neutral-900 
                     shadow-xl shadow-neutral-900/20 p-6 
                     rounded-lg"
@@ -37,6 +58,9 @@ export function RegisterForm(){
                         </label>
                         <input 
                             type="text"
+                            name="fullname"
+                            value={inputsCredentials.fullname}
+                            onChange={(e) => handleChangeInputs(e)}
                             id="FullName" 
                             placeholder="full name"
                             className="focus:outline-none focus:shadow-lg 
@@ -56,7 +80,10 @@ export function RegisterForm(){
                         </label>
                         <input 
                             type="number"
-                            id="PhoneNumber" 
+                            id="PhoneNumber"
+                            name="phonenumber"
+                            value={inputsCredentials.phonenumber}
+                            onChange={(e) => handleChangeInputs(e)}
                             placeholder="phone number"
                             className="focus:outline-none focus:shadow-lg 
                                 shadow-blue-700/20 focus:ring-2 ring-blue-500 
@@ -77,6 +104,9 @@ export function RegisterForm(){
                     <input 
                         type="email"
                         id="Email" 
+                        name="email"
+                        value={inputsCredentials.email}
+                        onChange={(e) => handleChangeInputs(e)}
                         placeholder="enter your email"
                         className="focus:outline-none focus:shadow-lg 
                             shadow-blue-700/20 focus:ring-2 ring-blue-500 
@@ -98,7 +128,10 @@ export function RegisterForm(){
                         </label>
                         <input 
                             type="password"
-                            id="Password" 
+                            name="password"
+                            id="Password"
+                            value={inputsCredentials.password}
+                            onChange={(e) => handleChangeInputs(e)}
                             placeholder="enter your password"
                             className="focus:outline-none focus:shadow-lg 
                                 shadow-blue-700/20 focus:ring-2 ring-blue-500 
@@ -117,6 +150,9 @@ export function RegisterForm(){
                         </label>
                         <input 
                             type="password"
+                            name="confirmpassword"
+                            onChange={(e) => handleChangeInputs(e)}
+                            value={inputsCredentials.confirmpassword}
                             id="ConfirmPassword" 
                             placeholder="confirm your password"
                             className="focus:outline-none focus:shadow-lg 
@@ -134,6 +170,9 @@ export function RegisterForm(){
                 <div className="flex items-start gap-2 mt-4">
                     <input
                         type="checkbox"
+                        name="confirmtermsandconditions"
+                        checked={inputsCredentials.confirmtermsandconditions}
+                        onChange={(e) => handleChangeInputs(e)}
                         id="terms"
                         required
                         className="mt-1"
@@ -146,8 +185,9 @@ export function RegisterForm(){
                         and confirm that all provided information is accurate.
                     </label>
                 </div>
-                {/* --------- Login Button --------- */}
+                {/* --------- Register Button --------- */}
                 <button
+                    type="submit"
                     className="focus:outline-none focus:shadow-lg 
                             shadow-blue-700/20 focus:ring-2 ring-blue-500
                         mt-4 rounded-lg py-2 w-full bg-blue-700 

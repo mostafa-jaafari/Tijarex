@@ -1,16 +1,38 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 
 export function LoginForm(){
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const router = useRouter();
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const res = await signIn("credentials", {
+            redirect: false,
+            email,
+            password,
+        });
+
+        if (res?.error) {
+        setError(res?.error);
+        } else {
+        router.push("/dashboard"); // or wherever you want to redirect
+        }
+    };
     return (
         <section
             className="w-full h-screen px-6 lg:px-20 flex flex-col 
                 justify-center items-center"
         >
             <form
+                onSubmit={handleLogin}
                 className="w-full sm:w-[500px] md:w-[500px] lg:w-full border border-neutral-900 
                     shadow-xl shadow-neutral-900/20 p-6 
                     rounded-lg"
@@ -33,6 +55,8 @@ export function LoginForm(){
                     </label>
                     <input 
                         type="email"
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                         id="Email" 
                         placeholder="enter your email"
                         className="focus:outline-none focus:shadow-lg 
@@ -52,6 +76,8 @@ export function LoginForm(){
                     </label>
                     <input 
                         type="password"
+                        onChange={(e) => setPassword(e.target.value)}
+                        value={password}
                         id="Password" 
                         placeholder="enter your password"
                         className="focus:outline-none focus:shadow-lg 
@@ -61,6 +87,7 @@ export function LoginForm(){
                 </div>
                 {/* --------- Login Button --------- */}
                 <button
+                    type="submit"
                     className="focus:outline-none focus:shadow-lg 
                             shadow-blue-700/20 focus:ring-2 ring-blue-500
                         mt-4 rounded-lg py-2 w-full bg-blue-700 
@@ -82,6 +109,7 @@ export function LoginForm(){
                     />
                 </div>
                 {/* ---------- Google Provider ---------- */}
+                {error !== "" && error}
                 <button
                     className="flex justify-center gap-2 w-full 
                         py-2 cursor-pointer hover:bg-gray-900/20 

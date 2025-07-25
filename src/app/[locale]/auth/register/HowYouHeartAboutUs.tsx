@@ -23,7 +23,7 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full p-2 flex items-center
                     text-neutral-400 justify-between border
-                    border-neutral-900 rounded-lg"
+                    border-neutral-900 rounded-lg cursor-pointer"
             >
                 <span>
                     {selectedChoice === "" ? 
