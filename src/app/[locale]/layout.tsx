@@ -6,6 +6,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { Toaster } from "sonner";
 
 
 const bebas_neue = Bebas_Neue({
@@ -42,7 +43,8 @@ export default async function RootLayout({
         className={`w-full overflow-x-hidden 
           bg-white dark:bg-[#0a0a0a] 
           ${cairo.className} ${bebas_neue.variable} antialiased`}
-      >
+          >
+        <Toaster position="top-center" />
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
