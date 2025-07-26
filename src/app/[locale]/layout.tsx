@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import "../../app/globals.css";
 import { Cairo, Bebas_Neue } from 'next/font/google'
 import { notFound } from "next/navigation";
@@ -18,11 +17,6 @@ const cairo = Cairo({
   subsets: ['arabic', 'latin'],
   weight: ['400', '700'],
 });
-
-export const metadata: Metadata = {
-  title: 'Home | Jamla.ma',
-  description: 'Build your brand easily with MODIFY.ma',
-}
 
 export default async function RootLayout({
   children,

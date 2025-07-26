@@ -4,15 +4,17 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 
 
 export function LoginForm(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
     const handleLogin = async (e: React.FormEvent) => {
+        setIsLoading(true)
         e.preventDefault();
         const res = await signIn("credentials", {
             redirect: false,
@@ -21,9 +23,12 @@ export function LoginForm(){
         });
 
         if (res?.error) {
-        setError(res?.error);
+            toast.error("login Failed");
+            setIsLoading(false);
         } else {
-        router.push("/dashboard"); // or wherever you want to redirect
+            router.push("/seller");
+            toast.success("login successfully.");
+            setIsLoading(false);
         }
     };
     return (
@@ -88,13 +93,12 @@ export function LoginForm(){
                 {/* --------- Login Button --------- */}
                 <button
                     type="submit"
-                    className="focus:outline-none focus:shadow-lg 
-                            shadow-blue-700/20 focus:ring-2 ring-blue-500
-                        mt-4 rounded-lg py-2 w-full bg-blue-700 
-                        font-bold hover:bg-blue-900
-                        transition-all duration-200 cursor-pointer"
+                    disabled={isLoading}
+                    className={`font-bold mt-4 py-2 focus:outline-none w-full focus:shadow-lg 
+                        transition-all duration-200 rounded-lg
+                        ${isLoading ? "bg-neutral-900 cursor-not-allowed text-neutral-600" : "focus:ring-2 cursor-pointer shadow-blue-700/20 ring-blue-500 bg-blue-700 hover:bg-blue-900"}`}
                 >
-                    login
+                    login{isLoading && (<span className="dots"></span>)}
                 </button>
                 {/* --------- Providers ---------- */}
                 <div
@@ -109,7 +113,6 @@ export function LoginForm(){
                     />
                 </div>
                 {/* ---------- Google Provider ---------- */}
-                {error !== "" && error}
                 <button
                     className="flex justify-center gap-2 w-full 
                         py-2 cursor-pointer hover:bg-gray-900/20 
