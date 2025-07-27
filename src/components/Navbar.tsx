@@ -16,6 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { SwitchLanguage } from "./SwitchLanguage";
 
 export function Navbar({ session }: { session: Session | null }) {
     const [isCollapsed, setIsCollapsed] = useState(true);
@@ -78,10 +79,10 @@ export function Navbar({ session }: { session: Session | null }) {
                 {!isCollapsed && (
                     <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">X</span>
+                            <span className="text-white font-bold text-sm">J</span>
                         </div>
                         <div>
-                            <h1 className="font-semibold text-gray-900">Xenith</h1>
+                            <h1 className="font-semibold text-gray-900">Jamla.ma</h1>
                             <p className="text-xs text-gray-500">Seller Portal</p>
                         </div>
                     </div>
@@ -186,27 +187,38 @@ export function Navbar({ session }: { session: Session | null }) {
             {/* User Profile & Sign Out */}
             <div className="border-t border-gray-100 p-4">
                 {!isCollapsed && (
-                    <div className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-gray-50">
-                        <div className="relative w-8 h-8 bg-gray-300 overflow-hidden rounded-full flex items-center justify-center">
-                            {session?.user?.image ? (
-                                <Image
-                                    src={session?.user?.image}
-                                    alt={session?.user?.name}
-                                    fill
-                                    className="object-cover"
-                                />
-                            ) : (
-                                <span className="text-gray-600 font-medium text-sm">{session?.user?.name.slice(0 ,2).toUpperCase()}</span>
-                            )}
+                    <div className="flex space-y-2 flex-col items-center">
+                        <div
+                            className="w-full"
+                        >
+                            <SwitchLanguage
+                                CLASSNAME="w-full flex items-center justify-between bg-blue-100 px-2 py-1 rounded-full border border-blue-300 text-blue-600"
+                            />
                         </div>
-                        <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                                {session?.user?.name}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                                {session?.user?.email}
-                            </p>
+                        <div
+                            className="flex items-center gap-2 bg-gray-50 space-x-3 mb-3 p-2 rounded-lg"
+                        >
+                            <div className="relative flex-shrink-0 w-8 h-8 bg-gray-300 overflow-hidden rounded-full flex items-center justify-center">
+                                {session?.user?.image ? (
+                                    <Image
+                                        src={session?.user?.image}
+                                        alt={session?.user?.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                ) : (
+                                    <span className="text-gray-600 font-medium text-sm">{session?.user?.name.slice(0 ,2).toUpperCase()}</span>
+                                )}
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">
+                                    {session?.user?.name}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    {session?.user?.email}
+                                </p>
 
+                            </div>
                         </div>
                     </div>
                 )}

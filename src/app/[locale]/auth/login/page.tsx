@@ -42,6 +42,7 @@ export const metadata: Metadata = {
 export default function page() {
   return (
     <main
+        dir='ltr'
         className='flex items-start bg-black w-full text-white min-h-screen'
     >
         <div

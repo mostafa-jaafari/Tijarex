@@ -14,6 +14,7 @@ import {
     ChevronRight,
     SlidersHorizontal
 } from "lucide-react";
+import { Session } from "next-auth";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -116,7 +117,7 @@ const sortOptions = [
     { label: "Latest Added", value: "date_desc" }
 ];
 
-export function ProductsPage() {
+export function ProductsPage({  session }: { session: Session | null }) {
     const [viewMode, setViewMode] = useState("grid"); // "grid" or "table"
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
@@ -249,7 +250,9 @@ export function ProductsPage() {
                     <h1 className="text-2xl font-bold text-gray-900">Products</h1>
                     <p className="text-sm text-gray-600 mt-1">Manage your product inventory</p>
                 </div>
-                <RightDashboardHeader />
+                <RightDashboardHeader
+                    session={session}
+                />
             </div>
 
             {/* Search and Controls */}

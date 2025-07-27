@@ -5,6 +5,26 @@ import React from 'react'
 import { RightDashboardHeader } from '@/components/RightDashboardHeader'
 import { getServerSession, Session } from 'next-auth'
 
+
+export const metadata = {
+  title: "Seller Dashboard | Jamla.ma",
+  description: "Monitor your store performance, view earnings, and track popular products on your Jamla.ma seller dashboard.",
+  keywords: [
+    "seller dashboard",
+    "Jamla.ma",
+    "store performance",
+    "earnings",
+    "popular products",
+    "ecommerce analytics",
+    "sales statistics"
+  ],
+  openGraph: {
+    title: "Seller Dashboard | Jamla.ma",
+    description: "Stay updated with your store's performance and analytics on Jamla.ma.",
+    url: "https://jamla.ma/seller",
+    type: "website"
+  }
+}
 export default async function page() {
   const session: Session | null = await getServerSession();
   return (

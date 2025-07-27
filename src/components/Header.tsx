@@ -57,7 +57,12 @@ export async function Header() {
         <div
           className="hidden md:flex lg:flex"
         >
-          <SwitchLanguage />
+          <SwitchLanguage
+            CLASSNAME="flex items-center gap-2 px-3 py-1 rounded-full 
+              border dark:bg-transparent dark:border-neutral-800
+              dark:hover:bg-neutral-900 transition-all duration-200 
+              text-sm font-medium"
+          />
         </div>
         <Link
           href="/auth/register" 

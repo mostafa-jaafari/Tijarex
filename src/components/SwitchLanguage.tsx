@@ -20,7 +20,7 @@ function getPathWithLocale(pathname: string, locale: string) {
   return `/${locale}/${segments.join('/')}`;
 }
 
-export function SwitchLanguage() {
+export function SwitchLanguage({ CLASSNAME }: { CLASSNAME: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -45,17 +45,14 @@ export function SwitchLanguage() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1 rounded-full 
-        border dark:bg-transparent dark:border-neutral-800
-        dark:hover:bg-neutral-900 transition-all duration-200 
-        text-sm font-medium"
+        className={CLASSNAME}
       >
-        <span className="text-base dark:text-white text-neutral-500">
+        <span className="text-base dark:text-blue-600 text-blue-600">
           <Languages size={16} />
         </span>
-        <span className="dark:text-gray-500 text-neutral-500">{currentLocale.short}</span>
+        <span className="dark:text-blue-600 text-blue-600">{currentLocale.short}</span>
         <svg
-          className={`w-3 h-3 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3 h-3 text-blue-600 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -67,7 +64,7 @@ export function SwitchLanguage() {
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 bg-white 
         dark:bg-black dark:border-neutral-800 rounded-lg shadow-lg 
-        border border-gray-200 overflow-hidden z-50 min-w-[120px]">
+        border border-gray-200 overflow-hidden z-50 min-w-[120px] w-full">
           {locales.map(({ code, flag, short }) => {
             const newPath = getPathWithLocale(pathname, code);
             const search = searchParams.toString();
