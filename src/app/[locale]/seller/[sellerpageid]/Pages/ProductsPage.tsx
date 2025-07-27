@@ -1,5 +1,4 @@
 "use client";
-
 import { RightDashboardHeader } from "@/components/RightDashboardHeader";
 import { 
     Search, 
@@ -12,10 +11,14 @@ import {
     DollarSign,
     ChevronLeft,
     ChevronRight,
-    SlidersHorizontal
+    SlidersHorizontal,
+    Download,
+    ArrowRight,
+    ArrowLeft
 } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 // Sample products data
@@ -24,7 +27,12 @@ const productsData = [
         id: "P001",
         name: "Wireless Headphones Pro",
         category: "Electronics",
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop&crop=center",
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&crop=center",
+        images: [
+            "https://images.unsplash.com/photo-1606813909355-bd3f3f3d3b8d?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1585386959984-a4155223f4ef?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center"
+        ],
         price: 299.99,
         originalPrice: 349.99,
         stock: 45,
@@ -38,7 +46,12 @@ const productsData = [
         id: "P002",
         name: "Smart Watch Series X",
         category: "Wearables",
-        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&h=200&fit=crop&crop=center",
+        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop&crop=center",
+        images: [
+            "https://images.unsplash.com/photo-1508898578281-774ac4893c0d?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1533236897111-3e94666b2edf?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
+        ],
         price: 199.99,
         originalPrice: 229.99,
         stock: 8,
@@ -52,7 +65,12 @@ const productsData = [
         id: "P003",
         name: "Gaming Mechanical Keyboard",
         category: "Gaming",
-        image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=200&h=200&fit=crop&crop=center",
+        image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=400&fit=crop&crop=center",
+        images: [
+            "https://images.unsplash.com/photo-1624899795816-7d8f234b5af3?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1587202372775-98973b81c82c?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1586862202284-3e35c40dfca5?w=400&h=400&fit=crop&crop=center"
+        ],
         price: 149.99,
         originalPrice: 149.99,
         stock: 0,
@@ -66,7 +84,12 @@ const productsData = [
         id: "P004",
         name: "4K Webcam Ultra",
         category: "Electronics",
-        image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=200&h=200&fit=crop&crop=center",
+        image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
+        images: [
+            "https://images.unsplash.com/photo-1593642532973-d31b6557fa68?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1585397335786-2c5c878b3b16?w=400&h=400&fit=crop&crop=center"
+        ],
         price: 89.99,
         originalPrice: 99.99,
         stock: 23,
@@ -80,7 +103,12 @@ const productsData = [
         id: "P005",
         name: "Bluetooth Speaker Mini",
         category: "Audio",
-        image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=200&h=200&fit=crop&crop=center",
+        image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center",
+        images: [
+            "https://images.unsplash.com/photo-1605540437052-7a74fd8f2b49?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1611106014101-8b83c6a22f4c?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center"
+        ],
         price: 59.99,
         originalPrice: 79.99,
         stock: 67,
@@ -94,7 +122,12 @@ const productsData = [
         id: "P006",
         name: "USB-C Hub Pro",
         category: "Accessories",
-        image: "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=200&h=200&fit=crop&crop=center",
+        image: "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
+        images: [
+            "https://images.unsplash.com/photo-1626196339568-7a53f647ea8a?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
+            "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
+        ],
         price: 39.99,
         originalPrice: 49.99,
         stock: 156,
@@ -105,6 +138,7 @@ const productsData = [
         rating: 4.4
     }
 ];
+
 
 const categories = ["All", "Electronics", "Wearables", "Gaming", "Audio", "Accessories"];
 const stockStatuses = ["All", "In Stock", "Low Stock", "Out of Stock"];
@@ -171,6 +205,7 @@ export function ProductsPage({  session }: { session: Session | null }) {
         name: string;
         category: string;
         image: string;
+        images: string[];
         price: number;
         originalPrice: number;
         stock: number;
@@ -181,66 +216,123 @@ export function ProductsPage({  session }: { session: Session | null }) {
         rating: number;
     };
 
-    const ProductCard = ({ product }: { product: Product }) => (
-        <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors group">
-            {/* Product Image */}
-            <div className="aspect-square mb-4 bg-gray-50 rounded-lg overflow-hidden">
-                <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={200}
-                    height={200}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                />
-            </div>
+    const ProductCard = ({ product }: { product: Product }) => {
+  const [currentImage, setCurrentImage] = useState(0);
 
-            {/* Product Info */}
-            <div className="space-y-3">
-                <div>
-                    <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-1">
-                        {product.name}
-                    </h3>
-                    <p className="text-xs text-gray-500">{product.category}</p>
-                </div>
+  const handlePrevImage = () => {
+    setCurrentImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+  };
 
-                <div className="flex items-center space-x-2">
-                    <span className="text-lg font-bold text-gray-900">${product.price}</span>
-                    {product.originalPrice !== product.price && (
-                        <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>
-                    )}
-                </div>
+  const handleNextImage = () => {
+    setCurrentImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+  };
 
-                <span className={`inline-block px-2 py-1 text-xs font-medium rounded border ${getStockBadge(product.status)}`}>
-                    {product.status}
-                </span>
+  return (
+    <div className="relative group w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+      
+      {/* Product Image Section */}
+      <div className="relative w-full h-64 overflow-hidden">
+        <Link
+            href={`/seller/products?p_id=${product.id}`}
+        >
+             <Image
+          src={product.images[currentImage]}
+          alt={product.name}
+          fill
+          className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+        />
+        </Link>
 
-                {/* Quick Stats */}
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                    <div className="flex items-center space-x-1">
-                        <TrendingUp className="w-3 h-3" />
-                        <span>{product.sales} sales</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                        <DollarSign className="w-3 h-3" />
-                        <span>${(product.revenue / 1000).toFixed(1)}K</span>
-                    </div>
-                </div>
+        {/* Left Arrow */}
+        <button
+          onClick={handlePrevImage}
+          className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100 text-gray-600 opacity-0 group-hover:opacity-100 transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </button>
 
-                {/* Action Buttons */}
-                <div className="flex items-center justify-end space-x-2 pt-2">
-                    <button className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                        <Eye className="w-4 h-4" />
-                    </button>
-                    <button className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors">
-                        <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                </div>
-            </div>
+        {/* Right Arrow */}
+        <button
+          onClick={handleNextImage}
+          className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100 text-gray-600 opacity-0 group-hover:opacity-100 transition"
+        >
+          <ArrowRight className="w-4 h-4" />
+        </button>
+
+        {/* Quick Actions (Eye + Download Mockup Button) */}
+        <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition">
+          {/* Eye Icon */}
+          <button className="p-2 bg-white rounded-full shadow hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition">
+            <Eye className="w-4 h-4" />
+          </button>
+
+          {/* Make Order Button */}
+          <button className="flex items-center justify-center p-2 bg-blue-600 rounded-full shadow hover:bg-blue-700 text-white transition">
+            <Download className="w-4 h-4" />
+          </button>
         </div>
-    );
+
+        {/* Pagination Dots */}
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
+          {product.images.map((_, i) => (
+            <span
+              key={i}
+              className={`w-2 h-2 rounded-full ${
+                i === currentImage ? "bg-blue-600" : "bg-gray-300"
+              }`}
+            ></span>
+          ))}
+        </div>
+      </div>
+
+      {/* Product Info Section */}
+      <div className="p-4 space-y-3">
+        {/* Name & Category */}
+        <div>
+          <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
+            {product.name}
+          </h3>
+          <p className="text-xs text-gray-500">{product.category}</p>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-center space-x-2">
+          <span className="text-lg font-bold text-gray-900">${product.price}</span>
+          {product.originalPrice !== product.price && (
+            <span className="text-sm text-gray-400 line-through">
+              ${product.originalPrice}
+            </span>
+          )}
+        </div>
+
+        {/* Stock Status */}
+        <span
+          className={`inline-block px-2 py-1 text-xs font-medium rounded-full border ${getStockBadge(
+            product.status
+          )}`}
+        >
+          {product.status}
+        </span>
+
+        {/* Quick Stats */}
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center space-x-1">
+            <TrendingUp className="w-3 h-3 text-green-500" />
+            <span>{product.sales} sales</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <DollarSign className="w-3 h-3 text-blue-500" />
+            <span>${(product.revenue / 1000).toFixed(1)}K</span>
+          </div>
+        </div>
+        <button className="w-full mt-3 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg transition">
+            Make Order
+        </button>
+      </div>
+    </div>
+  );
+};
+
 
     return (
         <div className="w-full space-y-4">
@@ -374,7 +466,7 @@ export function ProductsPage({  session }: { session: Session | null }) {
 
             {/* Products Grid */}
             {viewMode === "grid" ? (
-                <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                     {paginatedProducts.map(product => (
                         <ProductCard key={product.id} product={product} />
                     ))}

@@ -1,0 +1,343 @@
+"use client";
+import React, { useState } from 'react';
+import { Star, ChevronLeft, ChevronRight, Search, Minus, Plus, Heart, Share2, Truck, RotateCcw } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+
+// Mock product data
+const productData = {
+  id: "1",
+  name: "Nike Air Zoom Structure 22",
+  price: 6997,
+  currency: "₹",
+  rating: 4.5,
+  reviewCount: 128,
+  description: "Engineered mesh, a heel overlay and dynamic support throughout the midfoot all work together to provide a smooth, stable ride. Flywire cables secure the top of your foot. The mesh provides targeted ventilation and support.",
+  images: [
+    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&h=600&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&h=600&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=600&h=600&fit=crop&crop=center"
+  ],
+  sizes: [
+    { label: "US 7", available: true },
+    { label: "US 7.5", available: true },
+    { label: "US 8", available: true },
+    { label: "US 8.5", available: true },
+    { label: "US 9", available: true },
+    { label: "US 9.5", available: true },
+    { label: "US 10", available: true },
+    { label: "US 10.5", available: true },
+    { label: "US 11.5", available: true },
+    { label: "US 11.5", available: false },
+    { label: "US 12", available: false }
+  ],
+  colors: [
+    { name: "Black/White/Grid Iron", color: "#1a1a1a", selected: true },
+    { name: "Navy/White", color: "#1e3a8a", selected: false },
+    { name: "Grey/Black", color: "#6b7280", selected: false }
+  ],
+};
+
+export function SingleProductPage({ ProductId }: { ProductId: string }) {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [activeTab, setActiveTab] = useState("description");
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const handleImageChange = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      setSelectedImageIndex(prev => 
+        prev === 0 ? productData.images.length - 1 : prev - 1
+      );
+    } else {
+      setSelectedImageIndex(prev => 
+        prev === productData.images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${
+          i < Math.floor(rating) 
+            ? 'fill-yellow-400 text-yellow-400' 
+            : i < rating 
+            ? 'fill-yellow-400/50 text-yellow-400' 
+            : 'text-gray-300'
+        }`}
+      />
+    ));
+  };
+
+  const pathname = usePathname();
+        const pathSegments = pathname.split('/').filter(Boolean);
+        const breadcrumb = [
+            { label: "Home", href: "/" },
+            ...pathSegments.map((segment, idx) => {
+                const href = '/' + pathSegments.slice(0, idx + 1).join('/');
+                // Capitalize and replace dashes/underscores with spaces
+                const label = segment
+                    .replace(/[-_]/g, ' ')
+                    .replace(/\b\w/g, l => l.toUpperCase());
+                return { label, href };
+            }),
+        ];
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center space-x-4">
+          <div className="text-2xl font-bold">✓</div>
+        <nav className="flex items-center space-x-2 text-sm text-gray-600">
+            {breadcrumb.map((item, index) => (
+                <React.Fragment key={item.href}>
+                    <a href={item.href} className="hover:text-gray-900 transition-colors">
+                        {item.label}
+                    </a>
+                    {index < breadcrumb.length - 1 && (
+                        <span className="text-gray-400">/</span>
+                    )}
+                </React.Fragment>
+            ))}
+        </nav>
+        </div>
+        <Search className="w-6 h-6 text-gray-600 cursor-pointer hover:text-gray-900" />
+      </header>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Product Images */}
+          <div className="space-y-4">
+            {/* Main Image */}
+            <div className="relative aspect-square bg-gray-50 rounded-lg overflow-hidden">
+              <div
+                   className='relative w-full h-full'
+              >
+                  <Image
+                src={productData.images[selectedImageIndex]}
+                alt={productData.name}
+                fill
+                className="object-cover"
+              />
+              </div>
+              <button
+                onClick={() => handleImageChange('prev')}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => handleImageChange('next')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Thumbnail Images */}
+            <div className="flex space-x-3">
+              {productData.images.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImageIndex(index)}
+                  className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                    selectedImageIndex === index 
+                      ? 'border-black' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <Image
+                    src={image}
+                    fill
+                    alt={`Product view ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Product Details */}
+          <div className="space-y-6">
+            {/* Product Title and Price */}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {productData.name}
+              </h1>
+              <div className="flex items-center space-x-4 mb-4">
+                <span className="text-2xl font-bold text-gray-900">
+                  {productData.currency} {productData.price.toLocaleString()}
+                </span>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1">
+                    {renderStars(productData.rating)}
+                  </div>
+                  <span className="text-sm text-gray-600">Reviews</span>
+                  <button className="text-sm text-blue-600 hover:underline">
+                    See all
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Size Selection */}
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Size</h3>
+              <div className="grid grid-cols-4 gap-2">
+                {productData.sizes.map((size, index) => (
+                  <button
+                    key={index}
+                    onClick={() => size.available && setSelectedSize(size.label)}
+                    disabled={!size.available}
+                    className={`py-3 px-4 text-sm font-medium rounded-lg border transition-all ${
+                      selectedSize === size.label
+                        ? 'border-black bg-black text-white'
+                        : size.available
+                        ? 'border-gray-300 hover:border-gray-400 text-gray-900'
+                        : 'border-gray-200 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {size.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Color Selection */}
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Color</h3>
+              <div className="flex items-center space-x-3">
+                {productData.colors.map((colorOption, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedColor(index)}
+                    className={`w-8 h-8 rounded-full border-2 transition-all ${
+                      selectedColor === index ? 'border-gray-800' : 'border-gray-300'
+                    }`}
+                    style={{ backgroundColor: colorOption.color }}
+                    title={colorOption.name}
+                  />
+                ))}
+                <span className="text-sm text-gray-600 ml-2">
+                  {productData.colors[selectedColor].name}
+                </span>
+              </div>
+            </div>
+
+            {/* Quantity and Actions */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center">
+                  <span className="text-sm font-medium mr-3">QTY</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="p-2 hover:bg-gray-50 transition-colors"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="px-4 py-2 text-sm font-medium min-w-[3rem] text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="p-2 hover:bg-gray-50 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button className="flex-1 bg-black text-white py-4 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+                  Add to Cart
+                </button>
+                <button
+                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  className={`p-4 rounded-lg border transition-colors ${
+                    isWishlisted 
+                      ? 'border-red-300 bg-red-50 text-red-600' 
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
+                </button>
+                <button className="p-4 rounded-lg border border-gray-300 hover:border-gray-400 transition-colors">
+                  <Share2 className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="border-t border-gray-200 pt-6">
+              <div className="flex space-x-8 border-b border-gray-200">
+                <button
+                  onClick={() => setActiveTab("description")}
+                  className={`pb-3 text-sm font-medium transition-colors ${
+                    activeTab === "description"
+                      ? 'text-black border-b-2 border-black'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Description
+                </button>
+                <button
+                  onClick={() => setActiveTab("delivery")}
+                  className={`pb-3 text-sm font-medium transition-colors ${
+                    activeTab === "delivery"
+                      ? 'text-black border-b-2 border-black'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Delivery & Returns
+                </button>
+              </div>
+
+              <div className="pt-6">
+                {activeTab === "description" ? (
+                  <div className="space-y-4">
+                    <p className="text-gray-700 leading-relaxed">
+                      {productData.description}
+                    </p>
+                    <button className="text-sm text-blue-600 hover:underline">
+                      Read more
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <Truck className="w-5 h-5 text-gray-600 mt-0.5" />
+                      <div>
+                        <h4 className="font-medium text-gray-900">Free Standard Delivery</h4>
+                        <p className="text-sm text-gray-600">Orders over ₹14,000 qualify for free standard delivery.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <RotateCcw className="w-5 h-5 text-gray-600 mt-0.5" />
+                      <div>
+                        <h4 className="font-medium text-gray-900">Free Returns</h4>
+                        <p className="text-sm text-gray-600">45-day return policy for unworn items.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Product ID Display */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <span className="text-sm text-gray-600">Product ID: </span>
+              <span className="text-sm font-mono text-gray-900">{ProductId}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
