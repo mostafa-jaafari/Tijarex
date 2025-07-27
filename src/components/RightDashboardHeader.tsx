@@ -1,16 +1,16 @@
 "use client";
 
 import { Bell } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
+import { Session } from "next-auth";
 
 
 
-export function RightDashboardHeader(){
-    const session = useSession();
+export function RightDashboardHeader({ session }: { session: Session | null }){
     const ProfileHeaderNavs = [
         { label: "dashboard", icon: LayoutDashboard },
         { label: "products", icon: Package },
@@ -123,9 +123,9 @@ export function RightDashboardHeader(){
                     <div
                         className='relative w-12 h-12 rounded-full border overflow-hidden'
                     >
-                        <Image 
-                            src={session?.data?.user?.image as string || ""}
-                            alt={session?.data?.user?.name as string || ""}
+                        <Image
+                            src={session?.user?.image as string || ""}
+                            alt={session?.user?.name as string || ""}
                             fill
                             className="object-cover"
                         />
@@ -134,10 +134,10 @@ export function RightDashboardHeader(){
                         className="flex flex-col items-start"
                     >
                         <span className="text-sm font-medium text-gray-900">
-                            {session?.data?.user?.name}
+                            {session?.user?.name}
                         </span>
                         <span className="text-sm font-medium text-gray-500">
-                            {session?.data?.user?.email}
+                            {session?.user?.email}
                         </span>
                     </div>
                 </button>
@@ -171,7 +171,11 @@ export function RightDashboardHeader(){
 
                         {/* Sign Out Button */}
                         <button
-                        className="w-full flex items-center justify-center px-4 py-2 text-red-600 font-medium hover:bg-red-50 transition-colors"
+                            onClick={() => signOut()}
+                            className="w-full cursor-pointer flex 
+                                items-center justify-center px-4 py-2 
+                                text-red-600 font-medium hover:bg-red-50 
+                                transition-colors"
                         >
                             Sign Out
                         </button>

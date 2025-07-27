@@ -3,8 +3,10 @@ import { SellerStatisticCards } from '@/components/SellerStatisticCards'
 import EarningsChart from '@/components/EarningsChart'
 import React from 'react'
 import { RightDashboardHeader } from '@/components/RightDashboardHeader'
+import { getServerSession, Session } from 'next-auth'
 
-export default function page() {
+export default async function page() {
+  const session: Session | null = await getServerSession();
   return (
     <main
         className='w-full bg-gray-50'
@@ -21,7 +23,9 @@ export default function page() {
     </div>
 
     {/* Right Side */}
-        <RightDashboardHeader />
+        <RightDashboardHeader
+          session={session}
+        />
     </div>
     </div>
 

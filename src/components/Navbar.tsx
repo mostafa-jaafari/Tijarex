@@ -5,19 +5,19 @@ import {
     RotateCcw, 
     ShoppingBag, 
     ShoppingCart, 
-    LogOut, 
     Settings, 
     HelpCircle, 
     Users,
     ChevronLeft,
     ChevronRight
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { Session } from "next-auth";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-export function Navbar() {
+export function Navbar({ session }: { session: Session | null }) {
     const [isCollapsed, setIsCollapsed] = useState(true);
     
     const Navigation_Links = [
@@ -187,30 +187,29 @@ export function Navbar() {
             <div className="border-t border-gray-100 p-4">
                 {!isCollapsed && (
                     <div className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-gray-50">
-                        <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                            <span className="text-gray-600 font-medium text-sm">JD</span>
+                        <div className="relative w-8 h-8 bg-gray-300 overflow-hidden rounded-full flex items-center justify-center">
+                            {session?.user?.image ? (
+                                <Image
+                                    src={session?.user?.image}
+                                    alt={session?.user?.name}
+                                    fill
+                                    className="object-cover"
+                                />
+                            ) : (
+                                <span className="text-gray-600 font-medium text-sm">{session?.user?.name.slice(0 ,2).toUpperCase()}</span>
+                            )}
                         </div>
                         <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">John Doe</p>
-                            <p className="text-xs text-gray-500">john@store.com</p>
+                            <p className="text-sm font-medium text-gray-900">
+                                {session?.user?.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                {session?.user?.email}
+                            </p>
+
                         </div>
                     </div>
                 )}
-                
-                <button
-                    onClick={() => signOut()}
-                    className={`
-                        w-full flex items-center px-3 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors
-                        ${isCollapsed ? 'justify-center' : 'justify-start'}
-                    `}
-                    title={isCollapsed ? "Sign Out" : undefined}
-                >
-                    <LogOut 
-                        size={18} 
-                        className={`${isCollapsed ? '' : 'mr-3'}`} 
-                    />
-                    {!isCollapsed && <span>Sign Out</span>}
-                </button>
             </div>
         </aside>
     );

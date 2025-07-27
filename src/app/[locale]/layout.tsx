@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/Navbar";
 import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
+import { getServerSession, Session } from "next-auth";
 
 
 
@@ -34,6 +35,7 @@ export default async function RootLayout({
   }
   const messages = await getMessages();
   const IsArabic = locale === 'ar';
+  const session: Session | null = await getServerSession();
   return (
     <html dir={IsArabic ? "rtl" : "ltr"} lang={locale} className="scroll-smooth">
       <body
@@ -47,7 +49,11 @@ export default async function RootLayout({
               <section
                 className="w-full flex"
               >
-                <Navbar />
+                {session && (
+                  <Navbar
+                    session={session}
+                  />
+                )}
                 {children}
               </section>
             </NextIntlClientProvider>
