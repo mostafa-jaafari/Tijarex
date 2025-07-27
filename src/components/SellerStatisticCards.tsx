@@ -1,0 +1,96 @@
+"use client";
+
+import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign } from "lucide-react";
+
+export function SellerStatisticCards() {
+    const CardsDetails = [
+        {
+            count: "5,690",
+            percent: 15,
+            isPositive: true,
+            title: "Total Customers",
+            subtitle: "Active customers",
+            icon: Users,
+            color: "blue"
+        },
+        {
+            count: "589",
+            percent: 23,
+            isPositive: true,
+            title: "Total Orders",
+            subtitle: "This month",
+            icon: ShoppingBag,
+            color: "green"
+        },
+        {
+            count: "$47,590",
+            percent: 8,
+            isPositive: false,
+            title: "Total Revenue",
+            subtitle: "Monthly revenue",
+            icon: DollarSign,
+            color: "red"
+        },
+    ];
+
+    const getIconColor = (color: string) => {
+        switch (color) {
+            case 'blue': return 'text-blue-600 bg-blue-50';
+            case 'green': return 'text-green-600 bg-green-50';
+            case 'red': return 'text-red-600 bg-red-50';
+            default: return 'text-gray-600 bg-gray-50';
+        }
+    };
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {CardsDetails.map((card, idx) => {
+                return (
+                    <div
+                        key={idx}
+                        className="bg-white border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors"
+                    >
+                        {/* Icon and Value Row */}
+                        <div
+                            className="flex items-center justify-between"
+                        >
+                            <div className="flex items-start justify-start mb-2 gap-2">
+                            <div className={`p-2 rounded-lg ${getIconColor(card.color)}`}>
+                                <card.icon className="w-5 h-5" />
+                            </div>
+                            {/* Main Value */}
+                            <div className="mb-2">
+                                <h3 className="text-2xl font-semibold text-gray-900">
+                                    {card.count}
+                                </h3>
+                            </div>
+                        </div>
+                        <div className={`
+                            flex items-center space-x-1 text-sm font-medium
+                            ${card.isPositive ? 'text-green-600' : 'text-red-600'}
+                        `}>
+                            {card.isPositive ? (
+                                <TrendingUp size={14} />
+                            ) : (
+                                <TrendingDown size={14} />
+                            )}
+                            <span>{card.isPositive ? '+' : ''}{card.percent}%</span>
+                        </div>
+                        </div>
+
+
+                        {/* Title and Subtitle */}
+                        <div>
+                            <p className="text-sm font-medium text-gray-900">
+                                {card.title}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                {card.subtitle}
+                            </p>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}

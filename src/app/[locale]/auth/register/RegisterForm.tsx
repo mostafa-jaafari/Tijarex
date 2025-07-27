@@ -6,6 +6,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/Firebase";
 import { HowYouHeartAboutUs } from "./HowYouHeartAboutUs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
   const [selectedChoice, setSelectedChoice] = useState<string>("");
@@ -61,7 +62,7 @@ export function RegisterForm() {
 
     return Object.values(newErrors).some((error) => error === true);
   };
-
+  const router = useRouter();
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
@@ -84,6 +85,7 @@ export function RegisterForm() {
         createdAt: new Date(),
       });
       toast.success("Account created successfully!");
+      router.push("/auth/login")
     } catch (error: unknown) {
       console.error("Error creating account:", error);
       if (

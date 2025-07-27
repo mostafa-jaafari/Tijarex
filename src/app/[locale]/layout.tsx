@@ -6,6 +6,9 @@ import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Toaster } from "sonner";
+import { Navbar } from "@/components/Navbar";
+import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
+
 
 
 const bebas_neue = Bebas_Neue({
@@ -38,11 +41,18 @@ export default async function RootLayout({
           bg-white dark:bg-[#0a0a0a] 
           ${cairo.className} ${bebas_neue.variable} antialiased`}
           >
-        <Toaster position="top-center" />
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-        <ScrollToTop />
+          <NextAuthSessionProvider>
+            <Toaster position="top-center" />
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <section
+                className="w-full flex"
+              >
+                <Navbar />
+                {children}
+              </section>
+            </NextIntlClientProvider>
+            <ScrollToTop />
+          </NextAuthSessionProvider>
       </body>
     </html>
   );
