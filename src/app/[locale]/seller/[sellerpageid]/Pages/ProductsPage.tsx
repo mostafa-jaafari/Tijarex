@@ -3,7 +3,6 @@
 import { RightDashboardHeader } from "@/components/RightDashboardHeader";
 import { 
     Search, 
-    Plus, 
     Grid3X3, 
     List, 
     Edit2,

@@ -1,9 +1,7 @@
 import { PopularProductsWidget } from '@/components/PopularProductsWidget'
 import { SellerStatisticCards } from '@/components/SellerStatisticCards'
 import EarningsChart from '@/components/EarningsChart'
-import { Plus, BarChart3, Bell } from 'lucide-react'
 import React from 'react'
-import Image from 'next/image'
 import { RightDashboardHeader } from '@/components/RightDashboardHeader'
 
 export default function page() {
