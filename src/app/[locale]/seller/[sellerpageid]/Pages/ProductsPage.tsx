@@ -160,7 +160,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         )
 }
     return (
-        <div className="relative group w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="relative mb-4 group w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
         
         {/* Product Image Section */}
         <div className="relative w-full h-64 overflow-hidden">
@@ -280,16 +280,16 @@ const ProductCard = ({ product }: { product: Product }) => {
             </div>
 
             {/* Search and Controls */}
-            <div className="flex items-center justify-between space-x-4 p-6">
+            <div className="flex items-center justify-center space-x-4 p-6">
                 {/* Search Bar */}
-                <div className="flex-1 max-w-md relative">
+                <div className="flex-1 grow relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
                         type="text"
                         placeholder="Search products..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-10 py-2 pr-4 h-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                 </div>
 
@@ -298,19 +298,19 @@ const ProductCard = ({ product }: { product: Product }) => {
                     {/* Filters Toggle */}
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-colors ${
+                        className={`flex items-center space-x-2 cursor-pointer px-8 py-2.5 rounded-lg border transition-colors ${
                             showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                         <SlidersHorizontal className="w-4 h-4" />
-                        <span className="text-sm font-medium">Filters</span>
+                        <span className="font-medium">Filters</span>
                     </button>
 
                     {/* Sort Dropdown */}
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-2 cursor-pointer border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         {sortOptions.map(option => (
                             <option key={option.value} value={option.value}>
@@ -323,7 +323,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                     <div className="flex items-center bg-gray-100 rounded-lg p-1">
                         <button
                             onClick={() => setViewMode("grid")}
-                            className={`p-1.5 rounded transition-colors ${
+                            className={`p-1.5 rounded cursor-pointer transition-colors ${
                                 viewMode === "grid" ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                             }`}
                         >
@@ -331,7 +331,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                         </button>
                         <button
                             onClick={() => setViewMode("table")}
-                            className={`p-1.5 rounded transition-colors ${
+                            className={`p-1.5 rounded cursor-pointer transition-colors ${
                                 viewMode === "table" ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                             }`}
                         >
