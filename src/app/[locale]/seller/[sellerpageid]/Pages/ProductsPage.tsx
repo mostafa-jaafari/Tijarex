@@ -14,7 +14,8 @@ import {
     SlidersHorizontal,
     Download,
     ArrowRight,
-    ArrowLeft
+    ArrowLeft,
+    ShoppingCart
 } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
@@ -491,15 +492,18 @@ export function ProductsPage({  session }: { session: Session | null }) {
                                 <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center space-x-3">
-                                            <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden">
-                                                <Image
-                                                    src={product.image}
-                                                    alt={product.name}
-                                                    width={40}
-                                                    height={40}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
+                                            <Link
+                                                href={`/seller/products?p_id=${product.id}`}
+                                            >
+                                                <div className="relative w-14 h-14 bg-gray-100 rounded-lg overflow-hidden">
+                                                        <Image
+                                                            src={product.image}
+                                                            alt={product.name}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                </div>
+                                            </Link>
                                             <div>
                                                 <div className="text-sm font-medium text-gray-900">{product.name}</div>
                                                 <div className="text-xs text-gray-500">ID: {product.id}</div>
@@ -523,14 +527,14 @@ export function ProductsPage({  session }: { session: Session | null }) {
                                     <td className="px-6 py-4 text-sm text-gray-600">{product.lastUpdated}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-end space-x-2">
-                                            <button className="p-1 text-gray-400 hover:text-blue-600 transition-colors">
+                                            <button className="p-1 text-green-400 hover:text-green-600 transition-colors">
+                                                <Download className="w-4 h-4" />
+                                            </button>
+                                            <button className="p-1 text-blue-400 hover:text-blue-600 transition-colors">
                                                 <Eye className="w-4 h-4" />
                                             </button>
-                                            <button className="p-1 text-gray-400 hover:text-green-600 transition-colors">
-                                                <Edit2 className="w-4 h-4" />
-                                            </button>
-                                            <button className="p-1 text-gray-400 hover:text-red-600 transition-colors">
-                                                <Trash2 className="w-4 h-4" />
+                                            <button className="p-1 text-blue-400 hover:text-blue-600 transition-colors">
+                                                <ShoppingCart className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </td>
