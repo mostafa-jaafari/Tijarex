@@ -4,9 +4,7 @@ import { Product } from "@/types/product";
 import { 
     Search, 
     Grid3X3, 
-    List, 
-    Edit2,
-    Trash2,
+    List,
     Eye,
     TrendingUp,
     DollarSign,
@@ -22,124 +20,6 @@ import { Session } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-// // Sample products data
-// const productsData = [
-//     {
-//         id: "P001",
-//         name: "Wireless Headphones Pro",
-//         category: "Electronics",
-//         image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&crop=center",
-//         images: [
-//             "https://images.unsplash.com/photo-1606813909355-bd3f3f3d3b8d?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1585386959984-a4155223f4ef?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center"
-//         ],
-//         price: 299.99,
-//         originalPrice: 349.99,
-//         stock: 45,
-//         status: "In Stock",
-//         sales: 1250,
-//         revenue: 374875,
-//         lastUpdated: "2024-01-15",
-//         rating: 4.8
-//     },
-//     {
-//         id: "P002",
-//         name: "Smart Watch Series X",
-//         category: "Wearables",
-//         image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop&crop=center",
-//         images: [
-//             "https://images.unsplash.com/photo-1508898578281-774ac4893c0d?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1533236897111-3e94666b2edf?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
-//         ],
-//         price: 199.99,
-//         originalPrice: 229.99,
-//         stock: 8,
-//         status: "Low Stock",
-//         sales: 890,
-//         revenue: 177991,
-//         lastUpdated: "2024-01-14",
-//         rating: 4.6
-//     },
-//     {
-//         id: "P003",
-//         name: "Gaming Mechanical Keyboard",
-//         category: "Gaming",
-//         image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=400&fit=crop&crop=center",
-//         images: [
-//             "https://images.unsplash.com/photo-1624899795816-7d8f234b5af3?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1587202372775-98973b81c82c?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1586862202284-3e35c40dfca5?w=400&h=400&fit=crop&crop=center"
-//         ],
-//         price: 149.99,
-//         originalPrice: 149.99,
-//         stock: 0,
-//         status: "Out of Stock",
-//         sales: 680,
-//         revenue: 101993,
-//         lastUpdated: "2024-01-13",
-//         rating: 4.7
-//     },
-//     {
-//         id: "P004",
-//         name: "4K Webcam Ultra",
-//         category: "Electronics",
-//         image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
-//         images: [
-//             "https://images.unsplash.com/photo-1593642532973-d31b6557fa68?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1585397335786-2c5c878b3b16?w=400&h=400&fit=crop&crop=center"
-//         ],
-//         price: 89.99,
-//         originalPrice: 99.99,
-//         stock: 23,
-//         status: "In Stock",
-//         sales: 520,
-//         revenue: 46795,
-//         lastUpdated: "2024-01-12",
-//         rating: 4.5
-//     },
-//     {
-//         id: "P005",
-//         name: "Bluetooth Speaker Mini",
-//         category: "Audio",
-//         image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center",
-//         images: [
-//             "https://images.unsplash.com/photo-1605540437052-7a74fd8f2b49?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1611106014101-8b83c6a22f4c?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center"
-//         ],
-//         price: 59.99,
-//         originalPrice: 79.99,
-//         stock: 67,
-//         status: "In Stock",
-//         sales: 410,
-//         revenue: 24596,
-//         lastUpdated: "2024-01-11",
-//         rating: 4.3
-//     },
-//     {
-//         id: "P006",
-//         name: "USB-C Hub Pro",
-//         category: "Accessories",
-//         image: "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
-//         images: [
-//             "https://images.unsplash.com/photo-1626196339568-7a53f647ea8a?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
-//             "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
-//         ],
-//         price: 39.99,
-//         originalPrice: 49.99,
-//         stock: 156,
-//         status: "In Stock",
-//         sales: 789,
-//         revenue: 31556,
-//         lastUpdated: "2024-01-10",
-//         rating: 4.4
-//     }
-// ];
 
 
 const categories = ["All", "Electronics", "Wearables", "Gaming", "Audio", "Accessories"];

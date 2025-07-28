@@ -5,41 +5,6 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { Product } from '@/types/product';
 
-// Mock product data
-// const productData = {
-//   id: "1",
-//   name: "Nike Air Zoom Structure 22",
-//   price: 6997,
-//   currency: "₹",*
-//   rating: 4.5,
-//   reviewCount: 128,*
-//   description:* "Engineered mesh, a heel overlay and dynamic support throughout the midfoot all work together to provide a smooth, stable ride. Flywire cables secure the top of your foot. The mesh provides targeted ventilation and support.",
-//   images: [
-//     "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&crop=center",
-//     "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&h=600&fit=crop&crop=center",
-//     "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&h=600&fit=crop&crop=center",
-//     "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=600&h=600&fit=crop&crop=center"
-//   ],
-//   sizes: [*
-//     { label: "US 7", available: true },
-//     { label: "US 7.5", available: true },
-//     { label: "US 8", available: true },
-//     { label: "US 8.5", available: true },
-//     { label: "US 9", available: true },
-//     { label: "US 9.5", available: true },
-//     { label: "US 10", available: true },
-//     { label: "US 10.5", available: true },
-//     { label: "US 11.5", available: true },
-//     { label: "US 11.5", available: false },
-//     { label: "US 12", available: false }
-//   ],
-//   colors: [
-//     { name: "Black/White/Grid Iron", color: "#1a1a1a", selected: true },
-//     { name: "Navy/White", color: "#1e3a8a", selected: false },
-//     { name: "Grey/Black", color: "#6b7280", selected: false }
-//   ],
-// };
-
 export function SingleProductPage({ ProductId }: { ProductId: string }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
@@ -67,7 +32,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
         }
         }
         fetchProducts();
-    }, []);
+    }, [ProductId]);
 
   const handleImageChange = (direction: 'prev' | 'next') => {
     if(!selectedProduct?.product_images) return;
