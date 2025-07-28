@@ -436,7 +436,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
             {/* Results Summary */}
             <div className="px-6 flex items-center justify-between text-sm text-gray-600">
                 <span>Showing {paginatedProducts.length} of {filteredProducts.length} products</span>
-                <span>Page {currentPage} of {totalPages}</span>
+                {/* <span>Page {currentPage} of {totalPages}</span> */}
             </div>
 
             {/* Products Grid/Table */}

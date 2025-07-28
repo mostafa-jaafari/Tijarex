@@ -1,7 +1,7 @@
 "use client";
 import { FilterOrders } from '@/components/FilterOrders';
 import { OrderType } from '@/types/orders';
-import { MoreHorizontal, Eye, Edit, Trash2, Plus, Package } from 'lucide-react';
+import { MoreHorizontal, Eye, Plus, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -44,7 +44,6 @@ export default function OrdersPage() {
     order.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if(loading) return <div>Loading...</div>
   return (
     <section className="w-full overflow-x-scroll bg-gray-50 min-h-screen">
       {/* Header */}
@@ -120,7 +119,63 @@ export default function OrdersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredOrders.map((order) => (
+                {loading ? (
+                  <tr className="animate-pulse">
+                    {/* Order ID + Date */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-gray-300 rounded w-24 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-16"></div>
+                    </td>
+
+                    {/* Seller (Image + Name + Email) */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                        <div>
+                          <div className="h-4 bg-gray-300 rounded w-24 mb-1"></div>
+                          <div className="h-3 bg-gray-200 rounded w-32"></div>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-5 w-16 bg-gray-300 rounded-full"></div>
+                    </td>
+
+                    {/* Product (Image + Name + Quantity) */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gray-300 rounded-md"></div>
+                        <div>
+                          <div className="h-4 bg-gray-300 rounded w-36 mb-1"></div>
+                          <div className="h-3 bg-gray-200 rounded w-20"></div>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Total */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-gray-300 rounded w-16"></div>
+                    </td>
+
+                    {/* Date */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-gray-300 rounded w-20"></div>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        {[...Array(4)].map((_, i) => (
+                          <div key={i} className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                )
+                :
+                filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{order.id}</div>
@@ -208,12 +263,12 @@ export default function OrdersPage() {
                         <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                           <Eye size={16} />
                         </button>
-                        <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        {/* <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
                           <Edit size={16} />
                         </button>
                         <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                           <Trash2 size={16} />
-                        </button>
+                        </button> */}
                         <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
                           <MoreHorizontal size={16} />
                         </button>
