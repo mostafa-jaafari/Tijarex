@@ -2,6 +2,7 @@
 import { FilterOrders } from '@/components/FilterOrders';
 import { MoreHorizontal, Eye, Edit, Trash2, Download, Search, Plus, Package } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 export default function OrdersPage() {
@@ -116,7 +117,7 @@ export default function OrdersPage() {
   return (
     <section className="w-full overflow-x-scroll bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-6">
+      <div className="bg-white border-b border-gray-200 px-6 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-blue-50 rounded-xl">
@@ -130,34 +131,21 @@ export default function OrdersPage() {
             </div>
           </div>
           
-          <div className="flex items-center space-x-3">
-            <button className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
-              <Download size={18} />
-              <span className="text-sm font-medium">Export</span>
-            </button>
-            <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
-              <Plus size={18} />
-              <span className="text-sm font-medium">Create Order</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Search Bar */}
-        <div className="mt-4 max-w-md">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search orders, customers, or products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
+          <Link
+            href="/seller/products"
+          >
+              <button className="cursor-pointer flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
+                <Plus size={18} />
+                <span className="text-sm font-medium">Create Order</span>
+              </button>
+          </Link>
         </div>
       </div>
 
-      <FilterOrders />
+      <FilterOrders 
+        onChange={(e) => setSearchTerm(e.target.value)}
+        searchTerm={searchTerm}
+      />
 
       {/* Orders Table */}
       <div className="p-6">

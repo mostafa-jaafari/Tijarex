@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronDown, Check, Filter, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ChevronDown, Check, Filter, X, Search } from "lucide-react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 interface DropDownMenuProps {
     BtnTitle: string;
@@ -9,9 +9,10 @@ interface DropDownMenuProps {
     onSelect: (item: string) => void;
     selectedItem: string;
     variant?: "primary" | "secondary";
+    CLASSNAME?: string;
 }
 
-const DropDownMenu = ({ BtnTitle, List, onSelect, selectedItem, variant = "secondary" }: DropDownMenuProps) => {
+export const DropDownMenu = ({ BtnTitle, CLASSNAME, List, onSelect, selectedItem, variant = "secondary" }: DropDownMenuProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const MenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -34,26 +35,25 @@ const DropDownMenu = ({ BtnTitle, List, onSelect, selectedItem, variant = "secon
     const displayText = selectedItem === "" ? BtnTitle : selectedItem.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
     const buttonVariants = {
-        primary: `
+        primary: `bg-white 
             ${isSelected 
                 ? "bg-blue-600 text-white border-blue-600 shadow-sm" 
-                : "bg-white text-gray-700 border-gray-300 hover:border-gray-400"
+                : "text-gray-700 border-gray-200 hover:border-gray-400"
             }
         `,
-        secondary: `
+        secondary: `bg-white 
             ${isSelected 
                 ? "bg-blue-50 text-blue-700 border-blue-200 shadow-sm" 
                 : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:border-gray-300"
             }
         `
     };
-
     return (
         <div className="relative" ref={MenuRef}>
-            <button
+            <div
                 onClick={() => setIsOpen(!isOpen)}
-                className={`
-                    flex items-center justify-between gap-2 px-4 py-2.5 text-sm font-medium
+                className={`${CLASSNAME}
+                    flex items-center cursor-pointer justify-between gap-2 px-4 py-2.5 text-sm font-medium
                     border rounded-lg transition-all duration-200 min-w-[120px]
                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
                     ${buttonVariants[variant]}
@@ -78,7 +78,7 @@ const DropDownMenu = ({ BtnTitle, List, onSelect, selectedItem, variant = "secon
                         className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                     />
                 </div>
-            </button>
+            </div>
 
             {isOpen && (
                 <div className="absolute top-full mt-2 w-full min-w-[180px] z-50">
@@ -116,7 +116,11 @@ const DropDownMenu = ({ BtnTitle, List, onSelect, selectedItem, variant = "secon
     );
 };
 
-export function FilterOrders() {
+interface FilterOrdersProps {
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    searchTerm: string;
+}
+export function FilterOrders({ onChange, searchTerm }: FilterOrdersProps) {
     const orderFilters = [
         {
             title: "All Orders",
@@ -160,7 +164,9 @@ export function FilterOrders() {
     };
 
     const hasActiveFilters = activeFiltersCount > 0;
-
+    const HnadleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
+        onChange(e);
+    }
     return (
         <section className="w-full p-6 bg-gray-50 border-b border-gray-200">
             {/* Header */}
@@ -191,9 +197,8 @@ export function FilterOrders() {
                     </button>
                 )}
             </div>
-
             {/* Filters */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex items-center flex-wrap gap-3">
                 {orderFilters.map((filter, idx) => (
                     <DropDownMenu
                         key={idx}
@@ -204,6 +209,19 @@ export function FilterOrders() {
                         variant={idx === 0 ? "primary" : "secondary"}
                     />
                 ))}
+                {/* Search Bar */}
+                <div className="grow">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <input
+                            type="text"
+                            placeholder="Search orders, customers, or products..."
+                            value={searchTerm}
+                            onChange={HnadleChangeInputValue}
+                            className="w-full pl-10 py-1.5 pr-4 h-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white focus:border-transparent"
+                        />
+                    </div>
+                </div>
             </div>
 
             {/* Active Filters Summary */}
