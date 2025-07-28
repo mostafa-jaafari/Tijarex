@@ -1,5 +1,6 @@
 "use client";
 import { RightDashboardHeader } from "@/components/RightDashboardHeader";
+import { Product } from "@/types/product";
 import { 
     Search, 
     Grid3X3, 
@@ -20,125 +21,125 @@ import {
 import { Session } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// Sample products data
-const productsData = [
-    {
-        id: "P001",
-        name: "Wireless Headphones Pro",
-        category: "Electronics",
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&crop=center",
-        images: [
-            "https://images.unsplash.com/photo-1606813909355-bd3f3f3d3b8d?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1585386959984-a4155223f4ef?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center"
-        ],
-        price: 299.99,
-        originalPrice: 349.99,
-        stock: 45,
-        status: "In Stock",
-        sales: 1250,
-        revenue: 374875,
-        lastUpdated: "2024-01-15",
-        rating: 4.8
-    },
-    {
-        id: "P002",
-        name: "Smart Watch Series X",
-        category: "Wearables",
-        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop&crop=center",
-        images: [
-            "https://images.unsplash.com/photo-1508898578281-774ac4893c0d?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1533236897111-3e94666b2edf?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
-        ],
-        price: 199.99,
-        originalPrice: 229.99,
-        stock: 8,
-        status: "Low Stock",
-        sales: 890,
-        revenue: 177991,
-        lastUpdated: "2024-01-14",
-        rating: 4.6
-    },
-    {
-        id: "P003",
-        name: "Gaming Mechanical Keyboard",
-        category: "Gaming",
-        image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=400&fit=crop&crop=center",
-        images: [
-            "https://images.unsplash.com/photo-1624899795816-7d8f234b5af3?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1587202372775-98973b81c82c?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1586862202284-3e35c40dfca5?w=400&h=400&fit=crop&crop=center"
-        ],
-        price: 149.99,
-        originalPrice: 149.99,
-        stock: 0,
-        status: "Out of Stock",
-        sales: 680,
-        revenue: 101993,
-        lastUpdated: "2024-01-13",
-        rating: 4.7
-    },
-    {
-        id: "P004",
-        name: "4K Webcam Ultra",
-        category: "Electronics",
-        image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
-        images: [
-            "https://images.unsplash.com/photo-1593642532973-d31b6557fa68?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1585397335786-2c5c878b3b16?w=400&h=400&fit=crop&crop=center"
-        ],
-        price: 89.99,
-        originalPrice: 99.99,
-        stock: 23,
-        status: "In Stock",
-        sales: 520,
-        revenue: 46795,
-        lastUpdated: "2024-01-12",
-        rating: 4.5
-    },
-    {
-        id: "P005",
-        name: "Bluetooth Speaker Mini",
-        category: "Audio",
-        image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center",
-        images: [
-            "https://images.unsplash.com/photo-1605540437052-7a74fd8f2b49?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1611106014101-8b83c6a22f4c?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center"
-        ],
-        price: 59.99,
-        originalPrice: 79.99,
-        stock: 67,
-        status: "In Stock",
-        sales: 410,
-        revenue: 24596,
-        lastUpdated: "2024-01-11",
-        rating: 4.3
-    },
-    {
-        id: "P006",
-        name: "USB-C Hub Pro",
-        category: "Accessories",
-        image: "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
-        images: [
-            "https://images.unsplash.com/photo-1626196339568-7a53f647ea8a?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
-            "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
-        ],
-        price: 39.99,
-        originalPrice: 49.99,
-        stock: 156,
-        status: "In Stock",
-        sales: 789,
-        revenue: 31556,
-        lastUpdated: "2024-01-10",
-        rating: 4.4
-    }
-];
+// // Sample products data
+// const productsData = [
+//     {
+//         id: "P001",
+//         name: "Wireless Headphones Pro",
+//         category: "Electronics",
+//         image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&crop=center",
+//         images: [
+//             "https://images.unsplash.com/photo-1606813909355-bd3f3f3d3b8d?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1585386959984-a4155223f4ef?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center"
+//         ],
+//         price: 299.99,
+//         originalPrice: 349.99,
+//         stock: 45,
+//         status: "In Stock",
+//         sales: 1250,
+//         revenue: 374875,
+//         lastUpdated: "2024-01-15",
+//         rating: 4.8
+//     },
+//     {
+//         id: "P002",
+//         name: "Smart Watch Series X",
+//         category: "Wearables",
+//         image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop&crop=center",
+//         images: [
+//             "https://images.unsplash.com/photo-1508898578281-774ac4893c0d?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1533236897111-3e94666b2edf?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
+//         ],
+//         price: 199.99,
+//         originalPrice: 229.99,
+//         stock: 8,
+//         status: "Low Stock",
+//         sales: 890,
+//         revenue: 177991,
+//         lastUpdated: "2024-01-14",
+//         rating: 4.6
+//     },
+//     {
+//         id: "P003",
+//         name: "Gaming Mechanical Keyboard",
+//         category: "Gaming",
+//         image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=400&fit=crop&crop=center",
+//         images: [
+//             "https://images.unsplash.com/photo-1624899795816-7d8f234b5af3?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1587202372775-98973b81c82c?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1586862202284-3e35c40dfca5?w=400&h=400&fit=crop&crop=center"
+//         ],
+//         price: 149.99,
+//         originalPrice: 149.99,
+//         stock: 0,
+//         status: "Out of Stock",
+//         sales: 680,
+//         revenue: 101993,
+//         lastUpdated: "2024-01-13",
+//         rating: 4.7
+//     },
+//     {
+//         id: "P004",
+//         name: "4K Webcam Ultra",
+//         category: "Electronics",
+//         image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
+//         images: [
+//             "https://images.unsplash.com/photo-1593642532973-d31b6557fa68?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1585397335786-2c5c878b3b16?w=400&h=400&fit=crop&crop=center"
+//         ],
+//         price: 89.99,
+//         originalPrice: 99.99,
+//         stock: 23,
+//         status: "In Stock",
+//         sales: 520,
+//         revenue: 46795,
+//         lastUpdated: "2024-01-12",
+//         rating: 4.5
+//     },
+//     {
+//         id: "P005",
+//         name: "Bluetooth Speaker Mini",
+//         category: "Audio",
+//         image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center",
+//         images: [
+//             "https://images.unsplash.com/photo-1605540437052-7a74fd8f2b49?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1611106014101-8b83c6a22f4c?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop&crop=center"
+//         ],
+//         price: 59.99,
+//         originalPrice: 79.99,
+//         stock: 67,
+//         status: "In Stock",
+//         sales: 410,
+//         revenue: 24596,
+//         lastUpdated: "2024-01-11",
+//         rating: 4.3
+//     },
+//     {
+//         id: "P006",
+//         name: "USB-C Hub Pro",
+//         category: "Accessories",
+//         image: "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
+//         images: [
+//             "https://images.unsplash.com/photo-1626196339568-7a53f647ea8a?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1625842268584-8f3296705fc3?w=400&h=400&fit=crop&crop=center",
+//             "https://images.unsplash.com/photo-1612817159949-f9d5284e6c49?w=400&h=400&fit=crop&crop=center"
+//         ],
+//         price: 39.99,
+//         originalPrice: 49.99,
+//         stock: 156,
+//         status: "In Stock",
+//         sales: 789,
+//         revenue: 31556,
+//         lastUpdated: "2024-01-10",
+//         rating: 4.4
+//     }
+// ];
 
 
 const categories = ["All", "Electronics", "Wearables", "Gaming", "Audio", "Accessories"];
@@ -152,6 +153,8 @@ const sortOptions = [
     { label: "Latest Added", value: "date_desc" }
 ];
 
+
+    
 export function ProductsPage({  session }: { session: Session | null }) {
     const [viewMode, setViewMode] = useState("grid"); // "grid" or "table"
     const [searchQuery, setSearchQuery] = useState("");
@@ -162,8 +165,28 @@ export function ProductsPage({  session }: { session: Session | null }) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
 
+    const [allProducts, setProducts] = useState<Product[] | []>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchProducts() {
+        try {
+            const res = await fetch("/api/products");
+            if (!res.ok) throw new Error("Failed to fetch products");
+
+            const data = await res.json();
+            setProducts(data.products);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+        }
+        fetchProducts();
+    }, []);
+
     // Filter and sort products
-    const filteredProducts = productsData
+    const filteredProducts = allProducts
         .filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                 product.category.toLowerCase().includes(searchQuery.toLowerCase());
@@ -175,8 +198,8 @@ export function ProductsPage({  session }: { session: Session | null }) {
             switch (sortBy) {
                 case "name_asc": return a.name.localeCompare(b.name);
                 case "name_desc": return b.name.localeCompare(a.name);
-                case "price_asc": return a.price - b.price;
-                case "price_desc": return b.price - a.price;
+                case "price_asc": return a.sale_price - b.sale_price;
+                case "price_desc": return b.sale_price - a.sale_price;
                 case "sales_desc": return b.sales - a.sales;
                 case "date_desc": return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
                 default: return 0;
@@ -201,137 +224,165 @@ export function ProductsPage({  session }: { session: Session | null }) {
         }
     };
 
-    type Product = {
-        id: string;
-        name: string;
-        category: string;
-        image: string;
-        images: string[];
-        price: number;
-        originalPrice: number;
-        stock: number;
-        status: string;
-        sales: number;
-        revenue: number;
-        lastUpdated: string;
-        rating: number;
+    
+
+const ProductCard = ({ product }: { product: Product }) => {
+    const [currentImage, setCurrentImage] = useState(0);
+
+    const handlePrevImage = () => {
+        setCurrentImage((prev) => (prev === 0 ? product.product_images.length - 1 : prev - 1));
     };
 
-    const ProductCard = ({ product }: { product: Product }) => {
-  const [currentImage, setCurrentImage] = useState(0);
+    const handleNextImage = () => {
+        setCurrentImage((prev) => (prev === product.product_images.length - 1 ? 0 : prev + 1));
+    };
 
-  const handlePrevImage = () => {
-    setCurrentImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
-  };
 
-  const handleNextImage = () => {
-    setCurrentImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
-  };
+    // --- Loading Skeleton ---
+    if(loading){
+        return (
+            <section
+                className="w-full h-max"
+            >
+                        <div 
+                            className="relative w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm animate-pulse">
+                            {/* Image Skeleton */}
+                            <div className="relative w-full h-64 bg-gray-200"></div>
 
-  return (
-    <div className="relative group w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-      
-      {/* Product Image Section */}
-      <div className="relative w-full h-64 overflow-hidden">
-        <Link
-            href={`/seller/products?p_id=${product.id}`}
-        >
-             <Image
-          src={product.images[currentImage]}
-          alt={product.name}
-          fill
-          className="object-cover transform group-hover:scale-105 transition-transform duration-300"
-        />
-        </Link>
+                            {/* Product Info Section */}
+                            <div className="p-4 space-y-3">
+                                {/* Name & Category Skeleton */}
+                                <div className="space-y-2">
+                                <div className="w-3/4 h-4 bg-gray-200 rounded"></div>
+                                <div className="w-1/2 h-3 bg-gray-200 rounded"></div>
+                                </div>
 
-        {/* Left Arrow */}
-        <button
-          onClick={handlePrevImage}
-          className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100 text-gray-600 opacity-0 group-hover:opacity-100 transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </button>
+                                {/* Price Skeleton */}
+                                <div className="flex items-center space-x-2">
+                                <div className="w-16 h-4 bg-gray-200 rounded"></div>
+                                <div className="w-10 h-3 bg-gray-200 rounded"></div>
+                                </div>
 
-        {/* Right Arrow */}
-        <button
-          onClick={handleNextImage}
-          className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100 text-gray-600 opacity-0 group-hover:opacity-100 transition"
-        >
-          <ArrowRight className="w-4 h-4" />
-        </button>
+                                {/* Stock Status Skeleton */}
+                                <div className="w-20 h-5 bg-gray-200 rounded-full"></div>
 
-        {/* Quick Actions (Eye + Download Mockup Button) */}
-        <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition">
-          {/* Eye Icon */}
-          <button className="p-2 bg-white rounded-full shadow hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition">
-            <Eye className="w-4 h-4" />
-          </button>
+                                {/* Quick Stats Skeleton */}
+                                <div className="flex justify-between">
+                                <div className="w-16 h-3 bg-gray-200 rounded"></div>
+                                <div className="w-16 h-3 bg-gray-200 rounded"></div>
+                                </div>
 
-          {/* Make Order Button */}
-          <button className="flex items-center justify-center p-2 bg-blue-600 rounded-full shadow hover:bg-blue-700 text-white transition">
-            <Download className="w-4 h-4" />
-          </button>
+                                {/* Button Skeleton */}
+                                <div className="w-full h-9 bg-gray-200 rounded-lg"></div>
+                            </div>
+                        </div>
+            </section>
+        )
+}
+    return (
+        <div className="relative group w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+        
+        {/* Product Image Section */}
+        <div className="relative w-full h-64 overflow-hidden">
+            <Link
+                href={`/seller/products?p_id=${product.id}`}
+            >
+                <Image
+                    src={product.product_images[currentImage]}
+                    alt={product.name}
+                    fill
+                    className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+                />
+            </Link>
+
+            {/* Left Arrow */}
+            <button
+            onClick={handlePrevImage}
+            className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100 text-gray-600 opacity-0 group-hover:opacity-100 transition"
+            >
+            <ArrowLeft className="w-4 h-4" />
+            </button>
+
+            {/* Right Arrow */}
+            <button
+            onClick={handleNextImage}
+            className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white rounded-full shadow hover:bg-gray-100 text-gray-600 opacity-0 group-hover:opacity-100 transition"
+            >
+            <ArrowRight className="w-4 h-4" />
+            </button>
+
+            {/* Quick Actions (Eye + Download Mockup Button) */}
+            <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition">
+            {/* Eye Icon */}
+            <button className="p-2 bg-white rounded-full shadow hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition">
+                <Eye className="w-4 h-4" />
+            </button>
+
+            {/* Make Order Button */}
+            <button className="flex items-center justify-center p-2 bg-blue-600 rounded-full shadow hover:bg-blue-700 text-white transition">
+                <Download className="w-4 h-4" />
+            </button>
+            </div>
+
+            {/* Pagination Dots */}
+            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
+            {product.product_images.map((_, i) => (
+                <span
+                key={i}
+                className={`w-2 h-2 rounded-full ${
+                    i === currentImage ? "bg-blue-600" : "bg-gray-300"
+                }`}
+                ></span>
+            ))}
+            </div>
         </div>
 
-        {/* Pagination Dots */}
-        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
-          {product.images.map((_, i) => (
+        {/* Product Info Section */}
+        <div className="p-4 space-y-3">
+            {/* Name & Category */}
+            <div>
+            <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
+                {product.name}
+            </h3>
+            <p className="text-xs text-gray-500">{product.category}</p>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-center space-x-2">
+            <span className="text-lg font-bold text-gray-900">${product.sale_price}</span>
+            {product.regular_price !== product.sale_price && (
+                <span className="text-sm text-gray-400 line-through">
+                ${product.regular_price}
+                </span>
+            )}
+            </div>
+
+            {/* Stock Status */}
             <span
-              key={i}
-              className={`w-2 h-2 rounded-full ${
-                i === currentImage ? "bg-blue-600" : "bg-gray-300"
-              }`}
-            ></span>
-          ))}
-        </div>
-      </div>
-
-      {/* Product Info Section */}
-      <div className="p-4 space-y-3">
-        {/* Name & Category */}
-        <div>
-          <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
-            {product.name}
-          </h3>
-          <p className="text-xs text-gray-500">{product.category}</p>
-        </div>
-
-        {/* Price */}
-        <div className="flex items-center space-x-2">
-          <span className="text-lg font-bold text-gray-900">${product.price}</span>
-          {product.originalPrice !== product.price && (
-            <span className="text-sm text-gray-400 line-through">
-              ${product.originalPrice}
+            className={`inline-block px-2 py-1 text-xs font-medium rounded-full border ${getStockBadge(
+                product.status
+            )}`}
+            >
+            {product.status}
             </span>
-          )}
-        </div>
 
-        {/* Stock Status */}
-        <span
-          className={`inline-block px-2 py-1 text-xs font-medium rounded-full border ${getStockBadge(
-            product.status
-          )}`}
-        >
-          {product.status}
-        </span>
-
-        {/* Quick Stats */}
-        <div className="flex items-center justify-between text-xs text-gray-500">
-          <div className="flex items-center space-x-1">
-            <TrendingUp className="w-3 h-3 text-green-500" />
-            <span>{product.sales} sales</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <DollarSign className="w-3 h-3 text-blue-500" />
-            <span>${(product.revenue / 1000).toFixed(1)}K</span>
-          </div>
+            {/* Quick Stats */}
+            <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="flex items-center space-x-1">
+                <TrendingUp className="w-3 h-3 text-green-500" />
+                <span>{product.sales} sales</span>
+            </div>
+            <div className="flex items-center space-x-1">
+                <DollarSign className="w-3 h-3 text-blue-500" />
+                <span>${(product.revenue / 1000).toFixed(1)}K</span>
+            </div>
+            </div>
+            <button className="w-full mt-3 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg transition">
+                Make Order
+            </button>
         </div>
-        <button className="w-full mt-3 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg transition">
-            Make Order
-        </button>
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 
@@ -497,7 +548,7 @@ export function ProductsPage({  session }: { session: Session | null }) {
                                             >
                                                 <div className="relative w-14 h-14 bg-gray-100 rounded-lg overflow-hidden">
                                                         <Image
-                                                            src={product.image}
+                                                            src={product.product_images[0]}
                                                             alt={product.name}
                                                             fill
                                                             className="object-cover"
@@ -512,9 +563,9 @@ export function ProductsPage({  session }: { session: Session | null }) {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">{product.category}</td>
                                     <td className="px-6 py-4">
-                                        <div className="text-sm font-medium text-gray-900">${product.price}</div>
-                                        {product.originalPrice !== product.price && (
-                                            <div className="text-xs text-gray-500 line-through">${product.originalPrice}</div>
+                                        <div className="text-sm font-medium text-gray-900">${product.sale_price}</div>
+                                        {product.regular_price !== product.sale_price && (
+                                            <div className="text-xs text-gray-500 line-through">${product.regular_price}</div>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
@@ -527,13 +578,13 @@ export function ProductsPage({  session }: { session: Session | null }) {
                                     <td className="px-6 py-4 text-sm text-gray-600">{product.lastUpdated}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-end space-x-2">
-                                            <button className="p-1 text-green-400 hover:text-green-600 transition-colors">
+                                            <button className="p-1 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors">
                                                 <Download className="w-4 h-4" />
                                             </button>
-                                            <button className="p-1 text-blue-400 hover:text-blue-600 transition-colors">
+                                            <button className="p-1 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors">
                                                 <Eye className="w-4 h-4" />
                                             </button>
-                                            <button className="p-1 text-blue-400 hover:text-blue-600 transition-colors">
+                                            <button className="p-1 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors">
                                                 <ShoppingCart className="w-4 h-4" />
                                             </button>
                                         </div>

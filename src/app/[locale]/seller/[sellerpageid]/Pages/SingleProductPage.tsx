@@ -1,43 +1,44 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, ChevronLeft, ChevronRight, Search, Minus, Plus, Heart, Share2, Truck, RotateCcw } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { Product } from '@/types/product';
 
 // Mock product data
-const productData = {
-  id: "1",
-  name: "Nike Air Zoom Structure 22",
-  price: 6997,
-  currency: "₹",
-  rating: 4.5,
-  reviewCount: 128,
-  description: "Engineered mesh, a heel overlay and dynamic support throughout the midfoot all work together to provide a smooth, stable ride. Flywire cables secure the top of your foot. The mesh provides targeted ventilation and support.",
-  images: [
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&h=600&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&h=600&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=600&h=600&fit=crop&crop=center"
-  ],
-  sizes: [
-    { label: "US 7", available: true },
-    { label: "US 7.5", available: true },
-    { label: "US 8", available: true },
-    { label: "US 8.5", available: true },
-    { label: "US 9", available: true },
-    { label: "US 9.5", available: true },
-    { label: "US 10", available: true },
-    { label: "US 10.5", available: true },
-    { label: "US 11.5", available: true },
-    { label: "US 11.5", available: false },
-    { label: "US 12", available: false }
-  ],
-  colors: [
-    { name: "Black/White/Grid Iron", color: "#1a1a1a", selected: true },
-    { name: "Navy/White", color: "#1e3a8a", selected: false },
-    { name: "Grey/Black", color: "#6b7280", selected: false }
-  ],
-};
+// const productData = {
+//   id: "1",
+//   name: "Nike Air Zoom Structure 22",
+//   price: 6997,
+//   currency: "₹",*
+//   rating: 4.5,
+//   reviewCount: 128,*
+//   description:* "Engineered mesh, a heel overlay and dynamic support throughout the midfoot all work together to provide a smooth, stable ride. Flywire cables secure the top of your foot. The mesh provides targeted ventilation and support.",
+//   images: [
+//     "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&crop=center",
+//     "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&h=600&fit=crop&crop=center",
+//     "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&h=600&fit=crop&crop=center",
+//     "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=600&h=600&fit=crop&crop=center"
+//   ],
+//   sizes: [*
+//     { label: "US 7", available: true },
+//     { label: "US 7.5", available: true },
+//     { label: "US 8", available: true },
+//     { label: "US 8.5", available: true },
+//     { label: "US 9", available: true },
+//     { label: "US 9.5", available: true },
+//     { label: "US 10", available: true },
+//     { label: "US 10.5", available: true },
+//     { label: "US 11.5", available: true },
+//     { label: "US 11.5", available: false },
+//     { label: "US 12", available: false }
+//   ],
+//   colors: [
+//     { name: "Black/White/Grid Iron", color: "#1a1a1a", selected: true },
+//     { name: "Navy/White", color: "#1e3a8a", selected: false },
+//     { name: "Grey/Black", color: "#6b7280", selected: false }
+//   ],
+// };
 
 export function SingleProductPage({ ProductId }: { ProductId: string }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -47,14 +48,36 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
   const [activeTab, setActiveTab] = useState("description");
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+        async function fetchProducts() {
+        try {
+            const res = await fetch("/api/products");
+            if (!res.ok) throw new Error("Failed to fetch products");
+
+            const data = await res.json();
+            const selected = data?.products?.find((product: Product) => product.id === ProductId) as Product || null;
+            setSelectedProduct(selected);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+        }
+        fetchProducts();
+    }, []);
+
   const handleImageChange = (direction: 'prev' | 'next') => {
+    if(!selectedProduct?.product_images) return;
     if (direction === 'prev') {
       setSelectedImageIndex(prev => 
-        prev === 0 ? productData.images.length - 1 : prev - 1
+        prev === 0 ? selectedProduct.product_images.length - 1 : prev - 1
       );
     } else {
       setSelectedImageIndex(prev => 
-        prev === productData.images.length - 1 ? 0 : prev + 1
+        prev === selectedProduct.product_images.length - 1 ? 0 : prev + 1
       );
     }
   };
@@ -87,8 +110,96 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                 return { label, href };
             }),
         ];
+        if(loading){
+          return (
+            <div className="w-full min-h-screen bg-white animate-pulse">
+              {/* Header */}
+              <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-4">
+                  <div className="w-8 h-8 bg-gray-200 rounded"></div>
+                  <div className="flex space-x-2">
+                    <div className="w-16 h-4 bg-gray-200 rounded"></div>
+                    <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                    <div className="w-16 h-4 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+                <div className="w-6 h-6 bg-gray-200 rounded"></div>
+              </header>
+
+              <div className="max-w-7xl mx-auto px-6 py-8">
+                <div className="grid lg:grid-cols-2 gap-12">
+                  
+                  {/* Product Images */}
+                  <div className="space-y-4">
+                    {/* Main Image Skeleton */}
+                    <div className="relative aspect-square bg-gray-200 rounded-lg"></div>
+
+                    {/* Thumbnails */}
+                    <div className="flex space-x-3">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className="w-20 h-20 bg-gray-200 rounded-lg"></div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Product Details */}
+                  <div className="space-y-6">
+                    {/* Title & Price */}
+                    <div className="space-y-3">
+                      <div className="w-3/4 h-6 bg-gray-200 rounded"></div>
+                      <div className="w-1/2 h-5 bg-gray-200 rounded"></div>
+                    </div>
+
+                    {/* Size Selection */}
+                    <div className="space-y-3">
+                      <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[...Array(4)].map((_, i) => (
+                          <div key={i} className="w-full h-10 bg-gray-200 rounded"></div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Color Selection */}
+                    <div className="space-y-3">
+                      <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                      <div className="flex space-x-3">
+                        {[...Array(3)].map((_, i) => (
+                          <div key={i} className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Quantity & Buttons */}
+                    <div className="space-y-4">
+                      <div className="w-32 h-10 bg-gray-200 rounded"></div>
+                      <div className="flex space-x-3">
+                        <div className="flex-1 h-12 bg-gray-200 rounded"></div>
+                        <div className="w-12 h-12 bg-gray-200 rounded"></div>
+                        <div className="w-12 h-12 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
+
+                    {/* Tabs */}
+                    <div className="space-y-4">
+                      <div className="flex space-x-6">
+                        <div className="w-20 h-4 bg-gray-200 rounded"></div>
+                        <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                      </div>
+                      <div className="w-full h-16 bg-gray-200 rounded"></div>
+                    </div>
+
+                    {/* Product ID */}
+                    <div className="w-40 h-6 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        }
+        if(!selectedProduct) return;
   return (
-    <div className="min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-white">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <div className="flex items-center space-x-4">
@@ -119,8 +230,8 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                    className='relative w-full h-full'
               >
                   <Image
-                src={productData.images[selectedImageIndex]}
-                alt={productData.name}
+                src={selectedProduct?.product_images[selectedImageIndex]}
+                alt={selectedProduct.name}
                 fill
                 className="object-cover"
               />
@@ -141,7 +252,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
 
             {/* Thumbnail Images */}
             <div className="flex space-x-3">
-              {productData.images.map((image, index) => (
+              {selectedProduct.product_images.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
@@ -167,15 +278,15 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
             {/* Product Title and Price */}
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {productData.name}
+                {selectedProduct.name}
               </h1>
               <div className="flex items-center space-x-4 mb-4">
                 <span className="text-2xl font-bold text-gray-900">
-                  {productData.currency} {productData.price.toLocaleString()}
+                  {selectedProduct.currency} {selectedProduct.sale_price.toLocaleString()}
                 </span>
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-1">
-                    {renderStars(productData.rating)}
+                    {renderStars(selectedProduct.rating)}
                   </div>
                   <span className="text-sm text-gray-600">Reviews</span>
                   <button className="text-sm text-blue-600 hover:underline">
@@ -189,7 +300,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
             <div>
               <h3 className="text-lg font-semibold mb-3">Size</h3>
               <div className="grid grid-cols-4 gap-2">
-                {productData.sizes.map((size, index) => (
+                {selectedProduct.sizes.map((size, index) => (
                   <button
                     key={index}
                     onClick={() => size.available && setSelectedSize(size.label)}
@@ -212,7 +323,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
             <div>
               <h3 className="text-lg font-semibold mb-3">Color</h3>
               <div className="flex items-center space-x-3">
-                {productData.colors.map((colorOption, index) => (
+                {selectedProduct.colors.map((colorOption, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedColor(index)}
@@ -224,7 +335,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                   />
                 ))}
                 <span className="text-sm text-gray-600 ml-2">
-                  {productData.colors[selectedColor].name}
+                  {selectedProduct.colors[selectedColor].name}
                 </span>
               </div>
             </div>
@@ -263,9 +374,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                   className={`p-4 rounded-lg border transition-colors ${
                     isWishlisted 
                       ? 'border-red-300 bg-red-50 text-red-600' 
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
+                      : 'border-gray-300 hover:border-gray-400'}`}>
                   <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
                 </button>
                 <button className="p-4 rounded-lg border border-gray-300 hover:border-gray-400 transition-colors">
@@ -303,7 +412,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                 {activeTab === "description" ? (
                   <div className="space-y-4">
                     <p className="text-gray-700 leading-relaxed">
-                      {productData.description}
+                      {selectedProduct.description}
                     </p>
                     <button className="text-sm text-blue-600 hover:underline">
                       Read more
