@@ -1,35 +1,38 @@
 import { db } from '@/Firebase';
-import { ProductType } from '@/types/product';
+import { OrderType } from '@/types/orders';
 import { doc, getDoc } from 'firebase/firestore';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import NodeCache from 'node-cache';
 
 const cache = new NodeCache({ stdTTL: 300 }); // 5 minutes cache
 
 export async function GET() {
+    const session = await getServerSession();
+    if(!session?.user?.email) return;
   try {
-    const cacheKey = 'products';
+    const cacheKey = 'orders';
 
     // Check cache
-    let products = cache.get(cacheKey);
-    if (products) {
-      return NextResponse.json({ products, cached: true });
+    let orders = cache.get(cacheKey);
+    if (orders) {
+      return NextResponse.json({ orders, cached: true });
     }
 
     // Fetch from Firestore
-    const docRef = doc(db, 'jamladata', 'jamla_products');
+    const docRef = doc(db, 'orders', session?.user?.email);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
       return NextResponse.json({ error: 'No data found' }, { status: 404 });
     }
 
-    products = docSnap.data().globalproducts as ProductType;
+    orders = docSnap.data().orders as OrderType;
 
     // Cache the products
-    cache.set(cacheKey, products);
+    cache.set(cacheKey, orders);
 
-    return NextResponse.json({ products, cached: false });
+    return NextResponse.json({ orders, cached: false });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error', details: error }, { status: 500 });
   }

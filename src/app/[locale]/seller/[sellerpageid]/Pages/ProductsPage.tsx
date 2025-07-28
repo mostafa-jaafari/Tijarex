@@ -1,7 +1,7 @@
 "use client";
 import { DropDownMenu } from "@/components/FilterOrders";
 import { RightDashboardHeader } from "@/components/RightDashboardHeader";
-import { Product } from "@/types/product";
+import { ProductType } from "@/types/product";
 import { 
     Search, 
     Grid3X3, 
@@ -64,7 +64,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
     
-    const [allProducts, setProducts] = useState<Product[] | []>([]);
+    const [allProducts, setProducts] = useState<ProductType[] | []>([]);
     const [loading, setLoading] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string }>({
         "Category": "All",
@@ -192,7 +192,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
     // Check if any filters are active
     const hasActiveFilters = Object.values(selectedFilters).some(value => value !== "All") || searchQuery !== "";
 
-    const ProductCard = ({ product }: { product: Product }) => {
+    const ProductCard = ({ product }: { product: ProductType }) => {
         const [currentImage, setCurrentImage] = useState(0);
 
         const handlePrevImage = () => {
@@ -354,7 +354,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                         className="w-full pl-10 py-2 pr-4 h-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                 </div>
-
+                
                 {/* Controls */}
                 <div className="flex items-center space-x-2">
                     {/* Filters Toggle */}
@@ -443,7 +443,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
             {loading ? (
                 <div className="px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                     {Array.from({ length: 8 }).map((_, i) => (
-                        <ProductCard key={i} product={{} as Product} />
+                        <ProductCard key={i} product={{} as ProductType} />
                     ))}
                 </div>
             ) : filteredProducts.length === 0 ? (
