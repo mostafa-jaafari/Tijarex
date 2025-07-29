@@ -189,5 +189,19 @@
       "newUser": "30 min ago"
     },
     "viewAll": "View All Notifications"
+  },
+  "cards": {
+    "customers": {
+      "title": "Total Customers",
+      "subtitle": "Active customers"
+    },
+    "orders": {
+      "title": "Total Orders",
+      "subtitle": "This month"
+    },
+    "revenue": {
+      "title": "Total Revenue",
+      "subtitle": "Monthly revenue"
+    }
   }
 }

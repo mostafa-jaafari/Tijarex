@@ -1,15 +1,17 @@
 "use client";
 
 import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function SellerStatisticCards() {
+    const t = useTranslations("cards");
     const CardsDetails = [
         {
             count: "5,690",
             percent: 15,
             isPositive: true,
-            title: "Total Customers",
-            subtitle: "Active customers",
+            title: t("customers.title"),
+            subtitle: t("customers.subtitle"),
             icon: Users,
             color: "blue"
         },
@@ -17,8 +19,8 @@ export function SellerStatisticCards() {
             count: "589",
             percent: 23,
             isPositive: true,
-            title: "Total Orders",
-            subtitle: "This month",
+            title: t("orders.title"),
+            subtitle: t("orders.title"),
             icon: ShoppingBag,
             color: "green"
         },
@@ -26,8 +28,8 @@ export function SellerStatisticCards() {
             count: "$47,590",
             percent: 8,
             isPositive: false,
-            title: "Total Revenue",
-            subtitle: "Monthly revenue",
+            title: t("revenue.title"),
+            subtitle: t("revenue.title"),
             icon: DollarSign,
             color: "red"
         },
