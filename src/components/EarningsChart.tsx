@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
-import { BarChart3, Download } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // Sample data for the chart
 const earningsData = [
@@ -50,6 +51,7 @@ const EarningsChart = () => {
     return null;
   };
 
+  const t = useTranslations();
   return (
     <div className="bg-white shadow-md hover:shadow-lg rounded-2xl">
       {/* Header */}
@@ -59,8 +61,8 @@ const EarningsChart = () => {
             <BarChart3 className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Earnings Overview</h3>
-            <p className="text-sm text-gray-600">Revenue comparison by quarters</p>
+            <h3 className="text-lg font-semibold text-gray-900">{t('earnings.title')}</h3>
+            <p className="text-sm text-gray-600">{t('earnings.subtitle')}</p>
           </div>
         </div>
         
@@ -79,14 +81,10 @@ const EarningsChart = () => {
                   }
                 `}
               >
-                {period}
+                {t(`earnings.periods.${period}`)}
               </button>
             ))}
           </div>
-          
-          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
-            <Download size={16} />
-          </button>
         </div>
       </div>
 
@@ -109,7 +107,7 @@ const EarningsChart = () => {
           
           <div className="flex items-center space-x-2 text-sm">
             <span className="text-green-600 font-medium">+12.4%</span>
-            <span className="text-gray-500">vs last year</span>
+            <span className="text-gray-500">{t('earnings.vs_last_year')}</span>
           </div>
         </div>
         
