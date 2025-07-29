@@ -1,11 +1,38 @@
 "use client";
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
+import {
+  LineChart, Line, XAxis, YAxis, ResponsiveContainer,
+  Tooltip, CartesianGrid, TooltipProps
+} from 'recharts';
 import { BarChart3 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-// Sample data for the chart
-const earningsData = [
+// Define proper types for the chart data
+type EarningsDataItem = {
+  month: string;
+  firstHalf: number;
+  topGross: number;
+};
+
+// Define period types
+type PeriodType = '7D' | '1M' | '3M' | '6M' | '12M';
+
+// Define tooltip payload type
+interface TooltipPayload {
+  color?: string;
+  dataKey?: string;
+  value?: number;
+  payload?: EarningsDataItem;
+}
+
+// Custom tooltip props interface
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  label?: string;
+}
+
+const earningsData: EarningsDataItem[] = [
   { month: 'Jan', firstHalf: 80, topGross: 90 },
   { month: 'Feb', firstHalf: 95, topGross: 110 },
   { month: 'Mar', firstHalf: 120, topGross: 140 },
@@ -20,11 +47,11 @@ const earningsData = [
   { month: 'Dec', firstHalf: 75, topGross: 95 }
 ];
 
-const EarningsChart = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState('12M');
-  const periods = ['7D', '1M', '3M', '6M', '12M'];
+const EarningsChart: React.FC = () => {
+  const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('12M');
+  const periods: PeriodType[] = ['7D', '1M', '3M', '6M', '12M'];
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[120px]">
@@ -34,7 +61,7 @@ const EarningsChart = () => {
               <div className="flex items-center space-x-2">
                 <div 
                   className="w-2 h-2 rounded-full" 
-                  style={{ backgroundColor: entry.color }}
+                  style={{ backgroundColor: entry.color || '#000' }}
                 />
                 <span className="text-xs text-gray-600">
                   {entry.dataKey === 'firstHalf' ? 'Q1-Q2' : 'Q3-Q4'}
@@ -52,6 +79,7 @@ const EarningsChart = () => {
   };
 
   const t = useTranslations();
+
   return (
     <div className="bg-white shadow-md hover:shadow-lg rounded-2xl">
       {/* Header */}
@@ -119,7 +147,6 @@ const EarningsChart = () => {
               margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-              
               <XAxis 
                 dataKey="month" 
                 axisLine={false}
@@ -131,11 +158,9 @@ const EarningsChart = () => {
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#6B7280' }}
                 domain={[0, 250]}
-                tickFormatter={(value) => `$${value}K`}
+                tickFormatter={(value: number) => `$${value}K`}
               />
-              
               <Tooltip content={<CustomTooltip />} />
-              
               <Line 
                 type="monotone" 
                 dataKey="firstHalf" 
