@@ -1,7 +1,7 @@
 "use client";
 import { FilterOrders } from '@/components/FilterOrders';
 import { OrderType } from '@/types/orders';
-import { MoreHorizontal, Eye, Plus, Package } from 'lucide-react';
+import { MoreHorizontal, Plus, Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';

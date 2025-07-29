@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Star, ChevronLeft, ChevronRight, Search, Minus, Plus, Heart, Share2, Truck, RotateCcw } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { Product } from '@/types/product';
+import { ProductType } from '@/types/product';
 
 export function SingleProductPage({ ProductId }: { ProductId: string }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -13,7 +13,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
   const [activeTab, setActiveTab] = useState("description");
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
             if (!res.ok) throw new Error("Failed to fetch products");
 
             const data = await res.json();
-            const selected = data?.products?.find((product: Product) => product.id === ProductId) as Product || null;
+            const selected = data?.products?.find((product: ProductType) => product.id === ProductId) as ProductType || null;
             setSelectedProduct(selected);
         } catch (error) {
             console.error(error);
