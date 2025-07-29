@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, ResponsiveContainer,
-  Tooltip, CartesianGrid, TooltipProps
+  Tooltip, CartesianGrid,
 } from 'recharts';
 import { BarChart3 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
