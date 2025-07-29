@@ -20,7 +20,7 @@ function getPathWithLocale(pathname: string, locale: string) {
   return `/${locale}/${segments.join('/')}`;
 }
 
-export function SwitchLanguage({ CLASSNAME }: { CLASSNAME: string }) {
+export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
