@@ -15,32 +15,34 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl"
 import { SwitchLanguage } from "./SwitchLanguage";
 
 export function Sidebar({ session }: { session: Session | null }) {
+    const t = useTranslations("sidebar");
+    const locale = useLocale();
     const [isCollapsed, setIsCollapsed] = useState(true);
-    
     const Navigation_Links = [
         {
-            label: "Dashboard",
+            label: t("dashboard"),
             icon: Home,
             href: "seller",
             badge: null,
         },
         {
-            label: "Products",
+            label: t("products"),
             icon: ShoppingCart,
             href: "products",
             badge: "12",
         },
         {
-            label: "Orders",
+            label: t("orders"),
             icon: ShoppingBag,
             href: "orders",
             badge: "3",
         },
         {
-            label: "Returns",
+            label: t("returns"),
             icon: RotateCcw,
             href: "returns",
             badge: null,
@@ -49,17 +51,17 @@ export function Sidebar({ session }: { session: Session | null }) {
 
     const Tools_Links = [
         {
-            label: "Settings",
+            label: t("settings"),
             icon: Settings,
             href: "settings",
         },
         {
-            label: "Help & Support",
+            label: t("help"),
             icon: HelpCircle,
             href: "help",
         },
         {
-            label: "Manage Users",
+            label: t("manage_users"),
             icon: Users,
             href: "manage-user",
         },
@@ -81,8 +83,8 @@ export function Sidebar({ session }: { session: Session | null }) {
                             <span className="text-white font-bold text-sm">J</span>
                         </div>
                         <div>
-                            <h1 className="font-semibold text-gray-900">Jamla.ma</h1>
-                            <p className="text-xs text-gray-500">Seller Portal</p>
+                            <h1 className="font-semibold text-gray-900">{t("brand")}</h1>
+                            <p className="text-xs text-gray-500">{t("portal")}</p>
                         </div>
                     </div>
                 )}
@@ -105,7 +107,7 @@ export function Sidebar({ session }: { session: Session | null }) {
                 <div className="px-3 mb-6">
                     {!isCollapsed && (
                         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 px-3">
-                            Navigation
+                            {t("navigation")}
                         </h2>
                     )}
                     <nav className="space-y-1">
@@ -115,10 +117,10 @@ export function Sidebar({ session }: { session: Session | null }) {
                                 <Link
                                     href={`/seller/${nav.href !== "seller" ? nav.href : ""}`}
                                     key={idx}
-                                    className={`
+                                    className={`${locale === "ar" && "gap-2"}
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? "bg-blue-50 text-blue-700 border-l-2 border-blue-600" 
+                                            ? `bg-blue-50 text-blue-700 border-blue-600 ${locale === "ar" ? "border-r-2" : "border-l-2"}` 
                                             : "text-gray-700 hover:bg-gray-50"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
@@ -149,7 +151,7 @@ export function Sidebar({ session }: { session: Session | null }) {
                 <div className="px-3">
                     {!isCollapsed && (
                         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 px-3">
-                            Tools
+                            {t("tools")}
                         </h2>
                     )}
                     <nav className="space-y-1">
@@ -159,10 +161,10 @@ export function Sidebar({ session }: { session: Session | null }) {
                                 <Link
                                     href={`/seller/${tool.href !== "seller" ? tool.href : ""}`}
                                     key={idx}
-                                    className={`
+                                    className={`${locale === "ar" && "gap-2"}
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? "bg-blue-50 text-blue-700 border-l-2 border-blue-600" 
+                                            ? `bg-blue-50 text-blue-700 border-blue-600 ${locale === "ar" ? "border-r-2" : "border-l-2"}` 
                                             : "text-gray-700 hover:bg-gray-50"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}

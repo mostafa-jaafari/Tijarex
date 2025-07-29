@@ -150,5 +150,20 @@
     "description1": "Products and prices that boost your sales—start with confidence.",
     "description2": "Pick your quantity and launch your shop today—no hassle, no large commitments.",
     "button": "Join Free & Start Selling!"
+  },
+  "sidebar": {
+    "brand": "Jamla.ma",
+    "portal": "Seller Portal",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar",
+    "navigation": "Navigation",
+    "tools": "Tools",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "orders": "Orders",
+    "returns": "Returns",
+    "settings": "Settings",
+    "help": "Help & Support",
+    "manage_users": "Manage Users"
   }
 }
