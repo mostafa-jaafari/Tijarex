@@ -4,16 +4,18 @@ import { ProductsPage } from "./Pages/ProductsPage";
 import { SingleProductPage } from "./Pages/SingleProductPage";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     sellerpageid: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
+  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function Page({ params, searchParams }: PageProps) {
-  const { sellerpageid } = params;
+  // Await the params and searchParams as they are now Promises in Next.js 15
+  const { sellerpageid } = await params;
+  const resolvedSearchParams = await searchParams;
+  
   const PAGE_ID = sellerpageid;
-
   const session = await getServerSession();
 
   let TabRender;
@@ -25,7 +27,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
     case "products":
       // Check if a product ID exists in searchParams
-      const productId = typeof searchParams.p_id === "string" ? searchParams.p_id : undefined;
+      const productId = typeof resolvedSearchParams.p_id === "string" ? resolvedSearchParams.p_id : undefined;
 
       if (productId) {
         TabRender = <SingleProductPage ProductId={productId} />;
@@ -35,7 +37,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       break;
 
     default:
-      TabRender = <div>Page not found</div>;
+      TabRender = <div className="w-full h-screen bg-gray-200 flex items-center justify-center text-6xl font-bold">Page not found</div>;
       break;
   }
 
