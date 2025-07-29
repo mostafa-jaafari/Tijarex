@@ -81,7 +81,7 @@ export default function OrdersPage() {
       <div className="p-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           {/* Table Header Info */}
-          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
                 <p className="text-sm text-gray-500 mt-1">
@@ -260,9 +260,9 @@ export default function OrdersPage() {
                     
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="flex items-center justify-center space-x-2">
-                        <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        {/* <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                           <Eye size={16} />
-                        </button>
+                        </button> */}
                         {/* <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
                           <Edit size={16} />
                         </button>

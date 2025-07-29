@@ -32,7 +32,7 @@ export const DropDownMenu = ({ BtnTitle, CLASSNAME, List, onSelect, selectedItem
     };
 
     const isSelected = selectedItem !== "";
-    const displayText = selectedItem === "" ? BtnTitle : selectedItem.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const displayText = selectedItem === "" || selectedItem.toLowerCase() === "all" ? BtnTitle : selectedItem.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
     const buttonVariants = {
         primary: `bg-white 

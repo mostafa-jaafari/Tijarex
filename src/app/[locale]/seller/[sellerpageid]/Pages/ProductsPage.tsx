@@ -342,7 +342,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
             </div>
 
             {/* Search and Controls */}
-            <div className="flex items-center justify-center space-x-4 p-6">
+            <div className="flex items-center justify-center space-x-4 px-6">
                 {/* Search Bar */}
                 <div className="flex-1 grow relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -351,7 +351,10 @@ export function ProductsPage({ session }: { session: Session | null }) {
                         placeholder="Search products..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 py-2 pr-4 h-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full max-w-1/2 pl-10 py-1 pr-4 
+                            h-full border border-gray-200 rounded-xl 
+                            focus:outline-none focus:ring-2
+                            focus:ring-blue-500 focus:border-transparent"
                     />
                 </div>
                 
@@ -360,7 +363,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                     {/* Filters Toggle */}
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center space-x-2 cursor-pointer px-8 py-2.5 rounded-lg border transition-colors ${
+                        className={`flex items-center space-x-2 cursor-pointer px-4 py-1.5 text-sm rounded-lg border transition-colors ${
                             showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'
                         }`}
                     >
@@ -372,10 +375,12 @@ export function ProductsPage({ session }: { session: Session | null }) {
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="px-3 py-2 cursor-pointer border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-0.5 cursor-pointer border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         {sortOptions.map(option => (
-                            <option key={option.value} value={option.value}>
+                            <option 
+                                key={option.value} 
+                                value={option.value}>
                                 {option.label}
                             </option>
                         ))}
@@ -405,7 +410,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
 
             {/* Filters Panel */}
             {showFilters && (
-                <div className="px-6 space-y-4">
+                <div className="px-6 space-y-2">
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-medium text-gray-900">Filters</h3>
                         {hasActiveFilters && (
@@ -417,7 +422,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                             </button>
                         )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                         {productFilters.map((filter, idx) => (
                             <DropDownMenu
                                 key={idx}
@@ -479,7 +484,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Sales</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Updated</th>
+                                {/* <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Updated</th> */}
                                 <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -518,7 +523,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                                         <div className="text-xs text-gray-500 mt-1">{product.stock} units</div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">{product.sales.toLocaleString()}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-600">{product.lastUpdated}</td>
+                                    {/* <td className="px-6 py-4 text-sm text-gray-600">{product.lastUpdated}</td> */}
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-end space-x-2">
                                             <button className="p-1 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors">

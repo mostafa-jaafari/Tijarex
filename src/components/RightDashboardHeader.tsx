@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -72,9 +72,9 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
 
                 {/* Dropdown Menu */}
                 {isNotificationsOpen && (
-                    <div ref={DropDownNotifsRef} className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 animate-fade-in">
+                    <div ref={DropDownNotifsRef} className="absolute overflow-hidden right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 animate-fade-in">
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-2 border-b">
+                    <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200">
                         <span className="text-sm font-semibold">Notifications</span>
                         <button className="text-xs text-blue-600 hover:underline">
                         Mark all as read
@@ -82,7 +82,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                     </div>
 
                     {/* Notification List */}
-                    <ul className="max-h-64 overflow-y-auto divide-y">
+                    <ul className="max-h-64 overflow-y-auto divide-y divide-gray-100">
                         <li className="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer transition">
                         <span className="mr-3 text-blue-500">
                             <Bell size={16} />
@@ -116,7 +116,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                 )}
             </div>
             <span 
-                className="border-rs border-gray-200 h-8 flex"
+                className="border-r border-gray-200 h-6 flex"
             />
             {/* Profile Menu */}
             <div className="relative">
@@ -139,9 +139,14 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                     <div
                         className="flex flex-col items-start"
                     >
-                        <span className="text-sm font-medium text-gray-900">
-                            {session?.user?.name}
-                        </span>
+                        <div
+                            className="w-full flex items-center justify-between"
+                        >
+                            <span className="text-sm font-medium text-gray-900">
+                                {session?.user?.name}
+                            </span>
+                            <ChevronDown size={18} className="text-gray-500"/>
+                        </div>
                         <span className="text-sm font-medium text-gray-500">
                             {session?.user?.email}
                         </span>
