@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
   
   const isAuthPage = authPages.some(page => pathname.startsWith(page));
   const isLandingPage = pathname === `/${locale}`; // Landing page (root with locale)
-  const isSellerPage = pathname.startsWith(`/${locale}/seller`);
+  // const isSellerPage = pathname.startsWith(`/${locale}/seller`);
   
   // Landing page logic: only accessible to non-logged-in users
   if (isLandingPage) {
