@@ -77,7 +77,7 @@ const testimonials = [
       if (contentRef.current && containerRef.current) {
         // Force layout recalculation
         contentRef.current.style.display = 'none';
-        contentRef.current.offsetHeight; // Trigger reflow
+        void contentRef.current.offsetHeight; // Trigger reflow
         contentRef.current.style.display = 'flex';
         
         // Wait for next frame to ensure proper rendering
