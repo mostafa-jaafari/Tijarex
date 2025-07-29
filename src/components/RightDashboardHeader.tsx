@@ -115,19 +115,25 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                     </div>
                 )}
             </div>
+            <span 
+                className="border-rs border-gray-200 h-8 flex"
+            />
             {/* Profile Menu */}
             <div className="relative">
                 <button 
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                     className="flex items-center space-x-2 cursor-pointer">
                     <div
-                        className='relative w-12 h-12 rounded-full border overflow-hidden'
+                        className='relative w-12 h-12'
                     >
                         <Image
                             src={session?.user?.image as string || ""}
                             alt={session?.user?.name as string || ""}
                             fill
-                            className="object-cover"
+                            className="object-cover overflow-hidden rounded-full"
+                        />
+                        <span
+                            className="absolute w-3 h-3 rounded-full bg-green-500 right-1 bottom-0 border-2 border-white"
                         />
                     </div>
                     <div

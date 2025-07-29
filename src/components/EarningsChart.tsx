@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
-import { BarChart3, Download, Calendar } from 'lucide-react';
+import { BarChart3, Download } from 'lucide-react';
 
 // Sample data for the chart
 const earningsData = [
@@ -51,7 +51,7 @@ const EarningsChart = () => {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg">
+    <div className="bg-white shadow-md hover:shadow-lg rounded-2xl">
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-gray-100">
         <div className="flex items-center space-x-3">

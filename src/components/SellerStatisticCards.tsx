@@ -48,46 +48,45 @@ export function SellerStatisticCards() {
                 return (
                     <div
                         key={idx}
-                        className="bg-white border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors"
+                        className="bg-white shadow hover:shadow-md 
+                            rounded-2xl px-6 py-4 transition-all duration-200"
                     >
                         {/* Icon and Value Row */}
+                        <p className="text-sm font-medium text-gray-900">
+                            {card.title}
+                        </p>
                         <div
                             className="flex items-center justify-between"
                         >
-                            <div className="flex items-start justify-start mb-2 gap-2">
-                            <div className={`p-2 rounded-lg ${getIconColor(card.color)}`}>
-                                <card.icon className="w-5 h-5" />
-                            </div>
+                            <div className="flex items-start justify-between w-full mb-2 gap-2">
                             {/* Main Value */}
-                            <div className="mb-2">
+                            <div className="flex items-center gap-2">
                                 <h3 className="text-2xl font-semibold text-gray-900">
                                     {card.count}
                                 </h3>
+                                <div className={`
+                                    flex items-center space-x-1 text-sm font-medium
+                                    ${card.isPositive ? 'text-green-600' : 'text-red-600'}
+                                `}>
+                                    {card.isPositive ? (
+                                        <TrendingUp size={14} />
+                                    ) : (
+                                        <TrendingDown size={14} />
+                                    )}
+                                    <span>{card.isPositive ? '+' : ''}{card.percent}%</span>
+                                </div>
+                            </div>
+                            <div className={`p-2 rounded-lg ${getIconColor(card.color)}`}>
+                                <card.icon className="w-5 h-5" />
                             </div>
                         </div>
-                        <div className={`
-                            flex items-center space-x-1 text-sm font-medium
-                            ${card.isPositive ? 'text-green-600' : 'text-red-600'}
-                        `}>
-                            {card.isPositive ? (
-                                <TrendingUp size={14} />
-                            ) : (
-                                <TrendingDown size={14} />
-                            )}
-                            <span>{card.isPositive ? '+' : ''}{card.percent}%</span>
-                        </div>
                         </div>
 
 
-                        {/* Title and Subtitle */}
-                        <div>
-                            <p className="text-sm font-medium text-gray-900">
-                                {card.title}
-                            </p>
-                            <p className="text-xs text-gray-500">
+                    {/* Title and Subtitle */}
+                        <p className="text-xs text-gray-500">
                                 {card.subtitle}
-                            </p>
-                        </div>
+                        </p>
                     </div>
                 );
             })}
