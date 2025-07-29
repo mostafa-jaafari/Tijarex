@@ -232,8 +232,7 @@ export function FilterOrders({ onChange, searchTerm }: FilterOrdersProps) {
                             <span className="text-sm font-medium text-blue-700">Active Filters:</span>
                             <div className="flex flex-wrap gap-2">
                                 {Object.entries(selectedFilters)
-                                    .filter(([_, value]) => value !== "")
-                                    .map(([key, value], idx) => (
+                                    .filter(([, value]) => value !== "")                                    .map(([key, value], idx) => (
                                         <span
                                             key={idx}
                                             className="inline-flex items-center space-x-1 px-2 py-1 
