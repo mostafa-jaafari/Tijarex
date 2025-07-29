@@ -6,7 +6,7 @@ import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Toaster } from "sonner";
-import { Navbar } from "@/components/Navbar";
+import { Sidebar } from "@/components/Sidebar";
 import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
 import { getServerSession, Session } from "next-auth";
 
@@ -50,7 +50,7 @@ export default async function RootLayout({
                 className="w-full flex"
               >
                 {session && (
-                  <Navbar
+                  <Sidebar
                     session={session}
                   />
                 )}

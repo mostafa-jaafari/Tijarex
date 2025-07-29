@@ -1,5 +1,4 @@
 "use client";
-
 import { 
     Home, 
     RotateCcw, 
@@ -18,7 +17,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { SwitchLanguage } from "./SwitchLanguage";
 
-export function Navbar({ session }: { session: Session | null }) {
+export function Sidebar({ session }: { session: Session | null }) {
     const [isCollapsed, setIsCollapsed] = useState(true);
     
     const Navigation_Links = [
