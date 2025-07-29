@@ -166,5 +166,29 @@
     "settings": "الإعدادات",
     "help": "المساعدة والدعم",
     "manage_users": "إدارة المستخدمين"
+  },
+  "sellerdashboard": {
+  "headertitle": "لوحة التحكم",
+  "headersubtitle": "راقب أداء متجرك"
+},
+  "profiledropdown": {
+    "dashboard": "لوحة التحكم",
+    "products": "المنتجات",
+    "orders": "الطلبات",
+    "returns": "المرتجعات",
+    "signout": "تسجيل الخروج"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "markAllAsRead": "تمييز الكل كمقروء",
+    "newOrder": "تم استلام طلب جديد",
+    "lowStock": "المخزون شارف على النفاد",
+    "newUser": "تم تسجيل مستخدم جديد",
+    "timeAgo": {
+      "newOrder": "منذ دقيقتين",
+      "lowStock": "منذ 10 دقائق",
+      "newUser": "منذ 30 دقيقة"
+    },
+    "viewAll": "عرض كل الإشعارات"
   }
 }

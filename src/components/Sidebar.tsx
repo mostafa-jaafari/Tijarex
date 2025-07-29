@@ -72,7 +72,7 @@ export function Sidebar({ session }: { session: Session | null }) {
     return (
         <aside className={`
             ${isCollapsed ? 'w-16' : 'w-74'} 
-            bg-white border-r border-gray-200 h-screen transition-all duration-300 
+            bg-white ${locale === "ar" ? "border-l" : "border-r"} border-gray-200 h-screen transition-all duration-300 
             flex flex-col sticky top-0 overflow-hidden
         `}>
             {/* Header */}

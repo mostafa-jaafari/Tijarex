@@ -7,15 +7,18 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { Session } from "next-auth";
+import { useLocale, useTranslations } from "next-intl";
 
 
 
 export function RightDashboardHeader({ session }: { session: Session | null }){
+    const locale = useLocale();
+    const t = useTranslations();
     const ProfileHeaderNavs = [
-        { label: "dashboard", icon: LayoutDashboard },
-        { label: "products", icon: Package },
-        { label: "orders", icon: ShoppingCart },
-        { label: "returns", icon: RotateCcw },
+        { label: t("profiledropdown.dashboard"), icon: LayoutDashboard, href: "dashboard" },
+        { label: t("profiledropdown.products"), icon: Package, href: "products" },
+        { label: t("profiledropdown.orders"), icon: ShoppingCart, href: "orders" },
+        { label: t("profiledropdown.returns"), icon: RotateCcw, href: "returns" },
     ];
     
     const DropDownProfileRef = useRef<HTMLDivElement | null>(null)
@@ -44,19 +47,6 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
     return (
         <section>
             <div className="flex items-center space-x-4">
-      
-            {/* Reports Button */}
-            {/* <button className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                <BarChart3 size={16} />
-                <span className="text-sm font-medium">Reports</span>
-            </button> */}
-
-            {/* Create Order Button */}
-            {/* <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition-colors">
-                <Plus size={16} />
-                <span className="text-sm font-medium">Create Order</span>
-            </button> */}
-
             {/* Notifications */}
             <div className="relative">
                 {/* Bell Icon with Badge */}
@@ -75,9 +65,9 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                     <div ref={DropDownNotifsRef} className="absolute overflow-hidden right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 animate-fade-in">
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200">
-                        <span className="text-sm font-semibold">Notifications</span>
+                        <span className="text-sm font-semibold">{t("notifications.title")}</span>
                         <button className="text-xs text-blue-600 hover:underline">
-                        Mark all as read
+                            {t("notifications.markAllAsRead")}
                         </button>
                     </div>
 
@@ -110,7 +100,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
 
                     {/* Footer */}
                     <div className="p-2 text-center text-blue-600 text-sm hover:bg-gray-50 cursor-pointer">
-                        View All Notifications
+                        {t("notifications.viewAll")}
                     </div>
                     </div>
                 )}
@@ -165,8 +155,10 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                                 <Link
                                     key={idx}
                                     onClick={() => setIsProfileMenuOpen(false)}
-                                    href={`/seller/${nav.label !== "dashboard" ? nav.label : ""}`}
-                                    className="flex items-center px-4 py-2 text-gray-500 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                                    href={`/seller/${nav.href !== "dashboard" ? nav.href : ""}`}
+                                    className={`flex items-center px-4 py-2 text-gray-500 
+                                        hover:bg-blue-50 hover:text-blue-700 transition-colors
+                                        ${locale === "ar" && "gap-2"}`}
                                 >
                                     {/* Optional Icon */}
                                     <span className="mr-2">
@@ -188,7 +180,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                                 text-red-600 font-medium hover:bg-red-50 
                                 transition-colors"
                         >
-                            Sign Out
+                            {t("profiledropdown.signout")}
                         </button>
                     </div>
                     )}

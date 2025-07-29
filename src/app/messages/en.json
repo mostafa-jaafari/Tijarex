@@ -165,5 +165,29 @@
     "settings": "Settings",
     "help": "Help & Support",
     "manage_users": "Manage Users"
+  },
+  "sellerdashboard": {
+    "headertitle": "Dashboard",
+    "headersubtitle": "Monitor your store performance"
+  },
+  "profiledropdown": {
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "orders": "Orders",
+    "returns": "Returns",
+    "signout": "Sign Out"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "newOrder": "New order received",
+    "lowStock": "Stock running low",
+    "newUser": "New user registered",
+    "timeAgo": {
+      "newOrder": "2 min ago",
+      "lowStock": "10 min ago",
+      "newUser": "30 min ago"
+    },
+    "viewAll": "View All Notifications"
   }
 }

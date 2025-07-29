@@ -4,6 +4,7 @@ import EarningsChart from '@/components/EarningsChart'
 import React from 'react'
 import { RightDashboardHeader } from '@/components/RightDashboardHeader'
 import { getServerSession, Session } from 'next-auth'
+import { getTranslations } from 'next-intl/server'
 
 
 export const metadata = {
@@ -27,6 +28,7 @@ export const metadata = {
 }
 export default async function page() {
   const session: Session | null = await getServerSession();
+  const t = await getTranslations("sellerdashboard");
   return (
     <main
         className='w-full bg-gray-50'
@@ -38,8 +40,8 @@ export default async function page() {
     
     {/* Left Side */}
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-      <p className="text-sm text-gray-600 mt-1">Monitor your store performance</p>
+      <h1 className="text-2xl font-semibold text-gray-900">{t("headertitle")}</h1>
+      <p className="text-sm text-gray-600 mt-1">{t("headersubtitle")}</p>
     </div>
 
     {/* Right Side */}
