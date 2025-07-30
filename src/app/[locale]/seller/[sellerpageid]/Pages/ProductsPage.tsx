@@ -19,18 +19,10 @@ import {
     Filter
 } from "lucide-react";
 import { Session } from "next-auth";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const sortOptions = [
-    { label: "Name A-Z", value: "name_asc" },
-    { label: "Name Z-A", value: "name_desc" },
-    { label: "Price: Low to High", value: "price_asc" },
-    { label: "Price: High to Low", value: "price_desc" },
-    { label: "Best Selling", value: "sales_desc" },
-    { label: "Latest Added", value: "date_desc" }
-];
 
 // Fixed filter configuration for products
 const productFilters = [
@@ -57,6 +49,15 @@ const productFilters = [
 ];
     
 export function ProductsPage({ session }: { session: Session | null }) {
+    const t = useTranslations("productspage");
+    const sortOptions = [
+        { label: t("sortoptions.0"), value: "name_asc" },
+        { label: t("sortoptions.1"), value: "name_desc" },
+        { label: t("sortoptions.2"), value: "price_asc" },
+        { label: t("sortoptions.3"), value: "price_desc" },
+        { label: t("sortoptions.4"), value: "sales_desc" },
+        { label: t("sortoptions.5"), value: "date_desc" }
+    ];
     const [viewMode, setViewMode] = useState("grid");
     const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState("name_asc");
@@ -335,23 +336,23 @@ export function ProductsPage({ session }: { session: Session | null }) {
             {/* Header */}
             <div className="flex items-center px-6 py-2 justify-between border-b border-neutral-200">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-                    <p className="text-sm text-gray-600 mt-1">Manage your product inventory</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+                    <p className="text-sm text-gray-600 mt-1">{t("subtitle")}</p>
                 </div>
                 <RightDashboardHeader session={session} />
             </div>
 
             {/* Search and Controls */}
-            <div className="flex items-center justify-center space-x-4 px-6">
+            <div className="flex items-center justify-between space-x-4 px-6">
                 {/* Search Bar */}
-                <div className="flex-1 grow relative">
+                <div className="w-full max-w-1/2 relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
                         type="text"
-                        placeholder="Search products..."
+                        placeholder={t("searchinputplaceholder")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full max-w-1/2 pl-10 py-1 pr-4 
+                        className="w-full pl-10 py-1 pr-4 
                             h-full border border-gray-200 rounded-xl 
                             focus:outline-none focus:ring-2
                             focus:ring-blue-500 focus:border-transparent"
@@ -368,7 +369,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                         }`}
                     >
                         <SlidersHorizontal className="w-4 h-4" />
-                        <span className="font-medium">Filters</span>
+                        <span className="font-medium">{t("filterbtn")}</span>
                     </button>
 
                     {/* Sort Dropdown */}

@@ -228,5 +228,19 @@
     },
     "sales": "sales",
     "viewAll": "View All Products"
+  },
+  "productspage": {
+    "title": "Discover Our Exclusive Collection",
+    "subtitle": "Browse through our handpicked products tailored for every style and need",
+    "searchinputplaceholder": "search products...",
+    "filterbtn": "Filters",
+    "sortoptions": [
+      "Name A-Z",
+      "Name Z-A",
+      "Price: Low to High",
+      "Price: High to Low",
+      "Best Selling",
+      "Latest Added"
+    ]
   }
 }
