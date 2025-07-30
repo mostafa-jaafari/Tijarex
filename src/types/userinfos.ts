@@ -8,4 +8,5 @@ export type UserInfosType = {
     howyouheartaboutus: string;
     isNewUser: boolean;
     phonenumber: string;
+    profileimage: string;
 };

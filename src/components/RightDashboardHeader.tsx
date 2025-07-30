@@ -116,7 +116,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                         className='relative w-12 h-12'
                     >
                         <Image
-                            src={session?.user?.image as string || ""}
+                            src={userInfos?.profileimage as string || session?.user?.image as string || ""}
                             alt={session?.user?.name as string || ""}
                             fill
                             className="object-cover overflow-hidden rounded-full"

@@ -8,7 +8,8 @@ import {
     HelpCircle, 
     Users,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    User
 } from "lucide-react";
 import { Session } from "next-auth";
 import Image from "next/image";
@@ -52,6 +53,11 @@ export function Sidebar({ session }: { session: Session | null }) {
 
     const Tools_Links = [
         {
+            label: t("manage_users"),
+            icon: User,
+            href: "profile",
+        },
+        {
             label: t("settings"),
             icon: Settings,
             href: "settings",
@@ -60,11 +66,6 @@ export function Sidebar({ session }: { session: Session | null }) {
             label: t("help"),
             icon: HelpCircle,
             href: "help",
-        },
-        {
-            label: t("manage_users"),
-            icon: Users,
-            href: "manage-user",
         },
     ];
 
