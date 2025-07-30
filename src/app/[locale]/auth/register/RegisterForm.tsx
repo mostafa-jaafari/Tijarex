@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/Firebase";
 import { HowYouHeartAboutUs } from "./HowYouHeartAboutUs";
@@ -73,7 +73,10 @@ export function RegisterForm() {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, inputsCredentials.email, inputsCredentials.password);
+      const userCredential = await createUserWithEmailAndPassword(auth, inputsCredentials.email, inputsCredentials.password);
+      const user = userCredential.user;
+      await sendEmailVerification(user);
+      
       await setDoc(doc(db, "users", inputsCredentials.email), {
         fullname: inputsCredentials.fullname,
         phonenumber: inputsCredentials.phonenumber,
@@ -84,10 +87,9 @@ export function RegisterForm() {
         isVerifiedUser: false,
         createdAt: new Date(),
       });
-      toast.success("Account created successfully!");
-      router.push("/auth/login")
+      toast.success("Account created successfully, please confirm your email!");
+      router.push("/auth/confirm-email")
     } catch (error: unknown) {
-      console.error("Error creating account:", error);
       if (
         typeof error === "object" &&
         error !== null &&

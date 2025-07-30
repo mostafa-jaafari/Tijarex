@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -140,6 +141,12 @@ export function LoginForm(){
                         className="object-cover"
                     /> Login with Github
                 </button>
+                <div className="mt-4 text-center text-sm">
+                    Don&apos;t have an account ? 
+                    <Link href="/auth/register" className="ml-2 text-blue-600 hover:underline">
+                        Register
+                    </Link>
+                </div>
             </form>
         </section>
     )

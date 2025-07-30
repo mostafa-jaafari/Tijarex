@@ -49,11 +49,9 @@ export default async function RootLayout({
               <section
                 className="w-full flex"
               >
-                {session && (
-                  <Sidebar
-                    session={session}
-                  />
-                )}
+                <Sidebar
+                  session={session}
+                />
                 {children}
               </section>
             </NextIntlClientProvider>

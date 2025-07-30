@@ -33,6 +33,7 @@ export async function middleware(request: NextRequest) {
   const authPages = [
     `/${locale}/auth/login`,
     `/${locale}/auth/register`,
+    `/${locale}/auth/confirm-email`
   ];
   
   const isAuthPage = authPages.some(page => pathname.startsWith(page));

@@ -69,6 +69,7 @@ export function Sidebar({ session }: { session: Session | null }) {
 
     const params = useParams().sellerpageid || "seller";
 
+    if(!session) return;
     return (
         <aside className={`
             ${isCollapsed ? 'w-16' : 'w-74'} 

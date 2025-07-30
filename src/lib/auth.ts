@@ -4,7 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db, auth as ClientAuth } from "@/Firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
 import { genareteUniqueUsername } from "@/components/Functions/generateUniqueUsername";
 
 // Extend NextAuth types
@@ -41,6 +41,8 @@ interface GitHubProfile {
   avatar_url: string;
 }
 
+
+const Admins = ["mostafajaafari081@gmail.com"];
 export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
@@ -79,7 +81,7 @@ export const authOptions: AuthOptions = {
             return {
               id: user.uid,
               email: user.email,
-              name: user.displayName || "UnknowUser",
+              name: user.displayName || "Guest",
               image: user.photoURL || "https://s.gravatar.com/avatar/0743d216d4ce5aea55b0a45675d313e4?s=64&d=mp",
             };
           }
@@ -102,7 +104,7 @@ export const authOptions: AuthOptions = {
             profile.name ||
             (profile as GitHubProfile).login ||
             profile.email?.split("@")[0]?.replace(/\./g, " ").replace(/\b\w/g, c => c.toUpperCase()) ||
-            "User";
+            "Guest";
             const UniqueUserName = await genareteUniqueUsername(profile?.name || fallbackName)
 
 
@@ -114,6 +116,7 @@ export const authOptions: AuthOptions = {
               profileimage: user.image,
               isPrivateProfile: false,
               username: UniqueUserName,
+              role: "seller",
             });
           }
         }
