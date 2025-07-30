@@ -6,7 +6,6 @@ import {
     ShoppingCart, 
     Settings, 
     HelpCircle, 
-    Users,
     ChevronLeft,
     ChevronRight,
     User

@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import OrdersPage from "./Pages/OrdersPage";
 import { ProductsPage } from "./Pages/ProductsPage";
 import { SingleProductPage } from "./Pages/SingleProductPage";
+import ProfilePage from "./Pages/ProfilePage";
 
 interface PageProps {
   params: Promise<{
@@ -24,7 +25,9 @@ export default async function Page({ params, searchParams }: PageProps) {
     case "orders":
       TabRender = <OrdersPage />;
       break;
-
+    case "profile":
+      TabRender = <ProfilePage />
+      break;
     case "products":
       // Check if a product ID exists in searchParams
       const productId = typeof resolvedSearchParams.p_id === "string" ? resolvedSearchParams.p_id : undefined;
