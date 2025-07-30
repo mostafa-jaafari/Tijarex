@@ -1,9 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Eye, Package, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function PopularProductsWidget() {
+    const t = useTranslations("popularProducts");
     const popularProducts = [
         {
             id: "P001",
@@ -61,14 +64,13 @@ export function PopularProductsWidget() {
             isPositive: true
         }
     ];
-
     const getStockBadge = (stock: string) => {
         switch (stock) {
-            case "In Stock":
+            case t("stock.in"):
                 return "bg-green-100 text-green-800 border-green-200";
-            case "Low Stock":
+            case t("stock.low"):
                 return "bg-yellow-100 text-yellow-800 border-yellow-200";
-            case "Out of Stock":
+            case t("stock.out"):
                 return "bg-red-100 text-red-800 border-red-200";
             default:
                 return "bg-gray-100 text-gray-800 border-gray-200";
@@ -83,8 +85,8 @@ export function PopularProductsWidget() {
                     <Package className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-900">Top Products</h3>
-                    <p className="text-sm text-gray-600">Best performing items</p>
+                    <h3 className="text-lg font-semibold text-gray-900">{t("headerTitle")}</h3>
+                    <p className="text-sm text-gray-600">{t("headerSubtitle")}</p>
                 </div>
             </div>
 
@@ -113,15 +115,7 @@ export function PopularProductsWidget() {
                                         const target = e.target as HTMLImageElement;
                                         target.style.display = 'none';
                                         if (target.parentElement) {
-                                            target.parentElement.innerHTML = `
-                                                <div class="w-full h-full flex items-center justify-center bg-gray-100">
-                                                    <div class="w-5 h-5 text-gray-400">
-                                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            `;
+                                            target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-100"><div class="w-5 h-5 text-gray-400">⚠️</div></div>`;
                                         }
                                     }}
                                 />
@@ -139,33 +133,21 @@ export function PopularProductsWidget() {
                                         {product.category}
                                     </p>
                                 </div>
-                                <div className={`
-                                    flex items-center space-x-1 text-xs font-medium
-                                    ${product.isPositive ? 'text-green-600' : 'text-red-600'}
-                                `}>
-                                    {product.isPositive ? (
-                                        <ArrowUpRight className="w-3 h-3" />
-                                    ) : (
-                                        <ArrowDownRight className="w-3 h-3" />
-                                    )}
+                                <div className={`flex items-center space-x-1 text-xs font-medium ${product.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                                    {product.isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                                     <span>{product.growth}%</span>
                                 </div>
                             </div>
 
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">
-                                        {product.revenue}
-                                    </p>
+                                    <p className="text-sm font-medium text-gray-900">{product.revenue}</p>
                                     <p className="text-xs text-gray-500">
-                                        {product.sales.toLocaleString()} sales
+                                        {product.sales.toLocaleString()} {t("sales")}
                                     </p>
                                 </div>
-                                <span className={`
-                                    px-2 py-1 text-xs font-medium rounded border
-                                    ${getStockBadge(product.stock)}
-                                `}>
-                                    {product.stock}
+                                <span className={`px-2 py-1 text-xs font-medium rounded border ${getStockBadge(t(`stock.${product.stock.toLowerCase().includes("in") ? "in" : product.stock.toLowerCase().includes("low") ? "low" : "out"}`))}`}>
+                                    {t(`stock.${product.stock.toLowerCase().includes("in") ? "in" : product.stock.toLowerCase().includes("low") ? "low" : "out"}`)}
                                 </span>
                             </div>
                         </div>
@@ -174,10 +156,12 @@ export function PopularProductsWidget() {
             </div>
 
             {/* View All Button */}
-            <button className="w-full flex items-center justify-center space-x-2 py-2 px-4 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200">
+            <Link 
+                href="/seller/products"
+                className="w-full cursor-pointer flex items-center justify-center space-x-2 py-2 px-4 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200">
                 <Eye className="w-4 h-4" />
-                <span>View All Products</span>
-            </button>
+                <span>{t("viewAll")}</span>
+            </Link>
         </div>
     );
 }

@@ -217,5 +217,16 @@
     "q1q2": "Q1-Q2",
     "q3q4": "Q3-Q4",
     "vs_last_year": "vs last year"
+  },
+  "popularProducts": {
+    "headerTitle": "Top Products",
+    "headerSubtitle": "Best performing items",
+    "stock": {
+      "in": "In Stock",
+      "low": "Low Stock",
+      "out": "Out of Stock"
+    },
+    "sales": "sales",
+    "viewAll": "View All Products"
   }
 }
