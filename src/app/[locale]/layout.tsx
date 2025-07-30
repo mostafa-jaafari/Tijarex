@@ -9,6 +9,7 @@ import { Toaster } from "sonner";
 import { Sidebar } from "@/components/Sidebar";
 import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
 import { getServerSession, Session } from "next-auth";
+import { UserInfosContextProvider } from "@/context/UserInfosContext";
 
 
 
@@ -44,18 +45,20 @@ export default async function RootLayout({
           ${cairo.className} ${bebas_neue.variable} antialiased`}
           >
           <NextAuthSessionProvider>
-            <Toaster position="top-center" />
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <section
-                className="w-full flex"
-              >
-                <Sidebar
-                  session={session}
-                />
-                {children}
-              </section>
-            </NextIntlClientProvider>
-            <ScrollToTop />
+            <UserInfosContextProvider>
+              <Toaster position="top-center" />
+              <NextIntlClientProvider locale={locale} messages={messages}>
+                <section
+                  className="w-full flex"
+                >
+                  <Sidebar
+                    session={session}
+                  />
+                  {children}
+                </section>
+              </NextIntlClientProvider>
+              <ScrollToTop />
+            </UserInfosContextProvider>
           </NextAuthSessionProvider>
       </body>
     </html>

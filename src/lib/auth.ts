@@ -4,7 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db, auth as ClientAuth } from "@/Firebase";
-import { sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { genareteUniqueUsername } from "@/components/Functions/generateUniqueUsername";
 
 // Extend NextAuth types

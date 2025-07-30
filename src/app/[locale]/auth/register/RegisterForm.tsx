@@ -76,7 +76,7 @@ export function RegisterForm() {
       const userCredential = await createUserWithEmailAndPassword(auth, inputsCredentials.email, inputsCredentials.password);
       const user = userCredential.user;
       await sendEmailVerification(user);
-      
+
       await setDoc(doc(db, "users", inputsCredentials.email), {
         fullname: inputsCredentials.fullname,
         phonenumber: inputsCredentials.phonenumber,
@@ -84,7 +84,6 @@ export function RegisterForm() {
         howyouheartaboutus: inputsCredentials.howyouheartaboutus,
         confirmtermsandconditions: inputsCredentials.confirmtermsandconditions,
         isNewUser: true,
-        isVerifiedUser: false,
         createdAt: new Date(),
       });
       toast.success("Account created successfully, please confirm your email!");

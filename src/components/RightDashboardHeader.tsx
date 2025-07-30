@@ -1,5 +1,4 @@
 "use client";
-
 import { Bell, ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -8,8 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { Session } from "next-auth";
 import { useLocale, useTranslations } from "next-intl";
-
-
+import { useUserInfos } from "@/context/UserInfosContext";
 
 export function RightDashboardHeader({ session }: { session: Session | null }){
     const locale = useLocale();
@@ -43,7 +41,8 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
         }
         document.addEventListener("mousedown", hideMenuRef);
         return () => document.removeEventListener("mousedown", hideMenuRef);
-    },[isNotificationsOpen])
+    },[isNotificationsOpen]);
+    const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
         <section>
             <div className="flex items-center space-x-4">
@@ -133,7 +132,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                             className="w-full flex items-center justify-between"
                         >
                             <span className="text-sm font-medium text-gray-900">
-                                {session?.user?.name}
+                                {isLoadingUserInfos ? (<span className="animate-pulse w-25 h-3 bg-gray-100 flex rounded"/>) : userInfos?.fullname}
                             </span>
                             <ChevronDown size={18} className="text-gray-500"/>
                         </div>

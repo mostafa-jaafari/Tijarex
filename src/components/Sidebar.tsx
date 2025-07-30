@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl"
 import { SwitchLanguage } from "./SwitchLanguage";
+import { useUserInfos } from "@/context/UserInfosContext";
 
 export function Sidebar({ session }: { session: Session | null }) {
     const t = useTranslations("sidebar");
@@ -69,6 +70,7 @@ export function Sidebar({ session }: { session: Session | null }) {
 
     const params = useParams().sellerpageid || "seller";
 
+    const { isLoadingUserInfos, userInfos } = useUserInfos();
     if(!session) return;
     return (
         <aside className={`
@@ -213,9 +215,9 @@ export function Sidebar({ session }: { session: Session | null }) {
                                 )}
                             </div>
                             <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900">
-                                    {session?.user?.name}
-                                </p>
+                                <span className="text-sm font-medium text-gray-900">
+                                {isLoadingUserInfos ? (<span className="animate-pulse w-25 h-3 bg-gray-100 flex rounded"/>) : userInfos?.fullname}
+                            </span>
                                 <p className="text-xs text-gray-500">
                                     {session?.user?.email}
                                 </p>
