@@ -243,5 +243,31 @@
       "Latest Added"
     ],
     "filterstitle": ["Category", "Stock Status", "Price Range", "Sales Performance"]
+  },
+  "orderspage": {
+    "title": "Orders Management",
+    "subtitle": "Manage and track all your orders in one place",
+    "createorderbtn": "Create order",
+    "searchinputplaceholder": "Search orders, customers, or products...",
+    "filter": {
+      "title": "Filter Orders",
+      "subtitle": "No filters applied",
+      "filter": "filter",
+      "applied": "applied",
+      "clearAll": "Clear All"
+    },
+    "orderstable": {
+      "title": "Recent Orders",
+      "ordersFound": "orders found"
+    },
+    "orderTableHeaders": {
+      "order": "Order",
+      "customer": "Customer",
+      "status": "Status",
+      "product": "Product",
+      "total": "Total",
+      "date": "Date",
+      "actions": "Actions"
+    }
   }
 }

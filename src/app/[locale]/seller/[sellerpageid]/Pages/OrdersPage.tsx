@@ -2,13 +2,14 @@
 import { FilterOrders } from '@/components/FilterOrders';
 import { OrderType } from '@/types/orders';
 import { MoreHorizontal, Plus, Package } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 export default function OrdersPage() {
+  const t = useTranslations("orderspage");
   const [searchTerm, setSearchTerm] = useState('');
-
   const [orders, setOrders] = useState<OrderType[] | []>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -44,19 +45,20 @@ export default function OrdersPage() {
     order.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const locale = useLocale();
   return (
     <section className="w-full overflow-x-scroll bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="p-3 bg-blue-50 rounded-xl">
               <Package className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Orders Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
               <p className="text-sm text-gray-500 mt-1">
-                Manage and track all your orders in one place
+                {t("subtitle")}
               </p>
             </div>
           </div>
@@ -64,9 +66,11 @@ export default function OrdersPage() {
           <Link
             href="/seller/products"
           >
-              <button className="cursor-pointer flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
+              <button className="cursor-pointer flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
                 <Plus size={18} />
-                <span className="text-sm font-medium">Create Order</span>
+                <span className="text-sm font-medium">
+                  {t("createorderbtn")}
+                </span>
               </button>
           </Link>
         </div>
@@ -83,9 +87,9 @@ export default function OrdersPage() {
           {/* Table Header Info */}
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t("orderstable.title")}</h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''} found
+                  {filteredOrders.length} {locale === "ar" ? t("orderstable.ordersFound") : "order"}{filteredOrders.length !== 1 && locale !== "ar" ? 's' : ''} {locale !== "ar" && "found"}
                 </p>
             </div>
           </div>
@@ -96,25 +100,25 @@ export default function OrdersPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Order
+                    {t("orderTableHeaders.order")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Customer
+                    {t("orderTableHeaders.customer")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    {t("orderTableHeaders.status")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Product
+                    {t("orderTableHeaders.product")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total
+                    {t("orderTableHeaders.total")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
+                    {t("orderTableHeaders.date")}
                   </th>
                   <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    {t("orderTableHeaders.actions")}
                   </th>
                 </tr>
               </thead>
@@ -129,7 +133,7 @@ export default function OrdersPage() {
 
                     {/* Seller (Image + Name + Email) */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
                         <div>
                           <div className="h-4 bg-gray-300 rounded w-24 mb-1"></div>
@@ -145,7 +149,7 @@ export default function OrdersPage() {
 
                     {/* Product (Image + Name + Quantity) */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-300 rounded-md"></div>
                         <div>
                           <div className="h-4 bg-gray-300 rounded w-36 mb-1"></div>
@@ -166,7 +170,7 @@ export default function OrdersPage() {
 
                     {/* Actions */}
                     <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <div className="flex items-center justify-center space-x-2">
+                      <div className="flex items-center justify-center gap-2">
                         {[...Array(4)].map((_, i) => (
                           <div key={i} className="w-8 h-8 bg-gray-200 rounded-lg"></div>
                         ))}
@@ -183,7 +187,7 @@ export default function OrdersPage() {
                     </td>
                     
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center gap-3">
                         <div
                             className='relative w-8 h-8 overflow-hidden rounded-full'
                         >
@@ -219,7 +223,7 @@ export default function OrdersPage() {
                     </td>
                     
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center gap-3">
                         <div
                             className='relative w-10 h-10 overflow-hidden rounded-lg border border-gray-200'
                         >
@@ -259,7 +263,7 @@ export default function OrdersPage() {
                     </td>
                     
                     <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <div className="flex items-center justify-center space-x-2">
+                      <div className="flex items-center justify-center gap-2">
                         {/* <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                           <Eye size={16} />
                         </button> */}

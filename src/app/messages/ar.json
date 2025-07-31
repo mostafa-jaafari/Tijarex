@@ -244,5 +244,31 @@
       "الأحدث إضافة"
     ],
     "filterstitle": ["الفئة", "حالة المخزون", "نطاق السعر", "أداء المبيعات"]
+  },
+  "orderspage": {
+    "title": "إدارة الطلبات",
+    "subtitle": "قم بإدارة وتتبع جميع طلباتك في مكان واحد",
+    "createorderbtn": "إنشاء طلب",
+    "searchinputplaceholder": "ابحث عن الطلبات أو العملاء أو المنتجات...",
+    "filter": {
+      "title": "تصفية الطلبات",
+      "subtitle": "لم يتم تطبيق أي فلاتر",
+      "filter": "فلاتر",
+      "applied": "تم التطبيق",
+      "clearAll": "مسح الكل"
+    },
+    "orderstable": {
+      "title": "الطلبات الأخيرة",
+      "ordersFound": "تم العثور على"
+    },
+    "orderTableHeaders": {
+      "order": "الطلب",
+      "customer": "العميل",
+      "status": "الحالة",
+      "product": "المنتج",
+      "total": "الإجمالي",
+      "date": "التاريخ",
+      "actions": "الإجراءات"
+    }
   }
 }

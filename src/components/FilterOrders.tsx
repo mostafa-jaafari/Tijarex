@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, Check, Filter, X, Search } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 interface DropDownMenuProps {
@@ -61,7 +62,7 @@ export const DropDownMenu = ({ BtnTitle, CLASSNAME, List, onSelect, selectedItem
                 `}
             >
                 <span className="truncate">{displayText}</span>
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center gap-1">
                     {isSelected && variant === "secondary" && (
                         <button
                             onClick={(e) => {
@@ -121,6 +122,7 @@ interface FilterOrdersProps {
     searchTerm: string;
 }
 export function FilterOrders({ onChange, searchTerm }: FilterOrdersProps) {
+    const t = useTranslations("orderspage");
     const orderFilters = [
         {
             title: "All Orders",
@@ -167,20 +169,23 @@ export function FilterOrders({ onChange, searchTerm }: FilterOrdersProps) {
     const HnadleChangeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
         onChange(e);
     }
+    const locale = useLocale();
     return (
         <section className="w-full p-6 bg-gray-50 border-b border-gray-200">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg shadow-sm border border-gray-200">
                         <Filter className="w-4 h-4 text-gray-600" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Filter Orders</h3>
-                        <p className="text-sm text-gray-500">
+                        <h3 className="text-lg font-semibold text-gray-900">{t("filter.title")}</h3>
+                        <p 
+                            dir="rtl"
+                            className="text-sm text-gray-500">
                             {hasActiveFilters 
-                                ? `${activeFiltersCount} filter${activeFiltersCount > 1 ? 's' : ''} applied`
-                                : "No filters applied"
+                                ? `${activeFiltersCount} ${t("filter.filter")}${activeFiltersCount > 1 && locale !== "ar" ? 's' : ''} ${t("filter.applied")}`
+                                : t("filter.subtitle")
                             }
                         </p>
                     </div>
@@ -189,11 +194,11 @@ export function FilterOrders({ onChange, searchTerm }: FilterOrdersProps) {
                 {hasActiveFilters && (
                     <button
                         onClick={clearAllFilters}
-                        className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-red-600 
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 
                                  hover:bg-red-50 rounded-lg transition-colors"
                     >
                         <X size={14} />
-                        <span>Clear All</span>
+                        <span>{t("filter.clearAll")}</span>
                     </button>
                 )}
             </div>
@@ -215,7 +220,7 @@ export function FilterOrders({ onChange, searchTerm }: FilterOrdersProps) {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <input
                             type="text"
-                            placeholder="Search orders, customers, or products..."
+                            placeholder={t("searchinputplaceholder")}
                             value={searchTerm}
                             onChange={HnadleChangeInputValue}
                             className="w-full pl-10 py-1.5 pr-4 h-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white focus:border-transparent"
@@ -228,14 +233,14 @@ export function FilterOrders({ onChange, searchTerm }: FilterOrdersProps) {
             {hasActiveFilters && (
                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-blue-700">Active Filters:</span>
                             <div className="flex flex-wrap gap-2">
                                 {Object.entries(selectedFilters)
                                     .filter(([, value]) => value !== "")                                    .map(([key, value], idx) => (
                                         <span
                                             key={idx}
-                                            className="inline-flex items-center space-x-1 px-2 py-1 
+                                            className="inline-flex items-center gap-1 px-2 py-1 
                                                      bg-blue-100 text-blue-700 text-xs font-medium rounded-full"
                                         >
                                             <span>{key}: {value.replace(/_/g, ' ')}</span>
