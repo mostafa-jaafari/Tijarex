@@ -52,14 +52,10 @@ export const metadata = {
 };
 export default function Home() {
   return (
-    <main className="w-full overflow-x-hidden">
-      <section
-        className="w-full bg-black min-h-screen"
-      >
-        <Header />
-        <div className="absolute z-10 right-[25%] w-[300px] lg:w-[600px] md:w-[600px] h-[300px] lg:h-[600px] md:h-[600px] rounded-full bg-blue-600 opacity-20 blur-3xl" />
-        <HeroSection />
-      </section>
+    <main className="w-full">
+      <Header />
+      {/* <div className="absolute z-10 right-[25%] w-[300px] lg:w-[600px] md:w-[600px] h-[300px] lg:h-[600px] md:h-[600px] rounded-full bg-blue-600 opacity-20 blur-3xl" /> */}
+      <HeroSection />
       <HeroStatistics />
       <WhyChooseUs />
       <HowItWorks />

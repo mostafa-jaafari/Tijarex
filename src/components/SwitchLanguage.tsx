@@ -47,10 +47,10 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
         onClick={() => setIsOpen(!isOpen)}
         className={CLASSNAME}
       >
-        <span className="text-base dark:text-blue-600 text-blue-600">
-          <Languages size={16} />
+        <span className="text-base text-blue-600">
+          <Languages size={20} />
         </span>
-        <span className="dark:text-blue-600 text-blue-600">{currentLocale.short}</span>
+        <span className="uppercase text-blue-600">{currentLocale.code}</span>
         <svg
           className={`w-3 h-3 text-blue-600 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -62,8 +62,8 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 bg-white 
-        dark:bg-black dark:border-neutral-800 rounded-lg shadow-lg 
+        <div className="absolute top-full right-0 mt-2 
+        bg-blue-50 rounded-lg shadow-lg 
         border border-gray-200 overflow-hidden z-50 min-w-[120px] w-full">
           {locales.map(({ code, flag, short }) => {
             const newPath = getPathWithLocale(pathname, code);
@@ -82,9 +82,9 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
                   className={`flex items-center gap-2 w-full px-3 py-2 
                     text-sm transition-colors text-left 
                     ${currentLocaleCode === code ? 
-                      'dark:bg-neutral-800 bg-[#892CDC] dark:text-white' 
+                      'bg-blue-600 text-white' 
                       : 
-                      'text-gray-700 dark:hover:bg-neutral-900 hover:bg-neutral-300'
+                      'text-gray-700 hover:bg-neutral-200'
                   }`}
                 >
                   <div

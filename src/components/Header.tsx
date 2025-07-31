@@ -31,8 +31,8 @@ export async function Header() {
   return (
     <section 
       dir="ltr"
-      className="w-full py-3 lg:px-10 md:px-10 px-6 flex
-        items-center justify-between z-20">
+      className="sticky top-0 w-full py-3 lg:px-10 md:px-10 px-6 flex
+        items-center justify-between z-50 bg-white">
       <h1 className="text-neutral-300">
         JAMLA.ma | LOGO
       </h1>
@@ -44,7 +44,7 @@ export async function Header() {
           <Link
             key={idx}
             href={link.href}
-            className="mx-2 cursor-pointer text-blue-200 
+            className="mx-2 cursor-pointer text-blue-600
                 hover:scale-105 transition-transform duration-200"
           >
             {link.name}
@@ -58,23 +58,24 @@ export async function Header() {
           className="hidden md:flex lg:flex"
         >
           <SwitchLanguage
-            CLASSNAME="flex items-center gap-2 px-3 py-1 rounded-full 
-              border dark:bg-transparent dark:border-neutral-800
-              dark:hover:bg-neutral-900 transition-all duration-200 
-              text-sm font-medium"
+            CLASSNAME="flex items-center cursor-pointer border 
+            border-blue-400 text-xs py-1 px-3 rounded-full gap-1"
           />
         </div>
         <Link
           href="/auth/register" 
-            className="lg:text-normal md:text-md text-sm bg-blue-600 py-2 cursor-pointer 
-            px-6 text-neutral-300 rounded-full">
+            className="lg:text-normal md:text-md text-sm 
+              bg-gradient-to-r transition-colors duration-200 
+              hover:to-blue-400 from-blue-600 to-blue-200 
+              py-1.5 cursor-pointer px-6 text-white rounded-full">
           {t("buttons.beSeller")}
         </Link>
         <Link
           href="/auth/login" 
-            className="lg:text-normal md:text-md text-sm border border-neutral-800 
-            rounded-full py-2 cursor-pointer 
-            px-6 text-neutral-300">
+            className="lg:text-normal md:text-md text-sm 
+              border border-blue-300 transition-colors duration-200
+              py-1 font-bold bg-blue-50/50 hover:bg-blue-50 cursor-pointer 
+              px-6 text-blue-600 rounded-full">
           {t("buttons.login")}
         </Link>
         <HeaderMenur />

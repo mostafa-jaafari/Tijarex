@@ -8,7 +8,7 @@ export async function HeroSection() {
     <main>
       <section 
         className="relative w-full z-20 h-[80vh] flex flex-col 
-          items-center justify-center text-center text-white 
+          items-center justify-center text-center text-black 
           px-6 lg:px-20 md:px-20 overflow-hidden">
         <h1 className="lg:w-[80%] text-4xl md:text-6xl font-extrabold leading-tight">
           {t('title_line1')}<br />
@@ -28,7 +28,7 @@ export async function HeroSection() {
           {t('footer_note')}
         </p>
       </section>
-      <InfiniteCardsScroll />
+      {/* <InfiniteCardsScroll /> */}
     </main>
   );
 }
