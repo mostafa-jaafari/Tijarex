@@ -6,11 +6,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { Session } from "next-auth";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useUserInfos } from "@/context/UserInfosContext";
 
 export function RightDashboardHeader({ session }: { session: Session | null }){
-    const locale = useLocale();
     const t = useTranslations();
     const ProfileHeaderNavs = [
         { label: t("profiledropdown.dashboard"), icon: LayoutDashboard, href: "dashboard" },

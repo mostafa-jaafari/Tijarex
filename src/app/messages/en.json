@@ -241,6 +241,7 @@
       "Price: High to Low",
       "Best Selling",
       "Latest Added"
-    ]
+    ],
+    "filterstitle": ["Category", "Stock Status", "Price Range", "Sales Performance"]
   }
 }

@@ -215,7 +215,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                                 <div className="w-3/4 h-4 bg-gray-200 rounded"></div>
                                 <div className="w-1/2 h-3 bg-gray-200 rounded"></div>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-2">
                                 <div className="w-16 h-4 bg-gray-200 rounded"></div>
                                 <div className="w-10 h-3 bg-gray-200 rounded"></div>
                             </div>
@@ -274,7 +274,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
 
                     {/* Pagination Dots */}
                     {product.product_images.length > 1 && (
-                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
                             {product.product_images.map((_, i) => (
                                 <span
                                     key={i}
@@ -296,7 +296,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                         <p className="text-xs text-gray-500">{product.category}</p>
                     </div>
 
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                         <span className="text-lg font-bold text-gray-900">${product.sale_price}</span>
                         {product.regular_price !== product.sale_price && (
                             <span className="text-sm text-gray-400 line-through">
@@ -314,11 +314,11 @@ export function ProductsPage({ session }: { session: Session | null }) {
                     </span>
 
                     <div className="flex items-center justify-between text-xs text-gray-500">
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center gap-1">
                             <TrendingUp className="w-3 h-3 text-green-500" />
                             <span>{product.sales} sales</span>
                         </div>
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center gap-1">
                             <DollarSign className="w-3 h-3 text-blue-500" />
                             <span>${(product.revenue / 1000).toFixed(1)}K</span>
                         </div>
@@ -343,7 +343,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
             </div>
 
             {/* Search and Controls */}
-            <div className="flex items-center justify-between space-x-4 px-6">
+            <div className="flex items-center justify-between gap-4 px-6">
                 {/* Search Bar */}
                 <div className="w-full max-w-1/2 relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -360,11 +360,11 @@ export function ProductsPage({ session }: { session: Session | null }) {
                 </div>
                 
                 {/* Controls */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                     {/* Filters Toggle */}
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center space-x-2 cursor-pointer px-4 py-1.5 text-sm rounded-lg border transition-colors ${
+                        className={`flex items-center gap-2 cursor-pointer px-4 py-1.5 text-sm rounded-lg border transition-colors ${
                             showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'
                         }`}
                     >
@@ -493,7 +493,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                             {paginatedProducts.map(product => (
                                 <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4">
-                                        <div className="flex items-center space-x-3">
+                                        <div className="flex items-center gap-3">
                                             <Link href={`/seller/products?p_id=${product.id}`}>
                                                 <div className="relative w-14 h-14 bg-gray-100 rounded-lg overflow-hidden">
                                                     <Image
@@ -526,7 +526,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                                     <td className="px-6 py-4 text-sm text-gray-600">{product.sales.toLocaleString()}</td>
                                     {/* <td className="px-6 py-4 text-sm text-gray-600">{product.lastUpdated}</td> */}
                                     <td className="px-6 py-4">
-                                        <div className="flex items-center justify-end space-x-2">
+                                        <div className="flex items-center justify-end gap-2">
                                             <button className="p-1 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors">
                                                 <Download className="w-4 h-4" />
                                             </button>
@@ -551,13 +551,13 @@ export function ProductsPage({ session }: { session: Session | null }) {
                     <button
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
-                        className="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         <ChevronLeft className="w-4 h-4" />
                         <span>Previous</span>
                     </button>
 
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                         {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                             let page;
                             if (totalPages <= 5) {
@@ -589,7 +589,7 @@ export function ProductsPage({ session }: { session: Session | null }) {
                     <button
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
-                        className="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         <span>Next</span>
                         <ChevronRight className="w-4 h-4" />

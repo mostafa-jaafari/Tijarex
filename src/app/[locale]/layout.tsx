@@ -35,7 +35,6 @@ export default async function RootLayout({
     notFound();
   }
   const messages = await getMessages();
-  const IsArabic = locale === 'ar';
   const session: Session | null = await getServerSession();
   return (
     <html lang={locale} className="scroll-smooth">
