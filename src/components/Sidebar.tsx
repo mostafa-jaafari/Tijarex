@@ -75,7 +75,7 @@ export function Sidebar({ session }: { session: Session | null }) {
     return (
         <aside className={`
             ${isCollapsed ? 'w-16' : 'w-74'} 
-            bg-white ${locale === "ar" ? "border-l" : "border-r"} border-gray-200 h-screen transition-all duration-300 
+            bg-white border-r border-gray-200 h-screen transition-all duration-300 
             flex flex-col sticky top-0 overflow-hidden
         `}>
             {/* Header */}
@@ -197,7 +197,9 @@ export function Sidebar({ session }: { session: Session | null }) {
                             className="w-full"
                         >
                             <SwitchLanguage
-                                CLASSNAME="w-full flex items-center justify-between bg-blue-100 px-2 py-1 rounded-full border border-blue-300 text-blue-600"
+                                CLASSNAME="w-full flex items-center justify-between 
+                                    bg-blue-100 px-2 py-1 rounded-full border 
+                                    border-blue-300 text-blue-600"
                             />
                         </div>
                         <div
