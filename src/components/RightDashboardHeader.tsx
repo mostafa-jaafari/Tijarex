@@ -45,7 +45,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
     const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
         <section>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
             {/* Notifications */}
             <div className="relative">
                 {/* Bell Icon with Badge */}
@@ -111,7 +111,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
             <div className="relative">
                 <button 
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className="flex items-center space-x-2 cursor-pointer">
+                    className="flex items-center gap-2 cursor-pointer">
                     <div
                         className='relative w-12 h-12'
                     >
@@ -156,11 +156,10 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                                     onClick={() => setIsProfileMenuOpen(false)}
                                     href={`/seller/${nav.href !== "dashboard" ? nav.href : ""}`}
                                     className={`flex items-center px-4 py-2 text-gray-500 
-                                        hover:bg-blue-50 hover:text-blue-700 transition-colors
-                                        ${locale === "ar" && "gap-2"}`}
+                                        hover:bg-blue-50 hover:text-blue-700 transition-colors gap-2`}
                                 >
                                     {/* Optional Icon */}
-                                    <span className="mr-2">
+                                    <span className="">
                                         <nav.icon size={16} />
                                     </span>
                                     <span className="capitalize">{nav.label}</span>

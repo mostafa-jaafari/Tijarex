@@ -81,7 +81,8 @@ export function Sidebar({ session }: { session: Session | null }) {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
                 {!isCollapsed && (
-                    <div className="flex items-center space-x-3">
+                    <div 
+                        className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                             <span className="text-white font-bold text-sm">J</span>
                         </div>
@@ -120,10 +121,10 @@ export function Sidebar({ session }: { session: Session | null }) {
                                 <Link
                                     href={`/seller/${nav.href !== "seller" ? nav.href : ""}`}
                                     key={idx}
-                                    className={`${locale === "ar" && "gap-2"}
+                                    className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-blue-50 text-blue-700 border-blue-600 ${locale === "ar" ? "border-r-2" : "border-l-2"}` 
+                                            ? `bg-blue-50 text-blue-700 border-blue-600 border-l-2` 
                                             : "text-gray-700 hover:bg-gray-50"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
@@ -164,10 +165,10 @@ export function Sidebar({ session }: { session: Session | null }) {
                                 <Link
                                     href={`/seller/${tool.href !== "seller" ? tool.href : ""}`}
                                     key={idx}
-                                    className={`${locale === "ar" && "gap-2"}
+                                    className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-blue-50 text-blue-700 border-blue-600 ${locale === "ar" ? "border-r-2" : "border-l-2"}` 
+                                            ? `bg-blue-50 text-blue-700 border-blue-600 border-l-2` 
                                             : "text-gray-700 hover:bg-gray-50"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}

@@ -78,9 +78,9 @@ export function PopularProductsWidget() {
     };
 
     return (
-        <div className="space-y-6 w-full">
+        <div className="space-y-4 w-full">
             {/* Header */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-3 px-4">
                 <div className="p-2 bg-blue-50 rounded-lg">
                     <Package className="w-5 h-5 text-blue-600" />
                 </div>
@@ -91,11 +91,11 @@ export function PopularProductsWidget() {
             </div>
 
             {/* Products List */}
-            <div className="space-y-4">
+            <div className="gap-4">
                 {popularProducts.map((product, index) => (
                     <div
                         key={product.id}
-                        className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                        className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
                     >
                         {/* Rank */}
                         <div className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-semibold">
@@ -133,7 +133,7 @@ export function PopularProductsWidget() {
                                         {product.category}
                                     </p>
                                 </div>
-                                <div className={`flex items-center space-x-1 text-xs font-medium ${product.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                                <div className={`flex items-center gap-1 text-xs font-medium ${product.isPositive ? 'text-green-600' : 'text-red-600'}`}>
                                     {product.isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                                     <span>{product.growth}%</span>
                                 </div>

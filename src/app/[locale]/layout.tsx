@@ -38,7 +38,7 @@ export default async function RootLayout({
   const IsArabic = locale === 'ar';
   const session: Session | null = await getServerSession();
   return (
-    <html dir={IsArabic ? "rtl" : "ltr"} lang={locale} className="scroll-smooth">
+    <html lang={locale} className="scroll-smooth">
       <body
         className={`w-full overflow-x-hidden 
           bg-white dark:bg-[#0a0a0a] 
