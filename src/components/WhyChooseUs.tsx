@@ -83,9 +83,13 @@ export function WhyChooseUs() {
           return (
             <div
               key={idx}
-              className="p-6 flex gap-6 border border-neutral-200 rounded-lg hover:shadow-lg transition-shadow duration-200"
+              className="p-6 flex gap-6 border border-neutral-200 
+                rounded-lg hover:shadow transition-shadow 
+                duration-200"
             >
-              <span className="flex h-max text-blue-700 rounded-full p-2 bg-blue-200">
+              <span 
+                className="flex h-max text-blue-600 
+                  rounded-full p-2 bg-blue-100">
                 <card.icon />
               </span>
               <div>

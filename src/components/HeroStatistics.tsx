@@ -29,15 +29,18 @@ export async function HeroStatistics() {
   ];
 
   return (
-    <section className="bg-blue-50 py-10 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 lg:px-20 md:px-20 px-6">
+    <section className="bg-gradient-to-b to-blue-50 py-10 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 lg:px-20 md:px-20 px-6">
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="border-l-3 border-blue-700 rounded flex flex-col items-center justify-center text-center px-10"
+          className="border-l-3 border-blue-400 rounded 
+            flex flex-col items-center justify-center 
+            text-center px-10"
         >
           <div
             dir={locale === 'ar' ? 'ltr' : 'ltr'}
-            className="lg:text-4xl md:text-4xl text-2xl font-bold text-black flex items-center gap-1"
+            className="lg:text-4xl md:text-4xl text-2xl 
+              font-bold text-black flex items-center gap-1"
           >
             <CountUp
               from={0}
