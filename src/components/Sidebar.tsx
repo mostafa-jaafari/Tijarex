@@ -15,13 +15,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl"
+import { useTranslations } from "next-intl"
 import { SwitchLanguage } from "./SwitchLanguage";
 import { useUserInfos } from "@/context/UserInfosContext";
 
 export function Sidebar({ session }: { session: Session | null }) {
     const t = useTranslations("sidebar");
-    const locale = useLocale();
     const [isCollapsed, setIsCollapsed] = useState(true);
     const Navigation_Links = [
         {
