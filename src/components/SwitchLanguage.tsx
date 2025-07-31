@@ -47,12 +47,12 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
         onClick={() => setIsOpen(!isOpen)}
         className={CLASSNAME}
       >
-        <span className="text-base text-blue-600">
+        <span className="text-base">
           <Languages size={20} />
         </span>
-        <span className="uppercase text-blue-600">{currentLocale.code}</span>
+        <span className="uppercase">{currentLocale.code}</span>
         <svg
-          className={`w-3 h-3 text-blue-600 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

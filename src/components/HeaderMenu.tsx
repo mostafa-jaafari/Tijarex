@@ -56,7 +56,7 @@ export function HeaderMenur(){
             {!openMunu && (
                 <span
                     onClick={() => setOpenMenu(!openMunu)}
-                    className="text-white cursor-pointer"
+                    className="text-blue-600 cursor-pointer"
                     >
                     <Menu />
                 </span>
@@ -68,17 +68,22 @@ export function HeaderMenur(){
                 >
                     <div
                         ref={MenuRef}
-                        className="border-l border-neutral-800 h-screen w-56 sm:w-80 bg-black
-                            transition-transform duration-500"
+                        className="border-l border-blue-300 h-screen 
+                            w-56 sm:w-80 bg-gradient-to-r from-blue-200 to-blue-600 transition-transform 
+                            duration-500"
                     >
                         <div
-                            className="border-b border-neutral-800 px-6 flex
-                                justify-between items-center py-4"
+                            className="border-b border-blue-300 p-2 flex
+                                justify-between items-center"
                         >
                             <div
                                 className="md:hidden lg:flex"
                             >
-                                <SwitchLanguage />
+                                <SwitchLanguage
+                                    CLASSNAME="flex items-center gap-1 text-xs 
+                                        px-2 rounded-full border border-blue-100 
+                                        py-0.5 cursor-pointer hover:bg-blue-600/20 text-white"
+                                />
                             </div>
                             <span
                                 onClick={() => setOpenMenu(!openMunu)}
@@ -92,7 +97,8 @@ export function HeaderMenur(){
                                 <Link
                                     key={idx}
                                     href={link.href}
-                                    className="block px-6 py-3 text-white hover:bg-neutral-800 transition-colors"
+                                    className="block px-6 py-3 text-white 
+                                        hover:bg-gradient-to-r from-blue-600 transition-colors"
                                     onClick={() => setOpenMenu(false)}
                                 >
                                     {link.name}
