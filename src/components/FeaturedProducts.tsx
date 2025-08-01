@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import { FakeProducts } from "./FakeProducts";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
+import { Eye, Heart, ShoppingCart } from "lucide-react";
 
 // Types for better type safety
 interface Product {
@@ -115,7 +116,7 @@ export function FeaturedProducts() {
                             md:text-base disabled:opacity-50
                             disabled:cursor-not-allowed cursor-pointer
                             ${selectedTabCategorie === tab.name 
-                                ? "bg-blue-500 text-white"
+                                ? "bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 text-white"
                                 : "text-gray-500 hover:bg-blue-50"
                             }
                         `}
@@ -130,7 +131,7 @@ export function FeaturedProducts() {
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
                 {isLoading ? (
                     // Loading skeleton
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                         {[...Array(4)].map((_, idx) => (
                             <div key={idx} className="animate-pulse">
                                 <div className="bg-gray-200 h-64 rounded-xl mb-4"></div>
@@ -143,13 +144,15 @@ export function FeaturedProducts() {
                 ) : filteredProducts.length > 0 ? (
                     <div 
                         className="grid grid-cols-1 sm:grid-cols-2 
-                            lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            lg:grid-cols-3 xl:grid-cols-4 gap-2">
                         {filteredProducts.map((product: Product) => (
                             <div
                                 key={product.id}
-                                className="group bg-white rounded-2xl border border-gray-200 overflow-hidden
-                                         hover:shadow-2xl hover:shadow-gray-200/50 hover:-translate-y-2
-                                         transition-all duration-500 cursor-pointer"
+                                className="group bg-gradient-to-t from-blue-100 
+                                    via-white to-white rounded-xl border 
+                                    border-gray-200 overflow-hidden hover:shadow-2xl 
+                                    hover:shadow-gray-200/50 hover:-translate-y-1
+                                    transition-all duration-500 cursor-pointer"
                             >
                                 {/* Enhanced image container */}
                                 <div className="relative aspect-square overflow-hidden bg-gray-100">
@@ -158,39 +161,49 @@ export function FeaturedProducts() {
                                         fill
                                         loading="lazy"
                                         alt={product.title}
-                                        className="object-cover w-full h-full group-hover:scale-110 
-                                                 transition-transform duration-700 ease-out"
+                                        className="object-cover w-full h-full 
+                                            group-hover:scale-110 transition-transform 
+                                            duration-700 ease-out"
                                     />
                                     {/* Overlay effects */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent 
-                                                  opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <div 
+                                        className="absolute inset-0 bg-gradient-to-t 
+                                            from-black/20 to-transparent opacity-0 
+                                            group-hover:opacity-100 transition-opacity 
+                                            duration-300" />
                                     
                                     {/* Quick actions overlay */}
-                                    <div className="absolute top-4 right-4 flex flex-col gap-2 
-                                                  opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                        <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full
-                                                         flex items-center justify-center hover:bg-white
-                                                         transition-colors duration-200 shadow-lg">
-                                            ❤️
+                                    <div 
+                                        className="absolute top-4 right-4 flex 
+                                            flex-col gap-2 opacity-0 group-hover:opacity-100 
+                                            transition-all duration-300">
+                                        <button 
+                                            className="w-10 h-10 bg-white/90 backdrop-blur-sm 
+                                                rounded-full flex items-center justify-center 
+                                                hover:bg-white transition-colors duration-200 
+                                                shadow-lg">
+                                            <Heart size={20}/>
                                         </button>
-                                        <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full
-                                                         flex items-center justify-center hover:bg-white
-                                                         transition-colors duration-200 shadow-lg">
-                                            👁️
+                                        <button 
+                                            className="w-10 h-10 bg-white/90 backdrop-blur-sm 
+                                                rounded-full flex items-center justify-center 
+                                                hover:bg-white transition-colors duration-200 
+                                                shadow-lg">
+                                            <Eye size={20}/>
                                         </button>
                                     </div>
 
                                     {/* Discount badge (if applicable) */}
                                     {product.originalPrice && product.originalPrice > product.price && (
-                                        <div className="absolute top-4 left-4 bg-red-500 text-white 
-                                                      px-3 py-1 rounded-full text-sm font-bold">
-                                            {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                                        <div className="absolute top-2 left-2 bg-red-600 text-white 
+                                                      px-3 py-1 rounded-full text-xs font-bold">
+                                            {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% {t("featuredproducts.discountpercent")}
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Enhanced product info */}
-                                <div className="p-6">
+                                <div className="p-3">
                                     <div className="mb-3">
                                         <h3 className="text-lg font-bold text-gray-800 mb-2 
                                                      group-hover:text-blue-600 transition-colors duration-300
@@ -232,15 +245,15 @@ export function FeaturedProducts() {
 
                                     {/* Enhanced CTA button */}
                                     <button
-                                        className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600
-                                                 text-white font-semibold rounded-xl
-                                                 hover:from-blue-600 hover:to-blue-700
-                                                 hover:shadow-lg hover:shadow-blue-500/25
-                                                 transform hover:scale-105 active:scale-95
-                                                 transition-all duration-300 ease-out
-                                                 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                        className="w-full bg-gradient-to-r 
+                                            from-blue-600 via-blue-500 to-blue-400
+                                            transition-all duration-300 ease-out
+                                            py-2 rounded-full text-white hover:to-blue-200
+                                            flex items-center justify-center gap-2
+                                            focus:outline-none focus:ring-2 cursor-pointer
+                                            focus:ring-blue-500/50"
                                     >
-                                        {t("globalcta")}
+                                        <ShoppingCart size={20}/> {t("globalcta")}
                                     </button>
                                 </div>
                             </div>
@@ -251,18 +264,11 @@ export function FeaturedProducts() {
                     <div className="text-center py-20">
                         <div className="text-6xl mb-4 opacity-50">🔍</div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                            {t("featuredproducts.nofound")}
+                            {t("featuredproducts.nofound.title")}
                         </h3>
                         <p className="text-gray-500 mb-6">
-                            Try selecting a different category or check back later
+                            {t("featuredproducts.nofound.description")}
                         </p>
-                        <button
-                            onClick={() => handleCategoryChange("all")}
-                            className="px-6 py-3 bg-blue-500 text-white rounded-xl
-                                     hover:bg-blue-600 transition-colors duration-300"
-                        >
-                            View All Products
-                        </button>
                     </div>
                 )}
             </div>
@@ -270,10 +276,11 @@ export function FeaturedProducts() {
             {/* Load more button (optional) */}
             {filteredProducts.length > 0 && filteredProducts.length >= 8 && (
                 <div className="mt-12">
-                    <button className="px-8 py-4 border-2 border-blue-500 text-blue-500 
-                                     rounded-xl font-semibold hover:bg-blue-500 hover:text-white
-                                     transition-all duration-300 transform hover:scale-105">
-                        Load More Products
+                    <button 
+                        className="border border-blue-200 py-2 px-6 
+                            font-semibold rounded-full text-blue-600
+                            cursor-pointer hover:bg-blue-100">
+                        {t("featuredproducts.viewallbtn")}
                     </button>
                 </div>
             )}

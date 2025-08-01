@@ -124,7 +124,13 @@
   "featuredproducts": {
     "title": "Featured Products",
     "description": "Discover a variety of products including clothing, accessories, and much more — all in one place.",
-    "tabs": ["all", "electronics", "fashion", "home appliances"]
+    "tabs": ["all", "electronics", "fashion", "home appliances"],
+    "discountpercent": "Off",
+    "nofound": {
+      "title": "Featured Products",
+      "description": "Try selecting a different category or check back later"
+    },
+    "viewallbtn": "View all products"
   },
   "faqlist": {
     "title": "Frequently Asked Questions",

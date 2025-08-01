@@ -20,7 +20,7 @@ export async function LastCallToAction() {
                     className="cursor-pointer bg-gradient-to-r 
                         from-blue-600 via-blue-500 to-blue-400
                         hover:to-blue-200 transition px-6 py-2
-                        rounded-full border border-blue-300 shadow-xl 
+                        rounded-full border border-blue-400 shadow-xl 
                         shadow-blue-700/20 text-white text-lg font-semibold"
                 >
                     {t("button")}
