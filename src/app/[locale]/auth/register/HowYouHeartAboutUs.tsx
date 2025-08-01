@@ -1,7 +1,7 @@
 "use client";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 type HowYouHeartAboutUs = {
@@ -24,9 +24,20 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
         onSelect(choice);
         setIsOpen(false);
     }
+    const MenuRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        const hideMenuRef = (e: MouseEvent) => {
+            if(MenuRef.current && !MenuRef.current.contains(e.target as Node)){
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", hideMenuRef);
+        return () => document.removeEventListener("mousedown", hideMenuRef);
+    },[])
     return (
         <section
             className="relative mt-2"
+            ref={MenuRef}
         >
             <div
                 onClick={() => setIsOpen(!isOpen)}
@@ -71,7 +82,10 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
                         return (
                             <li
                                 key={idx}
-                                onClick={() => HandleSelectChoice(choice)}
+                                onClick={() => {
+                                    HandleSelectChoice(choice)
+                                    setIsOpen(false)
+                                }}
                                 className="list-none px-2 py-1 text-gray-500
                                     hover:bg-gray-200/50 hover:text-gray-700 cursor-pointer"
                             >

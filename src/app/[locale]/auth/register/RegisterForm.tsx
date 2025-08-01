@@ -121,10 +121,10 @@ export function RegisterForm() {
           lg:w-full border border-gray-200 
           p-6 rounded-lg"
       >
-        <h1 className="mb-8 text-center text-2xl font-bold uppercase">{t("title")}</h1>
+        <h1 className="mb-8 text-center text-2xl font-bold uppercase text-blue-600">{t("title")}</h1>
         <div className="w-full flex items-center gap-2">
           <div className="w-full flex flex-col mb-2">
-            <label htmlFor="FullName" className="px-1">
+            <label htmlFor="FullName" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.fullname")} <span className="text-red-800">*</span>
             </label>
             <input
@@ -140,7 +140,7 @@ export function RegisterForm() {
             />
           </div>
           <div className="w-full flex flex-col mb-2">
-            <label htmlFor="PhoneNumber" className="px-1">
+            <label htmlFor="PhoneNumber" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.phonenumber")} <span className="text-red-800">*</span>
             </label>
             <input
@@ -158,7 +158,7 @@ export function RegisterForm() {
         </div>
 
         <div className="flex flex-col mb-2">
-          <label htmlFor="Email" className="px-1">
+          <label htmlFor="Email" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
             {t("inputslabel.emailadress")} <span className="text-red-800">*</span>
           </label>
           <input
@@ -176,7 +176,7 @@ export function RegisterForm() {
 
         <div className="w-full flex items-center gap-2">
           <div className="w-full flex flex-col">
-            <label htmlFor="Password" className="px-1">
+            <label htmlFor="Password" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.password")} <span className="text-red-800">*</span>
             </label>
             <input
@@ -192,7 +192,7 @@ export function RegisterForm() {
             />
           </div>
           <div className="w-full flex flex-col">
-            <label htmlFor="ConfirmPassword" className="px-1">
+            <label htmlFor="ConfirmPassword" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.confirmpassword")} <span className="text-red-800">*</span>
             </label>
             <input
