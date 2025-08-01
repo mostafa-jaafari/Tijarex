@@ -102,17 +102,20 @@ export function RegisterForm() {
     }
   };
 
-  const baseInputClass = `focus:outline-none rounded-lg py-2 px-2 border 
-  focus:shadow-md transition-shadow duration-300 w-full`;
+  const baseInputClass = `focus:outline-none rounded-lg py-2 px-2 border focus:shadow-md transition-shadow duration-300 w-full`;
 
   const errorInputClass = `border-red-500 shadow-red-300`;
 
   return (
-    <section className="w-full h-screen px-6 lg:px-20 flex flex-col justify-center items-center">
+    <section 
+      className="w-full h-screen px-6 lg:px-20 flex 
+        flex-col justify-center items-center">
       <form
         onSubmit={handleCreateAccount}
         noValidate
-        className="w-full sm:w-[500px] md:w-[500px] lg:w-full border border-neutral-900 shadow-xl shadow-neutral-900/20 p-6 rounded-lg"
+        className="w-full sm:w-[500px] md:w-[500px] 
+          lg:w-full border border-gray-200 
+          p-6 rounded-lg"
       >
         <h1 className="mb-8 text-center text-2xl font-bold uppercase">Register</h1>
         <div className="w-full flex items-center gap-2">
@@ -128,7 +131,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder="full name"
               className={`${baseInputClass} ${
-                submitted && errors.fullname ? errorInputClass : "border-neutral-900"
+                submitted && errors.fullname ? errorInputClass : "border-gray-200"
               }`}
             />
           </div>
@@ -144,7 +147,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder="phone number"
               className={`${baseInputClass} ${
-                submitted && errors.phonenumber ? errorInputClass : "border-neutral-900"
+                submitted && errors.phonenumber ? errorInputClass : "border-gray-200"
               }`}
             />
           </div>
@@ -162,7 +165,7 @@ export function RegisterForm() {
             onChange={handleChangeInputs}
             placeholder="enter your email"
             className={`${baseInputClass} ${
-              submitted && errors.email ? errorInputClass : "border-neutral-900"
+              submitted && errors.email ? errorInputClass : "border-gray-200"
             }`}
           />
         </div>
@@ -180,7 +183,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder="enter your password"
               className={`${baseInputClass} ${
-                submitted && errors.password ? errorInputClass : "border-neutral-900"
+                submitted && errors.password ? errorInputClass : "border-gray-200"
               }`}
             />
           </div>
@@ -196,7 +199,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder="confirm your password"
               className={`${baseInputClass} ${
-                submitted && errors.confirmpassword ? errorInputClass : "border-neutral-900"
+                submitted && errors.confirmpassword ? errorInputClass : "border-gray-200"
               }`}
             />
           </div>
@@ -230,7 +233,11 @@ export function RegisterForm() {
 
         <button
           type="submit"
-          className="focus:outline-none focus:shadow-lg shadow-blue-700/20 focus:ring-2 ring-blue-500 mt-4 rounded-lg py-2 w-full bg-blue-700 font-bold hover:bg-blue-900 transition-all duration-200 cursor-pointer"
+          className="focus:outline-none text-white 
+            focus:ring-2 ring-blue-500 mt-4 rounded-lg 
+            py-2 w-full bg-blue-700 font-bold 
+            hover:bg-blue-800 transition-all 
+            duration-200 cursor-pointer"
         >
           Register
         </button>

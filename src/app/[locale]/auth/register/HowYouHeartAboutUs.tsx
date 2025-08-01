@@ -21,9 +21,10 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
         >
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full p-2 flex items-center
+                className={`w-full p-2 flex items-center
                     text-neutral-400 justify-between border
-                    border-neutral-900 rounded-lg cursor-pointer"
+                    border-gray-200 rounded-lg cursor-pointer
+                    ${isOpen && "shadow"}`}
             >
                 <span>
                     {selectedChoice === "" ? 
@@ -35,7 +36,7 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
                         :
                         (
                             <p
-                                className="text-white"
+                                className="text-gray-600"
                             >
                                 {selectedChoice}
                             </p>
@@ -49,9 +50,9 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
             </div>
             <div
                 className={`
-                    absolute left-0 top-full w-full mt-1
-                    bg-black border border-neutral-900 rounded-lg overflow-hidden
-                    transition-all duration-300
+                    absolute left-0 top-full w-full mt-1 bg-blue-50 
+                    border border-gray-200 rounded-lg 
+                    overflow-hidden transition-all duration-300
                     ${isOpen ? "max-h-60" : "opacity-0 max-h-0 pointer-events-none"}
                 `}
                 style={{ transitionProperty: 'max-height, margin-top' }}
@@ -62,8 +63,8 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
                             <li
                                 key={idx}
                                 onClick={() => HandleSelectChoice(choice)}
-                                className="list-none px-2 py-1 
-                                    hover:bg-neutral-900/20 cursor-pointer"
+                                className="list-none px-2 py-1 text-gray-500
+                                    hover:bg-gray-200/50 hover:text-gray-700 cursor-pointer"
                             >
                                 {choice}
                             </li>
