@@ -75,7 +75,7 @@ export async function Header() {
         <Link
           href="/auth/login" 
             className="lg:text-normal md:text-md text-sm 
-              border border-blue-300 transition-colors duration-200
+              border border-blue-200 transition-colors duration-200
               py-1 font-bold bg-blue-50/50 hover:bg-blue-50 cursor-pointer 
               px-6 text-blue-600 rounded-full">
           {t("buttons.login")}
