@@ -133,117 +133,57 @@ const GrowthSVG = () => (
 
 export function HowItWorks() {
     const t = useTranslations("howItWorks");
-    const svgComponents = [SignUpSVG, CustomizeSVG, ProductsSVG, GrowthSVG];
-    
-    const HowItWorks_Details = [
-        {
-            svg: svgComponents[0],
-            title: t("steps.0.title"),
-            description: t("steps.0.description"),
-        },
-        {
-            svg: svgComponents[1],
-            title: t("steps.1.title"),
-            description: t("steps.1.description"),
-        },
-        {
-            svg: svgComponents[2],
-            title: t("steps.2.title"),
-            description: t("steps.2.description"),
-        },
-        {
-            svg: svgComponents[3],
-            title: t("steps.3.title"),
-            description: t("steps.3.description"),
-        },
-    ];
+        
+    const steps = [
+    {
+      icon: <SignUpSVG />, 
+      title: t("steps.0.title"),
+      desc: t("steps.0.description")
+    },
+    {
+      icon: <CustomizeSVG />, 
+      title: t("steps.1.title"),
+      desc: t("steps.1.description")
+    },
+    {
+      icon: <ProductsSVG />, 
+      title: t("steps.2.title"),
+      desc: t("steps.2.description")
+    },
+    {
+      icon: <GrowthSVG />, 
+      title: t("steps.3.title"),
+      desc: t("steps.3.description")
+    }
+  ];
     const locale = useLocale();
     return (
-        <section
-            id="HowItWorks"
-            className="w-full flex py-20 px-6 
-                lg:px-20 flex-col justify-center items-center 
-                bg-blue-600"
-        >
-                <h1
-                    className={`text-3xl md:text-4xl lg:text-4xl 
-                        px-6 font-bold text-white 
-                        text-center mb-4
-                        ${locale === "ar" ? "" : "bebas-neue"}`}
-                >
-                    {t("title")}
-                </h1>
-                <p className="mb-6 text-blue-200 text-center px-6">
-                    {t("subtitle")}
-                </p>
-            <div
-                className="w-full flex flex-col lg:flex-row items-center justify-center 
-                    gap-8 lg:gap-4"
-            >
-                {HowItWorks_Details.map((item, idx) => {
-                    const SVGComponent = item.svg;
-                    return (
-                        <React.Fragment key={idx}>
-                            <div className="flex flex-col items-center mb-8 lg:mb-0 flex-1 max-w-xs">
-                                <div
-                                    className="relative w-80 h-60 lg:w-full lg:h-60 mb-4 
-                                        overflow-hidden lg:p-10"
-                                >
-                                    <SVGComponent />
-                                </div>
-                                <span
-                                    className="w-full text-start text-xl
-                                        font-bold text-neutral-800 mb-2
-                                        flex justify-center no-underline gap-1"
-                                >
-                                    <ins
-                                        className="no-underline text-blue-900"
-                                        >
-                                        {idx + 1}. 
-                                    </ins>
-                                    <h1
-                                        className="text-white text-start"
-                                        >
-                                        {item.title}
-                                    </h1>
-                                </span>
-                                <p
-                                    className="text-sm text-blue-300 text-start"
-                                    >
-                                    {item.description}
-                                </p>
-                            </div>
-                            
-                            {/* Arrow SVG between steps - only show on large screens and not after last item */}
-                            {idx < HowItWorks_Details.length - 1 && (
-                                <div className="hidden lg:block mx-2">
-                                    <svg 
-                                        width="40" 
-                                        height="40" 
-                                        viewBox="0 0 40 40" 
-                                        className="text-blue-600"
-                                    >
-                                        <defs>
-                                            <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stopColor="#3B82F6" />
-                                                <stop offset="100%" stopColor="#1D4ED8" />
-                                            </linearGradient>
-                                        </defs>
-                                        <path 
-                                            d="M10 20 L25 20 M20 15 L25 20 L20 25" 
-                                            stroke="url(#arrowGrad)" 
-                                            strokeWidth="2.5" 
-                                            fill="none" 
-                                            strokeLinecap="round" 
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                </div>
-                            )}
-                        </React.Fragment>
-                    )
-                })}
-            </div>
-        </section>
+    <section id="HowItWorks" className="w-full py-20 bg-blue-50 px-6 lg:px-24">
+      <div className="text-center mb-12">
+        <h2 className={`text-3xl md:text-4xl font-bold text-blue-800 ${locale !== 'ar' ? 'bebas-neue' : ''}`}>
+          {t("title")}
+        </h2>
+        <p className="text-blue-500 mt-3 text-sm md:text-base max-w-2xl mx-auto">
+          {t("subtitle")}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {steps.map((step, index) => (
+          <div
+            key={index}
+            className="flex flex-col items-center text-center bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
+          >
+            <div className="w-32 h-32 mb-4">{step.icon}</div>
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              {index + 1}. {step.title}
+            </h3>
+            <p className="text-sm text-blue-500 leading-relaxed">
+              {step.desc}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
     )
 }

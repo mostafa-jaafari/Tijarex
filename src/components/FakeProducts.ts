@@ -4,7 +4,9 @@ export const FakeProducts: {
     title: string;
     description: string;
     price: number;
+    rating: number;
     category: string;
+    originalPrice: number;
 }[] = [
   {
     id: 1,
@@ -12,6 +14,8 @@ export const FakeProducts: {
     title: "Wireless Headphones",
     description: "High-quality sound with noise cancellation.",
     price: 150,
+    originalPrice: 250,
+    rating: 4.5,
     category: "electronics",
   },
   {
@@ -20,6 +24,8 @@ export const FakeProducts: {
     title: "Smartphone 12 Pro",
     description: "Latest model with advanced camera features.",
     price: 999,
+    originalPrice: 250,
+    rating: 4.5,
     category: "electronics",
   },
   {
@@ -28,6 +34,8 @@ export const FakeProducts: {
     title: "Men's Leather Jacket",
     description: "Stylish and durable leather jacket for men.",
     price: 220,
+    originalPrice: 250,
+    rating: 4.5,
     category: "fashion",
   },
   {
@@ -36,6 +44,8 @@ export const FakeProducts: {
     title: "Women's Handbag",
     description: "Elegant handbag suitable for all occasions.",
     price: 85,
+    originalPrice: 250,
+    rating: 4.5,
     category: "fashion",
   },
   {
@@ -44,6 +54,8 @@ export const FakeProducts: {
     title: "4K Smart TV",
     description: "Ultra HD 4K TV with built-in streaming apps.",
     price: 600,
+    originalPrice: 250,
+    rating: 4.5,
     category: "electronics",
   },
   {
@@ -52,6 +64,8 @@ export const FakeProducts: {
     title: "Washing Machine",
     description: "High-efficiency front load washing machine.",
     price: 480,
+    originalPrice: 250,
+    rating: 4.5,
     category: "home-appliances",
   },
   {
@@ -60,6 +74,8 @@ export const FakeProducts: {
     title: "Microwave Oven",
     description: "900W microwave with grill and convection.",
     price: 130,
+    originalPrice: 250,
+    rating: 4.5,
     category: "home-appliances",
   },
   {
@@ -68,6 +84,8 @@ export const FakeProducts: {
     title: "Blender Set",
     description: "Multi-functional blender with glass jar.",
     price: 60,
+    originalPrice: 250,
+    rating: 4.5,
     category: "home-appliances",
   },
   {
@@ -76,6 +94,8 @@ export const FakeProducts: {
     title: "Casual Sneakers",
     description: "Comfortable and lightweight sneakers.",
     price: 75,
+    originalPrice: 250,
+    rating: 4.5,
     category: "fashion",
   },
   {
@@ -84,6 +104,8 @@ export const FakeProducts: {
     title: "Laptop Pro X",
     description: "Powerful laptop for work and play.",
     price: 1350,
+    originalPrice: 250,
+    rating: 4.5,
     category: "electronics",
   },
   {
@@ -92,6 +114,8 @@ export const FakeProducts: {
     title: "Men's Classic Watch",
     description: "Water-resistant watch with leather strap.",
     price: 110,
+    originalPrice: 250,
+    rating: 4.5,
     category: "fashion",
   },
   {
@@ -100,6 +124,8 @@ export const FakeProducts: {
     title: "Coffee Maker",
     description: "Brew fresh coffee with this compact machine.",
     price: 90,
+    originalPrice: 250,
+    rating: 4.5,
     category: "home-appliances",
   },
 ];

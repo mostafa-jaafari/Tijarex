@@ -14,8 +14,8 @@ export async function HeroSection() {
           {/* --- Badge --- */}
           <span 
             className="border border-blue-200 text-sm bg-blue-100 text-blue-700 
-              px-4 py-1 rounded-full flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-blue-600 flex"/> {t("badge")}
+              px-4 py-1 rounded-full flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse flex"/> {t("badge")}
           </span>
       
         {/* --- Big Title _Principle_ --- */}

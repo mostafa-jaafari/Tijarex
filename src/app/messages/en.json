@@ -123,7 +123,8 @@
   },
   "featuredproducts": {
     "title": "Featured Products",
-    "description": "Discover a variety of products including clothing, accessories, and much more — all in one place."
+    "description": "Discover a variety of products including clothing, accessories, and much more — all in one place.",
+    "tabs": ["all", "electronics", "fashion", "home appliances"]
   },
   "faqlist": {
     "title": "Frequently Asked Questions",

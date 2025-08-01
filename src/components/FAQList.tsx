@@ -63,7 +63,7 @@ export function FAQList() {
         <section
             id="FAQList"
             className="w-full flex lg:py-40 py-20 md:py-40 px-6 
-                lg:px-20 flex-col items-center"
+                lg:px-20 flex-col items-center gap-6"
         >
             <h1
                 className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
