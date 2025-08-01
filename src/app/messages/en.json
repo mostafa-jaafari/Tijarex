@@ -290,8 +290,11 @@
       "emailadress": "email adress",
       "password": "password",
       "confirmpassword": "confirm password",
-      "whychooseus": "why you choose us ?",
-      "optional": "optional"
+      "whychooseus": {
+        "label": "why you choose us ?",
+        "optional": "optional",
+        "options": ["instagram ads", "youtube ads", "facebook ads", "google", "google search", "others"]
+      }
     },
     "checkbox_para_1": "I agree to the",
     "checkbox_para_2": " Terms and Conditions",

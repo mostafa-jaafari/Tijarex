@@ -227,11 +227,11 @@ export function RegisterForm() {
             className={`mt-1 ${submitted && errors.confirmtermsandconditions ? errorInputClass : ""}`}
           />
           <label htmlFor="terms" className="text-sm text-gray-400">
-            I agree to the{" "}
+            {t("checkbox_para_1") + " "}
             <a href="/terms" target="_blank" className="text-blue-500 underline hover:text-blue-400">
-              Terms and Conditions
+              {t("checkbox_para_2")}
             </a>{" "}
-            and confirm that all provided information is accurate.
+            {t("checkbox_para_3")}
           </label>
         </div>
 
@@ -243,12 +243,12 @@ export function RegisterForm() {
             hover:bg-blue-800 transition-all 
             duration-200 cursor-pointer"
         >
-          Register
+          {t("registerbtn")}
         </button>
         <div className="mt-4 text-center text-sm">
-            Already have an account ? 
+            {t("haveanaccount")}
             <Link href="/auth/login" className="ml-2 text-blue-600 hover:underline">
-                Login
+                {t("loginlink")}
             </Link>
         </div>
       </form>

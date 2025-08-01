@@ -11,7 +11,14 @@ type HowYouHeartAboutUs = {
 export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAboutUs){
     const t = useTranslations("registerpage")
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const AvailableChices = ["instagram ads", "youtube ads", "facebook ads", "google", "google search", "others"];
+    const AvailableChices = [
+        t("inputslabel.whychooseus.options.0"),
+        t("inputslabel.whychooseus.options.1"),
+        t("inputslabel.whychooseus.options.2"),
+        t("inputslabel.whychooseus.options.3"),
+        t("inputslabel.whychooseus.options.4"),
+        t("inputslabel.whychooseus.options.5")
+    ];
     
     const HandleSelectChoice = (choice: string) => {
         onSelect(choice);
@@ -32,7 +39,7 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
                     {selectedChoice === "" ? 
                     (
                         <div>
-                            {t("inputslabel.whychooseus")} <span className="text-sm text-neutral-600">({t("inputslabel.optional")})</span>
+                            {t("inputslabel.whychooseus.label")} <span className="text-sm text-neutral-600">({t("inputslabel.whychooseus.optional")})</span>
                         </div>
                         )
                         :
@@ -53,7 +60,7 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
             <div
                 className={`
                     absolute left-0 top-full w-full mt-1 bg-gray-50 
-                    border border-gray-200 rounded-lg 
+                    border border-gray-200 rounded-lg shadow-lg
                     overflow-hidden transition-all duration-300
                     ${isOpen ? "max-h-60" : "opacity-0 max-h-0 pointer-events-none"}
                 `}

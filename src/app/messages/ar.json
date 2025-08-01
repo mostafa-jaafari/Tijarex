@@ -291,13 +291,17 @@
       "emailadress": "البريد الإلكتروني",
       "password": "كلمة المرور",
       "confirmpassword": "تأكيد كلمة المرور",
-      "whychooseus": "من أين سمعت عنا؟",
-      "optional": "اختياري"
+      "whychooseus": {
+        "label": "لماذا اخترتنا؟",
+        "optional": "اختياري",
+        "options": ["إعلانات إنستغرام", "إعلانات يوتيوب", "إعلانات فيسبوك", "جوجل", "بحث جوجل", "أخرى"]
+      }
     },
     "checkbox_para_1": "أوافق على",
     "checkbox_para_2": " الشروط والأحكام",
     "checkbox_para_3": " وأؤكد أن جميع المعلومات المقدمة صحيحة.",
-    "registerbtn": "تسجيل",
-    "haveanaccount": "هل لديك حساب بالفعل؟"
+    "registerbtn": "تسجيل الدخول",
+    "haveanaccount": "هل لديك حساب بالفعل ؟",
+    "loginlink": " تسجيل الدخول"
   }
 }
