@@ -281,5 +281,22 @@
       "date": "Date",
       "actions": "Actions"
     }
+  },
+  "registerpage": {
+    "title": "Register",
+    "inputslabel": {
+      "fullname": "full name",
+      "phonenumber": "phone number",
+      "emailadress": "email adress",
+      "password": "password",
+      "confirmpassword": "confirm password",
+      "whychooseus": "why you choose us ?",
+      "optional": "optional"
+    },
+    "checkbox_para_1": "I agree to the",
+    "checkbox_para_2": " Terms and Conditions",
+    "checkbox_para_3": " and confirm that all provided information is accurate.",
+    "registerbtn": "register",
+    "haveanaccount": "Already have an account ?"
   }
 }

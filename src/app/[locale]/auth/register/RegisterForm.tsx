@@ -7,8 +7,11 @@ import { auth, db } from "@/Firebase";
 import { HowYouHeartAboutUs } from "./HowYouHeartAboutUs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 
 export function RegisterForm() {
+  const t = useTranslations("registerpage");
+  const locale = useLocale();
   const [selectedChoice, setSelectedChoice] = useState<string>("");
   const [inputsCredentials, setInputsCredentials] = useState({
     fullname: "",
@@ -112,16 +115,17 @@ export function RegisterForm() {
         flex-col justify-center items-center">
       <form
         onSubmit={handleCreateAccount}
+        dir={locale === "ar" ? "rtl" : "ltr"}
         noValidate
         className="w-full sm:w-[500px] md:w-[500px] 
           lg:w-full border border-gray-200 
           p-6 rounded-lg"
       >
-        <h1 className="mb-8 text-center text-2xl font-bold uppercase">Register</h1>
+        <h1 className="mb-8 text-center text-2xl font-bold uppercase">{t("title")}</h1>
         <div className="w-full flex items-center gap-2">
           <div className="w-full flex flex-col mb-2">
             <label htmlFor="FullName" className="px-1">
-              Full Name <span className="text-red-800">*</span>
+              {t("inputslabel.fullname")} <span className="text-red-800">*</span>
             </label>
             <input
               type="text"
@@ -129,7 +133,7 @@ export function RegisterForm() {
               id="FullName"
               value={inputsCredentials.fullname}
               onChange={handleChangeInputs}
-              placeholder="full name"
+              placeholder={t("inputslabel.fullname")}
               className={`${baseInputClass} ${
                 submitted && errors.fullname ? errorInputClass : "border-gray-200"
               }`}
@@ -137,7 +141,7 @@ export function RegisterForm() {
           </div>
           <div className="w-full flex flex-col mb-2">
             <label htmlFor="PhoneNumber" className="px-1">
-              Phone Number <span className="text-red-800">*</span>
+              {t("inputslabel.phonenumber")} <span className="text-red-800">*</span>
             </label>
             <input
               type="number"
@@ -145,7 +149,7 @@ export function RegisterForm() {
               id="PhoneNumber"
               value={inputsCredentials.phonenumber}
               onChange={handleChangeInputs}
-              placeholder="phone number"
+              placeholder={t("inputslabel.phonenumber")}
               className={`${baseInputClass} ${
                 submitted && errors.phonenumber ? errorInputClass : "border-gray-200"
               }`}
@@ -155,7 +159,7 @@ export function RegisterForm() {
 
         <div className="flex flex-col mb-2">
           <label htmlFor="Email" className="px-1">
-            Email <span className="text-red-800">*</span>
+            {t("inputslabel.emailadress")} <span className="text-red-800">*</span>
           </label>
           <input
             type="email"
@@ -163,7 +167,7 @@ export function RegisterForm() {
             id="Email"
             value={inputsCredentials.email}
             onChange={handleChangeInputs}
-            placeholder="enter your email"
+            placeholder={t("inputslabel.emailadress")}
             className={`${baseInputClass} ${
               submitted && errors.email ? errorInputClass : "border-gray-200"
             }`}
@@ -173,7 +177,7 @@ export function RegisterForm() {
         <div className="w-full flex items-center gap-2">
           <div className="w-full flex flex-col">
             <label htmlFor="Password" className="px-1">
-              Password <span className="text-red-800">*</span>
+              {t("inputslabel.password")} <span className="text-red-800">*</span>
             </label>
             <input
               type="password"
@@ -181,7 +185,7 @@ export function RegisterForm() {
               id="Password"
               value={inputsCredentials.password}
               onChange={handleChangeInputs}
-              placeholder="enter your password"
+              placeholder={t("inputslabel.password")}
               className={`${baseInputClass} ${
                 submitted && errors.password ? errorInputClass : "border-gray-200"
               }`}
@@ -189,7 +193,7 @@ export function RegisterForm() {
           </div>
           <div className="w-full flex flex-col">
             <label htmlFor="ConfirmPassword" className="px-1">
-              Confirm Password <span className="text-red-800">*</span>
+              {t("inputslabel.confirmpassword")} <span className="text-red-800">*</span>
             </label>
             <input
               type="password"
@@ -197,7 +201,7 @@ export function RegisterForm() {
               id="ConfirmPassword"
               value={inputsCredentials.confirmpassword}
               onChange={handleChangeInputs}
-              placeholder="confirm your password"
+              placeholder={t("inputslabel.confirmpassword")}
               className={`${baseInputClass} ${
                 submitted && errors.confirmpassword ? errorInputClass : "border-gray-200"
               }`}

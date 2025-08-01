@@ -282,5 +282,22 @@
       "date": "التاريخ",
       "actions": "الإجراءات"
     }
+  },
+  "registerpage": {
+    "title": "إنشاء حساب",
+    "inputslabel": {
+      "fullname": "الاسم الكامل",
+      "phonenumber": "رقم الهاتف",
+      "emailadress": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirmpassword": "تأكيد كلمة المرور",
+      "whychooseus": "من أين سمعت عنا؟",
+      "optional": "اختياري"
+    },
+    "checkbox_para_1": "أوافق على",
+    "checkbox_para_2": " الشروط والأحكام",
+    "checkbox_para_3": " وأؤكد أن جميع المعلومات المقدمة صحيحة.",
+    "registerbtn": "تسجيل",
+    "haveanaccount": "هل لديك حساب بالفعل؟"
   }
 }

@@ -1,5 +1,6 @@
 "use client";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 
@@ -8,6 +9,7 @@ type HowYouHeartAboutUs = {
     selectedChoice: string;
 }
 export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAboutUs){
+    const t = useTranslations("registerpage")
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const AvailableChices = ["instagram ads", "youtube ads", "facebook ads", "google", "google search", "others"];
     
@@ -30,7 +32,7 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
                     {selectedChoice === "" ? 
                     (
                         <div>
-                            How you heart about us ? <span className="text-sm text-neutral-600">(optional)</span>
+                            {t("inputslabel.whychooseus")} <span className="text-sm text-neutral-600">({t("inputslabel.optional")})</span>
                         </div>
                         )
                         :
@@ -50,7 +52,7 @@ export function HowYouHeartAboutUs({ onSelect, selectedChoice }: HowYouHeartAbou
             </div>
             <div
                 className={`
-                    absolute left-0 top-full w-full mt-1 bg-blue-50 
+                    absolute left-0 top-full w-full mt-1 bg-gray-50 
                     border border-gray-200 rounded-lg 
                     overflow-hidden transition-all duration-300
                     ${isOpen ? "max-h-60" : "opacity-0 max-h-0 pointer-events-none"}
