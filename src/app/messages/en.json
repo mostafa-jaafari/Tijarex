@@ -14,10 +14,15 @@
     }
   },
   "hero": {
-    "title_line1": "Start with $0 – Sell global products, earn profit!",
-    "description": "Choose from a catalog of trending products, and we'll handle storage, delivery, and customer service... All you need to do is focus on selling and earning.",
+    "badge": "No upfront cost • 100% risk free",
+    "title_1": "Start with ",
+    "title_2": " $0",
+    "title_3": " – Sell global products, ",
+    "title_4": "earn profit!",
+    "description": "Join 2,000+ Moroccan sellers earning online without upfront costs or technical skills.",
     "cta-trying": "Join Free & Start Selling!",
     "cta-howitworks": "How it works ?",
+    "para_under_cta": "Trusted by 2,000+ Moroccan sellers",
     "footer_note": "Join over 2000 sellers making daily sales without needing capital or a registered company."
   },
   "statistics": [

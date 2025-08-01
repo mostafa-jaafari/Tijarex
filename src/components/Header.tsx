@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SwitchLanguage } from "./SwitchLanguage";
 import { getTranslations } from "next-intl/server";
-import { HeaderMenur } from "./HeaderMenu";
+import { HeaderMenu } from "./HeaderMenu";
 
 export async function Header() {
   const t = await getTranslations("header");
@@ -67,7 +67,8 @@ export async function Header() {
           href="/auth/register" 
             className="lg:text-normal md:text-md text-sm 
               bg-gradient-to-r transition-colors duration-200 
-              hover:to-blue-400 from-blue-600 to-blue-200 
+              hover:to-blue-200
+              from-blue-600 via-blue-500 to-blue-400
               py-1.5 cursor-pointer px-6 text-white rounded-full">
           {t("buttons.beSeller")}
         </Link>
@@ -79,7 +80,7 @@ export async function Header() {
               px-6 text-blue-600 rounded-full">
           {t("buttons.login")}
         </Link>
-        <HeaderMenur />
+        <HeaderMenu />
       </div>
     </section>
   );

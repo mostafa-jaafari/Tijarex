@@ -11,7 +11,7 @@ import { SwitchLanguage } from "./SwitchLanguage";
 
 
 
-export function HeaderMenur(){
+export function HeaderMenu(){
     const t = useTranslations("header");
     const NaviGation_Links = [
     {
