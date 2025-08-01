@@ -11,17 +11,24 @@ export async function HeroSection() {
         className="relative w-full z-20 h-[80vh] flex flex-col 
           items-center justify-center text-center text-black 
           px-6 lg:px-20 md:px-20 overflow-hidden">
+          {/* --- Badge --- */}
           <span 
             className="border border-blue-200 text-sm bg-blue-100 text-blue-700 
               px-4 py-1 rounded-full flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-blue-600 flex"/> {t("badge")}
           </span>
+      
+        {/* --- Big Title _Principle_ --- */}
         <h1 className="lg:w-[80%] text-3xl sm:text-4xl md:text-6xl lg:text-6xl font-extrabold leading-tight">
           {t('title_1')} <span className="text-blue-600">{t('title_2')}</span><span>{t('title_3')}</span><span className="text-blue-600">{t('title_4')}</span>
         </h1>
-        <p className="text-gray-500 mt-2">
+
+        {/* --- Para Description --- */}
+        <p className="text-gray-500 mt-6">
           {t("description")}
         </p>
+      
+        {/* --- CTA Buttons --- */}
         <div
           className="flex items-center gap-2 mt-6"
         >
@@ -44,10 +51,7 @@ export async function HeroSection() {
               {t('cta-howitworks')}
           </Link>
         </div>
-
-        {/* <p className="text-sm text-gray-400 mt-4">
-          {t('footer_note')}
-        </p> */}
+        {/* --- Para under CTA Buttons --- */}
         <div className="mt-6 text-gray-500 text-sm flex items-center gap-1">
           <div
             className="flex items-center -space-x-0.5"

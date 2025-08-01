@@ -58,8 +58,8 @@ export async function Header() {
           className="hidden md:flex lg:flex"
         >
           <SwitchLanguage
-            CLASSNAME="top-full right-0 mt-2 flex items-center cursor-pointer 
-              border border-blue-400 text-xs py-1 px-3 
+            CLASSNAME="flex items-center cursor-pointer 
+              border border-blue-200 text-xs py-1 px-3 
               text-blue-600 rounded-full gap-1"
           />
         </div>
