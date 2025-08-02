@@ -146,7 +146,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder={t("inputslabel.fullname")}
               className={`${baseInputClass} ${
-                submitted && errors.fullname ? errorInputClass : "border-gray-200"
+                submitted && errors.fullname ? errorInputClass : "border-gray-200 focus:ring-2 ring-blue-600"
               }`}
             />
           </div>
@@ -162,7 +162,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder={t("inputslabel.phonenumber")}
               className={`${baseInputClass} ${
-                submitted && errors.phonenumber ? errorInputClass : "border-gray-200"
+                submitted && errors.phonenumber ? errorInputClass : "border-gray-200 focus:ring-2 ring-blue-600"
               }`}
             />
           </div>
@@ -180,7 +180,7 @@ export function RegisterForm() {
             onChange={handleChangeInputs}
             placeholder={t("inputslabel.emailadress")}
             className={`${baseInputClass} ${
-              submitted && errors.email ? errorInputClass : "border-gray-200"
+              submitted && errors.email ? errorInputClass : "border-gray-200 focus:ring-2 ring-blue-600"
             }`}
           />
         </div>
@@ -198,7 +198,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder={t("inputslabel.password")}
               className={`${baseInputClass} ${
-                submitted && errors.password ? errorInputClass : "border-gray-200"
+                submitted && errors.password ? errorInputClass : "border-gray-200 focus:ring-2 ring-blue-600"
               }`}
             />
           </div>
@@ -214,7 +214,7 @@ export function RegisterForm() {
               onChange={handleChangeInputs}
               placeholder={t("inputslabel.confirmpassword")}
               className={`${baseInputClass} ${
-                submitted && errors.confirmpassword ? errorInputClass : "border-gray-200"
+                submitted && errors.confirmpassword ? errorInputClass : "border-gray-200 focus:ring-2 ring-blue-600"
               }`}
             />
           </div>

@@ -43,7 +43,8 @@ export default function page() {
   return (
     <main
         dir='ltr'
-        className='flex items-start bg-black w-full text-white min-h-screen'
+        className='flex items-start w-full 
+            text-white min-h-screen'
     >
         <div
             className='w-full'
