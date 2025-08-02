@@ -5,7 +5,7 @@ import React from 'react'
 import { RightDashboardHeader } from '@/components/RightDashboardHeader'
 import { getServerSession, Session } from 'next-auth'
 import { getTranslations } from 'next-intl/server'
-
+import { authOptions } from "@/lib/auth";
 
 export const metadata = {
   title: "Seller Dashboard | Jamla.ma",
@@ -27,7 +27,7 @@ export const metadata = {
   }
 }
 export default async function page() {
-  const session: Session | null = await getServerSession();
+  const session: Session | null = await getServerSession(authOptions);
   const t = await getTranslations("sellerdashboard");
   return (
     <main
@@ -40,6 +40,7 @@ export default async function page() {
     
     {/* Left Side */}
     <div>
+      {JSON.stringify(session?.user)}
       <h1 className="text-2xl font-semibold text-gray-900">{t("headertitle")}</h1>
       <p className="text-sm text-gray-600 mt-1">{t("headersubtitle")}</p>
     </div>
