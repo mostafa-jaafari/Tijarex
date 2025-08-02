@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { BadgeCheck, ChevronDown } from "lucide-react";
+import { ScrollReveal } from "./Animations/ScrollReveal";
 
 interface CustimizedFAQContainerProps {
     question: string;
@@ -65,6 +66,7 @@ export function FAQList() {
             className="w-full flex lg:py-40 py-20 md:py-40 px-6 
                 lg:px-20 flex-col items-center gap-6"
         >
+            <ScrollReveal>
             <h1
                 className={`text-3xl md:text-4xl lg:text-4xl font-bold text-neutral-800 
                     text-center mb-4
@@ -72,15 +74,16 @@ export function FAQList() {
             >
                 {t("title")}
             </h1>
-            <div className="w-full ">
-                {FAQList.map((faq, index) => (
-                    <CustimizedFAQContainer
-                        key={index}
-                        question={faq.question}
-                        answer={faq.answer}
-                    />
-                ))}
-            </div>
+                <div className="w-full ">
+                    {FAQList.map((faq, index) => (
+                        <CustimizedFAQContainer
+                            key={index}
+                            question={faq.question}
+                            answer={faq.answer}
+                        />
+                    ))}
+                </div>
+            </ScrollReveal>
         </section>
     )
 }

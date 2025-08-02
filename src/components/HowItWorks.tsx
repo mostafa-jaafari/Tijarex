@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { ScrollReveal } from "./Animations/ScrollReveal";
 
 // SVG Components
 const SignUpSVG = () => (
@@ -168,22 +169,24 @@ export function HowItWorks() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {steps.map((step, index) => (
-          <div
-            key={index}
-            className="flex flex-col items-center text-center bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
-          >
-            <div className="w-32 h-32 mb-4">{step.icon}</div>
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              {index + 1}. {step.title}
-            </h3>
-            <p className="text-sm text-blue-500 leading-relaxed">
-              {step.desc}
-            </p>
-          </div>
-        ))}
-      </div>
+      <ScrollReveal>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center text-center bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
+            >
+                <div className="w-32 h-32 mb-4">{step.icon}</div>
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                  {index + 1}. {step.title}
+                </h3>
+                <p className="text-sm text-blue-500 leading-relaxed">
+                  {step.desc}
+                </p>
+            </div>
+          ))}
+        </div>
+      </ScrollReveal>
     </section>
     )
 }

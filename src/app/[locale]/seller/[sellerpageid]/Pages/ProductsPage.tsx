@@ -334,12 +334,9 @@ export function ProductsPage({ session }: { session: Session | null }) {
     return (
         <div className="w-full space-y-4">
             {/* Header */}
-            <div className="flex items-center px-6 py-2 justify-between border-b border-neutral-200">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
-                    <p className="text-sm text-gray-600 mt-1">{t("subtitle")}</p>
-                </div>
-                <RightDashboardHeader session={session} />
+            <div className="px-6 py-2 border-b border-gray-200">
+                <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+                <p className="text-sm text-gray-600 mt-1">{t("subtitle")}</p>
             </div>
 
             {/* Search and Controls */}

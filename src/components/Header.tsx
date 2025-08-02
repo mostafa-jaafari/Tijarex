@@ -32,7 +32,7 @@ export async function Header() {
     <section 
       dir="ltr"
       className="sticky top-0 w-full py-3 lg:px-10 md:px-10 px-6 flex
-        items-center justify-between z-50 bg-white">
+        items-center justify-between z-50 backdrop-blur-[2px] bg-white/80">
       <h1 className="text-neutral-300">
         JAMLA.ma | LOGO
       </h1>

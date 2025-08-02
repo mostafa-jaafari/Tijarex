@@ -35,37 +35,35 @@ export default async function page() {
     >
         <section className='w-full'>
             {/* --- Header --- */}
-<div className="sticky z-50 top-0 bg-white border-b border-gray-200">
-  <div className="px-6 py-2 flex items-center justify-between">
-    {/* Left Side */}
-    <div>
-      <h1 className="text-2xl font-semibold text-gray-900">{t("headertitle")}</h1>
-      <p className="text-sm text-gray-600 mt-1">{t("headersubtitle")}</p>
-    </div>
+          <div className="sticky z-50 top-0 bg-white border-b border-gray-200">
+            <div className="px-6 py-2 flex items-center justify-between">
+              {/* Left Side */}
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-900">{t("headertitle")}</h1>
+                <p className="text-sm text-gray-600 mt-1">{t("headersubtitle")}</p>
+              </div>
 
-    {/* Right Side */}
-        <RightDashboardHeader
-          session={session}
-        />
-    </div>
-    </div>
+              {/* Right Side */}
+              <RightDashboardHeader
+                session={session}
+              />
+            </div>
+          </div>
 
-            <section
-                className='w-full flex'
-            >
+          <section
+              className='w-full flex'
+          >
             {/* --- section Content --- */}
             <section className='flex-1 flex flex-col'>
-
                 {/* --- Content Area --- */}
                 <div className='p-4 space-y-4'>
                 <SellerStatisticCards />
                 <EarningsChart />
                 </div>
             </section>
-
             {/* --- Sidebar --- */}
-                <PopularProductsWidget />
-            </section>
+            <PopularProductsWidget />
+          </section>
         </section>
     </main>
   )

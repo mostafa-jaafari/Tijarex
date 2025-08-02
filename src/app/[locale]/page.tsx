@@ -1,3 +1,4 @@
+import { ScrollReveal } from "@/components/Animations/ScrollReveal";
 import { FAQList } from "@/components/FAQList";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import Footer from "@/components/Footer";
@@ -57,12 +58,18 @@ export default function Home() {
       {/* <div className="absolute z-10 right-[25%] w-[300px] lg:w-[600px] md:w-[600px] h-[300px] lg:h-[600px] md:h-[600px] rounded-full bg-blue-600 opacity-20 blur-3xl" /> */}
       <HeroSection />
       <HeroStatistics />
-      <WhyChooseUs />
+      <ScrollReveal>
+        <WhyChooseUs />
+      </ScrollReveal>
       <HowItWorks />
       <FeaturedProducts />
-      <Testimonials />
+      <ScrollReveal>
+        <Testimonials />
+      </ScrollReveal>
       <FAQList />
-      <LastCallToAction />
+      <ScrollReveal>
+        <LastCallToAction />
+      </ScrollReveal>
       <Footer />
     </main>
   );
