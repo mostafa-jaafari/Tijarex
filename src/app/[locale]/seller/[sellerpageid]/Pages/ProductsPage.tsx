@@ -1,6 +1,5 @@
 "use client";
 import { DropDownMenu } from "@/components/FilterOrders";
-import { RightDashboardHeader } from "@/components/RightDashboardHeader";
 import { ProductType } from "@/types/product";
 import { 
     Search, 
@@ -18,7 +17,6 @@ import {
     ShoppingCart,
     Filter
 } from "lucide-react";
-import { Session } from "next-auth";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,7 +46,7 @@ const productFilters = [
     }
 ];
     
-export function ProductsPage({ session }: { session: Session | null }) {
+export function ProductsPage() {
     const t = useTranslations("productspage");
     const sortOptions = [
         { label: t("sortoptions.0"), value: "name_asc" },
