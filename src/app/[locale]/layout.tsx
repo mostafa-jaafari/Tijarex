@@ -6,9 +6,7 @@ import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Toaster } from "sonner";
-import { Sidebar } from "@/components/Sidebar";
 import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
-import { getServerSession, Session } from "next-auth";
 import { UserInfosContextProvider } from "@/context/UserInfosContext";
 
 
@@ -35,7 +33,6 @@ export default async function RootLayout({
     notFound();
   }
   const messages = await getMessages();
-  const session: Session | null = await getServerSession();
   return (
     <html lang={locale} className="scroll-smooth">
       <body
@@ -47,14 +44,7 @@ export default async function RootLayout({
             <UserInfosContextProvider>
               <Toaster position="top-center" />
               <NextIntlClientProvider locale={locale} messages={messages}>
-                <section
-                  className="w-full flex"
-                >
-                  <Sidebar
-                    session={session}
-                  />
                   {children}
-                </section>
               </NextIntlClientProvider>
               <ScrollToTop />
             </UserInfosContextProvider>

@@ -10,7 +10,6 @@ import {
     ChevronRight,
     User
 } from "lucide-react";
-import { Session } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -19,7 +18,7 @@ import { useTranslations } from "next-intl"
 import { SwitchLanguage } from "./SwitchLanguage";
 import { useUserInfos } from "@/context/UserInfosContext";
 
-export function Sidebar({ session }: { session: Session | null }) {
+export function Sidebar() {
     const t = useTranslations("sidebar");
     const [isCollapsed, setIsCollapsed] = useState(true);
     const Navigation_Links = [
@@ -70,7 +69,6 @@ export function Sidebar({ session }: { session: Session | null }) {
     const params = useParams().sellerpageid || "seller";
 
     const { isLoadingUserInfos, userInfos } = useUserInfos();
-    if(!session) return;
     return (
         <aside className={`
             ${isCollapsed ? 'w-16' : 'w-74'} 
@@ -205,15 +203,15 @@ export function Sidebar({ session }: { session: Session | null }) {
                             className="flex items-center gap-2 bg-gray-50 space-x-3 mb-3 p-2 rounded-lg"
                         >
                             <div className="relative flex-shrink-0 w-8 h-8 bg-gray-300 overflow-hidden rounded-full flex items-center justify-center">
-                                {session?.user?.image ? (
+                                {userInfos?.profileimage ? (
                                     <Image
-                                        src={session?.user?.image}
-                                        alt={session?.user?.name}
+                                        src={userInfos?.profileimage}
+                                        alt={userInfos?.fullname}
                                         fill
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <span className="text-gray-600 font-medium text-sm">{session?.user?.name.slice(0 ,2).toUpperCase()}</span>
+                                    <span className="text-gray-600 font-medium text-sm">{userInfos?.fullname.slice(0 ,2).toUpperCase()}</span>
                                 )}
                             </div>
                             <div className="flex-1">
@@ -221,7 +219,7 @@ export function Sidebar({ session }: { session: Session | null }) {
                                 {isLoadingUserInfos ? (<span className="animate-pulse w-25 h-3 bg-gray-100 flex rounded"/>) : userInfos?.fullname}
                             </span>
                                 <p className="text-xs text-gray-500">
-                                    {session?.user?.email}
+                                    {userInfos?.email}
                                 </p>
 
                             </div>

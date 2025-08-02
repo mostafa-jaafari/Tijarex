@@ -44,8 +44,7 @@ interface GitHubProfile {
   email: string | null;
   avatar_url: string;
 }
-
-const Admins = ["mostafajaafari081@gmail.com"];
+const Admins = ["jaafarimostafa081@gmail.com"];
 
 // Helper function to determine role
 const getUserRole = (email: string): string => {
