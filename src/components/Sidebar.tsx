@@ -194,9 +194,10 @@ export function Sidebar() {
                             className="w-full"
                         >
                             <SwitchLanguage
-                                CLASSNAME="w-full flex items-center justify-between 
-                                    bg-blue-100 px-2 py-1 rounded-full border 
-                                    border-blue-300 text-blue-600"
+                                CLASSNAME="text-sm w-full flex items-center 
+                                    justify-between bg-blue-100 px-2 py-1 
+                                    rounded-full border border-blue-300 
+                                    text-blue-600"
                             />
                         </div>
                         <div

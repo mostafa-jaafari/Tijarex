@@ -46,7 +46,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
         <section>
             <div className="flex items-center gap-4">
             {/* Notifications */}
-            <div className="relative">
+            <div ref={DropDownNotifsRef} className="relative">
                 {/* Bell Icon with Badge */}
                 <button
                     onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
@@ -60,7 +60,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
 
                 {/* Dropdown Menu */}
                 {isNotificationsOpen && (
-                    <div ref={DropDownNotifsRef} className="absolute overflow-hidden right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 animate-fade-in">
+                    <div className="absolute overflow-hidden right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 animate-fade-in">
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200">
                         <span className="text-sm font-semibold">{t("notifications.title")}</span>
@@ -107,7 +107,7 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                 className="border-r border-gray-200 h-6 flex"
             />
             {/* Profile Menu */}
-            <div className="relative">
+            <div ref={DropDownProfileRef} className="relative">
                 <button 
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                     className="flex items-center gap-2 cursor-pointer">
@@ -144,7 +144,6 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                 {/* Profile Dropdown */}
                 {isProfileMenuOpen && (
                     <div
-                        ref={DropDownProfileRef}
                         className="absolute right-0 top-full mt-2 w-full bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden animate-fade-in"
                     >
                         {/* Profile Menu Items */}
