@@ -57,23 +57,32 @@ export function RegisterForm() {
       fullname: inputsCredentials.fullname.trim() === "",
       phonenumber: inputsCredentials.phonenumber.trim() === "",
       email: inputsCredentials.email.trim() === "",
-      password: inputsCredentials.password.trim() === "",
-      confirmpassword: inputsCredentials.confirmpassword.trim() === "",
+      password: inputsCredentials.password.trim() === "" || inputsCredentials.password.trim() !== inputsCredentials.confirmpassword.trim(),
+      confirmpassword: inputsCredentials.confirmpassword.trim() === "" || inputsCredentials.confirmpassword.trim() !== inputsCredentials.password.trim(),
       confirmtermsandconditions: inputsCredentials.confirmtermsandconditions === false,
     };
     setErrors(newErrors);
 
     return Object.values(newErrors).some((error) => error === true);
   };
+
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const handleCreateAccount = async (e: React.FormEvent) => {
+    setIsLoading(true);
     e.preventDefault();
     setSubmitted(true);
-
     if (validate()) {
+      if(inputsCredentials.password.trim() !== inputsCredentials.confirmpassword.trim()){
+        toast("password didn't match !")
+        setIsLoading(false);
+        return;
+      }
       toast.error("Please fill all required inputs!");
+      setIsLoading(false);
       return;
     }
+
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, inputsCredentials.email, inputsCredentials.password);
@@ -102,6 +111,8 @@ export function RegisterForm() {
       } else {
         toast.error("An error occurred while creating the account.");
       }
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -124,7 +135,7 @@ export function RegisterForm() {
         <h1 className="mb-8 text-center text-2xl font-bold uppercase text-blue-600">{t("title")}</h1>
         <div className="w-full flex items-center gap-2">
           <div className="w-full flex flex-col mb-2">
-            <label htmlFor="FullName" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
+            <label htmlFor="FullName" className={`capitalize px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.fullname")} <span className="text-red-800">*</span>
             </label>
             <input
@@ -140,7 +151,7 @@ export function RegisterForm() {
             />
           </div>
           <div className="w-full flex flex-col mb-2">
-            <label htmlFor="PhoneNumber" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
+            <label htmlFor="PhoneNumber" className={`capitalize px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.phonenumber")} <span className="text-red-800">*</span>
             </label>
             <input
@@ -158,7 +169,7 @@ export function RegisterForm() {
         </div>
 
         <div className="flex flex-col mb-2">
-          <label htmlFor="Email" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
+          <label htmlFor="Email" className={`capitalize px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
             {t("inputslabel.emailadress")} <span className="text-red-800">*</span>
           </label>
           <input
@@ -176,7 +187,7 @@ export function RegisterForm() {
 
         <div className="w-full flex items-center gap-2">
           <div className="w-full flex flex-col">
-            <label htmlFor="Password" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
+            <label htmlFor="Password" className={`capitalize px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.password")} <span className="text-red-800">*</span>
             </label>
             <input
@@ -192,7 +203,7 @@ export function RegisterForm() {
             />
           </div>
           <div className="w-full flex flex-col">
-            <label htmlFor="ConfirmPassword" className={`px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
+            <label htmlFor="ConfirmPassword" className={`capitalize px-1 ${locale === "ar" ? "mb-1 text-sm" :""}`}>
               {t("inputslabel.confirmpassword")} <span className="text-red-800">*</span>
             </label>
             <input
@@ -236,14 +247,14 @@ export function RegisterForm() {
         </div>
 
         <button
-          type="submit"
-          className="focus:outline-none text-white 
-            focus:ring-2 ring-blue-500 mt-4 rounded-lg 
-            py-2 w-full bg-blue-700 font-bold 
-            hover:bg-blue-800 transition-all 
-            duration-200 cursor-pointer"
+            type="submit"
+            disabled={isLoading}
+            className={`font-bold mt-4 py-2 focus:outline-none 
+              w-full focus:shadow-lg text-white flex items-center justify-center gap-1
+              transition-all duration-200 rounded-lg
+              ${isLoading ? "bg-blue-900 text-white/70 cursor-not-allowed text-neutral-600" : "focus:ring-2 cursor-pointer shadow-blue-700/20 ring-blue-500 bg-blue-700 hover:bg-blue-800 hover:text-white/70"}`}
         >
-          {t("registerbtn")}
+            {isLoading && (<div className="w-4 h-4 border-2 border-transparent border-t-current rounded-full animate-spin"/>)}{t("registerbtn")}
         </button>
         <div className="mt-4 text-center text-sm">
             {t("haveanaccount")}

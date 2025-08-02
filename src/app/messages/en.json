@@ -300,6 +300,7 @@
     "checkbox_para_2": " Terms and Conditions",
     "checkbox_para_3": " and confirm that all provided information is accurate.",
     "registerbtn": "register",
-    "haveanaccount": "Already have an account ?"
+    "haveanaccount": "Already have an account ?",
+    "loginlink": "Login"
   }
 }
