@@ -303,5 +303,23 @@
     "registerbtn": "تسجيل الدخول",
     "haveanaccount": "هل لديك حساب بالفعل ؟",
     "loginlink": " تسجيل الدخول"
+  },
+  "loginpage": {
+    "title": "تسجيل الدخول",
+    "inputslabel": {
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور"
+    },
+    "loginbtn": "تسجيل الدخول",
+    "toast": {
+      "fillinputs": "يرجى ملء جميع الحقول المطلوبة!",
+      "loginfailed": "فشل في تسجيل الدخول.",
+      "loginsuccess": "تم تسجيل الدخول بنجاح."
+    },
+    "or": "أو",
+    "googlelogin": "تسجيل الدخول باستخدام",
+    "githublogin": "تسجيل الدخول باستخدام",
+    "donthaveaccount": "ليس لديك حساب ؟",
+    "registerlink": " إنشاء حساب"
   }
 }

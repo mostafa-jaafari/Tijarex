@@ -302,5 +302,23 @@
     "registerbtn": "register",
     "haveanaccount": "Already have an account ?",
     "loginlink": "Login"
+  },
+  "loginpage": {
+    "title": "Login",
+    "inputslabel": {
+      "email": "Email address",
+      "password": "Password"
+    },
+    "loginbtn": "Login",
+    "toast": {
+      "fillinputs": "Please fill all required fields!",
+      "loginfailed": "Login failed.",
+      "loginsuccess": "Login successful."
+    },
+    "or": "or",
+    "googlelogin": "Login with Google",
+    "githublogin": "Login with GitHub",
+    "donthaveaccount": "Don't have an account?",
+    "registerlink": "Register"
   }
 }
