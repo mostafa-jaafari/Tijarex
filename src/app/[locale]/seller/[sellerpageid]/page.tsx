@@ -1,4 +1,3 @@
-import { getServerSession } from "next-auth";
 import OrdersPage from "./Pages/OrdersPage";
 import { ProductsPage } from "./Pages/ProductsPage";
 import { SingleProductPage } from "./Pages/SingleProductPage";

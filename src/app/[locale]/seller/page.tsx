@@ -2,10 +2,6 @@ import { PopularProductsWidget } from '@/components/PopularProductsWidget'
 import { SellerStatisticCards } from '@/components/SellerStatisticCards'
 import EarningsChart from '@/components/EarningsChart'
 import React from 'react'
-import { SellerHeader } from '@/components/SellerHeader'
-import { getServerSession, Session } from 'next-auth'
-import { getTranslations } from 'next-intl/server'
-import { authOptions } from "@/lib/auth";
 import QuickSetupGuide from '@/components/QuickSetupGuide'
 
 export const metadata = {
@@ -28,8 +24,6 @@ export const metadata = {
   }
 }
 export default async function page() {
-  const session: Session | null = await getServerSession(authOptions);
-  const t = await getTranslations("sellerdashboard");
   return (
     <main
         className='w-full'

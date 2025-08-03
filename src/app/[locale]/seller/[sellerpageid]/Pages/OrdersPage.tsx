@@ -1,10 +1,9 @@
 "use client";
 import { FilterOrders } from '@/components/FilterOrders';
 import { OrderType } from '@/types/orders';
-import { MoreHorizontal, Plus, Package } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 export default function OrdersPage() {
@@ -48,7 +47,7 @@ export default function OrdersPage() {
   const locale = useLocale();
   return (
     <section className="w-full overflow-x-scroll bg-gray-50 min-h-screen">
-      
+
       <FilterOrders 
         onChange={(e) => setSearchTerm(e.target.value)}
         searchTerm={searchTerm}
