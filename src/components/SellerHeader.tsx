@@ -121,7 +121,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                                         />
                                         Total Balance
                                     </h1>
-                                    <b className="text-3xl">500 Dh</b>
+                                    <b className="text-3xl flex items-center text-green-700">{isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} Dh</b>
                                 </span>
                                 <span
                                     className="text-green-600 bg-white p-3 h-max 
