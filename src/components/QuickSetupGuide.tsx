@@ -11,6 +11,8 @@ export default function QuickSetupGuide() {
             title: "Create your account.",
             description: "Register your account and set up your basic details to start selling in minutes",
             btntitle: "Create account",
+            image: "/create-account-avatar.png",
+            imagestyles: "absolute z-30 group-hover:scale-140 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
             iscompleted: true,
             link: {
                 label: "Start your journey with us !",
@@ -20,6 +22,8 @@ export default function QuickSetupGuide() {
             title: "Add balance",
             description: "Top up your balance to start fulfilling your orders smoothly",
             btntitle: "Add balance",
+            image: "/CIH-MASTERCARD.png",
+            imagestyles: "absolute z-30 scale-140 group-hover:scale-180 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
             iscompleted: false,
             link: {
                 label: "Activate your account with credit.",
@@ -29,6 +33,8 @@ export default function QuickSetupGuide() {
             title: "Make your first order.",
             description: "Test the system by placing a sample or real order and see how it works !",
             btntitle: "Make first order",
+            image: "/First-Order.png",
+            imagestyles: "absolute z-30 scale-140 group-hover:scale-180 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
             iscompleted: false,
             link: {
                 label: "Try your first order now !",
@@ -73,38 +79,10 @@ export default function QuickSetupGuide() {
         >
 
             <h1
-                className='text-lg font-semibold text-gray-900'
+                className='text-lg font-semibold text-gray-900 mb-3'
             >
                 Quick setup guide
             </h1>
-
-            <div
-                className='w-full flex items-center gap-2 py-3'
-            >
-                <div
-                    className='w-full'
-                >
-                    <div
-                        className='rounded-full border border-blue-200 bg-blue-100'
-                    >
-                        <span 
-                            className="relative flex h-2 rounded-full 
-                            bg-blue-600 transition-all 
-                            duration-1000 ease-out 
-                            after:absolute 
-                            after:right-0 
-                            after:-top-1 
-                            after:w-4 
-                            after:shadow 
-                            after:h-4 
-                            after:rounded-r-full
-                            after:bg-blue-600"
-                            style={{ width: animatedWidth }}
-                        ></span> 
-                    </div>
-                </div>
-                <p className='text-gray-500'>{displayedPercent}%</p>
-            </div>
 
             <Image
                 src="/Pattern-1.jpg"
@@ -129,7 +107,19 @@ export default function QuickSetupGuide() {
                                 loading='lazy'
                             />
                             <div
-                                className='absolute bottom-0 left-0 z-20 p-4
+                                className={card.imagestyles}
+                            >
+                                <Image 
+                                    src={card.image}
+                                    alt=''
+                                    width={120}
+                                    height={120}
+                                    quality={100}
+                                    priority
+                                />
+                            </div>
+                            <div
+                                className='absolute bottom-0 left-0 z-40 p-4
                                     min-h-50 w-full flex flex-col justify-end
                                     space-y-2 bg-gradient-to-t from-white via-white'
                             >
@@ -165,6 +155,33 @@ export default function QuickSetupGuide() {
                         </div>
                     )
                 })}
+            </div>
+            <div
+                className='w-full flex items-center gap-2 pt-3'
+            >
+                <div
+                    className='w-full'
+                >
+                    <div
+                        className='rounded-full border border-blue-200 bg-blue-100'
+                    >
+                        <span 
+                            className="relative flex h-2 rounded-full 
+                            bg-blue-600 transition-all 
+                            duration-1000 ease-out 
+                            after:absolute 
+                            after:right-0 
+                            after:-top-1 
+                            after:w-4 
+                            after:shadow 
+                            after:h-4 
+                            after:rounded-full
+                            after:bg-blue-600"
+                            style={{ width: animatedWidth }}
+                        ></span> 
+                    </div>
+                </div>
+                <p className='text-gray-500'>{displayedPercent}%</p>
             </div>
         </section>
   )
