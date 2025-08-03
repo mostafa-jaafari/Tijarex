@@ -1,5 +1,5 @@
 "use client";
-import { Bell, ChevronDown } from "lucide-react";
+import { ArrowRightLeft, Bell, ChevronDown, CreditCard, DollarSign, FileClock, Warehouse } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,25 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
         { label: t("profiledropdown.products"), icon: Package, href: "products" },
         { label: t("profiledropdown.orders"), icon: ShoppingCart, href: "orders" },
         { label: t("profiledropdown.returns"), icon: RotateCcw, href: "returns" },
+    ];
+
+    const Balance_Links = [
+        {
+            label: "My balance purchases",
+            href: "/seller",
+            icon: FileClock,
+            iconstyles: "text-orange-400"
+        },{
+            label: "All transactions",
+            href: "/seller",
+            icon: ArrowRightLeft,
+            iconstyles: "text-green-600"
+        },{
+            label: "My withdrawls",
+            href: "/seller",
+            icon: Warehouse,
+            iconstyles: "text-yellow-500"
+        },
     ];
     
     const DropDownProfileRef = useRef<HTMLDivElement | null>(null)
@@ -41,18 +60,109 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
         document.addEventListener("mousedown", hideMenuRef);
         return () => document.removeEventListener("mousedown", hideMenuRef);
     },[isNotificationsOpen]);
+    
+    // DropDown balance
+    const DropDownBalanceRef = useRef<HTMLDivElement | null>(null)
+    const [isBalanceOpen, setIsBalanceOpen] = useState(false);
+    useEffect(() => {
+        const hideMenuRef = (e: MouseEvent) => {
+            if(DropDownBalanceRef.current && !DropDownBalanceRef.current.contains(e.target as Node)){
+                setIsBalanceOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", hideMenuRef);
+        return () => document.removeEventListener("mousedown", hideMenuRef);
+    },[isBalanceOpen]);
+
     const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
         <section>
             <div className="flex items-center gap-4">
+                {/* --- Balance --- */}
+            <div
+                ref={DropDownBalanceRef}
+                className="relative"
+            >
+                <button
+                    onClick={() => setIsBalanceOpen(!isBalanceOpen)}
+                    className="px-4 py-1 rounded-lg border border-green-200 
+                        flex items-center gap-2 font-semibold 
+                        bg-gradient-to-r from-green-50 to-green-100
+                        hover:bg-green-100 text-gray-500 cursor-pointer
+                        transition-all duration-200 ease-in"
+                >
+                    <DollarSign size={18} className="text-green-600"/> 500 Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
+                </button>
+                {isBalanceOpen && (
+                    <div className="absolute overflow-hidden right-0 
+                        mt-2 w-72 rounded-xl shadow-lg border 
+                        bg-gradient-to-r from-white to-green-100
+                        border-green-200 animate-fade-in">
+                        <div
+                            className="w-full
+                                bg-green-100"
+                        >
+                            <div
+                                className="w-full p-4 flex items-center justify-between"
+                            >
+                                <span className="flex flex-col gap-2">
+                                    <h1 
+                                        className="flex items-center gap-1 uppercase 
+                                            font-semibold text-gray-500"
+                                    >
+                                        <span 
+                                            className="w-2 h-2 bg-green-600 flex 
+                                                rounded-full animate-pulse"
+                                        />
+                                        Total Balance
+                                    </h1>
+                                    <b className="text-3xl">500 Dh</b>
+                                </span>
+                                <span
+                                    className="text-green-600 bg-white p-3 h-max 
+                                        flex rounded-2xl shadow"
+                                >
+                                    <CreditCard size={30} />
+                                </span>
+                            </div>
+                        </div>
+                        <div
+                            className="flex flex-col gap-2 p-2"
+                        >
+                            {Balance_Links.map((item, idx) => {
+                                return (
+                                    <Link 
+                                        key={idx}
+                                        href={item.href}
+                                        className="group flex items-center gap-2 
+                                            hover:bg-green-100 hover:text-green-600 p-2 
+                                            rounded-lg text-gray-600"
+                                    >
+                                        <span className={`bg-white shadow p-2 rounded-lg group-hover:text-green-600 ${item.iconstyles}`}><item.icon size={20} /></span> <h1>{item.label}</h1>
+                                    </Link>
+                                )
+                            })}
+                        </div>
+                        <div
+                            className="w-full flex justify-center p-4"
+                        >
+                            <button
+                                className="py-1 bg-green-600 w-full rounded-lg addbalance-button cursor-pointer"
+                            >
+                                Add balance
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
             {/* Notifications */}
             <div ref={DropDownNotifsRef} className="relative">
                 {/* Bell Icon with Badge */}
                 <button
                     onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                    className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    className="relative p-2 rounded-full hover:bg-blue-100 transition-colors"
                 >
-                    <Bell size={20} className="text-gray-600" />
+                    <Bell size={20} className="text-blue-600" />
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
                     3
                     </span>

@@ -56,3 +56,14 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
+.addbalance-button{
+  background: linear-gradient(180deg, #11db55, #198d02); /* Tailwind Blue-500 to Blue-600 */
+  color: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+.addbalance-button:hover {
+  background: linear-gradient(180deg, #1a9202, #198d02); /* lighter blue */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
