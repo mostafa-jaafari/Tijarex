@@ -2,12 +2,13 @@
 
 import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign } from "lucide-react";
 import { useTranslations } from "next-intl";
+import CountUp from "./Animations/CountUp";
 
 export function SellerStatisticCards() {
     const t = useTranslations("cards");
     const CardsDetails = [
         {
-            count: "5,690",
+            count: 5690,
             percent: 15,
             isPositive: true,
             title: t("customers.title"),
@@ -16,7 +17,7 @@ export function SellerStatisticCards() {
             color: "blue"
         },
         {
-            count: "589",
+            count: 589,
             percent: 23,
             isPositive: true,
             title: t("orders.title"),
@@ -25,7 +26,7 @@ export function SellerStatisticCards() {
             color: "green"
         },
         {
-            count: "$47,590",
+            count: 47590,
             percent: 8,
             isPositive: false,
             title: t("revenue.title"),
@@ -63,9 +64,7 @@ export function SellerStatisticCards() {
                             <div className="flex items-start justify-between w-full mb-2 gap-2">
                             {/* Main Value */}
                             <div className="flex items-center gap-2">
-                                <h3 className="text-2xl font-semibold text-gray-900">
-                                    {card.count}
-                                </h3>
+                                <CountUp separator="," from={0} to={card.count} className="text-2xl font-semibold text-gray-900" />
                                 <div className={`
                                     flex items-center space-x-1 text-sm font-medium
                                     ${card.isPositive ? 'text-green-600' : 'text-red-600'}
