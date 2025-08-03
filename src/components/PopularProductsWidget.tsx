@@ -82,7 +82,8 @@ export function PopularProductsWidget() {
             className="w-max py-4 pr-4"
         >
             <div 
-                className="bg-white border border-gray-100 rounded-2xl shadow-lg"
+                className="bg-white border border-gray-200 
+                    rounded-2xl"
             >
                 {/* Header */}
                 <div className="flex items-center gap-3 px-4 p-2 border-b border-gray-200">

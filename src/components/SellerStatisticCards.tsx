@@ -51,7 +51,7 @@ export function SellerStatisticCards() {
                 return (
                     <div
                         key={idx}
-                        className="bg-white shadow hover:shadow-md 
+                        className="bg-white hover:shadow border border-gray-200
                             rounded-2xl px-6 py-4 transition-all duration-200"
                     >
                         {/* Icon and Value Row */}

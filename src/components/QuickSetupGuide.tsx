@@ -75,7 +75,7 @@ export default function QuickSetupGuide() {
     return (
         <section
             className='relative w-full p-4 min-h-40 rounded-2xl 
-                bg-white shadow'
+                bg-white border border-gray-200'
         >
             <h1
                 className='text-lg font-semibold text-gray-900 mb-3'
