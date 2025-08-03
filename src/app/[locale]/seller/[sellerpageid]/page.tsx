@@ -17,7 +17,6 @@ export default async function Page({ params, searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   
   const PAGE_ID = sellerpageid;
-  const session = await getServerSession();
 
   let TabRender;
 
@@ -35,7 +34,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       if (productId) {
         TabRender = <SingleProductPage ProductId={productId} />;
       } else {
-        TabRender = <ProductsPage session={session} />;
+        TabRender = <ProductsPage />;
       }
       break;
 
