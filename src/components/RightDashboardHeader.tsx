@@ -85,10 +85,10 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
             >
                 <button
                     onClick={() => setIsBalanceOpen(!isBalanceOpen)}
-                    className="px-4 py-1 rounded-lg border border-green-200 
-                        flex items-center gap-2 font-semibold 
+                    className="px-4 py-1 font-semibold rounded-lg border 
+                        border-green-200 flex items-center gap-2
                         bg-gradient-to-r from-green-50 to-green-100
-                        hover:bg-green-100 text-gray-500 cursor-pointer
+                        hover:bg-green-100 text-green-700 cursor-pointer
                         transition-all duration-200 ease-in"
                 >
                     <DollarSign size={18} className="text-green-600"/> 500 Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
@@ -254,17 +254,20 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
                 {/* Profile Dropdown */}
                 {isProfileMenuOpen && (
                     <div
-                        className="absolute right-0 top-full mt-2 w-full bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden animate-fade-in"
+                        className="absolute right-0 top-full mt-2 w-full 
+                            bg-white shadow-lg border border-gray-200 
+                            rounded-xl overflow-hidden animate-fade-in"
                     >
                         {/* Profile Menu Items */}
-                        <div className="flex flex-col">
+                        <div className="flex flex-col p-2">
                             {ProfileHeaderNavs.map((nav, idx) => (
                                 <Link
                                     key={idx}
                                     onClick={() => setIsProfileMenuOpen(false)}
                                     href={`/seller/${nav.href !== "dashboard" ? nav.href : ""}`}
-                                    className={`flex items-center px-4 py-2 text-gray-500 
-                                        hover:bg-blue-50 hover:text-blue-700 transition-colors gap-2`}
+                                    className={`flex items-center px-3 py-2 text-gray-500 
+                                        rounded-xl hover:bg-blue-50 hover:text-blue-700 
+                                        transition-colors gap-2`}
                                 >
                                     {/* Optional Icon */}
                                     <span className="">
