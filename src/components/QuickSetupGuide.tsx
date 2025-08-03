@@ -1,5 +1,4 @@
 "use client";
-import { useUserInfos } from '@/context/UserInfosContext';
 import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
@@ -28,7 +27,7 @@ export default function QuickSetupGuide() {
             iscompleted: false,
             link: {
                 label: "Activate your account with credit.",
-                href: "/seller"
+                href: "/seller/add-balance",
             }
         },{
             title: "Make your first order.",
@@ -73,7 +72,6 @@ export default function QuickSetupGuide() {
 
         requestAnimationFrame(animate);
     }, [percent]);
-    const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
         <section
             className='relative w-full p-4 min-h-40 rounded-2xl 
@@ -146,11 +144,12 @@ export default function QuickSetupGuide() {
                                         Completed <CircleCheckBig size={16} />
                                     </button>
                                 ) : (
-                                    <button
+                                    <Link
+                                        href={card.link.href}
                                         className='primary-button rounded-xl py-1 px-4 w-max text-sm cursor-pointer'
                                     >
                                         {card.btntitle}
-                                    </button>
+                                    </Link>
                                 )}
                             </div>
                         </div>

@@ -2,6 +2,7 @@ import OrdersPage from "./Pages/OrdersPage";
 import { ProductsPage } from "./Pages/ProductsPage";
 import { SingleProductPage } from "./Pages/SingleProductPage";
 import ProfilePage from "./Pages/ProfilePage";
+import AddBalance from "./Pages/AddBalance";
 
 interface PageProps {
   params: Promise<{
@@ -25,6 +26,9 @@ export default async function Page({ params, searchParams }: PageProps) {
       break;
     case "profile":
       TabRender = <ProfilePage />
+      break;
+    case "add-balance":
+      TabRender = <AddBalance />
       break;
     case "products":
       // Check if a product ID exists in searchParams
