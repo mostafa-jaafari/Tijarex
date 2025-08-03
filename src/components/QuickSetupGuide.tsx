@@ -1,4 +1,5 @@
 "use client";
+import { useUserInfos } from '@/context/UserInfosContext';
 import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
@@ -72,6 +73,7 @@ export default function QuickSetupGuide() {
 
         requestAnimationFrame(animate);
     }, [percent]);
+    const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
         <section
             className='relative w-full p-4 min-h-40 rounded-2xl 

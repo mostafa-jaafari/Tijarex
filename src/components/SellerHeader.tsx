@@ -96,7 +96,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                         hover:bg-green-100 text-green-700 cursor-pointer
                         transition-all duration-200 ease-in"
                 >
-                    <DollarSign size={18} className="text-green-600"/> 500 Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
+                    <DollarSign size={18} className="text-green-600"/> {isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
                 </button>
                 {isBalanceOpen && (
                     <div className="absolute overflow-hidden right-0 

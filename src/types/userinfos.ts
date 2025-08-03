@@ -9,4 +9,5 @@ export type UserInfosType = {
     isNewUser: boolean;
     phonenumber: string;
     profileimage: string;
+    totalbalance: number;
 };
