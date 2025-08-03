@@ -48,3 +48,11 @@ body {
   background: linear-gradient(180deg, #60a5fa, #3b82f6); /* lighter blue */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
+.checked-button{
+  background: linear-gradient(180deg, #3bf679, #31dd0f); /* Tailwind Blue-500 to Blue-600 */
+  color: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}

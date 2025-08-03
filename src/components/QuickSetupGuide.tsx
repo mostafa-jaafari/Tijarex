@@ -1,9 +1,41 @@
 "use client";
+import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 
 export default function QuickSetupGuide() {
+
+    const stepsConfig = [
+        {
+            title: "Create your account.",
+            description: "Register your account and set up your basic details to start selling in minutes",
+            btntitle: "Create account",
+            iscompleted: true,
+            link: {
+                label: "Start your journey with us !",
+                href: "/seller"
+            }
+        },{
+            title: "Add balance",
+            description: "Top up your balance to start fulfilling your orders smoothly",
+            btntitle: "Add balance",
+            iscompleted: false,
+            link: {
+                label: "Activate your account with credit.",
+                href: "/seller"
+            }
+        },{
+            title: "Make your first order.",
+            description: "Test the system by placing a sample or real order and see how it works !",
+            btntitle: "Make first order",
+            iscompleted: false,
+            link: {
+                label: "Try your first order now !",
+                href: "/seller"
+            }
+        },
+    ];
     const [percent, setPercent] = useState(25);
     const [animatedWidth, setAnimatedWidth] = useState("0%");
     const [displayedPercent, setDisplayedPercent] = useState(0);
@@ -82,7 +114,7 @@ export default function QuickSetupGuide() {
                 loading='lazy'
             />
             <div className='w-full flex flex-shrink-0 items-center justify-between gap-2'>
-                {Array(3).fill(0).map((_, idx) => {
+                {stepsConfig.map((card, idx) => {
                     return (
                         <div
                             key={idx}
@@ -101,20 +133,34 @@ export default function QuickSetupGuide() {
                                     min-h-50 w-full flex flex-col justify-end
                                     space-y-2 bg-gradient-to-t from-white via-white'
                             >
-                                <h1>Add your first product</h1>
+                                <h1>{card.title}</h1>
                                 <span>
                                     <p className='text-sm text-gray-500'>
-                                        Start by adding a product and a few key details. Not ready?
+                                        {card.description}
                                     </p>
-                                    <Link href="/seller" className='text-sm text-blue-600'>
-                                        Start with a sample product
+                                    <Link 
+                                        href={card.link.href} 
+                                        className='text-sm text-blue-600'
+                                    >
+                                        {card.link.label}
                                     </Link>
                                 </span>
-                                <button
-                                    className='primary-button rounded-xl py-1 px-4 w-max text-sm cursor-pointer'
-                                >
-                                    Add product
-                                </button>
+                                {card.iscompleted ? (
+                                    <button
+                                        disabled
+                                        className='checked-button rounded-xl py-1 
+                                            flex items-center gap-1 px-4 w-max 
+                                            text-sm cursor-not-allowed'
+                                    >
+                                        Completed <CircleCheckBig size={16} />
+                                    </button>
+                                ) : (
+                                    <button
+                                        className='primary-button rounded-xl py-1 px-4 w-max text-sm cursor-pointer'
+                                    >
+                                        {card.btntitle}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     )
