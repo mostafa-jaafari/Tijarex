@@ -9,7 +9,7 @@ import { Session } from "next-auth";
 import { useTranslations } from "next-intl";
 import { useUserInfos } from "@/context/UserInfosContext";
 
-export function RightDashboardHeader({ session }: { session: Session | null }){
+export function SellerHeader({ session }: { session: Session | null }){
     const t = useTranslations();
     const ProfileHeaderNavs = [
         { label: t("profiledropdown.dashboard"), icon: LayoutDashboard, href: "dashboard" },
@@ -76,7 +76,12 @@ export function RightDashboardHeader({ session }: { session: Session | null }){
 
     const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
-        <section>
+        <section
+            className="sticky top-0 w-full flex items-center 
+                justify-between bg-white shadow
+                z-50 py-1.5 px-6 borderb border-gray-200"
+        >
+            <div className="grow"></div>
             <div className="flex items-center gap-4">
                 {/* --- Balance --- */}
             <div

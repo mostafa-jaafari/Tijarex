@@ -48,34 +48,7 @@ export default function OrdersPage() {
   const locale = useLocale();
   return (
     <section className="w-full overflow-x-scroll bg-gray-50 min-h-screen">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-50 rounded-xl">
-              <Package className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                {t("subtitle")}
-              </p>
-            </div>
-          </div>
-          
-          <Link
-            href="/seller/products"
-          >
-              <button className="cursor-pointer flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
-                <Plus size={18} />
-                <span className="text-sm font-medium">
-                  {t("createorderbtn")}
-                </span>
-              </button>
-          </Link>
-        </div>
-      </div>
-
+      
       <FilterOrders 
         onChange={(e) => setSearchTerm(e.target.value)}
         searchTerm={searchTerm}

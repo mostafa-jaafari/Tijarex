@@ -230,7 +230,7 @@ export function ProductsPage() {
         }
 
         return (
-            <div className="relative mb-4 group w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+            <section className="relative mb-4 group w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
                 {/* Product Image Section */}
                 <div className="relative w-full h-64 overflow-hidden">
                     <Link href={`/seller/products?p_id=${product.id}`}>
@@ -325,18 +325,12 @@ export function ProductsPage() {
                         Make Order
                     </button>
                 </div>
-            </div>
+            </section>
         );
     };
 
     return (
-        <div className="w-full space-y-4">
-            {/* Header */}
-            <div className="px-6 py-2 border-b border-gray-200">
-                <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
-                <p className="text-sm text-gray-600 mt-1">{t("subtitle")}</p>
-            </div>
-
+        <section className="w-full mt-6 space-y-4">
             {/* Search and Controls */}
             <div className="flex items-center justify-between gap-4 px-6">
                 {/* Search Bar */}
@@ -591,6 +585,6 @@ export function ProductsPage() {
                     </button>
                 </div>
             )}
-        </div>
+        </section>
     );
 }

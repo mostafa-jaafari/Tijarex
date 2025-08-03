@@ -2,7 +2,7 @@ import { PopularProductsWidget } from '@/components/PopularProductsWidget'
 import { SellerStatisticCards } from '@/components/SellerStatisticCards'
 import EarningsChart from '@/components/EarningsChart'
 import React from 'react'
-import { RightDashboardHeader } from '@/components/RightDashboardHeader'
+import { SellerHeader } from '@/components/SellerHeader'
 import { getServerSession, Session } from 'next-auth'
 import { getTranslations } from 'next-intl/server'
 import { authOptions } from "@/lib/auth";
@@ -34,37 +34,19 @@ export default async function page() {
     <main
         className='w-full'
     >
-        <section className='w-full'>
-            {/* --- Header --- */}
-          <div className="sticky z-50 top-0 bg-white border-b border-gray-200">
-            <div className="px-6 py-2 flex items-center justify-between">
-              {/* Left Side */}
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-900">{t("headertitle")}</h1>
-                <p className="text-sm text-gray-600 mt-1">{t("headersubtitle")}</p>
-              </div>
-
-              {/* Right Side */}
-              <RightDashboardHeader
-                session={session}
-              />
-            </div>
-          </div>
-
-          <section
-              className='w-full flex'
-          >
-            {/* --- section Content --- */}
-            <section className='flex-1 flex flex-col p-4 space-y-4'>
-            {/* --- Content Area --- */}
-              <QuickSetupGuide />
-              <SellerStatisticCards />
-              <EarningsChart />
-            </section>
-            {/* --- Sidebar --- */}
-              <PopularProductsWidget />
-          </section>
+      <section
+          className='w-full flex'
+      >
+        {/* --- section Content --- */}
+        <section className='flex-1 flex flex-col p-4 space-y-4'>
+        {/* --- Content Area --- */}
+          <QuickSetupGuide />
+          <SellerStatisticCards />
+          <EarningsChart />
         </section>
+        {/* --- Sidebar --- */}
+          <PopularProductsWidget />
+      </section>
     </main>
   )
 }
