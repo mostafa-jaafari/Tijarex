@@ -37,7 +37,6 @@ export default async function RootLayout({
     <html lang={locale} className="scroll-smooth">
       <body
         className={`w-full overflow-x-hidden 
-          bg-white dark:bg-[#0a0a0a] 
           ${cairo.className} ${bebas_neue.variable} antialiased`}
           >
           <NextAuthSessionProvider>

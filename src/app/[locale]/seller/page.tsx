@@ -6,6 +6,7 @@ import { RightDashboardHeader } from '@/components/RightDashboardHeader'
 import { getServerSession, Session } from 'next-auth'
 import { getTranslations } from 'next-intl/server'
 import { authOptions } from "@/lib/auth";
+import QuickSetupGuide from '@/components/QuickSetupGuide'
 
 export const metadata = {
   title: "Seller Dashboard | Jamla.ma",
@@ -31,7 +32,7 @@ export default async function page() {
   const t = await getTranslations("sellerdashboard");
   return (
     <main
-        className='w-full bg-gray-50'
+        className='w-full'
     >
         <section className='w-full'>
             {/* --- Header --- */}
@@ -54,15 +55,14 @@ export default async function page() {
               className='w-full flex'
           >
             {/* --- section Content --- */}
-            <section className='flex-1 flex flex-col'>
-                {/* --- Content Area --- */}
-                <div className='p-4 space-y-4'>
-                <SellerStatisticCards />
-                <EarningsChart />
-                </div>
+            <section className='flex-1 flex flex-col p-4 space-y-4'>
+            {/* --- Content Area --- */}
+              <QuickSetupGuide />
+              <SellerStatisticCards />
+              <EarningsChart />
             </section>
             {/* --- Sidebar --- */}
-            <PopularProductsWidget />
+              <PopularProductsWidget />
           </section>
         </section>
     </main>
