@@ -1,18 +1,21 @@
 "use client";
 import { Search } from 'lucide-react';
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 
 interface HeaderInputSearchProps{
     inputSearch: string;
     setInputSearch: (e: string) => void;
+    isSearchOpen: boolean;
+    setIsSearchOpen: (isOpen: boolean) => void;
 }
 
 const HeaderInputSearchContext = createContext<HeaderInputSearchProps | null>(null);
 
 export function HeaderInputSearchContextProvider({ children }: {children: React.ReactNode;}){
     const [inputSearch, setInputSearch] = useState("");
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     return (
-        <HeaderInputSearchContext value={{ inputSearch, setInputSearch }}>
+        <HeaderInputSearchContext value={{ inputSearch, setInputSearch, isSearchOpen, setIsSearchOpen }}>
             {children}
         </HeaderInputSearchContext>
     )
@@ -26,7 +29,7 @@ export const useHeaderSearchInput = () => {
 }
 
 export function HeaderInputSearch(){
-    const { inputSearch, setInputSearch } = useHeaderSearchInput();
+    const { inputSearch, setInputSearch, setIsSearchOpen, isSearchOpen } = useHeaderSearchInput();
     return (
         <div
             className="w-full border border-gray-200 rounded-full 
@@ -36,6 +39,7 @@ export function HeaderInputSearch(){
           <input 
             type="text"
             value={inputSearch}
+            onFocus={() => setIsSearchOpen(isSearchOpen === false && true)}
             onChange={(e) => {
                 setInputSearch(e.target.value)
             }}
@@ -58,19 +62,31 @@ export function HeaderInputSearch(){
 }
 
 export function HeaderSearchMenu() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { inputSearch } = useHeaderSearchInput();
-  return (
-    <div
-        className="absolute left-0 top-full w-full h-screen 
-            bg-neutral-900/30 flex justify-center"
-    >
-        <div
-        className="w-full md:w-1/2 lg:w-1/2 bg-teal-50 
-            mt-1 mr-30 rounded-xl p-6"
-        >
-        {inputSearch}
-        </div>
-    </div>
-  )
+    const { inputSearch, isSearchOpen, setIsSearchOpen } = useHeaderSearchInput();
+    const SearchMenuRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const handleHideSearchMenu = (e: MouseEvent) => {
+            if(SearchMenuRef.current && !SearchMenuRef.current.contains(e.target as Node)){
+                setIsSearchOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleHideSearchMenu);
+        return () => document.removeEventListener("mousedown", handleHideSearchMenu);
+    },[setIsSearchOpen])
+    if(isSearchOpen){
+        return (
+            <div
+                className="absolute left-0 top-full w-full h-screen 
+                    bg-neutral-900/30 flex justify-center"
+                    >
+                <div
+                    ref={SearchMenuRef}
+                    className="w-full md:w-1/2 lg:w-1/2 bg-teal-50 
+                        mt-1 mr-30 rounded-xl p-6"
+                >
+                {inputSearch}
+                </div>
+            </div>
+        )
+    }
 }
