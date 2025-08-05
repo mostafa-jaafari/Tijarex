@@ -48,16 +48,18 @@ export async function Header() {
         </h1>
         <div
           className="w-full group border border-gray-200 rounded-full 
-           flex items-center p-1 overflow-hidden"
+           flex items-center p-1 overflow-hidden focus-within:ring-2 
+           focus-within:ring-teal-500 transition-colors"
         >
           <input 
             type="text"
             placeholder="Search for everything"
-            className="grow py-2 px-4 border-none outline-none"
+            className="grow py-2 px-4 border-none outline-none
+              focus:text-teal-600"
           />
           <span
             className="group p-2.5 rounded-full cursor-pointer
-              bg-teal-600 text-white"
+              primary-button text-white"
           >
             <Search 
               size={20} 

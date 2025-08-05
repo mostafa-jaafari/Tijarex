@@ -41,14 +41,14 @@ body {
   font-family: var(--font-cenzel);
 }
 .primary-button{
-  background: linear-gradient(180deg, #14B8A6, #0D9488); /* Tailwind Teal-500 to Teal-600 */
+  background: linear-gradient(180deg, #14B8A6, #229e94); /* Tailwind Teal-500 to Teal-600 */
   color: white;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in-out;
 }
 .primary-button:hover {
-  background: linear-gradient(180deg, #14B8A6, #0D9488); /* lighter teal */
+  background: linear-gradient(180deg, #14B8A6, #149489); /* lighter teal */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
