@@ -131,14 +131,11 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className={`font-bold mt-4 py-2 focus:outline-none w-full flex items-center justify-center gap-1 transition-all duration-200 rounded-lg ${
-            isLoading
-              ? "bg-blue-900 cursor-not-allowed text-white/70"
-              : "focus:ring-2 cursor-pointer shadow-blue-700/20 ring-blue-500 bg-blue-700 hover:bg-blue-800 text-white hover:text-white/70"
-          }`}
+          className={`font-bold mt-4 py-2 focus:outline-none 
+            w-full focus:shadow-lg flex items-center justify-center gap-1 rounded-xl
+            ${isLoading ? "bg-blue-400 text-white/70 cursor-not-allowed text-neutral-600" : "focus:ring-2 cursor-pointer primary-button"}`}
         >
-          {isLoading && <div className="w-4 h-4 border-2 border-transparent border-t-current rounded-full animate-spin" />}
-          {t("loginbtn")}
+          {isLoading && (<div className="w-4 h-4 border-2 border-transparent border-t-current rounded-full animate-spin"/>)}{t("loginbtn")}
         </button>
 
         {/* Or separator */}
