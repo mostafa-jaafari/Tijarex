@@ -5,11 +5,11 @@ import React from 'react'
 import QuickSetupGuide from '@/components/QuickSetupGuide'
 
 export const metadata = {
-  title: "Seller Dashboard | Jamla.ma",
-  description: "Monitor your store performance, view earnings, and track popular products on your Jamla.ma seller dashboard.",
+  title: "Seller Dashboard | Tijarex.ma",
+  description: "Monitor your store performance, view earnings, and track popular products on your tijarex.ma seller dashboard.",
   keywords: [
     "seller dashboard",
-    "Jamla.ma",
+    "tijarex.ma",
     "store performance",
     "earnings",
     "popular products",
@@ -17,9 +17,9 @@ export const metadata = {
     "sales statistics"
   ],
   openGraph: {
-    title: "Seller Dashboard | Jamla.ma",
-    description: "Stay updated with your store's performance and analytics on Jamla.ma.",
-    url: "https://jamla.ma/seller",
+    title: "Seller Dashboard | tijarex.ma",
+    description: "Stay updated with your store's performance and analytics on tijarex.ma.",
+    url: "https://tijarex.ma/seller",
     type: "website"
   }
 }
