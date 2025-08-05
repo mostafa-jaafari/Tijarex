@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { HeaderMenu } from "./HeaderMenu";
 import GlobalLogo from "./GlobalLogo";
 import { Heart, Search, ShoppingCart } from "lucide-react";
+import { HeaderSearchMenu, HeaderInputSearch, HeaderInputSearchContextProvider } from "./HeaderSearchMenu";
 
 export async function Header() {
   const t = await getTranslations("header");
@@ -30,13 +31,54 @@ export async function Header() {
     },
   ];
 
+  const Header_Categories = [
+  {
+    label: "Electronics",
+    name: "electronics",
+    href: "/",
+  },
+  {
+    label: "Cosmetics",
+    name: "cosmetics",
+    href: "/",
+  },
+  {
+    label: "Clothing",
+    name: "clothing",
+    href: "/",
+  },
+  {
+    label: "Food & Kitchen",
+    name: "food-kitchen",
+    href: "/",
+  },
+  {
+    label: "Beverages",
+    name: "beverages",
+    href: "/",
+  },
+  {
+    label: "Accessories",
+    name: "accessories",
+    href: "/",
+  },
+  {
+    label: "Tools",
+    name: "tools",
+    href: "/",
+  },
+];
+
   return (
+    <HeaderInputSearchContextProvider>
     <section
-      className="py-2 px-6 lg:px-20 md:px-20"
+      className="sticky top-0 z-50 bg-white py-2"
     >
+      {/* --- Top Header --- */}
       <div
-        className="w-full flex items-center justify-between gap-6"
+        className="relative w-full pb-2 px-6 lg:px-20 md:px-20 flex items-center justify-between gap-6"
       >
+        {/* --- Logo --- */}
         <h1 
           className="uppercase text-3xl text-teal-600 
             font-cinzel font-bold">
@@ -46,42 +88,27 @@ export async function Header() {
               .ma
           </span>
         </h1>
-        <div
-          className="w-full group border border-gray-200 rounded-full 
-           flex items-center p-1 overflow-hidden focus-within:ring-2 
-           focus-within:ring-teal-500 transition-colors"
-        >
-          <input 
-            type="text"
-            placeholder="Search for everything"
-            className="grow py-2 px-4 border-none outline-none
-              focus:text-teal-600"
-          />
-          <span
-            className="group p-2.5 rounded-full cursor-pointer
-              primary-button text-white"
-          >
-            <Search 
-              size={20} 
-              className="group-hover:rotate-45 group-hover:scale-105 
-                transition-all duration-300"
-            />
-          </span>
-        </div>
+
+        {/* --- Input --- */}
+        <HeaderInputSearch />
+
+        {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
         <div
           className="flex items-center gap-2"
         >
-          <button
+          <Link
+            href="/auth/register"
             className="primary-button text-nowrap py-1 px-4 rounded-lg cursor-pointer"
           >
             Get started
-          </button>
-          <button
+          </Link>
+          <Link
+            href="/auth/login"
             className="text-teal-600 rounded-lg px-4 py-1 
               font-semibold cursor-pointer hover:text-teal-500"
           >
             Login
-          </button>
+          </Link>
           <div
             className="flex items-center gap-4"
           >
@@ -106,7 +133,29 @@ export async function Header() {
             </span>
           </div>
         </div>
+
+        <HeaderSearchMenu />
+      </div>
+
+
+      {/* --- Bottom Header --- */}
+      <div
+        className="w-full mt-4 flex items-center justify-between 
+          gap-4 px-6 lg:px-20 md:px-20 border-b border-gray-200"
+      >
+        {Header_Categories.map((item, idx) => {
+          return (
+            <button
+              key={idx}
+              className="w-full flex justify-center items-center 
+                gap-2 py-1 border-b-4 border-teal-500 capitalize"
+            >
+              {item.name}
+            </button>
+          )
+        })}
       </div>
     </section>
+    </HeaderInputSearchContextProvider>
   );
 }
