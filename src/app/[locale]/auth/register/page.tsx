@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { RegisterForm } from './RegisterForm'
+import { getLocale } from 'next-intl/server';
 
 
 
@@ -27,10 +28,11 @@ export const metadata = {
     },
 };
 
-export default function page() {
-  return (
+export default async function page() {
+  const locale = await getLocale();
+    return (
     <main
-        dir='ltr'
+        dir={locale === "ar" ? "rtl" : "ltr"}
         className='flex items-start w-full text-black min-h-screen'
     >
         <div

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 import { LoginForm } from './LoginForm'
 import { Metadata } from 'next'
+import { getLocale } from 'next-intl/server'
 
 
 
@@ -39,10 +40,11 @@ export const metadata: Metadata = {
     },
 }
 
-export default function page() {
-  return (
+export default async function page() {
+    const locale = await getLocale();
+    return (
     <main
-        dir='ltr'
+        dir={locale === "ar" ? "rtl" : "ltr"}
         className='flex items-start w-full 
             text-white min-h-screen'
     >
