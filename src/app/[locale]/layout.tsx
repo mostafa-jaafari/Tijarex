@@ -1,5 +1,5 @@
 import "../../app/globals.css";
-import { Cairo, Bebas_Neue } from 'next/font/google'
+import { Cairo, Bebas_Neue, Sorts_Mill_Goudy } from 'next/font/google'
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
@@ -10,6 +10,11 @@ import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
 import { UserInfosContextProvider } from "@/context/UserInfosContext";
 
 
+const cinzel = Sorts_Mill_Goudy({
+  subsets: ['latin'],
+  variable: '--font-cenzel',
+  weight: ['400']
+})
 
 const bebas_neue = Bebas_Neue({
   subsets: ['latin'],
@@ -37,7 +42,7 @@ export default async function RootLayout({
     <html lang={locale} className="scroll-smooth">
       <body
         className={`w-full overflow-x-hidden 
-          ${cairo.className} ${bebas_neue.variable} antialiased`}
+          ${cairo.className} ${cinzel.variable} ${bebas_neue.variable} antialiased`}
           >
           <NextAuthSessionProvider>
             <UserInfosContextProvider>

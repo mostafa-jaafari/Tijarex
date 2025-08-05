@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SwitchLanguage } from "./SwitchLanguage";
 import { getTranslations } from "next-intl/server";
 import { HeaderMenu } from "./HeaderMenu";
+import GlobalLogo from "./GlobalLogo";
 
 export async function Header() {
   const t = await getTranslations("header");
@@ -33,9 +34,7 @@ export async function Header() {
       dir="ltr"
       className="sticky top-0 w-full py-3 lg:px-10 md:px-10 px-6 flex
         items-center justify-between z-50 backdrop-blur-[2px] bg-white/80">
-      <h1 className="text-neutral-300">
-        JAMLA.ma | LOGO
-      </h1>
+      <GlobalLogo />
 
       <ul 
         className="hidden md:hidden lg:flex items-center 

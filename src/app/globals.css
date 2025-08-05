@@ -37,6 +37,9 @@ body {
   animation: fade-in 0.2s ease-out;
 }
 
+.font-cinzel {
+  font-family: var(--font-cenzel);
+}
 .primary-button{
   background: linear-gradient(180deg, #3b82f6, #2563eb); /* Tailwind Blue-500 to Blue-600 */
   color: white;
