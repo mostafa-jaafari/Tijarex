@@ -35,11 +35,10 @@ export async function HeroSection() {
           <Link 
             href="/auth/register"
             aria-label="Start selling now"
-            className="cursor-pointer bg-gradient-to-r 
-              from-blue-600 via-blue-500 to-blue-400
-              hover:to-blue-200 transition px-6 py-2
-              rounded-full border border-blue-300 shadow-xl 
-              shadow-blue-700/20 text-white text-lg font-semibold">
+            className="cursor-pointer
+              py-2 px-4 primary-button
+              rounded-xl
+              shadow-blue-700/20 text-lg font-semibold">
               {t('cta-trying')}
           </Link>
           <Link 

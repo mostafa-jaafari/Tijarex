@@ -113,7 +113,7 @@ export function FeaturedProducts() {
                         disabled={isLoading}
                         className={`
                             relative flex items-center gap-2 px-4 md:px-6
-                            py-1 rounded-full font-medium text-sm
+                            py-1 rounded-xl font-medium text-sm
                             md:text-base disabled:opacity-50
                             disabled:cursor-not-allowed cursor-pointer
                             ${selectedTabCategorie === tab.name 
@@ -181,14 +181,14 @@ export function FeaturedProducts() {
                                                 transition-all duration-300">
                                             <button 
                                                 className="w-10 h-10 bg-white/90 backdrop-blur-sm 
-                                                    rounded-full flex items-center justify-center 
+                                                    rounded-xl flex items-center justify-center 
                                                     hover:bg-white transition-colors duration-200 
                                                     shadow-lg">
                                                 <Heart size={20}/>
                                             </button>
                                             <button 
                                                 className="w-10 h-10 bg-white/90 backdrop-blur-sm 
-                                                    rounded-full flex items-center justify-center 
+                                                    rounded-xl flex items-center justify-center 
                                                     hover:bg-white transition-colors duration-200 
                                                     shadow-lg">
                                                 <Eye size={20}/>
@@ -198,7 +198,7 @@ export function FeaturedProducts() {
                                         {/* Discount badge (if applicable) */}
                                         {product.originalPrice && product.originalPrice > product.price && (
                                             <div className="absolute top-2 left-2 bg-red-600 text-white 
-                                                        px-3 py-1 rounded-full text-xs font-bold">
+                                                        px-3 py-1 rounded-xl text-xs font-bold">
                                                 {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% {t("featuredproducts.discountpercent")}
                                             </div>
                                         )}
@@ -250,7 +250,7 @@ export function FeaturedProducts() {
                                             className="w-full bg-gradient-to-r 
                                                 from-blue-600 via-blue-500 to-blue-400
                                                 transition-all duration-300 ease-out
-                                                py-2 rounded-full text-white hover:to-blue-200
+                                                py-2 rounded-xl text-white hover:to-blue-200
                                                 flex items-center justify-center gap-2
                                                 focus:outline-none focus:ring-2 cursor-pointer
                                                 focus:ring-blue-500/50"
@@ -280,7 +280,7 @@ export function FeaturedProducts() {
                 <div className="mt-12">
                     <button 
                         className="border border-blue-200 py-2 px-6 
-                            font-semibold rounded-full text-blue-600
+                            font-semibold rounded-xl text-blue-600
                             cursor-pointer hover:bg-blue-100">
                         {t("featuredproducts.viewallbtn")}
                     </button>

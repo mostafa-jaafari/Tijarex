@@ -17,11 +17,10 @@ export async function LastCallToAction() {
                 </p>
                 <Link
                     href="/auth/register"
-                    className="cursor-pointer bg-gradient-to-r 
-                        from-blue-600 via-blue-500 to-blue-400
-                        hover:to-blue-200 transition px-6 py-2
-                        rounded-full border border-blue-400 shadow-xl 
-                        shadow-blue-700/20 text-white text-lg font-semibold"
+                    className="cursor-pointer primary-button
+                        hover:to-blue-200 transition px-4 py-2
+                        rounded-xl
+                        text-lg font-semibold"
                 >
                     {t("button")}
                 </Link>

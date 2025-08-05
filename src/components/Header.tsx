@@ -59,16 +59,13 @@ export async function Header() {
           <SwitchLanguage
             CLASSNAME="flex items-center cursor-pointer 
               border border-blue-200 text-xs py-1 px-3 
-              text-blue-600 rounded-full gap-1"
+              text-blue-600 rounded-xl gap-1"
           />
         </div>
         <Link
           href="/auth/register" 
             className="lg:text-normal md:text-md text-sm 
-              bg-gradient-to-r transition-colors duration-200 
-              hover:to-blue-200
-              from-blue-600 via-blue-500 to-blue-400
-              py-1.5 cursor-pointer px-6 text-white rounded-full">
+              py-1.5 cursor-pointer px-6 rounded-xl primary-button">
           {t("buttons.beSeller")}
         </Link>
         <Link
@@ -76,7 +73,7 @@ export async function Header() {
             className="lg:text-normal md:text-md text-sm 
               border border-blue-200 transition-colors duration-200
               py-1 font-bold bg-blue-50/50 hover:bg-blue-50 cursor-pointer 
-              px-6 text-blue-600 rounded-full">
+              px-6 text-blue-600 rounded-xl">
           {t("buttons.login")}
         </Link>
         <HeaderMenu />
