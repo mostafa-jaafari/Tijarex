@@ -37,8 +37,14 @@ export async function Header() {
       <div
         className="w-full flex items-center justify-between gap-6"
       >
-        <h1 className="uppercase text-3xl text-teal-600 font-cinzel font-bold">
-          Tijarex<span className="lowercase font-normal text-lg">.ma</span>
+        <h1 
+          className="uppercase text-3xl text-teal-600 
+            font-cinzel font-bold">
+          Tijarex
+          <span 
+            className="lowercase font-normal text-lg">
+              .ma
+          </span>
         </h1>
         <div
           className="w-full group border border-gray-200 rounded-full 
@@ -79,11 +85,12 @@ export async function Header() {
           >
             {/* --- Favorite --- */}
             <span
-              className="relative text-teal-600 hover:text-teal-500 p-1 cursor-pointer"
+              className="relative text-teal-600 
+                hover:text-teal-500 cursor-pointer"
             >
               <Heart size={20} />
               <span
-                className="absolute left-3 -top-2 px-1 flex justify-center items-center rounded-full 
+                className="absolute left-3 -top-3 px-1 flex justify-center items-center rounded-full 
                   bg-teal-600 text-sm text-white"
               >
                 0
