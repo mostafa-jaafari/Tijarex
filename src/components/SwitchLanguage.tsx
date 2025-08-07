@@ -48,7 +48,7 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
         className={CLASSNAME}
       >
         <span className="text-base">
-          <Languages size={20} />
+          <Languages size={16} />
         </span>
         <span className="uppercase">{currentLocale.code}</span>
         <svg
@@ -63,8 +63,9 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
 
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 
-        bg-blue-50 rounded-lg shadow-lg 
-        border border-gray-200 overflow-hidden z-50 min-w-[120px] w-full">
+          bg-teal-50 rounded-lg shadow-lg 
+          border border-gray-200 overflow-hidden 
+          z-50 min-w-[120px] w-full">
           {locales.map(({ code, flag, short }) => {
             const newPath = getPathWithLocale(pathname, code);
             const search = searchParams.toString();
@@ -79,16 +80,16 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
                 onClick={() => setIsOpen(false)}
               >
                 <button
-                  className={`flex items-center gap-2 w-full px-3 py-2 
+                  className={`flex items-center gap-2 w-full px-2 py-1 
                     text-sm transition-colors text-left 
                     ${currentLocaleCode === code ? 
-                      'bg-blue-600 text-white' 
+                      'primary-button text-white' 
                       : 
                       'text-gray-700 hover:bg-neutral-200'
                   }`}
                 >
                   <div
-                    className='relative w-6 h-6 overflow-hidden rounded-lg'
+                    className='relative w-5 h-5 overflow-hidden rounded-lg'
                   >
                     <Image 
                       src={flag}

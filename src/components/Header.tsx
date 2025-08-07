@@ -71,91 +71,95 @@ export async function Header() {
 
   return (
     <HeaderInputSearchContextProvider>
-    <section
-      className="sticky top-0 z-50 bg-white py-2"
-    >
-      {/* --- Top Header --- */}
-      <div
-        className="relative w-full pb-2 px-6 lg:px-20 md:px-20 flex items-center justify-between gap-6"
+      <section
+        className="sticky top-0 z-50 bg-white py-2"
       >
-        {/* --- Logo --- */}
-        <h1 
-          className="uppercase text-3xl text-teal-600 
-            font-cinzel font-bold">
-          Tijarex
-          <span 
-            className="lowercase font-normal text-lg">
-              .ma
-          </span>
-        </h1>
-
-        {/* --- Input --- */}
-        <HeaderInputSearch />
-
-        {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
+        {/* --- Top Header --- */}
         <div
-          className="flex items-center gap-2"
+          className="relative w-full pb-2 px-6 lg:px-20 md:px-20 flex items-center justify-between gap-6"
         >
-          <Link
-            href="/auth/register"
-            className="primary-button text-nowrap py-1 px-4 rounded-lg cursor-pointer"
-          >
-            Get started
-          </Link>
-          <Link
-            href="/auth/login"
-            className="text-teal-600 rounded-lg px-4 py-1 
-              font-semibold cursor-pointer hover:text-teal-500"
-          >
-            Login
-          </Link>
+          {/* --- Logo --- */}
+          <h1 
+            className="uppercase text-3xl text-teal-600 
+              font-cinzel font-bold">
+            Tijarex
+            <span 
+              className="lowercase font-normal text-lg">
+                .ma
+            </span>
+          </h1>
+
+          {/* --- Input --- */}
+          <SwitchLanguage
+            CLASSNAME="flex items-center gap-1 text-xs border 
+              border-gray-200 text-teal-600 py-1 px-2 rounded-xl"
+          />
+          <HeaderInputSearch />
+
+          {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
           <div
-            className="flex items-center gap-4"
+            className="flex items-center gap-2"
           >
-            {/* --- Favorite --- */}
-            <span
-              className="relative text-teal-600 
-                hover:text-teal-500 cursor-pointer"
+            <Link
+              href="/auth/register"
+              className="primary-button text-nowrap py-1 px-4 rounded-lg cursor-pointer"
             >
-              <Heart size={20} />
+              Get started
+            </Link>
+            <Link
+              href="/auth/login"
+              className="text-teal-600 rounded-lg px-4 py-1 
+                font-semibold cursor-pointer hover:text-teal-500"
+            >
+              Login
+            </Link>
+            <div
+              className="flex items-center gap-4"
+            >
+              {/* --- Favorite --- */}
               <span
-                className="absolute left-3 -top-3 px-1 flex justify-center items-center rounded-full 
-                  bg-teal-600 text-sm text-white"
+                className="relative text-teal-600 
+                  hover:text-teal-500 cursor-pointer"
               >
-                0
+                <Heart size={20} />
+                <span
+                  className="absolute left-3 -top-3 px-1 flex justify-center items-center rounded-full 
+                    bg-teal-600 text-sm text-white"
+                >
+                  0
+                </span>
               </span>
-            </span>
-            {/* --- Shopping Cart --- */}
-            <span
-              className="text-teal-600 hover:text-teal-500 p-1 cursor-pointer"
-            >
-              <ShoppingCart size={20} />
-            </span>
+              {/* --- Shopping Cart --- */}
+              <span
+                className="text-teal-600 hover:text-teal-500 p-1 cursor-pointer"
+              >
+                <ShoppingCart size={20} />
+              </span>
+            </div>
           </div>
+
+          <HeaderSearchMenu />
         </div>
 
-        <HeaderSearchMenu />
-      </div>
 
-
-      {/* --- Bottom Header --- */}
-      <div
-        className="w-full mt-4 flex items-center justify-between 
-          gap-4 px-6 lg:px-20 md:px-20 border-b border-gray-200"
-      >
-        {Header_Categories.map((item, idx) => {
-          return (
-            <button
-              key={idx}
-              className="w-full flex justify-center items-center 
-                gap-2 py-1 border-b-4 border-teal-500 capitalize"
-            >
-              {item.name}
-            </button>
-          )
-        })}
-      </div>
-    </section>
+        {/* --- Bottom Header --- */}
+        <div
+          className="w-full mt-4 flex items-center justify-between 
+            gap-4 px-6 lg:px-20 md:px-20 border-b border-gray-200"
+        >
+          {Header_Categories.map((item, idx) => {
+            return (
+              <button
+                key={idx}
+                className="w-full flex justify-center items-center 
+                  gap-2 py-1 border-b-4 border-teal-500 capitalize"
+              >
+                {item.name}
+              </button>
+            )
+          })}
+        </div>
+      </section>
     </HeaderInputSearchContextProvider>
   );
 }
