@@ -46,10 +46,10 @@ export function HeaderInputSearch(){
             }}
             placeholder="Search for everything"
             className="grow py-2 px-4 border-none outline-none
-              focus:text-teal-600"
+              focus:text-teal-600 text-lg"
         />
             <span
-                className="group p-2.5 rounded-full cursor-pointer
+                className="group p-3.5 rounded-full cursor-pointer
                     primary-button text-white"
             >
                 <Search 

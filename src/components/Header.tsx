@@ -3,9 +3,10 @@ import { SwitchLanguage } from "./SwitchLanguage";
 import { getTranslations } from "next-intl/server";
 import { HeaderMenu } from "./HeaderMenu";
 import GlobalLogo from "./GlobalLogo";
-import { ArrowDown, ChevronDown, Heart, Search, ShoppingCart } from "lucide-react";
+import { ArrowDown, ChevronDown, Heart, Menu, Search, ShoppingCart } from "lucide-react";
 import { HeaderSearchMenu, HeaderInputSearch, HeaderInputSearchContextProvider } from "./HeaderSearchMenu";
 import Image from "next/image";
+import { ShowHeaderMenu } from "./ShowHeaderMenu";
 
 export default async function Header() {
   const t = await getTranslations("header");
@@ -82,9 +83,6 @@ export default async function Header() {
             flex items-center justify-between gap-12"
         >
           {/* --- Logo --- */}
-          <div
-            className="flex items-end"
-          >
             <Link
               href="/"
               className="relative w-12 h-12 overflow-hidden"
@@ -98,34 +96,36 @@ export default async function Header() {
                 priority
               />
             </Link>
-            {/* <h1 
-            className="uppercase text-4xl text-teal-600 
-              font-cinzel font-bold">
-            Tijarex
-            <span 
-              className="lowercase font-normal text-lg">
-                .ma
-            </span>
-          </h1> */}
-          </div>
+
+            <div
+              className="flex items-center gap-12"
+            >
+              {NaviGation_Links.map((item) => {
+                return (
+                  <Link
+                    href={item.href}
+                    key={item.name}
+                    className="list-none"
+                  >
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </div>
 
           {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
-          <div
-            className="flex items-center gap-2"
-          >
-            {/* <Link
-              href="/auth/register"
-              className="primary-button text-nowrap py-1 px-4 rounded-lg cursor-pointer"
+            <div
+              className="flex items-center gap-6"
             >
-              Get started
-            </Link>
+            
+            {/* --- CTA-Buttons --- */}
             <Link
-              href="/auth/login"
-              className="text-teal-600 rounded-lg px-4 py-1 
-                font-semibold cursor-pointer hover:text-teal-500"
+              href="/auth/register"
+              className="capitalize"
             >
-              Login
-            </Link> */}
+              Become seller
+            </Link>
+            {/* --- Favorite btn & Shopping-Card btn --- */}
             <div
               className="flex items-center gap-4"
             >
@@ -153,9 +153,10 @@ export default async function Header() {
               >
                 <ShoppingCart size={20} />
               </span>
+              {/* --- Menu --- */}
+                <ShowHeaderMenu />
             </div>
-          </div>
-{/*  */}
+            </div>
         </div>
 
 
