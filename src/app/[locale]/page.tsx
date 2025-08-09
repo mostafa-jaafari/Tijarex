@@ -1,14 +1,5 @@
 import { ScrollReveal } from "@/components/Animations/ScrollReveal";
-import { FAQList } from "@/components/FAQList";
-import { FeaturedProducts } from "@/components/FeaturedProducts";
-import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { HeroSection } from "@/components/HeroSection";
-import { HeroStatistics } from "@/components/HeroStatistics";
-import { HowItWorks } from "@/components/HowItWorks";
-import { LastCallToAction } from "@/components/LastCallToAction";
-import { Testimonials } from "@/components/Testimonials";
-import { WhyChooseUs } from "@/components/WhyChooseUs";
 
 export const metadata = {
   title: "Jamla.ma - Your Trusted Marketplace for Quality Products in Morocco",
@@ -55,22 +46,7 @@ export default function Home() {
   return (
     <main className="w-full">
       <Header />
-      {/* <div className="absolute z-10 right-[25%] w-[300px] lg:w-[600px] md:w-[600px] h-[300px] lg:h-[600px] md:h-[600px] rounded-full bg-blue-600 opacity-20 blur-3xl" /> */}
-      <HeroSection />
-      <HeroStatistics />
-      <ScrollReveal>
-        <WhyChooseUs />
-      </ScrollReveal>
-      <HowItWorks />
-      <FeaturedProducts />
-      <ScrollReveal>
-        <Testimonials />
-      </ScrollReveal>
-      <FAQList />
-      <ScrollReveal>
-        <LastCallToAction />
-      </ScrollReveal>
-      <Footer />
+      
     </main>
   );
 }
