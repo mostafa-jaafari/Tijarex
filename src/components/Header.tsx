@@ -5,6 +5,7 @@ import { HeaderMenu } from "./HeaderMenu";
 import GlobalLogo from "./GlobalLogo";
 import { ArrowDown, ChevronDown, Heart, Search, ShoppingCart } from "lucide-react";
 import { HeaderSearchMenu, HeaderInputSearch, HeaderInputSearchContextProvider } from "./HeaderSearchMenu";
+import Image from "next/image";
 
 export default async function Header() {
   const t = await getTranslations("header");
@@ -72,35 +73,47 @@ export default async function Header() {
   return (
     <HeaderInputSearchContextProvider>
       <section
-        className="sticky top-0 z-50 bg-white py-2"
+        className="sticky top-0 z-50 bg-teal-50/50 border
+          border-gray-200 pb-6"
       >
         {/* --- Top Header --- */}
         <div
-          className="relative w-full pb-2 px-6 lg:px-20 md:px-20 flex items-center justify-between gap-6"
+          className="relative w-full py-2 px-6
+            flex items-center justify-between gap-12"
         >
           {/* --- Logo --- */}
-          <h1 
-            className="uppercase text-3xl text-teal-600 
+          <div
+            className="flex items-end"
+          >
+            <Link
+              href="/"
+              className="relative w-12 h-12 overflow-hidden"
+            >
+              <Image 
+                src="/LOGO1.png"
+                alt=""
+                fill
+                className="object-contain"
+                quality={100}
+                priority
+              />
+            </Link>
+            {/* <h1 
+            className="uppercase text-4xl text-teal-600 
               font-cinzel font-bold">
             Tijarex
             <span 
               className="lowercase font-normal text-lg">
                 .ma
             </span>
-          </h1>
-
-          {/* --- Input --- */}
-          <SwitchLanguage
-            CLASSNAME="flex items-center gap-1 text-xs border 
-              border-gray-200 text-teal-600 py-1 px-2 rounded-xl"
-          />
-          <HeaderInputSearch />
+          </h1> */}
+          </div>
 
           {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
           <div
             className="flex items-center gap-2"
           >
-            <Link
+            {/* <Link
               href="/auth/register"
               className="primary-button text-nowrap py-1 px-4 rounded-lg cursor-pointer"
             >
@@ -112,10 +125,15 @@ export default async function Header() {
                 font-semibold cursor-pointer hover:text-teal-500"
             >
               Login
-            </Link>
+            </Link> */}
             <div
               className="flex items-center gap-4"
             >
+              {/* --- Switch Languages --- */}
+              <SwitchLanguage
+                CLASSNAME="flex items-center gap-1 text-xs border 
+                  border-gray-200 text-teal-600 py-1 px-2 rounded-xl"
+              />
               {/* --- Favorite --- */}
               <span
                 className="relative text-teal-600 
@@ -137,28 +155,17 @@ export default async function Header() {
               </span>
             </div>
           </div>
-
-          <HeaderSearchMenu />
+{/*  */}
         </div>
 
 
         {/* --- Bottom Header --- */}
         <div
-          className="w-full mt-4 flex items-center justify-between 
-            gap-4 px-6 lg:px-20 md:px-20 border-b border-gray-200"
+          className="w-full flex justify-center px-6"
         >
-          {Header_Categories.map((item, idx) => {
-            return (
-              <button
-                key={idx}
-                className="w-full flex justify-start items-center 
-                  gap-2 py-1 text-sm capitalize"
-              >
-                {item.name}
-                <ChevronDown size={14} className="text-neutral-500"/>
-              </button>
-            )
-          })}
+          {/* --- Input --- */}
+          <HeaderInputSearch />
+          <HeaderSearchMenu />
         </div>
       </section>
     </HeaderInputSearchContextProvider>

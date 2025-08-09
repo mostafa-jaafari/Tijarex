@@ -32,8 +32,9 @@ export function HeaderInputSearch(){
     const { inputSearch, setInputSearch, setIsSearchOpen, isSearchOpen } = useHeaderSearchInput();
     return (
         <div
-            className="w-full border border-gray-200 rounded-full 
-                flex items-center p-1 overflow-hidden focus-within:ring-2 
+            className="w-full lg:max-w-1/2 max-w-[400px] border 
+                border-gray-200 rounded-full flex items-center 
+                p-1 overflow-hidden focus-within:ring-2 
                 focus-within:ring-teal-500 transition-colors"
         >
           <input 
@@ -82,7 +83,7 @@ export function HeaderSearchMenu() {
                 <div
                     ref={SearchMenuRef}
                     className="w-full md:w-1/2 lg:w-1/2 bg-teal-50 
-                        mt-1 mr-30 rounded-xl p-6"
+                        mt-1 rounded-xl p-6"
                 >
                 {inputSearch}
                 </div>
