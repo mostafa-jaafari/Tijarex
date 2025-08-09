@@ -2,7 +2,7 @@ import { ScrollReveal } from "@/components/Animations/ScrollReveal";
 import { FAQList } from "@/components/FAQList";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import Footer from "@/components/Footer";
-import { Header } from "@/components/Header";
+import Header from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { HeroStatistics } from "@/components/HeroStatistics";
 import { HowItWorks } from "@/components/HowItWorks";

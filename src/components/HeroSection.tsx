@@ -1,75 +1,64 @@
-import { getTranslations } from "next-intl/server";
-import { Play, Star } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
-export async function HeroSection() {
-  const t = await getTranslations('hero');
+export function HeroSection() {
+  const products = [
+    {
+      name: "Cozy Armchair",
+      img: "https://images.pexels.com/photos/276224/pexels-photo-276224.jpeg",
+      link: "#",
+    },
+    {
+      name: "Minimal Sofa",
+      img: "https://images.pexels.com/photos/276528/pexels-photo-276528.jpeg",
+      link: "#",
+    },
+  ];
 
   return (
-    <main>
-      <section 
-        className="relative w-full z-20 h-[80vh] flex flex-col 
-          items-center justify-center text-center text-black 
-          px-6 lg:px-20 md:px-20 overflow-hidden">
-          {/* --- Badge --- */}
-          <span 
-            className="border border-blue-200 text-sm bg-blue-100 text-blue-700 
-              px-4 py-1 rounded-full flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse flex"/> {t("badge")}
-          </span>
-      
-        {/* --- Big Title _Principle_ --- */}
-        <h1 className="lg:w-[80%] text-3xl sm:text-4xl md:text-6xl lg:text-6xl font-extrabold leading-tight">
-          {t('title_1')} <span className="text-blue-600">{t('title_2')}</span><span>{t('title_3')}</span><span className="text-blue-600">{t('title_4')}</span>
+    <section 
+      className="max-w-7xl mx-auto px-4 my-14 
+        grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* CTA Block */}
+      <div 
+        className="bg-teal-50 rounded-xl p-8 flex flex-col 
+          justify-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Refresh your space
         </h1>
-
-        {/* --- Para Description --- */}
-        <p className="text-gray-500 mt-6">
-          {t("description")}
+        <p className="text-gray-700 mb-6">
+          Discover curated picks for your home — from statement chairs to warm
+          rugs.
         </p>
-      
-        {/* --- CTA Buttons --- */}
-        <div
-          className="flex items-center gap-2 mt-6"
+        <Link
+          href="#"
+          className="primary-button flex justify-center 
+            px-6 py-3 rounded-xl font-semibold transition"
         >
-          <Link 
-            href="/auth/register"
-            aria-label="Start selling now"
-            className="cursor-pointer
-              py-2 px-4 primary-button
-              rounded-xl
-              shadow-blue-700/20 text-lg font-semibold">
-              {t('cta-trying')}
-          </Link>
-          <Link 
-            href="/"
-            className="cursor-pointer px-6 py-2
-              text-blue-600 hover:text-blue-400
-              text-lg font-semibold flex items-center gap-2">
-              <Play size={16}/> 
-              {t('cta-howitworks')}
-          </Link>
-        </div>
-        {/* --- Para under CTA Buttons --- */}
-        <div className="mt-6 text-gray-500 text-sm flex items-center gap-1">
-          <div
-            className="flex items-center -space-x-0.5"
-          >
-            {Array(3).fill(0).map((_ ,idx) => {
-              return (
-                <div
-                  key={idx}
-                  className="w-3 h-3 border rounded-full"
-                >
-                </div>
-              )
-            })}
-          </div>
-          <Star size={16} className="fill-blue-500 text-blue-500"/> {t("para_under_cta")}
-        </div>
+          Go Shop Now
+        </Link>
+      </div>
 
-      </section>
-      {/* <InfiniteCardsScroll /> */}
-    </main>
+      {/* Product 1 */}
+      {products.map((p, i) => (
+        <Link
+          href={p.link}
+          key={i}
+          className="relative rounded-xl overflow-hidden group"
+        >
+          <Image
+            src={p.img}
+            alt={p.name}
+            width={500}
+            height={500}
+            className="object-cover w-full h-full group-hover:scale-105 transition duration-300"
+          />
+          <div className="absolute bottom-4 left-4 text-white">
+            <h3 className="text-lg font-semibold">{p.name}</h3>
+            <p className="text-sm opacity-90">Shop now</p>
+          </div>
+        </Link>
+      ))}
+    </section>
   );
 }

@@ -3,10 +3,10 @@ import { SwitchLanguage } from "./SwitchLanguage";
 import { getTranslations } from "next-intl/server";
 import { HeaderMenu } from "./HeaderMenu";
 import GlobalLogo from "./GlobalLogo";
-import { Heart, Search, ShoppingCart } from "lucide-react";
+import { ArrowDown, ChevronDown, Heart, Search, ShoppingCart } from "lucide-react";
 import { HeaderSearchMenu, HeaderInputSearch, HeaderInputSearchContextProvider } from "./HeaderSearchMenu";
 
-export async function Header() {
+export default async function Header() {
   const t = await getTranslations("header");
   const NaviGation_Links = [
     {
@@ -151,10 +151,11 @@ export async function Header() {
             return (
               <button
                 key={idx}
-                className="w-full flex justify-center items-center 
-                  gap-2 py-1 border-b-4 border-teal-500 capitalize"
+                className="w-full flex justify-start items-center 
+                  gap-2 py-1 text-sm capitalize"
               >
                 {item.name}
+                <ChevronDown size={14} className="text-neutral-500"/>
               </button>
             )
           })}
