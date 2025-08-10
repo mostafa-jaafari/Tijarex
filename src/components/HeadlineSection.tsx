@@ -8,9 +8,27 @@ interface HeadlineSectionProps{
     SHOWBUTTONS?: boolean;
     ISTITLELINK?: boolean;
     TITLEHREFLINK?: string;
+    SCROLLREF: React.RefObject<HTMLDivElement | null>;
 }
-export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK }: HeadlineSectionProps) {
-  return (
+export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK, SCROLLREF }: HeadlineSectionProps) {
+  
+    const scrollLeft = () => {
+        if (SCROLLREF.current) {
+            SCROLLREF.current.scrollBy({
+            left: -200,
+            behavior: "smooth",
+        });
+        }
+    };
+    const scrollRight = () => {
+        if (SCROLLREF.current) {
+            SCROLLREF.current.scrollBy({
+            left: 200,
+            behavior: "smooth",
+        });
+        }
+    };
+    return (
     <section
         className='w-full flex items-center justify-between mb-4'
     >
@@ -36,6 +54,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
                 className='flex items-center gap-2'
             >
                 <span
+                    onClick={scrollLeft}
                     className='bg-gray-200 hover:shadow-lg hover:bg-gray-300
                         hover:scale-105 cursor-pointer rounded-full p-1
                         transition-all duration-200'
@@ -43,6 +62,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
                     <ChevronLeft size={16} />
                 </span>
                 <span
+                    onClick={scrollRight}
                     className='bg-gray-200 hover:shadow-lg hover:bg-gray-300
                         hover:scale-105 cursor-pointer rounded-full p-1
                         transition-all duration-200'

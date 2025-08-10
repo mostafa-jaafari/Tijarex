@@ -140,10 +140,10 @@ export const Fake_Products = [
     category: "Bags",
     stock: 12,
     description: "Handmade leather backpack with premium stitching.",
-    owner: {
-      name: "Ahmed El Mansouri",
-      image: "https://images.unsplash.com/photo-1603415526960-f7e0328c63b1"
-    }
+    // owner: {
+    //   name: "Ahmed El Mansouri",
+    //   image: "https://images.unsplash.com/photo-1603415526960-f7e0328c63b1"
+    // }
   },
   {
     id: 2,

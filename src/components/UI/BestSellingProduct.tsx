@@ -9,8 +9,13 @@ interface BestSellingProductUIProps{
     PRODUCTTITLE: string;
     PRODUCTPRICE: number;
     PRODUCTCATEGORIE: string;
+    OWNER?: {
+        name: string;
+        image: string;
+    };
+    STOCK: number;
 }
-export function BestSellingProductUI({ PRODUCTIMAGE, PRODUCTID, PRODUCTCATEGORIE, PRODUCTPRICE , PRODUCTTITLE}: BestSellingProductUIProps) {
+export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGORIE, PRODUCTPRICE , PRODUCTTITLE}: BestSellingProductUIProps) {
 
   return (
     <section
@@ -25,7 +30,6 @@ export function BestSellingProductUI({ PRODUCTIMAGE, PRODUCTID, PRODUCTCATEGORIE
                 alt=''
                 fill
                 className='object-cover hover:scale-115 hover:rotate-5 transition-all duration-300'
-                quality={100}
             />
         </div>
         {/* --- Trend Badge --- */}
@@ -45,6 +49,12 @@ export function BestSellingProductUI({ PRODUCTIMAGE, PRODUCTID, PRODUCTCATEGORIE
             >
                 {PRODUCTTITLE}
             </h1>
+            <div
+                className='text-sm text-green-600 font-semibold
+                    flex items-center gap-1'
+            >
+                ●<span>({STOCK})</span> in stock
+            </div>
             <span
                 className='flex items-center gap-2'
             >
@@ -53,7 +63,9 @@ export function BestSellingProductUI({ PRODUCTIMAGE, PRODUCTID, PRODUCTCATEGORIE
                 >
                     123 Dh
                 </del>
-                <b>
+                <b
+                    className='text-teal-600'
+                >
                     {PRODUCTPRICE} Dh
                 </b>
                 <p
@@ -62,6 +74,49 @@ export function BestSellingProductUI({ PRODUCTIMAGE, PRODUCTID, PRODUCTCATEGORIE
                     ● {PRODUCTCATEGORIE}
                 </p>
             </span>
+            {/* --- Seller Infos --- */}
+            {OWNER ? (
+                <div
+                    className='flex items-center gap-2'
+                >
+                    <div
+                        className='relative flex-shrink-0 w-6 h-6 
+                            rounded-full overflow-hidden'
+                    >
+                        <Image
+                            src={OWNER.image}
+                            alt=''
+                            fill
+                            className='object-cover'
+                        />
+                    </div>
+                    <h1
+                        className='text-sm text-teal-900'
+                    >
+                        {OWNER.name}
+                    </h1>
+                </div>
+            ) : (
+                <div
+                    className='flex items-center gap-2'
+                >
+                    <div
+                        className='relative flex-shrink-0 w-6 h-6'
+                    >
+                        <Image
+                            src="/LOGO1.png"
+                            alt=''
+                            fill
+                            className='object-contain'
+                        />
+                    </div>
+                    <h1
+                        className='text-sm text-teal-600'
+                    >
+                        Tijarex
+                    </h1>
+                </div>
+            )}
         </div>
     </section>
   )
