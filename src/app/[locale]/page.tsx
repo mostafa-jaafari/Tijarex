@@ -1,4 +1,5 @@
 import { ScrollReveal } from "@/components/Animations/ScrollReveal";
+import { BestSellingProducts } from "@/components/BestSellingProducts";
 import Header from "@/components/Header";
 
 export const metadata = {
@@ -46,7 +47,11 @@ export default function Home() {
   return (
     <main className="w-full">
       <Header />
-      
+      <section
+        className="px-6 mt-12"
+      >
+        <BestSellingProducts />
+      </section>
     </main>
   );
 }

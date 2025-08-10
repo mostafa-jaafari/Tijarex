@@ -74,7 +74,7 @@ export default async function Header() {
   return (
     <HeaderInputSearchContextProvider>
       <section
-        className="sticky top-0 z-50 bg-teal-50/50 border
+        className="sticky top-0 z-50 bg-gray-50/60 border
           border-gray-200 pb-6"
       >
         {/* --- Top Header --- */}
