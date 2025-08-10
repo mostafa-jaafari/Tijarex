@@ -1,5 +1,5 @@
 import { ProductCardProps } from '@/types/product';
-import { Flame } from 'lucide-react';
+import { Flame, Tag } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react'
 
@@ -33,6 +33,17 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
         <div
             className='pt-2'
         >
+            <span
+                className='w-max text-gray-400 text-sm hover:text-teal-600 
+                    cursor-pointer flex items-center gap-1'
+            >
+                <Tag size={14} />
+                <p
+                    className='lowercase'
+                >
+                    {PRODUCTCATEGORIE}
+                </p>
+            </span>
             <h1
                 className='text-sm text-teal-900'
             >
@@ -57,11 +68,6 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
                 >
                     {PRODUCTPRICE} Dh
                 </b>
-                <p
-                    className='text-gray-400 text-sm lowercase'
-                    >
-                    ● {PRODUCTCATEGORIE}
-                </p>
             </span>
             {/* --- Seller Infos --- */}
             {OWNER ? (

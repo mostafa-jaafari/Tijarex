@@ -47,7 +47,7 @@ export async function Header() {
             {/* --- CTA-Buttons --- */}
             <Link
               href="/auth/register"
-              className="capitalize whitespace-nowrap"
+              className="text-sm primary-button py-1 px-3 rounded-lg capitalize whitespace-nowrap"
             >
               Become seller
             </Link>
