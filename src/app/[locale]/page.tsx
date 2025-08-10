@@ -4,6 +4,7 @@ import BestSummerCollections from "@/components/BestSummerCollections";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import Footer from "@/components/Footer";
 import { Header } from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
 import { ShopByCategories } from "@/components/ShopByCategories";
 import { Metadata } from "next";
 
@@ -52,6 +53,7 @@ export default function Home() {
   return (
     <main className="w-full">
       <Header />
+      <HeroSection />
       <section
         className="px-6 mt-12 space-y-30"
       >
