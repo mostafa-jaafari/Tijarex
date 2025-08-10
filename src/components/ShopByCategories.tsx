@@ -59,7 +59,7 @@ export function ShopByCategories() {
                 return (
                     <div 
                         key={i} 
-                        className="group h-40 w-40 p-2 bg-teal-50 rounded-lg shadow 
+                        className="relative group h-40 w-40 p-2 bg-teal-50 rounded-lg shadow 
                             flex flex-col justify-center items-center gap-2
                             cursor-pointer hover:shadow-lg">
                         <span
@@ -77,6 +77,14 @@ export function ShopByCategories() {
                         >
                             {cat.title}
                         </h1>
+                        {cat.isNew &&
+                            <span
+                                className='absolute right-2 top-2 text-teal-600 
+                                    text-sm bg-white rounded-lg px-2 shadow'
+                            >
+                                New
+                            </span>
+                        }
                     </div>
                 )
             })}

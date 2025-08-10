@@ -1,6 +1,8 @@
 import { ScrollReveal } from "@/components/Animations/ScrollReveal";
 import { BestSellingProducts } from "@/components/BestSellingProducts";
 import BestSummerCollections from "@/components/BestSummerCollections";
+import FeaturedProducts from "@/components/FeaturedProducts";
+import Footer from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { ShopByCategories } from "@/components/ShopByCategories";
 import { Metadata } from "next";
@@ -58,7 +60,9 @@ export default function Home() {
         </ScrollReveal>
         <ShopByCategories />
         <BestSummerCollections />
+        <FeaturedProducts />
       </section>
+      <Footer />
     </main>
   );
 }
