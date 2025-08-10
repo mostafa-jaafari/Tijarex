@@ -1,6 +1,7 @@
+"use client";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 interface HeadlineSectionProps{
@@ -12,10 +13,36 @@ interface HeadlineSectionProps{
 }
 export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK, SCROLLREF }: HeadlineSectionProps) {
   
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+
+    // دالة لفحص حالة التمرير
+    const checkScrollPosition = () => {
+        const el = SCROLLREF.current;
+        if (!el) return;
+
+        setCanScrollLeft(el.scrollLeft > 0);
+        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
+    };
+
+    useEffect(() => {
+        checkScrollPosition();
+
+        const el = SCROLLREF.current;
+        if (!el) return;
+
+        // نراقب حدث التمرير لتحديث الأزرار ديناميكياً
+        el.addEventListener("scroll", checkScrollPosition);
+
+        return () => {
+        el.removeEventListener("scroll", checkScrollPosition);
+        };
+    }, [SCROLLREF]);
+
     const scrollLeft = () => {
         if (SCROLLREF.current) {
             SCROLLREF.current.scrollBy({
-            left: -200,
+            left: -400,
             behavior: "smooth",
         });
         }
@@ -23,7 +50,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
     const scrollRight = () => {
         if (SCROLLREF.current) {
             SCROLLREF.current.scrollBy({
-            left: 200,
+            left: 400,
             behavior: "smooth",
         });
         }
@@ -53,22 +80,28 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
             <div
                 className='flex items-center gap-2'
             >
-                <span
+                <button
+                    disabled={!canScrollLeft}
                     onClick={scrollLeft}
-                    className='bg-gray-200 hover:shadow-lg hover:bg-gray-300
-                        hover:scale-105 cursor-pointer rounded-full p-1
-                        transition-all duration-200'
-                        >
+                    className={`p-1 rounded-full ${
+                        canScrollLeft
+                        ? "bg-teal-600 cursor-pointer text-white hover:bg-teal-700"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
+                    >
                     <ChevronLeft size={16} />
-                </span>
-                <span
+                </button>
+                <button
+                    disabled={!canScrollRight}
                     onClick={scrollRight}
-                    className='bg-gray-200 hover:shadow-lg hover:bg-gray-300
-                        hover:scale-105 cursor-pointer rounded-full p-1
-                        transition-all duration-200'
-                >
+                    className={`p-1 rounded-full ${
+                        canScrollRight
+                        ? "bg-teal-600 cursor-pointer text-white hover:bg-teal-700"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
+                    >
                     <ChevronRight size={16} />
-                </span>
+                </button>
             </div>
         )}
     </section>
