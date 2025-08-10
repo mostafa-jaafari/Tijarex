@@ -1,21 +1,10 @@
+import { ProductCardProps } from '@/types/product';
 import { Flame } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react'
 
 
-interface BestSellingProductUIProps{
-    PRODUCTIMAGE: string;
-    PRODUCTID: string | number;
-    PRODUCTTITLE: string;
-    PRODUCTPRICE: number;
-    PRODUCTCATEGORIE: string;
-    OWNER?: {
-        name: string;
-        image: string;
-    };
-    STOCK: number;
-}
-export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGORIE, PRODUCTPRICE , PRODUCTTITLE}: BestSellingProductUIProps) {
+export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGORIE, PRODUCTPRICE , PRODUCTTITLE}: ProductCardProps) {
 
   return (
     <section

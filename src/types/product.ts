@@ -28,3 +28,16 @@ export type ProductType = {
         }
     ];
 };
+
+export interface ProductCardProps{
+    PRODUCTIMAGE: string;
+    PRODUCTID: string | number;
+    PRODUCTTITLE: string;
+    PRODUCTPRICE: number;
+    PRODUCTCATEGORIE: string;
+    OWNER?: {
+        name: string;
+        image: string;
+    };
+    STOCK: number;
+}

@@ -77,7 +77,7 @@ export function HeaderSearchMenu() {
     if(isSearchOpen){
         return (
             <div
-                className="absolute left-0 top-full w-full h-screen 
+                className="absolute left-0 top-full w-full h-max 
                     flex justify-center"
                     >
                 <div
