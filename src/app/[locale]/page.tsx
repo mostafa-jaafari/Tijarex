@@ -1,6 +1,7 @@
 import { ScrollReveal } from "@/components/Animations/ScrollReveal";
 import { BestSellingProducts } from "@/components/BestSellingProducts";
-import Header from "@/components/Header";
+import BestSummerCollections from "@/components/BestSummerCollections";
+import { Header } from "@/components/Header";
 
 export const metadata = {
   title: "Jamla.ma - Your Trusted Marketplace for Quality Products in Morocco",
@@ -48,9 +49,12 @@ export default function Home() {
     <main className="w-full">
       <Header />
       <section
-        className="px-6 mt-12"
+        className="px-6 mt-12 space-y-12"
       >
-        <BestSellingProducts />
+        <ScrollReveal>
+          <BestSellingProducts />
+        </ScrollReveal>
+        <BestSummerCollections />
       </section>
     </main>
   );

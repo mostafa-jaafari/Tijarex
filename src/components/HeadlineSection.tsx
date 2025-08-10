@@ -9,7 +9,7 @@ interface HeadlineSectionProps{
     SHOWBUTTONS?: boolean;
     ISTITLELINK?: boolean;
     TITLEHREFLINK?: string;
-    SCROLLREF: React.RefObject<HTMLDivElement | null>;
+    SCROLLREF?: React.RefObject<HTMLDivElement | null>;
 }
 export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK, SCROLLREF }: HeadlineSectionProps) {
   
@@ -18,6 +18,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
 
     // دالة لفحص حالة التمرير
     const checkScrollPosition = () => {
+        if(!SCROLLREF?.current) return;
         const el = SCROLLREF.current;
         if (!el) return;
 
@@ -27,7 +28,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
 
     useEffect(() => {
         checkScrollPosition();
-
+        if(!SCROLLREF?.current) return;
         const el = SCROLLREF.current;
         if (!el) return;
 
@@ -40,6 +41,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
     }, [SCROLLREF]);
 
     const scrollLeft = () => {
+        if(!SCROLLREF?.current) return;
         if (SCROLLREF.current) {
             SCROLLREF.current.scrollBy({
             left: -400,
@@ -48,6 +50,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
         }
     };
     const scrollRight = () => {
+        if(!SCROLLREF?.current) return;
         if (SCROLLREF.current) {
             SCROLLREF.current.scrollBy({
             left: 400,

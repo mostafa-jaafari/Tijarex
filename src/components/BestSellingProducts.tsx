@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from 'react'
 import { HeadlineSection } from './HeadlineSection';
-import { BestSellingProductUI } from './UI/BestSellingProduct';
+import { BestSellingProductUI } from './UI/BestSellingProductUI';
 import { Fake_Products } from './FakeProducts';
 
 export function BestSellingProducts() {
@@ -16,7 +16,7 @@ export function BestSellingProducts() {
         <div
             ref={scrollRef}
             className='w-full flex items-center flex-nowrap 
-                overflow-x-auto scrollbar-hide gap-2'
+                overflow-x-hidden scrollbar-hide gap-2'
         >
             {Fake_Products.map((product) => {
                 return (

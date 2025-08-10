@@ -25,7 +25,7 @@ export function ShowHeaderMenu() {
     }, []);
 
     return (
-        <div className="relative">
+        <div className="">
             <span
                 ref={MenuRef}
                 onClick={() => setIsShowMenu(!isShowMenu)}
