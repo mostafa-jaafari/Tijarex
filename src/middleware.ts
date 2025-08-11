@@ -35,7 +35,11 @@ export async function middleware(request: NextRequest) {
     `/${locale}/auth/register`,
     `/${locale}/auth/confirm-email`
   ];
-  
+  const notProtectedPages = [
+    `/${locale}/onboarding`
+  ];
+
+  const isNotProtectedPages = notProtectedPages.some(page => pathname.startsWith(page));
   const isAuthPage = authPages.some(page => pathname.startsWith(page));
   const isLandingPage = pathname === `/${locale}`; // Landing page (root with locale)
   // const isSellerPage = pathname.startsWith(`/${locale}/seller`);
@@ -65,7 +69,7 @@ export async function middleware(request: NextRequest) {
   }
   
   // Protected pages logic: require authentication
-  if (!token && !isAuthPage && !isLandingPage) {
+  if (!token && !isAuthPage && !isLandingPage && !isNotProtectedPages) {
     // Not logged-in user trying to access protected pages → redirect to landing
     return NextResponse.redirect(new URL(`/${locale}`, request.url));
   }
