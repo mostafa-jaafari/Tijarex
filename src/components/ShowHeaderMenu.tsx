@@ -29,20 +29,20 @@ export function ShowHeaderMenu() {
             <span
                 ref={MenuRef}
                 onClick={() => setIsShowMenu(!isShowMenu)}
-                className="flex text-teal-600 hover:text-teal-500 p-1 cursor-pointer"
+                className="flex hover:text-black/50 p-1 cursor-pointer"
             >
                 <Menu size={20} />
             </span>
 
             <div
                 className={`
-                    absolute right-0 top-full mt-2 min-w-[220px]
+                    absolute right-6 top-full min-w-[220px]
                     flex flex-col items-start bg-white rounded-xl
                     border border-gray-100 shadow p-1
                     transform transition-all duration-200 origin-top-right
                     ${isShowMenu 
-                        ? "opacity-100 scale-y-100 scale-x-100 translate-y-0" 
-                        : "opacity-0 scale-y-0 scale-x-0 -translate-y-2 pointer-events-none"
+                        ? "opacity-100 scale-y-100 translate-y-0" 
+                        : "opacity-0 -translate-y-2 pointer-events-none"
                     }
                 `}
             >
@@ -50,7 +50,9 @@ export function ShowHeaderMenu() {
                     <Link
                         key={idx}
                         href={item.href}
-                        className="w-full py-1.5 px-2 rounded-lg flex items-center gap-2 hover:bg-teal-50 hover:text-gray-700"
+                        className="w-full py-1.5 px-2 rounded-lg flex 
+                            items-center gap-2 hover:bg-gray-50
+                            hover:text-gray-700"
                     >
                         <item.icon size={20} /> {item.label}
                     </Link>

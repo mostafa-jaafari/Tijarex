@@ -63,7 +63,7 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
 
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 
-          bg-teal-50 rounded-lg shadow-lg 
+          bg-gray-50 rounded-lg shadow-lg 
           border border-gray-200 overflow-hidden 
           z-50 min-w-[120px] w-full">
           {locales.map(({ code, flag, short }) => {

@@ -1,11 +1,12 @@
+"use client";
 import { ProductCardProps } from '@/types/product';
 import { Flame, Tag } from 'lucide-react';
 import Image from 'next/image';
-import React from 'react'
+import React, { useState } from 'react'
 
 
 export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGORIE, PRODUCTPRICE , PRODUCTTITLE}: ProductCardProps) {
-
+    const [isImageLoading, setIsImageLoading] = useState(false);
   return (
     <section
         className='relative w-full max-w-[250px] min-h-40 rounded-xl 
@@ -18,12 +19,16 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
                 src={PRODUCTIMAGE}
                 alt=''
                 fill
-                className='object-cover hover:scale-115 hover:rotate-5 transition-all duration-300'
+                loading='lazy'
+                onLoad={() => setIsImageLoading(true)}
+                className={`object-cover hover:scale-115 hover:rotate-5 
+                    transition-all duration-300
+                    ${!isImageLoading && "bg-gray-200 animate-pulse"}`}
             />
         </div>
         {/* --- Trend Badge --- */}
         <span
-            className='absolute z-20 top-2 right-2 bg-teal-600 
+            className='absolute z-20 top-2 right-2 bg-black
                 rounded-lg p-1 text-white'
         >
             <Flame size={20}/>
@@ -34,7 +39,7 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
             className='pt-2'
         >
             <span
-                className='w-max text-gray-400 text-sm hover:text-teal-600 
+                className='w-max text-gray-400 text-sm hover:text-black/80
                     cursor-pointer flex items-center gap-1'
             >
                 <Tag size={14} />
@@ -45,7 +50,7 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
                 </p>
             </span>
             <h1
-                className='text-sm text-teal-900'
+                className='text-sm'
             >
                 {PRODUCTTITLE}
             </h1>
@@ -64,7 +69,7 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
                     123 Dh
                 </del>
                 <b
-                    className='text-teal-600'
+                    className='text-teal-700'
                 >
                     {PRODUCTPRICE} Dh
                 </b>
@@ -86,7 +91,8 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
                         />
                     </div>
                     <h1
-                        className='text-sm text-teal-900'
+                        className='text-sm text-black/50 hover:text-black 
+                            cursor-pointer'
                     >
                         {OWNER.name}
                     </h1>
@@ -106,7 +112,7 @@ export function BestSellingProductUI({ PRODUCTIMAGE, STOCK, OWNER, PRODUCTCATEGO
                         />
                     </div>
                     <h1
-                        className='text-sm text-teal-600'
+                        className='text-sm text-teal-700'
                     >
                         Tijarex
                     </h1>

@@ -88,7 +88,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
                     onClick={scrollLeft}
                     className={`p-1 rounded-full ${
                         canScrollLeft
-                        ? "bg-teal-600 cursor-pointer text-white hover:bg-teal-700"
+                        ? "bg-black cursor-pointer text-white hover:bg-black/50"
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                     >
@@ -99,7 +99,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
                     onClick={scrollRight}
                     className={`p-1 rounded-full ${
                         canScrollRight
-                        ? "bg-teal-600 cursor-pointer text-white hover:bg-teal-700"
+                        ? "bg-black cursor-pointer text-white hover:bg-black/50"
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                     >

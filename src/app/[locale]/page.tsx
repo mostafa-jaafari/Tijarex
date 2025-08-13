@@ -4,7 +4,7 @@ import BestSummerCollections from "@/components/BestSummerCollections";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import Footer from "@/components/Footer";
 import { Header } from "@/components/Header";
-import HeroSection from "@/components/HeroSection";
+import { HeroSection } from "@/components/HeroSection";
 import { ShopByCategories } from "@/components/ShopByCategories";
 import { Metadata } from "next";
 

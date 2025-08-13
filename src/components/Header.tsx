@@ -1,16 +1,14 @@
 import Link from "next/link";
 import { SwitchLanguage } from "./SwitchLanguage";
 import { Heart, ShoppingCart } from "lucide-react";
-import { HeaderSearchMenu, HeaderInputSearch, HeaderInputSearchContextProvider } from "./HeaderSearchMenu";
 import Image from "next/image";
 import { ShowHeaderMenu } from "./ShowHeaderMenu";
 
 export async function Header() {
   return (
-    <HeaderInputSearchContextProvider>
       <section
         className="sticky top-0 z-50 bg-white
-          border border-gray-200 transition-all duration-500 
+          transition-all duration-500 
           ease-in-out"
       >
         {/* --- Top Header --- */}
@@ -32,21 +30,11 @@ export async function Header() {
               priority
             />
           </Link>
-
-            {/* Search Section */}
-            <div
-              className="relative w-full max-w-[700px] max-w-2/3 transition-all duration-500 ease-in-out"
-            >
-              {/* --- Input --- */}
-              <HeaderInputSearch />
-              <HeaderSearchMenu />
-            </div>
-
           {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
           <div className="flex items-center gap-6">
             {/* --- CTA-Buttons --- */}
             <Link
-              href="/auth/register"
+              href="/onboarding"
               className="text-sm primary-button py-1 px-3 rounded-lg capitalize whitespace-nowrap"
             >
               Become seller
@@ -56,19 +44,27 @@ export async function Header() {
             <div className="flex items-center gap-4">
               {/* --- Switch Languages --- */}
               <SwitchLanguage
-                CLASSNAME="flex items-center gap-1 text-xs border border-gray-200 text-teal-600 py-1 px-2 rounded-xl"
+                CLASSNAME="flex items-center gap-1 text-xs border 
+                  border-gray-200 rounded-lg cursor-pointer py-1 px-2"
               />
               
               {/* --- Favorite --- */}
-              <span className="relative text-teal-600 hover:text-teal-500 cursor-pointer">
-                <Heart size={20} />
-                <span className="absolute left-3 -top-3 px-1 flex justify-center items-center rounded-full bg-teal-600 text-sm text-white">
+              <span 
+                className="relative hover:text-black/50 
+                  cursor-pointer">
+                <Heart 
+                  size={20}
+                />
+                <span 
+                  className="absolute px-1 left-3 -top-3 flex justify-center 
+                    items-center rounded-full bg-black font-bold text-sm 
+                    text-white">
                   0
                 </span>
               </span>
               
               {/* --- Shopping Cart --- */}
-              <span className="text-teal-600 hover:text-teal-500 p-1 cursor-pointer">
+              <span className="hover:text-black/50 p-1 cursor-pointer">
                 <ShoppingCart size={20} />
               </span>
               
@@ -78,6 +74,5 @@ export async function Header() {
           </div>
         </div>
       </section>
-    </HeaderInputSearchContextProvider>
   );
 }

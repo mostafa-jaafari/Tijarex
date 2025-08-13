@@ -40,17 +40,6 @@ body {
 .font-cinzel {
   font-family: var(--font-cenzel);
 }
-.primary-button{
-  background: linear-gradient(180deg, #14B8A6, #229e94); /* Tailwind Teal-500 to Teal-600 */
-  color: white;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
-}
-.primary-button:hover {
-  background: linear-gradient(180deg, #14B8A6, #149489); /* lighter teal */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
 
 .checked-button{
   background: linear-gradient(180deg, #3bf679, #31dd0f); /* Tailwind Blue-500 to Blue-600 */
@@ -77,4 +66,19 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE & Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+.primary-button {
+  background: linear-gradient(90deg, #000000, #474747);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.primary-button:hover {
+  background: linear-gradient(90deg, #000000d5, #474747);
+}
+
+.primary-button:active {
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.4);
 }
