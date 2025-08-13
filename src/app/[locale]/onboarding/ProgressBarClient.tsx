@@ -1,7 +1,9 @@
 'use client';
 
 import { Check, CircleCheckBig } from 'lucide-react';
-import React, { ChangeEvent, useState } from 'react';
+import Head from 'next/head';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 // Check icon SVG
 const CheckIcon = ({ className }: { className?: string }) => (
@@ -38,12 +40,18 @@ function ProgressBar({
             <React.Fragment key={step}>
               <li className="relative flex items-center justify-center">
                 <button
-                  onClick={() => onStepClick && onStepClick(step)}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full font-bold transition-all duration-300 ease-in-out
-                    ${isCompleted ? 'bg-teal-600 text-white' : ''}
-                    ${isActive ? 'bg-teal-600 text-white ring-4 ring-teal-600/30' : ''}
-                    ${!isCompleted && !isActive ? 'border-2 border-teal-600 bg-white text-teal-600' : ''}
-                    ${onStepClick ? 'cursor-pointer hover:bg-teal-700 hover:text-white' : 'cursor-default'}
+                  onClick={() => {
+                    if (onStepClick && step <= currentStep) {
+                      onStepClick(step);
+                    }
+                  }}
+                  className={`flex h-10 w-10 items-center 
+                      justify-center rounded-full font-bold 
+                      transition-all duration-300 ease-in-out
+                    ${isCompleted ? 'bg-black text-white' : ''}
+                    ${isActive ? 'bg-black text-white ring-4 ring-gray-300' : ''}
+                    ${!isCompleted && !isActive ? 'border-2 bg-white text-gray-400' : ''}
+                    ${onStepClick ? 'cursor-pointer hover:text-gray-300' : 'cursor-default'}
                   `}
                   aria-current={isActive ? 'step' : undefined}
                   aria-label={`Step ${step}: ${status}`}
@@ -57,7 +65,7 @@ function ProgressBar({
                 <li
                   aria-hidden="true"
                   className={`flex-auto border-t-2 transition-colors duration-300 ease-in-out
-                    ${isCompleted ? 'border-teal-600' : 'border-gray-300'}
+                    ${isCompleted ? 'border-black' : 'border-gray-300'}
                   `}
                 />
               )}
@@ -72,13 +80,11 @@ function ProgressBar({
 /**
  * Client component wrapping the interactive onboarding logic
  */
-export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
+export function ProgressBarClient({ StepTitle = "4" }: {StepTitle: string;}) {
+  const totalSteps = 5;
   const [currentStep, setCurrentStep] = useState(1);
-
-  const handleNext = () => setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
-  const handlePrev = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
-
   const [selectedRole, setSelectedRole] = useState("");
+  
   const [formInputs, setFormInputs] = useState({
     fullname: "",
     phonenumber: "",
@@ -93,6 +99,32 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
             [name]: value,
         }));
     };
+  const handleNext = () => {
+    if (currentStep === 1) {
+      if (selectedRole === "") {
+        toast.error("Please choose role!");
+        return;
+      }
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+    } 
+    else if (currentStep === 2) {
+      const isOneEmpty = Object.values(formInputs).some(
+        (inp) => inp.trim() === ""
+      );
+      if (isOneEmpty) {
+        toast.error("Please fill all inputs first!");
+        return;
+      }
+      if (formInputs.password !== formInputs.confirmpassword){
+        toast.error("Password didn't match!");
+        return;
+      }
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+    }
+  };
+
+  const handlePrev = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+
   let StepFormRender;
   switch (currentStep) {
     case 1:
@@ -107,11 +139,12 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
                             key={idx}
                             className={`cursor-pointer w-full py-6 rounded-lg border 
                                 border-gray-200 relative
-                                ${selectedRole === card.role ? "border-none bg-teal-50 ring-2 font-semibold text-teal-600 ring-teal-500" : ""}`}
+                                ${selectedRole === card.role ? "border-none text-black bg-gray-50 ring-2 ring-black font-semibold" : ""}`}
                         >
                             {card.label} {selectedRole === card.role && (
                                 <span
-                                    className='p-0.5 absolute -right-3 -top-3 bg-teal-500 text-white rounded-full'
+                                    className='p-0.5 absolute -right-3 -top-3 
+                                      bg-black text-white rounded-full'
                                 >
                                     <Check 
                                         size={20}
@@ -136,11 +169,12 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
                         <label htmlFor="FullName">FullName <span className='text-red-700'>*</span></label>
                         <input 
                             onChange={HandleChangeInputs}
+                            value={formInputs.fullname}
                             type="text" 
                             placeholder='Full Name'
                             name='fullname'
                             id='FullName'
-                            className='w-full focus:ring-2 ring-teal-500 border border-gray-200 rounded-lg outline-none p-3'
+                            className='w-full focus:ring-2 ring-black border border-gray-200 rounded-lg outline-none p-3'
                         />
                     </div>
                     <div
@@ -149,11 +183,12 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
                         <label htmlFor="PhoneNumber">Phone Number <span className='text-red-700'>*</span></label>
                         <input 
                             onChange={HandleChangeInputs}
+                            value={formInputs.phonenumber}
                             type="number" 
                             placeholder='Phone Number'
                             name='phonenumber'
                             id='PhoneNumber'
-                            className='w-full focus:ring-2 ring-teal-500 border border-gray-200 rounded-lg outline-none p-3'
+                            className='w-full focus:ring-2 ring-black border border-gray-200 rounded-lg outline-none p-3'
                         />
                     </div>
                 </div>
@@ -163,11 +198,12 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
                     <label htmlFor="EmailAdress">Email Adress <span className='text-red-700'>*</span></label>
                     <input 
                         onChange={HandleChangeInputs}
+                        value={formInputs.emailadress}
                         type="email" 
                         placeholder='Email Adress'
                         name='emailadress'
                         id='EmailAdress'
-                        className='w-full focus:ring-2 ring-teal-500 border border-gray-200 rounded-lg outline-none p-3'
+                        className='w-full focus:ring-2 ring-black border border-gray-200 rounded-lg outline-none p-3'
                     />
                 </div>
                 <div
@@ -179,11 +215,12 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
                         <label htmlFor="Password">Password <span className='text-red-700'>*</span></label>
                         <input 
                             onChange={HandleChangeInputs}
+                            value={formInputs.password}
                             type="password" 
                             placeholder='Create Password'
                             name='password'
                             id='Password'
-                            className='w-full focus:ring-2 ring-teal-500 border border-gray-200 rounded-lg outline-none p-3'
+                            className='w-full focus:ring-2 ring-black border border-gray-200 rounded-lg outline-none p-3'
                         />
                     </div>
                     <div
@@ -192,11 +229,12 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
                         <label htmlFor="ConfirmPassword">Confirm Password <span className='text-red-700'>*</span></label>
                         <input 
                             onChange={HandleChangeInputs}
+                            value={formInputs.confirmpassword}
                             type="password"
                             placeholder='Confirm Password'
                             name='confirmpassword'
                             id='ConfirmPassword'
-                            className='w-full focus:ring-2 ring-teal-500 border border-gray-200 rounded-lg outline-none p-3'
+                            className='w-full focus:ring-2 ring-black border border-gray-200 rounded-lg outline-none p-3'
                         />
                     </div>
                 </div>
@@ -213,10 +251,21 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
     default:
         break;
   }
+  const DynamicTitle = currentStep === 1 ? "Choose Your Role" : currentStep === 2 ? "Fill Your Information" : currentStep === 3 ? "Step 3" : currentStep === 4 ? "Step 4" : "Step 5";
+  
+  useEffect(() => {
+    document.title = DynamicTitle; // هنا بيغير العنوان مباشرة في المتصفح
+  }, [currentStep, DynamicTitle]);
+  
   return (
     <>
+    <Head>
+        <title>{currentStep} | My App</title>
+      </Head>
       <ProgressBar totalSteps={totalSteps} currentStep={currentStep} onStepClick={setCurrentStep} />
-
+      <h1 className="text-2xl font-bold text-center text-gray-800">
+        {DynamicTitle}
+      </h1>
       <div className="text-center text-gray-600 mt-4">
         {StepFormRender}
       </div>
@@ -225,14 +274,21 @@ export function ProgressBarClient({ totalSteps }: { totalSteps: number }) {
         <button
           onClick={handlePrev}
           disabled={currentStep === 1}
-          className="px-6 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-2 font-semibold text-gray-700 
+            bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300 
+            disabled:opacity-50 disabled:cursor-not-allowed 
+            cursor-pointer
+            transition-colors"
         >
           Previous
         </button>
         <button
           onClick={handleNext}
           disabled={currentStep === totalSteps}
-          className="px-6 py-2 font-semibold text-white bg-teal-600 rounded-lg shadow-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-2 font-semibold text-white 
+            bg-black rounded-lg shadow-sm hover:bg-black/80
+            disabled:opacity-50 disabled:cursor-not-allowed 
+            cursor-pointer transition-colors"
         >
           Next
         </button>
