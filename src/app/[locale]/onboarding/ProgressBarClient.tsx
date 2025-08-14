@@ -1,6 +1,7 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import { SuccessScreen } from '@/components/Animations/SuccessScreen';
+import { Check, MoveLeft } from 'lucide-react';
 import Head from 'next/head';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -102,6 +103,7 @@ export function ProgressBarClient() {
   const totalSteps = 4;
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedRole, setSelectedRole] = useState("");
+  const [selectedHowHeartAboutUs, setSelectedHowHeartAboutUs] = useState("");
   
   const [formInputs, setFormInputs] = useState({
     fullname: "",
@@ -118,13 +120,18 @@ export function ProgressBarClient() {
             [name]: value,
         }));
     };
+  const handelNextDelayed = () => {
+    setTimeout(() => {
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+    }, 300);
+  }
   const handleNext = () => {
     if (currentStep === 1) {
       if (selectedRole === "") {
         toast.error("Please choose role!");
         return;
       }
-      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+      handelNextDelayed();
     } 
     else if (currentStep === 2) {
       const isOneEmpty = Object.values(formInputs).some(
@@ -138,7 +145,10 @@ export function ProgressBarClient() {
         toast.error("Password didn't match!");
         return;
       }
-      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+      handelNextDelayed();
+    }
+    if(currentStep === 3){
+      handelNextDelayed();
     }
   };
 
@@ -156,7 +166,7 @@ export function ProgressBarClient() {
                         <button
                             onClick={() => {
                               setSelectedRole(card.role)
-                              setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+                              handelNextDelayed();
                             }}
                             key={idx}
                             className={`cursor-pointer w-full py-6 rounded-lg border 
@@ -278,10 +288,40 @@ export function ProgressBarClient() {
         )
         break;
     case 3:
-        StepFormRender = (<div>You are in 3 step</div>)
+        StepFormRender = (
+          <div
+            className='space-y-6'
+          >
+            <p
+              className='text-gray-500 text-medium text-center'
+            >
+              How did you hear about us ?
+            </p>
+            <div
+              className='w-full  flex flex-col gap-3'
+            >
+              {["youtube", "instagram", "facebook", "tiktok", "others"].map((option, idx) => {
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setSelectedHowHeartAboutUs(option)
+                      handelNextDelayed();
+                    }}
+                    className='w-full flex items-center cursor-pointer
+                      justify-center border border-gray-200
+                      rounded-lg py-3 capitalize hover:bg-gray-50'
+                  >
+                    {option}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )
         break;
     case 4:
-        StepFormRender = (<div>You are in 4 step</div>)
+        StepFormRender = (<SuccessScreen /> )
         break;
   
     default:
@@ -299,10 +339,9 @@ export function ProgressBarClient() {
         <title>{currentStep} | My App</title>
       </Head>
       <section
-        className='w-full flex items-start gap-6'
+        className='w-full flex items-start'
       >
-        <div
-          className='w-1/2 min-h-80 bg-teal-50/50 p-12 rounded-xl'
+        <div className='w-full min-h-80 bg-teal-50/50 pr-6 py-12 pl-12 rounded-xl'
           >
           <div
             className="pb-6"
@@ -326,36 +365,36 @@ export function ProgressBarClient() {
           />
         </div>
         
-
-        <div
-          className='min-w-1/2'
+        <div className='w-1/2 flex-shrink-0 pl-6 py-12 pr-12'
         >
-          <div className="text-center text-gray-600 mt-4">
+          <div className="text-center text-gray-600">
             {StepFormRender}
           </div>
 
-          {currentStep !== 1 && (
+          {currentStep !== 1 && currentStep !== 4 && (
             <div className="flex justify-between pt-4">
               <button
                 onClick={handlePrev}
                 disabled={currentStep === 1}
-                className="px-6 py-2 font-semibold text-gray-700 
-                  bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300 
-                  disabled:opacity-50 disabled:cursor-not-allowed 
+                className="text-gray-500 flex items-center gap-1
+                  hover:text-gray-400
+                  disabled:opacity-50
+                  disabled:cursor-not-allowed 
                   cursor-pointer
                   transition-colors"
               >
-                Previous
+                <MoveLeft size={14} /> Previous
               </button>
               <button
                 onClick={handleNext}
                 disabled={currentStep === totalSteps}
-                className="px-6 py-2 font-semibold text-white 
-                  bg-black rounded-lg shadow-sm hover:bg-black/80
-                  disabled:opacity-50 disabled:cursor-not-allowed 
+                className="px-6 py-1 rounded-lg 
+                  bg-black hover:bg-black/80 text-white
+                  disabled:opacity-50
+                  disabled:cursor-not-allowed 
                   cursor-pointer transition-colors"
               >
-                Next
+                {currentStep === 3 ? "Skip" : "Next"}
               </button>
             </div>
           )}
