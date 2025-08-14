@@ -87,8 +87,11 @@ export const authOptions: AuthOptions = {
               credentials.email,
               credentials.password
             );
-
+            
             const user = userCredential.user;
+            if (!user.emailVerified) {
+              throw new Error("Email not verified");
+            }
             return {
               id: user.uid,
               email: user.email,

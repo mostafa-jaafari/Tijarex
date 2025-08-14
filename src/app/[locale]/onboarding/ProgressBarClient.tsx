@@ -191,6 +191,7 @@ export function ProgressBarClient() {
 
   const handlePrev = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
+  const OptionsHowHearAboutUs = ["youtube", "instagram", "facebook", "tiktok", "others"];
   let StepFormRender;
   switch (currentStep) {
     case 1:
@@ -337,20 +338,28 @@ export function ProgressBarClient() {
             <div
               className='w-full  flex flex-col gap-3'
             >
-              {["youtube", "instagram", "facebook", "tiktok", "others"].map((option, idx) => {
+              {OptionsHowHearAboutUs.map((option, idx) => {
                 return (
                   <button
                     key={idx}
                     onClick={() => {
                       setSelectedHowDidYouHearAboutUs(option)
-                      handelNextDelayed();
-                      handleCreateAccount();
                     }}
-                    className='w-full flex items-center cursor-pointer
+                    className={`relative w-full flex items-center cursor-pointer
                       justify-center border border-gray-200
-                      rounded-lg py-3 capitalize hover:bg-gray-50'
+                      rounded-lg py-3 capitalize
+                      ${selectedHowDidYouHearAboutUs === option ? "ring-1 ring-teal-500 bg-teal-50" : "hover:bg-gray-50"}`}
                   >
                     {option}
+                    {selectedHowDidYouHearAboutUs === option && (
+                      <span
+                        className='p-0.5 absolute -right-2 -top-2 
+                          bg-teal-500 text-white rounded-full'
+                      >
+                        <Check 
+                          size={14}
+                        />
+                      </span>)}
                   </button>
                 )
               })}
@@ -435,7 +444,7 @@ export function ProgressBarClient() {
                   disabled:cursor-not-allowed 
                   cursor-pointer transition-colors"
               >
-                {currentStep === 3 ? "Skip" : "Next"}
+                {currentStep === 3 && selectedHowDidYouHearAboutUs === "" ? "Skip" : "Next"}
               </button>
             </div>
           )}

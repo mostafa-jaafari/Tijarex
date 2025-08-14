@@ -61,19 +61,26 @@ export function LoginForm() {
       return;
     }
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: inputsCredentials.email,
-      password: inputsCredentials.password,
-    });
+    try{
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: inputsCredentials.email,
+        password: inputsCredentials.password,
+      });
 
-    if (res?.error) {
-      toast.error(t("toast.loginfailed"));
-    } else {
-      toast.success(t("toast.loginsuccess"));
-      router.push("/seller");
+      if (res?.error) {
+        toast.error("Email and Password not valid.");
+        setIsLoading(false);
+        return;
+      } else {
+        toast.success(t("toast.loginsuccess"));
+        router.push("/seller");
+      }
+    }catch (err){
+      toast.error(err as string);
+    }finally{
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const baseInputClass = `focus:outline-none rounded-lg py-2 px-2 border focus:shadow-md transition-shadow duration-300 w-full`;
