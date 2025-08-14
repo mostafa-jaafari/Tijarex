@@ -8,8 +8,15 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { Toaster } from "sonner";
 import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
 import { UserInfosContextProvider } from "@/context/UserInfosContext";
+import { Metadata } from "next";
 
 
+export const metadata: Metadata = {
+  title: {
+    default: "Tijarex - The best marketplace in the world",
+    template: "Tijarex - %s"
+  }
+}
 const cinzel = Sorts_Mill_Goudy({
   subsets: ['latin'],
   variable: '--font-cenzel',

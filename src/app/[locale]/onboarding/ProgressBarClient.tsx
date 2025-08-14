@@ -3,7 +3,7 @@
 import { SuccessScreen } from '@/components/Animations/SuccessScreen';
 import { auth, db } from '@/Firebase';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { Check, MoveLeft } from 'lucide-react';
 import Head from 'next/head';
 import { useRouter } from 'next/navigation';
@@ -151,7 +151,7 @@ export function ProgressBarClient() {
     }, 300);
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep === 1) {
       if (selectedRole === "") {
         toast.error("Please choose role!");
@@ -173,6 +173,12 @@ export function ProgressBarClient() {
       }
       if (formInputs.password.length <= 5) {
         toast.error("Password must be at least 6 characters long!");
+        return;
+      }
+      const DocRef = doc(db, "users", formInputs.emailadress);
+      const DocSnapp = await getDoc(DocRef);
+      if(DocSnapp.exists()){
+        toast.error("Email already exists !");
         return;
       }
       handelNextDelayed();
