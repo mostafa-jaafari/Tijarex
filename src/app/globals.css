@@ -78,7 +78,3 @@ body {
 .primary-button:hover {
   background: linear-gradient(90deg, #000000d5, #474747);
 }
-
-.primary-button:active {
-  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.4);
-}

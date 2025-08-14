@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { SwitchLanguage } from "./SwitchLanguage";
-import { Heart, ShoppingCart } from "lucide-react";
+import { ChevronDown, Heart, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { ShowHeaderMenu } from "./ShowHeaderMenu";
+import { GetStartedBtn } from "./GetStartedBtn";
 
 export async function Header() {
   return (
@@ -33,12 +34,7 @@ export async function Header() {
           {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
           <div className="flex items-center gap-6">
             {/* --- CTA-Buttons --- */}
-            <Link
-              href="/onboarding"
-              className="text-sm primary-button py-1 px-3 rounded-lg capitalize whitespace-nowrap"
-            >
-              Become seller
-            </Link>
+            <GetStartedBtn />
             
             {/* --- Favorite btn & Shopping-Card btn --- */}
             <div className="flex items-center gap-4">

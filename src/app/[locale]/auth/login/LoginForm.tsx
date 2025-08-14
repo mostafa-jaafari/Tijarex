@@ -162,7 +162,7 @@ export function LoginForm() {
 
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account ?
-          <Link href="/auth/register" className="ml-2 text-teal-600 hover:underline">
+          <Link href="/auth/onboarding" className="ml-2 text-teal-600 hover:underline">
             Register
           </Link>
         </div>
