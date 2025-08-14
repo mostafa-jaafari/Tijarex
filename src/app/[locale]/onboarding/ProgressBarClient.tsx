@@ -21,7 +21,8 @@ const CheckIcon = ({ className }: { className?: string }) => (
 
 /**
  * Pure progress bar presentational component
- */
+*/
+const stepTitles = ["Choose your role", "fill your informations", "how did you hear about us ?", "Success! Let’s Begin"];
 function ProgressBar({
   totalSteps,
   currentStep,
@@ -32,7 +33,6 @@ function ProgressBar({
   onStepClick?: (step: number) => void;
 }) {
   const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
-  const stepTitles = ["Choose your role", "fill your informations", "step 3", "step 4"];
   return (
     <div className="h-full" aria-label="Progress bar">
       <ol className="flex flex-col items-start">
@@ -48,10 +48,11 @@ function ProgressBar({
               <li 
                 className={`relative flex items-center px-8 py-3 
                   rounded-xl gap-3 w-full
-                  ${isActive ? "bg-gray-200" : "bg-transparent"}`}>
+                  ${isActive && currentStep !== 4 ? "bg-gray-200" : "bg-transparent"}`}>
                 {/* Circle */}
                 <button
                   onClick={() => {
+                    if(currentStep === 4) return;
                     if (onStepClick && step <= currentStep) {
                       onStepClick(step);
                     }
@@ -60,19 +61,19 @@ function ProgressBar({
                   className={`flex h-10 w-10 items-center
                       justify-center rounded-full font-bold 
                       transition-all duration-300 ease-in-out
-                    ${isCompleted ? 'bg-green-100 text-teal-500 cursor-pointer' : ''}
-                    ${isActive ? 'bg-gray-500 text-white ring-2 ring-gray-500' : ''}
+                    ${isCompleted || currentStep === 4 ? 'bg-green-100 text-teal-500 cursor-pointer' : ''}
+                    ${isActive && currentStep !== 4 ? 'bg-gray-500 text-white ring-2 ring-gray-500' : ''}
                     ${!isCompleted && !isActive ? 'border-2 border-gray-200 bg-white text-gray-300 cursor-not-allowed' : ''}
                   `}
                   aria-current={isActive ? 'step' : undefined}
                   aria-label={`Step ${step}: ${status}`}
                 >
                   <span className="sr-only">Step {step}: {status}</span>
-                  {isCompleted ? <CheckIcon className="h-6 w-6 text-teal-500" /> : <span>{step}</span>}
+                  {isCompleted || currentStep === 4 ? <CheckIcon className="h-6 w-6 text-teal-500" /> : <span>{step}</span>}
                 </button>
 
                 {/* Title */}
-                <span className={`font-medium capitalize ${isActive ? 'text-black' : 'text-gray-500'}`}>
+                <span className={`font-medium capitalize ${isCompleted || currentStep === 4 ? "text-teal-600" : isActive ? 'text-black' : 'text-gray-500'}`}>
                   {stepTitles[index]}
                 </span>
               </li>
@@ -145,6 +146,10 @@ export function ProgressBarClient() {
         toast.error("Password didn't match!");
         return;
       }
+      if (formInputs.password.length <= 5) {
+        toast.error("Password must be at least 6 characters long!");
+        return;
+      }
       handelNextDelayed();
     }
     if(currentStep === 3){
@@ -171,12 +176,12 @@ export function ProgressBarClient() {
                             key={idx}
                             className={`cursor-pointer w-full py-6 rounded-lg border 
                                 border-gray-200 relative
-                                ${selectedRole === card.role ? "border-none text-black bg-gray-50 ring-2 ring-black font-semibold" : ""}`}
+                                ${selectedRole === card.role ? "border-none text-black bg-teal-50 text-teal-600 ring-2 ring-teal-500 font-semibold" : ""}`}
                         >
                             {card.label} {selectedRole === card.role && (
                                 <span
                                     className='p-0.5 absolute -right-3 -top-3 
-                                      bg-black text-white rounded-full'
+                                      bg-teal-500 text-white rounded-full'
                                 >
                                     <Check 
                                         size={20}
@@ -321,17 +326,16 @@ export function ProgressBarClient() {
         )
         break;
     case 4:
-        StepFormRender = (<SuccessScreen /> )
+        StepFormRender = (<SuccessScreen />)
         break;
   
     default:
         break;
   }
-  const DynamicTitle = currentStep === 1 ? "Choose Your Role" : currentStep === 2 ? "Fill Your Information" : currentStep === 3 ? "Step 3" : currentStep === 4 ? "Step 4" : "Step 5";
   
   useEffect(() => {
-    document.title = DynamicTitle; // هنا بيغير العنوان مباشرة في المتصفح
-  }, [currentStep, DynamicTitle]);
+    document.title = stepTitles[currentStep - 1]; // هنا بيغير العنوان مباشرة في المتصفح
+  }, [currentStep]);
   
   return (
     <>
@@ -339,16 +343,19 @@ export function ProgressBarClient() {
         <title>{currentStep} | My App</title>
       </Head>
       <section
-        className='w-full flex items-start'
+        className='w-full flex items-start 
+          rounded-xl overflow-hidden'
       >
-        <div className='w-full min-h-80 bg-teal-50/50 pr-6 py-12 pl-12 rounded-xl'
+        <div 
+          className='w-full min-h-80 bg-teal-50/50 
+            pr-6 py-12 pl-12'
           >
           <div
             className="pb-6"
           >
             <h1 
               className="text-2xl font-bold text-start 
-                text-gray-800">
+                text-teal-600">
               Seller Registration
             </h1>
             <p
@@ -372,7 +379,8 @@ export function ProgressBarClient() {
           </div>
 
           {currentStep !== 1 && currentStep !== 4 && (
-            <div className="flex justify-between pt-4">
+            <div 
+              className="w-full flex justify-between pt-4">
               <button
                 onClick={handlePrev}
                 disabled={currentStep === 1}

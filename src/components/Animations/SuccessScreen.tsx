@@ -27,14 +27,18 @@ export function SuccessScreen() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-80 bg-white text-center">
+    <div 
+      className="flex flex-col items-center justify-center 
+        min-h-90 text-center">
       {showConfetti && (
         <div style={{ opacity, transition: 'opacity 0.5s linear' }}>
           <Confetti width={width} height={height} />
         </div>
       )}
-      <h1 className="text-3xl font-bold mb-2">🎉 Congratulations!</h1>
-      <p className="text-gray-600">You’re all set to start selling.</p>
+      <h1 className="text-3xl text-teal-600 font-bold mb-2">🎉 Congratulations!</h1>
+      <p className="text-gray-400">
+        You’re Officially Part of Our Marketplace.
+      </p>
     </div>
   );
 }
