@@ -41,7 +41,7 @@ export default async function page() {
     return (
     <main
         className='w-full h-screen flex px-6
-            flex-col items-start justify-center'
+            flex-col items-center justify-center'
     >
         <LoginForm />
     </main>
