@@ -1,8 +1,12 @@
 'use client';
 
 import { SuccessScreen } from '@/components/Animations/SuccessScreen';
+import { auth, db } from '@/Firebase';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { Check, MoveLeft } from 'lucide-react';
 import Head from 'next/head';
+import { useRouter } from 'next/navigation';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -102,9 +106,10 @@ function ProgressBar({
  */
 export function ProgressBarClient() {
   const totalSteps = 4;
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedRole, setSelectedRole] = useState("");
-  const [selectedHowHeartAboutUs, setSelectedHowHeartAboutUs] = useState("");
+  const [selectedHowDidYouHearAboutUs, setSelectedHowDidYouHearAboutUs] = useState("");
   
   const [formInputs, setFormInputs] = useState({
     fullname: "",
@@ -126,7 +131,7 @@ export function ProgressBarClient() {
       setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
     }, 300);
   }
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep === 1) {
       if (selectedRole === "") {
         toast.error("Please choose role!");
@@ -154,6 +159,22 @@ export function ProgressBarClient() {
     }
     if(currentStep === 3){
       handelNextDelayed();
+    }
+    if(currentStep === 4){
+      const userCredential = await createUserWithEmailAndPassword(auth, formInputs.emailadress, formInputs.password);
+      const user = userCredential.user;
+      await sendEmailVerification(user);
+
+      await setDoc(doc(db, "users", formInputs.emailadress), {
+        fullname: formInputs.fullname,
+        phonenumber: formInputs.phonenumber,
+        email: formInputs.emailadress,
+        HowDidYouHearAboutUs: selectedHowDidYouHearAboutUs,
+        isNewUser: true,
+        createdAt: new Date(),
+      });
+      toast.success("Account created successfully, please confirm your email!");
+      router.push("/auth/confirm-email")
     }
   };
 
@@ -310,7 +331,7 @@ export function ProgressBarClient() {
                   <button
                     key={idx}
                     onClick={() => {
-                      setSelectedHowHeartAboutUs(option)
+                      setSelectedHowDidYouHearAboutUs(option)
                       handelNextDelayed();
                     }}
                     className='w-full flex items-center cursor-pointer
