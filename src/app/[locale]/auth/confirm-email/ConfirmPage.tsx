@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { auth } from "@/Firebase";
 import { sendEmailVerification } from "firebase/auth";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export function ConfirmPage() {
   const [resetCount, setResetCount] = useState(6);
@@ -29,8 +30,8 @@ export function ConfirmPage() {
         toast.success("Verification email resent.");
         setResetCount(60); // reset the timer
       } catch (error) {
-        toast.error("Failed to resend verification email.");
-        console.error(error);
+        toast.info("The verification email was already sent.");
+        console.log(error);
       } finally {
         setSending(false);
       }
@@ -40,31 +41,41 @@ export function ConfirmPage() {
   };
 
   return (
-    <section className="w-full min-h-screen flex flex-col justify-center items-center">
-      <div className="w-[450px] min-h-40 flex flex-col gap-8 py-4 items-center rounded-2xl border border-gray-200 shadow bg-blue-50">
-        <span className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-bold text-blue-600">Confirm Your Email Address</h1>
-          <p className="text-gray-400">We’ve sent you a confirmation link. Please check your inbox.</p>
-        </span>
-
-        <button
-          onClick={handleResendVerification}
-          disabled={resetCount !== 0 || sending}
-          className="py-1 px-6 rounded-xl border 
-              border-blue-300 bg-blue-700 
-              hover:bg-blue-600 cursor-pointer 
-              text-white
-              disabled:bg-gray-500
-              disabled:border-none
-              disabled:cursor-not-allowed"
-        >
-          {sending
-            ? "Sending..."
-            : resetCount !== 0
-            ? `${resetCount}s to Resend`
-            : "Resend Confirmation Link"}
-        </button>
-      </div>
+    <section 
+      className="w-1/2 rounded-xl bg-gray-50 
+        border border-gray-100 shadow flex flex-col 
+        justify-center items-center text-center px-12 
+        py-6 space-y-3"
+    >
+      <Image
+        src="/Email-Pending.png"
+        alt="Email Confirmation Pending"
+        width={120}
+        height={120}
+        quality={100}
+        priority
+      />
+      <h1
+        className="text-2xl font-semibold"
+      >
+        Verify Your Email to Start Selling
+      </h1>
+      <p
+        className="text-gray-400 text-sm"
+      >
+        You’re almost ready! Please check your inbox and click 
+        the verification link to activate your seller account.
+      </p>
+      <button
+        disabled={sending || resetCount > 0}
+        onClick={handleResendVerification}
+        className={`
+          py-2 px-6 rounded-full transition-colors duration-200
+          ${sending ? 'bg-gray-300 cursor-not-allowed text-gray-400' : 'bg-gradient-to-r from-black to-black/60 hover:from-black/60 hover:to-black text-white cursor-pointer'}
+        `}
+      >
+        {resetCount > 0 && (<span>({resetCount})</span>)} Resend Verification Email
+      </button>
     </section>
   );
 }
