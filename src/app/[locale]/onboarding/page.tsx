@@ -8,9 +8,11 @@ export default function OnboardingPage() {
     <main 
         className="flex flex-col items-center justify-center 
             min-h-screen bg-gray-50 font-sans p-4">
-      <div className="w-full max-w-2xl p-8 bg-white rounded-xl shadow-lg space-y-8">
+      <div 
+        className="w-full max-w-5xl bg-white 
+          rounded-xl shadow-lg space-y-8">
         {/* Client component with interactivity */}
-        <ProgressBarClient StepTitle='4' />
+        <ProgressBarClient />
       </div>
     </main>
   );

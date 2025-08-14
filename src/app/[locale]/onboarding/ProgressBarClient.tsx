@@ -1,13 +1,19 @@
 'use client';
 
-import { Check, CircleCheckBig } from 'lucide-react';
+import { Check } from 'lucide-react';
 import Head from 'next/head';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 // Check icon SVG
 const CheckIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+  <svg 
+    className={className} 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor" 
+    strokeWidth={3}
+  >
     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
   </svg>
 );
@@ -25,10 +31,10 @@ function ProgressBar({
   onStepClick?: (step: number) => void;
 }) {
   const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
-
+  const stepTitles = ["Choose your role", "fill your informations", "step 3", "step 4"];
   return (
-    <div className="w-full" aria-label="Progress bar">
-      <ol className="flex items-center">
+    <div className="h-full" aria-label="Progress bar">
+      <ol className="flex flex-col items-start">
         {steps.map((step, index) => {
           const isCompleted = step < currentStep;
           const isActive = step === currentStep;
@@ -38,34 +44,44 @@ function ProgressBar({
 
           return (
             <React.Fragment key={step}>
-              <li className="relative flex items-center justify-center">
+              <li 
+                className={`relative flex items-center px-8 py-3 
+                  rounded-xl gap-3 w-full
+                  ${isActive ? "bg-gray-200" : "bg-transparent"}`}>
+                {/* Circle */}
                 <button
                   onClick={() => {
                     if (onStepClick && step <= currentStep) {
                       onStepClick(step);
                     }
                   }}
-                  className={`flex h-10 w-10 items-center 
+                  // ${onStepClick ? 'cursor-pointer hover:text-gray-300' : 'cursor-default'}
+                  className={`flex h-10 w-10 items-center
                       justify-center rounded-full font-bold 
                       transition-all duration-300 ease-in-out
-                    ${isCompleted ? 'bg-black text-white' : ''}
-                    ${isActive ? 'bg-black text-white ring-4 ring-gray-300' : ''}
-                    ${!isCompleted && !isActive ? 'border-2 bg-white text-gray-400' : ''}
-                    ${onStepClick ? 'cursor-pointer hover:text-gray-300' : 'cursor-default'}
+                    ${isCompleted ? 'bg-green-100 text-teal-500 cursor-pointer' : ''}
+                    ${isActive ? 'bg-gray-500 text-white ring-2 ring-gray-500' : ''}
+                    ${!isCompleted && !isActive ? 'border-2 border-gray-200 bg-white text-gray-300 cursor-not-allowed' : ''}
                   `}
                   aria-current={isActive ? 'step' : undefined}
                   aria-label={`Step ${step}: ${status}`}
                 >
                   <span className="sr-only">Step {step}: {status}</span>
-                  {isCompleted ? <CheckIcon className="h-6 w-6 text-white" /> : <span>{step}</span>}
+                  {isCompleted ? <CheckIcon className="h-6 w-6 text-teal-500" /> : <span>{step}</span>}
                 </button>
+
+                {/* Title */}
+                <span className={`font-medium capitalize ${isActive ? 'text-black' : 'text-gray-500'}`}>
+                  {stepTitles[index]}
+                </span>
               </li>
 
+              {/* Connector line */}
               {!isLastStep && (
                 <li
                   aria-hidden="true"
-                  className={`flex-auto border-t-2 transition-colors duration-300 ease-in-out
-                    ${isCompleted ? 'border-black' : 'border-gray-300'}
+                  className={`ml-13 h-8 border-l-2 border-dashed transition-colors duration-300 ease-in-out
+                    ${isCompleted ? 'border-teal-500' : 'border-gray-300'}
                   `}
                 />
               )}
@@ -74,14 +90,16 @@ function ProgressBar({
         })}
       </ol>
     </div>
+
+
   );
 }
 
 /**
  * Client component wrapping the interactive onboarding logic
  */
-export function ProgressBarClient({ StepTitle = "4" }: {StepTitle: string;}) {
-  const totalSteps = 5;
+export function ProgressBarClient() {
+  const totalSteps = 4;
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedRole, setSelectedRole] = useState("");
   
@@ -91,6 +109,7 @@ export function ProgressBarClient({ StepTitle = "4" }: {StepTitle: string;}) {
     emailadress: "",
     password: "",
     confirmpassword: "",
+    city: "",
   });
     const HandleChangeInputs = (e: ChangeEvent<HTMLInputElement>) => {
         const { value, name } = e.target;
@@ -135,7 +154,10 @@ export function ProgressBarClient({ StepTitle = "4" }: {StepTitle: string;}) {
                 {[{label: "Become a Seller", role: "seller"}, {label: "Become an Affiliate", role: "affiliate"}].map((card, idx) => {
                     return (
                         <button
-                            onClick={() => setSelectedRole(card.role)}
+                            onClick={() => {
+                              setSelectedRole(card.role)
+                              setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+                            }}
                             key={idx}
                             className={`cursor-pointer w-full py-6 rounded-lg border 
                                 border-gray-200 relative
@@ -238,6 +260,20 @@ export function ProgressBarClient({ StepTitle = "4" }: {StepTitle: string;}) {
                         />
                     </div>
                 </div>
+                <div
+                  className='w-full max-w-1/2 mt-2 flex flex-col items-start'
+                >
+                  <label htmlFor="City">City <span className='text-red-700'>*</span></label>
+                  <input 
+                      onChange={HandleChangeInputs}
+                      value={formInputs.city}
+                      type="text" 
+                      placeholder='City'
+                      name='city'
+                      id='City'
+                      className='w-full focus:ring-2 ring-black border border-gray-200 rounded-lg outline-none p-3'
+                  />
+                </div>
             </div>
         )
         break;
@@ -262,37 +298,69 @@ export function ProgressBarClient({ StepTitle = "4" }: {StepTitle: string;}) {
     <Head>
         <title>{currentStep} | My App</title>
       </Head>
-      <ProgressBar totalSteps={totalSteps} currentStep={currentStep} onStepClick={setCurrentStep} />
-      <h1 className="text-2xl font-bold text-center text-gray-800">
-        {DynamicTitle}
-      </h1>
-      <div className="text-center text-gray-600 mt-4">
-        {StepFormRender}
-      </div>
+      <section
+        className='w-full flex items-start gap-6'
+      >
+        <div
+          className='w-1/2 min-h-80 bg-teal-50/50 p-12 rounded-xl'
+          >
+          <div
+            className="pb-6"
+          >
+            <h1 
+              className="text-2xl font-bold text-start 
+                text-gray-800">
+              Seller Registration
+            </h1>
+            <p
+              className='text-sm text-gray-400'
+            >
+              Join and start selling with us today
+            </p>
 
-      <div className="flex justify-between pt-4">
-        <button
-          onClick={handlePrev}
-          disabled={currentStep === 1}
-          className="px-6 py-2 font-semibold text-gray-700 
-            bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300 
-            disabled:opacity-50 disabled:cursor-not-allowed 
-            cursor-pointer
-            transition-colors"
+          </div>
+          <ProgressBar 
+            totalSteps={totalSteps} 
+            currentStep={currentStep} 
+            onStepClick={setCurrentStep}
+          />
+        </div>
+        
+
+        <div
+          className='min-w-1/2'
         >
-          Previous
-        </button>
-        <button
-          onClick={handleNext}
-          disabled={currentStep === totalSteps}
-          className="px-6 py-2 font-semibold text-white 
-            bg-black rounded-lg shadow-sm hover:bg-black/80
-            disabled:opacity-50 disabled:cursor-not-allowed 
-            cursor-pointer transition-colors"
-        >
-          Next
-        </button>
-      </div>
+          <div className="text-center text-gray-600 mt-4">
+            {StepFormRender}
+          </div>
+
+          {currentStep !== 1 && (
+            <div className="flex justify-between pt-4">
+              <button
+                onClick={handlePrev}
+                disabled={currentStep === 1}
+                className="px-6 py-2 font-semibold text-gray-700 
+                  bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300 
+                  disabled:opacity-50 disabled:cursor-not-allowed 
+                  cursor-pointer
+                  transition-colors"
+              >
+                Previous
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={currentStep === totalSteps}
+                className="px-6 py-2 font-semibold text-white 
+                  bg-black rounded-lg shadow-sm hover:bg-black/80
+                  disabled:opacity-50 disabled:cursor-not-allowed 
+                  cursor-pointer transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
     </>
   );
 }
