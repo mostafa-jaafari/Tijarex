@@ -71,7 +71,7 @@ export function ConfirmPage() {
         onClick={handleResendVerification}
         className={`
           py-2 px-6 rounded-full transition-colors duration-200
-          ${sending ? 'bg-gray-300 cursor-not-allowed text-gray-400' : 'bg-gradient-to-r from-black to-black/60 hover:from-black/60 hover:to-black text-white cursor-pointer'}
+          ${sending || resetCount > 0 ? 'bg-gray-300 cursor-not-allowed text-gray-400' : 'bg-gradient-to-r from-black to-black/60 hover:from-black/60 hover:to-black text-white cursor-pointer'}
         `}
       >
         {resetCount > 0 && (<span>({resetCount})</span>)} Resend Verification Email
