@@ -126,12 +126,32 @@ export function ProgressBarClient() {
             [name]: value,
         }));
     };
+  
+  const handleCreateAccount = async () => {
+    const userCredential = await createUserWithEmailAndPassword(auth, formInputs.emailadress, formInputs.password);
+    const user = userCredential.user;
+    await sendEmailVerification(user);
+
+    await setDoc(doc(db, "users", formInputs.emailadress), {
+      fullname: formInputs.fullname,
+      phonenumber: formInputs.phonenumber,
+      email: formInputs.emailadress,
+      HowDidYouHearAboutUs: selectedHowDidYouHearAboutUs,
+      UserRole: selectedRole,
+      isNewUser: true,
+      createdAt: new Date(),
+    });
+    toast.success("Account created successfully, please confirm your email!");
+    router.push("/auth/confirm-email")
+  }
+
   const handelNextDelayed = () => {
     setTimeout(() => {
       setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
     }, 300);
   }
-  const handleNext = async () => {
+
+  const handleNext = () => {
     if (currentStep === 1) {
       if (selectedRole === "") {
         toast.error("Please choose role!");
@@ -159,22 +179,7 @@ export function ProgressBarClient() {
     }
     if(currentStep === 3){
       handelNextDelayed();
-    }
-    if(currentStep === 4){
-      const userCredential = await createUserWithEmailAndPassword(auth, formInputs.emailadress, formInputs.password);
-      const user = userCredential.user;
-      await sendEmailVerification(user);
-
-      await setDoc(doc(db, "users", formInputs.emailadress), {
-        fullname: formInputs.fullname,
-        phonenumber: formInputs.phonenumber,
-        email: formInputs.emailadress,
-        HowDidYouHearAboutUs: selectedHowDidYouHearAboutUs,
-        isNewUser: true,
-        createdAt: new Date(),
-      });
-      toast.success("Account created successfully, please confirm your email!");
-      router.push("/auth/confirm-email")
+      handleCreateAccount();
     }
   };
 
@@ -333,6 +338,7 @@ export function ProgressBarClient() {
                     onClick={() => {
                       setSelectedHowDidYouHearAboutUs(option)
                       handelNextDelayed();
+                      handleCreateAccount();
                     }}
                     className='w-full flex items-center cursor-pointer
                       justify-center border border-gray-200
