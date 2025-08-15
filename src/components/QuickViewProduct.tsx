@@ -5,6 +5,7 @@ import { ProductType } from "@/types/product";
 import { BadgeCheck, Star } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { CalculateDiscount } from "./Functions/CalculateDiscount";
 
 export function QuickViewProduct() {
     const { isShowQuickViewProduct, setIsShowQuickViewProduct, productID } = useQuickViewProduct();
@@ -54,7 +55,8 @@ export function QuickViewProduct() {
         document.addEventListener("mousedown", handleHideQVP);
         return () => document.removeEventListener("mousedown", handleHideQVP);
     }, [setIsShowQuickViewProduct]);
-
+    
+    const [currentImage, setCurrentImage] = useState(0);
     if (!isVisible) return null;
 
     return (
@@ -69,12 +71,13 @@ export function QuickViewProduct() {
                     border-gray-200 p-6 transition-all duration-300 transform
                     ${isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
             >
-                {productID} / {selectedProductDetails?.id}
                 <div className="w-full flex flex-shrink-0 items-start justify-between gap-2">
-                    <div className="w-[400px] space-y-2">
-                        <div className="relative w-full h-[400px] rounded-xl overflow-hidden border">
+                    <div className="w-[400px] space-y-3">
+                        <div 
+                            className="relative w-full h-[400px] rounded-xl 
+                                overflow-hidden border border-gray-200 bg-gray-50">
                             <Image
-                                src="/"
+                                src={selectedProductDetails?.product_images[currentImage] || ""}
                                 alt=""
                                 fill
                                 className="object-cover"
@@ -83,22 +86,38 @@ export function QuickViewProduct() {
                             />
                         </div>
                         <div className="w-full grid grid-cols-4 gap-2">
-                            {Array(4).fill(0).map((_, idx) => (
+                            {selectedProductDetails?.product_images.map((pic, idx) => (
                                 <button
                                     key={idx}
-                                    className="relative w-full h-16 rounded-xl overflow-hidden border"
+                                    disabled={currentImage === idx}
+                                    onClick={() => setCurrentImage(idx)}
+                                    className={`relative w-full h-20 rounded-xl 
+                                        flex-shrink-0 overflow-hidden bg-gray-200
+                                        transition-all duration-300 border border-gray-200
+                                        ${currentImage === idx ? "ring-4 ring-teal-600" : "hover:ring-2 ring-gray-400 cursor-pointer"}`}
                                 >
-                                    {/* صورة مصغرة */}
+                                    <Image
+                                        src={pic || ""}
+                                        alt=""
+                                        fill
+                                        className="object-cover"
+                                        loading="lazy"
+                                    />
                                 </button>
                             ))}
                         </div>
                     </div>
-                    <div className="w-[400px] min-h-40 border border-gray-200 p-3 rounded-xl">
+                    <div 
+                        className="w-[400px] min-h-40 border border-gray-200 
+                            p-3 rounded-xl space-y-3">
                         <div className="flex items-center gap-2">
-                            <div className="relative border border-gray-200 w-10 h-10 rounded-full flex-shrink-0">
+                            <div 
+                                className="relative border border-gray-200 
+                                    w-10 h-10 rounded-full flex-shrink-0
+                                    overflow-hidden ring-2 ring-teal-600">
                                 <Image
-                                    src="/"
-                                    alt=""
+                                    src={selectedProductDetails?.owner?.image || ""}
+                                    alt={selectedProductDetails?.owner?.name || ""}
                                     fill
                                     className="object-cover"
                                     quality={100}
@@ -106,15 +125,39 @@ export function QuickViewProduct() {
                                 />
                             </div>
                             <span>
-                                <h1 className="flex items-center gap-2">
-                                    Mostafa Jaafari <BadgeCheck className="text-teal-600" size={18} />
+                                <h1 className="flex items-center gap-1">
+                                    {selectedProductDetails?.owner?.name} <BadgeCheck className="text-teal-600" size={14} />
                                 </h1>
                                 <p className="text-gray-400 flex items-center gap-1 text-sm">
-                                    <Star size={16} className="fill-yellow-500 text-yellow-500" />
+                                    <Star size={12} className="fill-yellow-500 text-yellow-500" />
                                     4.8 ● 234 reviews
                                 </p>
                             </span>
                         </div>
+                        <h1
+                            className="text-2xl font-semibold"
+                        >
+                            {selectedProductDetails?.name}
+                        </h1>
+                        <span
+                            className="flex items-end gap-3"
+                        >
+                            <ins
+                                className="no-underline text-xl text-gray-600"
+                            >
+                                {selectedProductDetails?.sale_price} Dh
+                            </ins>
+                            <del
+                                className="text-gray-400 text-md"
+                            >
+                                {selectedProductDetails?.regular_price} Dh
+                            </del>
+                            <p
+                                className="text-teal-600 px-3"
+                            >
+                                {CalculateDiscount(selectedProductDetails?.sale_price, selectedProductDetails?.regular_price)}% off
+                            </p>
+                        </span>
                     </div>
                 </div>
             </div>
