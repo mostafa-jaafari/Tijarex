@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
     `/${locale}/auth/confirm-email`
   ];
   const notProtectedPages = [
-    `/${locale}/onboarding`
+    `/${locale}/auth/onboarding`
   ];
 
   const isNotProtectedPages = notProtectedPages.some(page => pathname.startsWith(page));

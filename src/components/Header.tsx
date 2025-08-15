@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SwitchLanguage } from "./SwitchLanguage";
-import { ChevronDown, Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { ShowHeaderMenu } from "./ShowHeaderMenu";
 import { GetStartedBtn } from "./GetStartedBtn";

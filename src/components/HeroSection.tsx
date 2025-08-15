@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 
 
@@ -82,12 +83,13 @@ export function HeroSection(){
                         Discover unique products, unbeatable deals, 
                         and a shopping experience made just for you.
                     </p>
-                    <button
-                        className="px-6 py-2 rounded-xl bg-teal-600 primary-button
+                    <Link
+                        href="/auth/login"
+                        className="px-6 py-2 rounded-xl primary-button
                         cursor-pointer"
                     >
                         Start Shopping Now
-                    </button>
+                    </Link>
                 </div>
             </div>
             {/* --- RIGHT SECTION --- */}
