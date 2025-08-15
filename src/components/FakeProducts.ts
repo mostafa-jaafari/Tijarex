@@ -133,7 +133,7 @@ export const FakeProducts: {
 export const Fake_Products = [
   {
     id: 1,
-    name: "Vintage Leather Backpack",
+    title: "Vintage Leather Backpack",
     price: 79.99,
     uploadDate: "2025-08-05",
     image: "https://images.unsplash.com/photo-1585386959984-a4155224a1ad",
@@ -147,7 +147,7 @@ export const Fake_Products = [
   },
   {
     id: 2,
-    name: "Minimalist Wooden Watch",
+    title: "Minimalist Wooden Watch",
     price: 45.5,
     uploadDate: "2025-08-07",
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
@@ -161,7 +161,7 @@ export const Fake_Products = [
   },
   {
     id: 3,
-    name: "Handcrafted Ceramic Mug",
+    title: "Handcrafted Ceramic Mug",
     price: 15,
     uploadDate: "2025-08-06",
     image: "https://images.unsplash.com/photo-1574007659841-07aa5e56d5a4",
@@ -175,7 +175,7 @@ export const Fake_Products = [
   },
   {
     id: 4,
-    name: "Organic Cotton Hoodie",
+    title: "Organic Cotton Hoodie",
     price: 59.99,
     uploadDate: "2025-08-08",
     image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
@@ -189,7 +189,7 @@ export const Fake_Products = [
   },
   {
     id: 5,
-    name: "Bluetooth Wireless Earbuds",
+    title: "Bluetooth Wireless Earbuds",
     price: 39.99,
     uploadDate: "2025-08-02",
     image: "https://images.unsplash.com/photo-1583225272829-1d55a3f3a933",
@@ -203,7 +203,7 @@ export const Fake_Products = [
   },
   {
     id: 6,
-    name: "Luxury Scented Candle",
+    title: "Luxury Scented Candle",
     price: 25,
     uploadDate: "2025-08-04",
     image: "https://images.unsplash.com/photo-1519922639192-e73293ca430e",
@@ -217,7 +217,7 @@ export const Fake_Products = [
   },
   {
     id: 7,
-    name: "Travel Duffel Bag",
+    title: "Travel Duffel Bag",
     price: 89.99,
     uploadDate: "2025-08-01",
     image: "https://images.unsplash.com/photo-1590784076446-0f4b7b68d1e5",
@@ -231,7 +231,7 @@ export const Fake_Products = [
   },
   {
     id: 8,
-    name: "Custom Graphic T-Shirt",
+    title: "Custom Graphic T-Shirt",
     price: 22,
     uploadDate: "2025-08-03",
     image: "https://images.unsplash.com/photo-1520975922071-c3c5ab33a2a0",

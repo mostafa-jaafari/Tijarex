@@ -8,6 +8,7 @@ const nextConfig = {
       "spaceseller.ma",
       "images.unsplash.com",
       "s.gravatar.com",
+      "i.pravatar.cc"
     ]
   }
 };

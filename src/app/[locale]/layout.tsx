@@ -9,6 +9,8 @@ import { Toaster } from "sonner";
 import { NextAuthSessionProvider } from "@/context/NextAuthSessionProvider";
 import { UserInfosContextProvider } from "@/context/UserInfosContext";
 import { Metadata } from "next";
+import { QuickViewProductContextProvider } from "@/context/QuickViewProductContext";
+import { QuickViewProduct } from "@/components/QuickViewProduct";
 
 
 export const metadata: Metadata = {
@@ -51,15 +53,18 @@ export default async function RootLayout({
         className={`w-full overflow-x-hidden 
           ${cairo.className} ${cinzel.variable} ${bebas_neue.variable} antialiased`}
           >
-          <NextAuthSessionProvider>
-            <UserInfosContextProvider>
-              <Toaster position="top-center" />
-              <NextIntlClientProvider locale={locale} messages={messages}>
-                  {children}
-              </NextIntlClientProvider>
-              <ScrollToTop />
-            </UserInfosContextProvider>
-          </NextAuthSessionProvider>
+          <QuickViewProductContextProvider>
+            <NextAuthSessionProvider>
+              <UserInfosContextProvider>
+                <Toaster position="top-center" />
+                <NextIntlClientProvider locale={locale} messages={messages}>
+                  <QuickViewProduct />
+                    {children}
+                </NextIntlClientProvider>
+                <ScrollToTop />
+              </UserInfosContextProvider>
+            </NextAuthSessionProvider>
+          </QuickViewProductContextProvider>
       </body>
     </html>
   );

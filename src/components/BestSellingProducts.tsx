@@ -1,11 +1,26 @@
 "use client";
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { HeadlineSection } from './HeadlineSection';
 import { BestSellingProductUI } from './UI/BestSellingProductUI';
-import { Fake_Products } from './FakeProducts';
+import { ProductType } from '@/types/product';
 
 export function BestSellingProducts() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
+    const [trendProducts, setTrendsProducts] = useState<ProductType[] | []>([]);
+    useEffect(() => {
+        const handleFetchTrendsProducts = async () => {
+            const Res = await fetch("/api/products");
+            const { products } = await Res.json();
+            if (Array.isArray(products)) {
+                const SelectedProduct = products.filter(
+                    (product: ProductType) => product.isTrend);
+                setTrendsProducts(SelectedProduct as ProductType[] | []);
+            } else {
+                setTrendsProducts([]);
+            }
+        }
+        handleFetchTrendsProducts();
+    },[])
     return (
     <section>
         <HeadlineSection
@@ -18,17 +33,18 @@ export function BestSellingProducts() {
             className='w-full flex items-center flex-nowrap 
                 overflow-x-hidden scrollbar-hide gap-2'
         >
-            {Fake_Products.map((product) => {
+            {trendProducts.map((product) => {
                 return (
                     <BestSellingProductUI
                         key={product.id}
-                        PRODUCTID={product.id}
-                        PRODUCTIMAGE={product.image}
-                        PRODUCTTITLE={product.name}
-                        PRODUCTPRICE={product.price}
                         PRODUCTCATEGORIE={product.category}
-                        OWNER={product?.owner}
+                        PRODUCTID={product.id}
+                        PRODUCTIMAGES={product.product_images}
+                        PRODUCTSALEPRICE={product.sale_price}
+                        PRODUCTREGULARPRICE={product.regular_price}
+                        PRODUCTTITLE={product.title}
                         STOCK={product.stock}
+                        OWNER={product.owner}
                     />
                 )
             })}

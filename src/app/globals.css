@@ -71,7 +71,6 @@ body {
 .primary-button {
   background: linear-gradient(90deg, #000000, #474747);
   color: white;
-  border: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }

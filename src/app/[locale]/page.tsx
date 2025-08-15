@@ -1,4 +1,3 @@
-import { ScrollReveal } from "@/components/Animations/ScrollReveal";
 import { BestSellingProducts } from "@/components/BestSellingProducts";
 import BestSummerCollections from "@/components/BestSummerCollections";
 import FeaturedProducts from "@/components/FeaturedProducts";
@@ -57,9 +56,7 @@ export default function Home() {
       <section
         className="px-6 mt-12 space-y-30"
       >
-        <ScrollReveal>
-          <BestSellingProducts />
-        </ScrollReveal>
+        <BestSellingProducts />
         <ShopByCategories />
         <BestSummerCollections />
         <FeaturedProducts />
