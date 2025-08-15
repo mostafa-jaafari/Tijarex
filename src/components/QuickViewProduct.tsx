@@ -63,13 +63,13 @@ export function QuickViewProduct() {
 
     return (
         <section
-            className={`fixed z-50 top-0 left-0 w-full h-screen bg-black/40
-                flex justify-center items-center transition-opacity duration-300
+            className={`fixed z-50 top-0 left-0 w-full h-screen bg-black/60
+                flex justify-center items-end transition-opacity duration-300
                 ${isShowQuickViewProduct ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         >
             <div
                 ref={QVPRef}
-                className={`min-w-1/2 min-h-40 max-h-130 overflow-auto bg-white rounded-xl border 
+                className={`min-w-1/2 max-h-140 mb-12 overflow-auto bg-white rounded-xl border 
                     border-gray-200 p-6 transition-all duration-300 transform
                     ${isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
             >
@@ -115,7 +115,7 @@ export function QuickViewProduct() {
                         <div className="flex items-center gap-2">
                             <div 
                                 className="relative border border-gray-200 
-                                    w-10 h-10 rounded-full flex-shrink-0
+                                    w-10 h-10 rounded-full flex-shrink-0 bg-gray-50
                                     overflow-hidden ring-2 ring-teal-600">
                                 <Image
                                     src={selectedProductDetails?.owner?.image || ""}

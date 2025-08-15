@@ -39,7 +39,8 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                         onClick={HandleQuickView}
                         className='w-full primary-button border-b-2 
                             border-neutral-500 text-sm rounded-xl 
-                            py-2 flex justify-center
+                            py-2 flex justify-center focus:border-none
+                            focus:translate-y-0.5
                             items-center gap-1 text-white font-semibold'
                     >
                         <Eye size={16}/> Quick view
