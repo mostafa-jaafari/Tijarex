@@ -68,12 +68,29 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
-.primary-button {
-  background: linear-gradient(90deg, #000000, #474747);
+.primary-button-b {
+  background: linear-gradient(to bottom, #00000099, black, #00000099);
   color: white;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 0.5rem; /* rounded-lg */
+  border: 1px solid #4B5563; /* gray-600 */
+  box-shadow: 0 0 0 1px #00000080; /* ring ring-black/50 */
+  transition: all 0.2s;
 }
-.primary-button:hover {
-  background: linear-gradient(90deg, #000000d5, #474747);
+
+.primary-button-b:hover {
+  background: linear-gradient(to bottom, #000000, #000000be);
+}
+.primary-button-w {
+  background: linear-gradient(to bottom, #ffffff99, white, #ffffff99);
+  color: black;
+  cursor: pointer;
+  border-radius: 0.5rem; /* rounded-lg */
+  border: 1px solid #4B5563; /* gray-600 */
+  box-shadow: 0 0 0 1px #ffffff80; /* ring ring-black/50 */
+  transition: all 0.2s;
+}
+
+.primary-button-w:hover {
+  background: linear-gradient(to bottom, #ffffff, #ffffffbe);
 }

@@ -30,13 +30,12 @@ export function GetStartedBtn(){
     },[])
     return (
         <div
-            className="relative"
+            className="relative flex"
             ref={MenuRef}
         >
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 text-sm 
-                    py-1 px-3 rounded-full primary-button"
+                className="primary-button-b flex items-center gap-1 px-2 py-1 text-sm"
             >
                 Get Started <ChevronDown size={14} />
             </button>
@@ -50,6 +49,7 @@ export function GetStartedBtn(){
                         return (
                             <Link
                                 href={btn.href}
+                                prefetch={true}
                                 key={idx}
                                 onClick={() => setIsOpen(false)}
                                 className="text-center py-1 px-3 hover:bg-gradient-to-r 
