@@ -12,7 +12,7 @@ interface HeadlineSectionProps {
 }
 
 export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK, SCROLLREF }: HeadlineSectionProps) {
-
+    
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
 
@@ -22,8 +22,8 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
         const el = SCROLLREF.current;
         if (!el) return;
 
-        setCanScrollLeft(el.scrollLeft > 0);
-        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
+        setCanScrollLeft(el.scrollLeft > 5);
+        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
     }, [SCROLLREF]);
 
     useEffect(() => {
@@ -39,10 +39,9 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
 
     const scrollLeft = () => {
         if (!SCROLLREF?.current) return;
-        SCROLLREF.current.scrollBy({
-            left: -400,
-            behavior: "smooth",
-        });
+        SCROLLREF.current.scrollBy({ left: -400, behavior: "smooth" });
+        // Call checkScrollPosition after a brief delay to allow smooth scroll to complete
+        setTimeout(checkScrollPosition, 100);
     };
 
     const scrollRight = () => {
@@ -51,6 +50,8 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
             left: 400,
             behavior: "smooth",
         });
+        // Add the missing checkScrollPosition call
+        setTimeout(checkScrollPosition, 100);
     };
 
     return (
