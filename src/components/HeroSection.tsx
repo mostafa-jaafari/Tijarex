@@ -22,7 +22,7 @@ export function HeroSection(){
                 />
             </div>
             <div
-                className="absolute left-0 top-0 z-20 w-full 
+                className="absolute left-0 top-0 z-30 w-full 
                     h-full flex justify-center px-6"
             >
                 <div
