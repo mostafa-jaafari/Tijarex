@@ -29,7 +29,7 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                         transition-all duration-300"
                 />
                 <div
-                    className='translate-y-20 group-hover:translate-y-0 
+                    className='translate-y-0 group-hover:translate-y-0 
                         absolute z-20 bottom-0 left-0 w-full 
                         bg-gradient-to-t from-black/80 py-3 to-transparent 
                         flex justify-center gap-1 px-3
@@ -37,11 +37,8 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                 >
                     <button
                         onClick={HandleQuickView}
-                        className='w-full primary-button border-b-2 
-                            border-neutral-500 text-sm rounded-xl 
-                            py-2 flex justify-center focus:border-none
-                            focus:translate-y-0.5
-                            items-center gap-1 text-white font-semibold'
+                        className='primary-button-b w-full flex justify-center 
+                            gap-1 text-sm items-center text-nowrap'
                     >
                         <Eye size={16}/> Quick view
                     </button>
