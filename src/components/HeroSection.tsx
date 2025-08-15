@@ -20,17 +20,30 @@ export function HeroSection(){
                     quality={100}
                     priority
                 />
+            </div>
+            <div
+                className="absolute left-0 top-0 z-20 w-full 
+                    h-full flex justify-center px-6"
+            >
                 <div
-                    className="absolute left-0 bottom-0 z-20 w-full 
-                        h-full flex flex-col justify-end pb-12 
-                        items-center bg-black/50 space-y-12"
+                    className="w-full flex flex-col rounded-xl
+                        items-center justify-end pb-12 bg-black/50 space-y-12"
                 >
-                    <h1
-                        className="max-w-xl text-center text-3xl font-semibold text-white"
+                    <span
+                        className="flex flex-col items-center gap-2"
                     >
-                        Discover, Buy, and Sell Handmade, Vintage, 
-                            and Local Treasures – All in One Place!
-                    </h1>
+                        <p
+                            className="text-white bg-teal-600 text-sm px-3 rounded-full"
+                        >
+                            Tijarex – Morocco’s Marketplace for Unique Finds
+                        </p>
+                        <h1
+                            className="max-w-xl text-center text-3xl font-semibold text-white"
+                            >
+                            Discover, Buy, and Sell Handmade, Vintage, 
+                                and Local Treasures – All in One Place!
+                        </h1>
+                    </span>
                     <InputHero />
                 </div>
             </div>
