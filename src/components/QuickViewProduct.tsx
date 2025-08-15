@@ -271,21 +271,17 @@ export function QuickViewProduct() {
                             </div>
                         </div>
                         <div
-                            className="w-full flex items-center gap-2"
+                            className="w-full flex flex-col items-center gap-2"
                         >
                             <button
                                 className="w-full flex justify-center items-center gap-1
-                                    border-b-2 border-gray-300 cursor-pointer rounded-xl py-1
-                                    bg-gradient-to-r from-teal-600 to-teal-500 text-white
-                                    hover:from-teal-500 hover:to-teal-600 transition-colors duration-200"
+                                    primary-button-b py-2"
                             >
                                 <ShoppingCart size={16} /> Add to Cart
                             </button>
                             <button
                                 className="w-full flex justify-center items-center gap-1
-                                    border-b-2 border-gray-300 rounded-xl py-1 cursor-pointer
-                                    bg-gradient-to-r from-black to-black/80 text-white
-                                    hover:from-black/80 hover:to-black transition-colors duration-200"
+                                    primary-button-w py-2"
                             >
                                 <Heart size={16} /> Add to Wishlist
                             </button>
