@@ -59,11 +59,10 @@ export function ShopByCategories() {
                 return (
                     <div 
                         key={i} 
-                        className="relative group h-40 w-40 p-2 bg-teal-50 rounded-lg shadow 
-                            flex flex-col justify-center items-center gap-2
-                            cursor-pointer hover:shadow-lg">
+                        className="relative group h-40 w-40 p-2 primary-button-b
+                            flex flex-col justify-center items-center gap-2">
                         <span
-                            className='bg-white text-teal-600 p-4 
+                            className='primary-button-w text-teal-600 p-4 
                                 rounded-lg border border-gray-200'
                         >
                             <cat.icon 
@@ -73,14 +72,14 @@ export function ShopByCategories() {
                             />
                         </span>
                         <h1 
-                            className='font-semibold text-teal-600'
+                            className='font-semibold white'
                         >
                             {cat.title}
                         </h1>
                         {cat.isNew &&
                             <span
-                                className='absolute right-2 top-2 text-teal-600 
-                                    text-sm bg-white rounded-lg px-2 shadow'
+                                className='absolute right-2 top-2 text-black
+                                    text-sm bg-white rounded px-3 shadow'
                             >
                                 New
                             </span>

@@ -82,15 +82,15 @@ body {
   background: linear-gradient(to bottom, #000000, #181818);
 }
 .primary-button-w {
-  background: linear-gradient(to bottom, #dbdbdb, white, #dbdbdb);
+  background: linear-gradient(to bottom, #ffffff, #dbdbdb);
   color: black;
   cursor: pointer;
   border-radius: 0.5rem; /* rounded-lg */
-  border: 1px solid #cfcfcf; /* gray-600 */
+  border: 1px solid #dfdfdf; /* gray-600 */
   box-shadow: 0 0 0 1px #ffffff80; /* ring ring-black/50 */
   transition: all 0.2s;
 }
 
 .primary-button-w:hover {
-  background: linear-gradient(to bottom, #ffffff, #dbdbdb);
+  background-color: white;
 }
