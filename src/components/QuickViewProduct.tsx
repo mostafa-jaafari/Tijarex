@@ -11,21 +11,29 @@ export function QuickViewProduct() {
     const { isShowQuickViewProduct, setIsShowQuickViewProduct, productID } = useQuickViewProduct();
     const QVPRef = useRef<HTMLDivElement | null>(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [selectedProductDetails, setSelectedProductDetails] = useState<ProductType | null>(null);
     useEffect(() => {
         const handleFetchProductDetails = async () => {
-            const Res = await fetch("/api/products");
-            const { products } = await Res.json(); // نفك المفتاح الصحيح
+            setIsLoading(true);
+            try {
+                const Res = await fetch("/api/products");
+                const { products } = await Res.json(); // نفك المفتاح الصحيح
 
-            // نتأكد إنها مصفوفة قبل البحث
-            if (Array.isArray(products)) {
-                const SelectedProduct = products.find(
-                    (product: ProductType) => product.id === productID
-                );
-                setSelectedProductDetails(SelectedProduct as ProductType);
-            } else {
-                setSelectedProductDetails(null);
+                // نتأكد إنها مصفوفة قبل البحث
+                if (Array.isArray(products)) {
+                    const SelectedProduct = products.find(
+                        (product: ProductType) => product.id === productID
+                    );
+                    setSelectedProductDetails(SelectedProduct as ProductType);
+                } else {
+                    setSelectedProductDetails(null);
+                }
+            }catch (err) {
+                console.log(err)
+            }finally {
+                setIsLoading(false);
             }
         };
 
@@ -73,6 +81,17 @@ export function QuickViewProduct() {
                     border-gray-200 p-6 transition-all duration-300 transform
                     ${isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
             >
+                {isShowQuickViewProduct && isLoading ? (
+                    <div className="h-[70vh] w-full flex justify-center items-center">
+                        <div 
+                            className="w-20 h-20 border-2 
+                                border-transparent border-t-current 
+                                rounded-full animate-spin"
+                        />
+                    </div>
+                )
+                :
+                (
                 <div className="w-full flex flex-shrink-0 items-start justify-between gap-2">
                     <div className="w-[500px] space-y-3">
                         <div 
@@ -273,6 +292,7 @@ export function QuickViewProduct() {
                         </div>
                     </div>
                 </div>
+            )}
             </div>
         </section>
     );

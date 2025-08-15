@@ -1,5 +1,5 @@
 import { BestSellingProducts } from "@/components/BestSellingProducts";
-import BestSummerCollections from "@/components/BestSummerCollections";
+import { BestSummerCollections } from "@/components/BestSummerCollections";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import Footer from "@/components/Footer";
 import { Header } from "@/components/Header";

@@ -71,7 +71,7 @@ export function ShopByCategories() {
                                     transition-all duration-300'
                             />
                         </span>
-                        <h1 
+                        <h1
                             className='font-semibold white'
                         >
                             {cat.title}
