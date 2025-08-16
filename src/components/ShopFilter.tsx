@@ -44,7 +44,7 @@ export function ShopFilter() {
                 className={`w-full flex text-left px-2 py-1 rounded-md transition ${
                   SearchCat.toLowerCase() === cat.toLowerCase()
                     ? "primary-button-b py-1"
-                    : "hover:bg-gray-100"
+                    : "hover:bg-gray-100 text-gray-400"
                 }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -74,7 +74,9 @@ export function ShopFilter() {
             onChange={(e) =>
               setPrice([Number(e.target.value), price[1]])
             }
-            className="w-16 border rounded px-1"
+            className="w-16 ring ring-gray-300 text-gray-400 
+                focus:ring-gray-600 outline-none 
+                focus:text-gray-600 rounded px-1"
           />
           <span>-</span>
           <input
@@ -83,7 +85,9 @@ export function ShopFilter() {
             onChange={(e) =>
               setPrice([price[0], Number(e.target.value)])
             }
-            className="w-16 border rounded px-1"
+            className="w-16 ring ring-gray-300 text-gray-400 
+                focus:ring-gray-600 outline-none 
+                focus:text-gray-600 rounded px-1"
           />
         </div>
       </div>
