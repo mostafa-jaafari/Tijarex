@@ -35,14 +35,14 @@ export async function middleware(request: NextRequest) {
     `/${locale}/auth/register`,
     `/${locale}/auth/confirm-email`
   ];
-  const notProtectedPages = [
-    `/${locale}/auth/onboarding`
-  ];
+  
+  // Fixed: Check shop pages properly
+  const isShopPage = pathname.startsWith(`/${locale}/shop`);
+  const isOnboardingPage = pathname === `/${locale}/auth/onboarding`;
+  const isNotProtectedPage = isShopPage || isOnboardingPage;
 
-  const isNotProtectedPages = notProtectedPages.some(page => pathname.startsWith(page));
   const isAuthPage = authPages.some(page => pathname.startsWith(page));
   const isLandingPage = pathname === `/${locale}`; // Landing page (root with locale)
-  // const isSellerPage = pathname.startsWith(`/${locale}/seller`);
   
   // Landing page logic: only accessible to non-logged-in users
   if (isLandingPage) {
@@ -68,8 +68,14 @@ export async function middleware(request: NextRequest) {
     }
   }
   
+  // Shop pages and onboarding: accessible without authentication
+  if (isNotProtectedPage) {
+    const response = intlMiddleware(request);
+    return response || NextResponse.next();
+  }
+  
   // Protected pages logic: require authentication
-  if (!token && !isAuthPage && !isLandingPage && !isNotProtectedPages) {
+  if (!token) {
     // Not logged-in user trying to access protected pages → redirect to landing
     return NextResponse.redirect(new URL(`/${locale}`, request.url));
   }

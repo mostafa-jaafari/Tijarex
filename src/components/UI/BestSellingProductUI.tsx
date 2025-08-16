@@ -3,6 +3,7 @@ import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { ProductCardProps } from '@/types/product';
 import { BadgeCheck, Eye, Flame, ShoppingCart, Tag } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react'
 
 
@@ -62,17 +63,25 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
             <div
                 className='pt-2'
             >
-                <span
-                    className='w-max text-gray-400 text-sm hover:text-black/80
-                        cursor-pointer flex items-center gap-1'
-                >
-                    <Tag size={14} />
-                    <p
-                        className='lowercase'
-                    >
-                        {PRODUCTCATEGORIE}
-                    </p>
-                </span>
+                <div>
+                    {PRODUCTCATEGORIE.slice(0, 1).map((cat, idx) => {
+                        return (
+                            <Link
+                                href={`/shop?cat=${cat.toLowerCase().replace(" ","")}`}
+                                key={idx}
+                                className='w-max text-gray-400 text-sm hover:text-black/80
+                                    cursor-pointer flex items-center gap-1'
+                            >
+                                <Tag size={14} />
+                                <p
+                                    className='lowercase'
+                                >
+                                    {PRODUCTCATEGORIE}
+                                </p>
+                            </Link>
+                        )
+                    })}
+                </div>
                 <h1
                     className='text-sm'
                 >

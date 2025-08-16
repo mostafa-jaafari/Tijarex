@@ -37,7 +37,7 @@ export interface ProductCardProps{
     PRODUCTTITLE: string;
     PRODUCTSALEPRICE: number;
     PRODUCTREGULARPRICE: number;
-    PRODUCTCATEGORIE: string;
+    PRODUCTCATEGORIE: string[];
     OWNER?: {
         name: string;
         image: string;
