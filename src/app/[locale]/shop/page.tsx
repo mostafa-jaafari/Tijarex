@@ -1,3 +1,4 @@
+import { ShopInputSearch } from '@/components/ShopInputSearch';
 import { Metadata } from 'next';
 import React from 'react'
 
@@ -21,8 +22,7 @@ export default function page({ searchParams }: ShopPageProps) {
         className='w-full min-h-70 shrink-0 bg-white p-4 shadow-md 
             rounded-xl overflow-y-auto'
     >
-        {JSON.stringify(searchParams.cat)}
-        Shop Page
+        <ShopInputSearch />
     </section>
   )
 }

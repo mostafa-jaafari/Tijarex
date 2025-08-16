@@ -8,7 +8,7 @@ export function ShopFilter() {
 
   return (
     <aside 
-        className="sticky top-16 h-[calc(100vh-4rem)] 
+        className="sticky top-16 h-[calc(99vh-4rem)] 
             w-64 shrink-0 bg-white p-4 shadow-md 
             rounded-xl overflow-y-auto">
       {/* 🏷️ عنوان */}
