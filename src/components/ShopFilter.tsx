@@ -13,6 +13,10 @@ export function ShopFilter() {
   const Params = useSearchParams();
   const SearchCat = Params.get("cat") || "All";
   const [showCategoriesLength, setShowCategoriesLength] = useState(5);
+  
+  const HandleApplyFilters = () => {
+    // 
+  }
   return (
     <aside 
         className="sticky top-16 h-[calc(99vh-4rem)] 
@@ -107,6 +111,7 @@ export function ShopFilter() {
             <DropDownSortBy />
       {/* --- Apply Button --- */}
       <button 
+        onClick={() => HandleApplyFilters()}
         className="w-full py-1.5 primary-button-b
           rounded-lg shadow-sm text-gray-300 hover:text-gray-100">
         Apply Filters
