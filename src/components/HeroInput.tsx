@@ -29,30 +29,34 @@ export function InputHero() {
         return () => document.removeEventListener("mousedown", handleHideMenu);
     }, []);
 
-    const [searchResult, setSearchResult] = useState<ProductType[] | []>([]);
+    const [globalProductsData, setGlobalProductsData] = useState<ProductType[] | []>([]);
     const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+    const [searchResult, setSearchResult] = useState<ProductType[] | []>([]);
+    
+    useEffect(() => {
+        const handleFetchSearch = async () => {
+            const Res = await fetch("/api/products");
+            const { products } = await Res.json();
+            setGlobalProductsData(products as ProductType[]);
+        }
+        handleFetchSearch();
+    },[])
     useEffect(() => {
         if(searchInput === ""){
             setSearchResult([]);
             setIsLoadingSearch(false);
             return;
         }
+        setIsLoadingSearch(true);
         const controller = new AbortController();
         const handleFetchSearch = async () => {
-            setIsLoadingSearch(true);
             try {
-                const Res = await fetch("/api/products");
-                const { products } = await Res.json();
-                if(Array.isArray(products)){
-                    const FiltredSearch = products.filter((product: ProductType) => 
-                        product.category.includes(searchInput.toLowerCase()) || 
-                        product.owner?.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-                        product.title.toLowerCase().includes(searchInput.toLowerCase())
+                const FiltredSearch = globalProductsData.filter((product: ProductType) => 
+                    product.category.includes(searchInput.toLowerCase()) || 
+                    product.owner?.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    product.title.toLowerCase().includes(searchInput.toLowerCase())
                 );
                     setSearchResult(FiltredSearch as ProductType[]);
-                }else{
-                    setSearchResult([]);
-                }
             }catch (err){
                 console.log(err)
             }finally{
@@ -64,7 +68,7 @@ export function InputHero() {
             clearTimeout(timeoutId);
             controller.abort();
         };
-    },[searchInput])
+    },[searchInput, globalProductsData])
 
     function highlightMatch(text: string, query: string) {
         if (!query) return text;
