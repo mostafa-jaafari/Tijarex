@@ -114,7 +114,7 @@ export function ShopInputSearch() {
 
                 {/* Animated menu */}
                 <div
-                    className={`absolute left-0 top-full w-full mt-1 origin-top transition-all duration-300 ease-out ${
+                    className={`absolute left-0 top-full z-30 w-full mt-1 origin-top transition-all duration-300 ease-out ${
                         showSuggestionsMenu
                             ? "opacity-100 max-h-64 overflow-hidden opacity-100"
                             : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
