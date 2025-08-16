@@ -16,7 +16,7 @@ export function InputHero() {
         { label: "Gifts & art collectibles", icon: PackageSearch },
     ];
 
-    const [showSuggestionsMenu, setShowSuggestionsMenu] = useState(true);
+    const [showSuggestionsMenu, setShowSuggestionsMenu] = useState(false);
     const MenuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -66,41 +66,21 @@ export function InputHero() {
         };
     },[searchInput])
 
-function highlightMatch(text: string, query: string) {
-  if (!query) return text;
-  
-  const parts = [];
-  let lastIndex = 0;
-  
-  text.replace(new RegExp(`(${query})`, 'gi'), (match, p1, offset) => {
-    // Add text before match
-    if (offset > lastIndex) {
-      parts.push(text.slice(lastIndex, offset));
+    function highlightMatch(text: string, query: string) {
+        if (!query) return text;
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.split(regex).map((part, idx) =>
+            regex.test(part) ? (
+            <span key={idx} className="text-yellow-500">{part}</span>
+            ) : (
+            part
+            )
+        );
     }
-    
-    // Add highlighted match
-    parts.push(
-      <span key={offset} className="text-yellow-500">
-        {match}
-      </span>
-    );
-    
-    lastIndex = offset + match.length;
-    return match;
-  });
-  
-  // Add remaining text
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
-  }
-  
-  return parts.length ? parts : text;
-}
 
 
     return (
         <section ref={MenuRef} className="relative w-full max-w-[700px]">
-            {searchResult.length} / {isLoadingSearch ? "Loading..." : ""}
             <div className="w-full bg-white h-14 rounded-full overflow-hidden p-0.5 flex items-center">
                 <input
                     type="text"
@@ -155,7 +135,7 @@ function highlightMatch(text: string, query: string) {
                         </Link>
                     ))
                     :
-                    searchResult.length === 0 && searchInput !== "" ?
+                    !isLoadingSearch && searchResult.length === 0 && searchInput !== "" ?
                     (
                         <div
                             className="w-full flex justify-center py-3 text-gray-400"
