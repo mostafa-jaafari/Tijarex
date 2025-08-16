@@ -17,10 +17,10 @@ export function ShopFilter() {
         className="sticky top-16 h-[calc(99vh-4rem)] 
             w-64 shrink-0 bg-white p-4 shadow-md 
             rounded-xl overflow-y-auto text-sm">
-      {/* 🏷️ عنوان */}
+      {/* ---  Big Title --- */}
       <h2 className="text-lg font-semibold mb-4">Filters</h2>
 
-      {/* 📂 الفئات */}
+      {/* --- Categories --- */}
       <div className="mb-6">
         <span
             className="flex items-center justify-between"
@@ -43,7 +43,7 @@ export function ShopFilter() {
                 href={`/shop?cat=${cat.toLowerCase().trim().replace(" ","")}`}
                 className={`w-full flex text-left px-2 py-1 rounded-md transition ${
                   SearchCat.toLowerCase() === cat.toLowerCase()
-                    ? "bg-black text-white"
+                    ? "primary-button-b py-1"
                     : "hover:bg-gray-100"
                 }`}
               >
@@ -64,7 +64,7 @@ export function ShopFilter() {
         </ul>
       </div>
 
-      {/* 💲 السعر */}
+      {/* --- Price --- */}
       <div className="mb-6">
         <h3 className="font-medium mb-2">Price</h3>
         <div className="flex items-center space-x-2">
@@ -88,7 +88,7 @@ export function ShopFilter() {
         </div>
       </div>
 
-      {/* ↕️ الترتيب */}
+      {/* --- Sorts --- */}
       <div className="mb-6">
         <h3 className="font-medium mb-2">Sort By</h3>
         <select className="w-full border rounded px-2 py-1">
@@ -99,8 +99,9 @@ export function ShopFilter() {
         </select>
       </div>
 
-      {/* 🔘 زر تطبيق */}
-      <button className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+      {/* --- Apply Button --- */}
+      <button 
+        className="w-full primary-button-b py-2">
         Apply Filters
       </button>
     </aside>

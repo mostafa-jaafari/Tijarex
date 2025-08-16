@@ -42,7 +42,7 @@ export default async function page({ searchParams }: ShopPageProps) {
             <div
                 className='flex items-center gap-3 justify-center py-3'
             >
-                {["sport", "books", "fashion", "electronics"].map((sug, idx) => {
+                {["sports", "books", "fashion", "electronics"].map((sug, idx) => {
                     return (
                         <Link
                             key={idx}
