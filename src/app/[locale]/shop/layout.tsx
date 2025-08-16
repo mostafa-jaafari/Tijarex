@@ -1,3 +1,4 @@
+import Footer from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { ShopFilter } from '@/components/ShopFilter'
 import React from 'react'
@@ -14,8 +15,11 @@ export default function layout({ children }: { children: React.ReactNode }) {
           <ShopFilter />
         </aside>
 
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 py-2 pr-2">
+            {children}
+        </div>
       </section>
+      <Footer />
     </main>
   )
 }

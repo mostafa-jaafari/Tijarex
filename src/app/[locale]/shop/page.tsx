@@ -18,7 +18,8 @@ export async function generateMetadata({ searchParams }: ShopPageProps): Promise
 export default function page({ searchParams }: ShopPageProps) {
   return (
     <section
-        className='w-full min-h-70 bg-red-500'
+        className='w-full min-h-70 shrink-0 bg-white p-4 shadow-md 
+            rounded-xl overflow-y-auto'
     >
         {JSON.stringify(searchParams.cat)}
         Shop Page
