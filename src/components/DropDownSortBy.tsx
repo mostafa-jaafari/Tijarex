@@ -39,9 +39,9 @@ export const DropDownSortBy = () => {
                     flex flex-col items-start w-full mt-1
                     rounded-lg ring ring-gray-300 shadow-sm
                     overflow-hidden origin-top 
-                    transition-all duration-300 ease-in
+                    transition-all duration-300 ease-in-out
                     ${isOpen ? "max-h-64 overflow-hidden opacity-100"
-                    : "max-h-0 overflow-hidden pointer-events-none"}`}
+                    : "max-h-0 overflow-hidden pointer-events-none opacity-0"}`}
             >
                 {Sorts_Labels.map((sort, idx) => {
                     return (
