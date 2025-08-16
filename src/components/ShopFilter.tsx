@@ -1,15 +1,17 @@
 "use client";
+import { categories } from "@/app/[locale]/shop/ressources/Categories";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 
 export function ShopFilter() {
-  const [category, setCategory] = useState<string>("all");
   const [price, setPrice] = useState<[number, number]>([0, 100]);
 
   const Params = useSearchParams();
   const SearchCat = Params.get("cat") || "All";
+  const [showCategoriesLength, setShowCategoriesLength] = useState(5);
   return (
     <aside 
         className="sticky top-16 h-[calc(99vh-4rem)] 
@@ -20,13 +22,25 @@ export function ShopFilter() {
 
       {/* 📂 الفئات */}
       <div className="mb-6">
-        <h3 className="font-medium mb-2">Category</h3>
+        <span
+            className="flex items-center justify-between"
+        >
+            <h3 className="font-medium mb-2">Category</h3>
+            {showCategoriesLength > 5 && (
+                <p
+                    onClick={() => setShowCategoriesLength(5)}
+                    className="text-gray-400 cursor-pointer text-xs
+                        hover:bg-gray-100 p-1 rounded"
+                    >
+                    Show Less
+                </p>
+            )}
+        </span>
         <ul className="space-y-2">
-          {["all", "books", "electronics", "fashion", "home"].map((cat) => (
+          {categories.slice(0, showCategoriesLength).map((cat) => (
             <li key={cat}>
               <Link
-                href={`/shop?cat=${cat}`}
-                onClick={() => setCategory(cat)}
+                href={`/shop?cat=${cat.toLowerCase().trim().replace(" ","")}`}
                 className={`w-full flex text-left px-2 py-1 rounded-md transition ${
                   SearchCat.toLowerCase() === cat.toLowerCase()
                     ? "bg-black text-white"
@@ -37,6 +51,16 @@ export function ShopFilter() {
               </Link>
             </li>
           ))}
+            {showCategoriesLength !== categories.length && (
+                <button
+                    onClick={() => setShowCategoriesLength(prev => prev + 5)}
+                    className="w-full flex text-gray-400 items-center 
+                        cursor-pointer gap-1 justify-center text-xs
+                        hover:bg-gray-100 py-1 rounded"
+                    >
+                    Show more categories <ChevronDown size={16} />
+                </button>
+            )}
         </ul>
       </div>
 
