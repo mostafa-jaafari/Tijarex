@@ -15,7 +15,7 @@ import { QuickViewProduct } from "@/components/QuickViewProduct";
 
 export const metadata: Metadata = {
   title: {
-    default: "Tijarex - The best marketplace in the world",
+    default: "Tijarex - Your Trusted Marketplace for Quality Products in Morocco",
     template: "Tijarex - %s"
   }
 }

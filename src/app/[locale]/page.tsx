@@ -8,7 +8,6 @@ import { ShopByCategories } from "@/components/ShopByCategories";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tijarex - Your Trusted Marketplace for Quality Products in Morocco",
   description:
     "Discover the best deals on electronics, fashion, home essentials, and more at Tijarex. Shop with confidence, enjoy fast delivery, and experience exceptional customer service. Join thousands of happy customers across Morocco!",
   keywords: [
