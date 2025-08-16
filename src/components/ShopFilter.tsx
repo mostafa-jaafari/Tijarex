@@ -41,7 +41,7 @@ export function ShopFilter() {
             <li key={cat}>
               <Link
                 href={`/shop?cat=${cat.toLowerCase().trim().replace(" ","")}`}
-                className={`w-full flex text-left px-2 py-1 rounded-md transition ${
+                className={`w-full flex text-left px-3 py-1 rounded-md transition ${
                   SearchCat.toLowerCase() === cat.toLowerCase()
                     ? "bg-white shadow-sm text-black font-semibold py-1"
                     : "hover:bg-gray-100 text-gray-600"
@@ -54,9 +54,9 @@ export function ShopFilter() {
             {showCategoriesLength !== categories.length && (
                 <button
                     onClick={() => setShowCategoriesLength(prev => prev + 5)}
-                    className="w-full flex text-gray-500 items-center 
+                    className="w-full flex text-gray-600 items-center 
                         cursor-pointer gap-1 justify-center text-xs
-                        hover:bg-gray-100 py-1 rounded"
+                        hover:bg-gray-100 py-1.5 rounded"
                     >
                     Show more <ChevronDown size={16} />
                 </button>
@@ -105,7 +105,8 @@ export function ShopFilter() {
 
       {/* --- Apply Button --- */}
       <button 
-        className="w-full primary-button-b py-2">
+        className="w-full py-1.5 primary-button-b
+          rounded-lg shadow-sm text-gray-300 hover:text-gray-100">
         Apply Filters
       </button>
     </aside>

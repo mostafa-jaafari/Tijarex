@@ -97,7 +97,10 @@ export function ShopInputSearch() {
                         focus-within:w-full
                         focus-within:rounded-xl
                         transition-all duration-300
-                        shadow-sm h-14 rounded-full 
+                        shadow-sm
+                        ring ring-gray-100
+                        h-10 
+                        rounded-full 
                         overflow-hidden p-0.5 flex items-center">
                     <input
                         type="text"
@@ -107,9 +110,6 @@ export function ShopInputSearch() {
                         placeholder="What are you looking for?"
                         className="w-full h-full px-6 outline-none border-none rounded"
                     />
-                    {/* <button className="px-6 text-lg cursor-pointer h-full rounded-full bg-black text-white">
-                        search
-                    </button> */}
                 </div>
 
                 {/* Animated menu */}
