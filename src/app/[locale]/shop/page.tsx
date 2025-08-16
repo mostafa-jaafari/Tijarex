@@ -36,7 +36,7 @@ export default async function page({ searchParams }: ShopPageProps) {
   return (
     <section
         className='w-full min-h-70 shrink-0 bg-white p-4 shadow-md 
-            rounded-xl overflow-y-auto'
+            rounded-xl overflow-y-auto ring ring-gray-200'
     >
             <ShopInputSearch />
             <div

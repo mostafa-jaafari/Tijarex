@@ -35,7 +35,9 @@ export function GetStartedBtn(){
         >
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="primary-button-b flex items-center gap-1 px-2 py-1 text-sm"
+                className="primary-button-b text-gray-300 
+                    hover:text-gray-100 flex items-center 
+                    gap-1 px-2 py-1 text-sm"
             >
                 Get Started <ChevronDown size={14} />
             </button>
