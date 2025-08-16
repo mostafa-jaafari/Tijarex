@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 
@@ -6,11 +8,13 @@ export function ShopFilter() {
   const [category, setCategory] = useState<string>("all");
   const [price, setPrice] = useState<[number, number]>([0, 100]);
 
+  const Params = useSearchParams();
+  const SearchCat = Params.get("cat") || "All";
   return (
     <aside 
         className="sticky top-16 h-[calc(99vh-4rem)] 
             w-64 shrink-0 bg-white p-4 shadow-md 
-            rounded-xl overflow-y-auto">
+            rounded-xl overflow-y-auto text-sm">
       {/* 🏷️ عنوان */}
       <h2 className="text-lg font-semibold mb-4">Filters</h2>
 
@@ -20,16 +24,17 @@ export function ShopFilter() {
         <ul className="space-y-2">
           {["all", "books", "electronics", "fashion", "home"].map((cat) => (
             <li key={cat}>
-              <button
+              <Link
+                href={`/shop?cat=${cat}`}
                 onClick={() => setCategory(cat)}
-                className={`w-full text-left px-2 py-1 rounded-md transition ${
-                  category === cat
+                className={`w-full flex text-left px-2 py-1 rounded-md transition ${
+                  SearchCat.toLowerCase() === cat.toLowerCase()
                     ? "bg-black text-white"
                     : "hover:bg-gray-100"
                 }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </button>
+              </Link>
             </li>
           ))}
         </ul>
