@@ -14,7 +14,7 @@ export async function Header() {
       >
         {/* --- Top Header --- */}
         <div
-          className="relative w-full pt-2 pb-4 px-6 flex justify-between 
+          className="relative w-full py-1 px-6 flex justify-between 
           gap-12 transition-all duration-500 ease-in-out"
         >
           {/* --- Logo --- */}
