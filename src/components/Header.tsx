@@ -9,7 +9,7 @@ export async function Header() {
   return (
       <section
         className="sticky top-0 z-50 bg-white
-          transition-all duration-500 
+          transition-all duration-500 shadow-sm
           ease-in-out"
       >
         {/* --- Top Header --- */}

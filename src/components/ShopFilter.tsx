@@ -15,7 +15,7 @@ export function ShopFilter() {
   return (
     <aside 
         className="sticky top-16 h-[calc(99vh-4rem)] 
-            w-64 shrink-0 bg-white p-4 shadow-md 
+            w-64 shrink-0 bg-gray-200 p-4 shadow-sm 
             rounded-xl overflow-y-auto text-sm">
       {/* ---  Big Title --- */}
       <h2 className="text-lg font-semibold mb-4">Filters</h2>
@@ -25,7 +25,7 @@ export function ShopFilter() {
         <span
             className="flex items-center justify-between"
         >
-            <h3 className="font-medium mb-2">Category</h3>
+            <h3 className="font-bold text-gray-700 mb-2">Category</h3>
             {showCategoriesLength > 5 && (
                 <p
                     onClick={() => setShowCategoriesLength(5)}
@@ -43,8 +43,8 @@ export function ShopFilter() {
                 href={`/shop?cat=${cat.toLowerCase().trim().replace(" ","")}`}
                 className={`w-full flex text-left px-2 py-1 rounded-md transition ${
                   SearchCat.toLowerCase() === cat.toLowerCase()
-                    ? "primary-button-b py-1"
-                    : "hover:bg-gray-100 text-gray-400"
+                    ? "bg-white shadow-sm text-black font-semibold py-1"
+                    : "hover:bg-gray-100 text-gray-600"
                 }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -54,11 +54,11 @@ export function ShopFilter() {
             {showCategoriesLength !== categories.length && (
                 <button
                     onClick={() => setShowCategoriesLength(prev => prev + 5)}
-                    className="w-full flex text-gray-400 items-center 
+                    className="w-full flex text-gray-500 items-center 
                         cursor-pointer gap-1 justify-center text-xs
                         hover:bg-gray-100 py-1 rounded"
                     >
-                    Show more categories <ChevronDown size={16} />
+                    Show more <ChevronDown size={16} />
                 </button>
             )}
         </ul>
@@ -66,7 +66,7 @@ export function ShopFilter() {
 
       {/* --- Price --- */}
       <div className="mb-6">
-        <h3 className="font-medium mb-2">Price</h3>
+        <h3 className="font-bold text-gray-700 mb-2">Price</h3>
         <div className="flex items-center space-x-2">
           <input
             type="number"
@@ -94,7 +94,7 @@ export function ShopFilter() {
 
       {/* --- Sorts --- */}
       <div className="mb-6">
-        <h3 className="font-medium mb-2">Sort By</h3>
+        <h3 className="font-bold text-gray-700 mb-2">Sort By</h3>
         <select className="w-full border rounded px-2 py-1">
           <option value="popularity">Popularity</option>
           <option value="newest">Newest</option>
