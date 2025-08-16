@@ -2,21 +2,47 @@
 import { categories } from "@/app/[locale]/shop/ressources/Categories";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ChangeEvent, useState } from "react";
 import { DropDownSortBy } from "./DropDownSortBy";
 
 
 export function ShopFilter() {
-  const [price, setPrice] = useState<[number, number]>([0, 100]);
 
   const Params = useSearchParams();
   const SearchCat = Params.get("cat") || "All";
   const [showCategoriesLength, setShowCategoriesLength] = useState(5);
   
-  const HandleApplyFilters = () => {
-    // 
+  const [filtersInputs, setFiltersInputs] = useState({
+    pricefrom: 0,
+    priceto: 0,
+    sort: "",
+  });
+  const [selectedSort, setSelectedSort] = useState("");
+  const HandleChangeInputs = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setFiltersInputs(prev => ({...prev, [name]: value}));
   }
+  const router = useRouter();
+  const HandleApplyFilters = () => {
+    if (filtersInputs.pricefrom !== 0 || filtersInputs.priceto !== 0) {
+      const PrevParams = new URLSearchParams(Params.toString());
+
+      if (filtersInputs.pricefrom !== 0) {
+        PrevParams.set("pf", String(filtersInputs.pricefrom));
+      }
+
+      if (filtersInputs.priceto !== 0) {
+        PrevParams.set("pt", String(filtersInputs.priceto));
+      }
+
+      if (selectedSort !== "") {
+        PrevParams.set("sortby", String(selectedSort));
+      }
+
+      router.push(`?${PrevParams.toString()}`);
+    }
+  };
   return (
     <aside 
         className="sticky top-16 h-[calc(99vh-4rem)] 
@@ -75,10 +101,9 @@ export function ShopFilter() {
         <div className="flex items-center space-x-2">
           <input
             type="number"
-            value={price[0]}
-            onChange={(e) =>
-              setPrice([Number(e.target.value), price[1]])
-            }
+            value={filtersInputs.pricefrom}
+            onChange={(e) => HandleChangeInputs(e)}
+            name="pricefrom"
             className="w-full py-1 text-center ring ring-gray-300 
                 focus:ring-gray-600 outline-none 
                 focus:text-gray-600 rounded px-1"
@@ -86,10 +111,9 @@ export function ShopFilter() {
           <span>-</span>
           <input
             type="number"
-            value={price[1]}
-            onChange={(e) =>
-              setPrice([price[0], Number(e.target.value)])
-            }
+            value={filtersInputs.priceto}
+            onChange={(e) => HandleChangeInputs(e)}
+            name="priceto"
             className="w-full py-1 text-center ring ring-gray-300
                 focus:ring-gray-600 outline-none 
                 focus:text-gray-600 rounded px-1"
@@ -98,17 +122,7 @@ export function ShopFilter() {
       </div>
 
       {/* --- Sorts --- */}
-      {/* <div className="mb-6">
-        <h3 className="font-bold text-gray-700 mb-2">Sort By</h3>
-        <select className="w-full border rounded px-2 py-1">
-          <option value="popularity">Popularity</option>
-          <option value="newest">Newest</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-        </select>
-      </div> */}
-
-            <DropDownSortBy />
+        <DropDownSortBy onSelect={setSelectedSort} />
       {/* --- Apply Button --- */}
       <button 
         onClick={() => HandleApplyFilters()}

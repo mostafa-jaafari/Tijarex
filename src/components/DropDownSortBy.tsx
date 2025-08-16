@@ -5,8 +5,10 @@ import { useEffect, useRef, useState } from "react";
 
 
 
-
-export const DropDownSortBy = () => {
+interface DropDownSortByProps{
+    onSelect: (select: string) => void;
+}
+export const DropDownSortBy = ({ onSelect }: DropDownSortByProps) => {
     const Sorts_Labels = ["Newest", "Low to High", "High to Low"];
     const [isOpen, setIsOpen] = useState(false);
     const [selectedSort, setSelectedSort] = useState("");
@@ -20,6 +22,7 @@ export const DropDownSortBy = () => {
         document.addEventListener("mousedown", hideMenuRef);
         return () => document.removeEventListener("mousedown", hideMenuRef);
     },[])
+
     return (
         <section
             ref={MenuRef}
@@ -51,6 +54,7 @@ export const DropDownSortBy = () => {
                             disabled={selectedSort.toLowerCase() === sort.toLowerCase()}
                             onClick={() => {
                                 setSelectedSort(sort);
+                                onSelect(sort.toLowerCase());
                                 setIsOpen(false);
                             }}
                             className={`w-full text-start py-2 px-3
