@@ -88,7 +88,7 @@ export function LoginForm() {
       <form
         onSubmit={handleLogin}
         className="w-full max-w-[500] border border-gray-200 
-          p-12 rounded-xl bg-gradient-to-bl from-white from-80% to-neutral-200"
+          p-12 rounded-xl bg-gradient-to-bl from-white from-8mail0% to-neutral-200"
         noValidate
       >
         <h1 className="mb-8 text-center text-2xl font-bold uppercase text-teal-600">
