@@ -1,22 +1,26 @@
 import Link from "next/link";
 import { SwitchLanguage } from "./SwitchLanguage";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 import { ShowHeaderMenu } from "./ShowHeaderMenu";
-import { GetStartedBtn } from "./GetStartedBtn";
+import { DropDownShoppingCart } from "./DropDownShoppingCart";
+
+
+export const WhiteButtonStyles = "border-b border-gray-400 hover:bg-gray-50 bg-white cursor-pointer text-gray-800";
+export const BlackButtonStyles = "text-white bg-gradient-to-b from-neutral-800 to-neutral-600 cursor-pointer hover:from-neutral-900 to-neutral-700 border-x border-t border-neutral-500 ring ring-black";
 
 export async function Header() {
   return (
       <section
-        className="sticky top-0 z-50 bg-white
+        className="sticky top-0 z-50 bg-white backdrop-blur-sm
           transition-all duration-500 shadow-sm
           ease-in-out"
       >
-        {/* --- Top Header --- */}
         <div
           className="relative w-full py-1 px-6 flex justify-between 
           gap-12 transition-all duration-500 ease-in-out"
         >
+
           {/* --- Logo --- */}
           <Link
             href="/"
@@ -31,17 +35,37 @@ export async function Header() {
               priority
             />
           </Link>
+
+          {/* --- Navigations Links --- */}
+          <div
+            className="flex items-center gap-6"
+          >
+            {["best selling", "shop by categories", "summer 2025", "featured products"].map((item, idx) => {
+              return (
+                <Link
+                  href={`#${item.toLowerCase()}`}
+                  key={idx}
+                  className="text-gray-500 capitalize cursor-pointer
+                    hover:text-black"
+                >
+                  {item}
+                </Link>
+              )
+            })}
+          </div>
+
           {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
           <div className="flex items-center gap-6">
             {/* --- CTA-Buttons --- */}
-            <GetStartedBtn />
+            {/* <GetStartedBtn /> */}
             
             {/* --- Favorite btn & Shopping-Card btn --- */}
             <div className="flex items-center gap-4">
               {/* --- Switch Languages --- */}
               <SwitchLanguage
-                CLASSNAME="flex items-center gap-1 text-xs border 
-                  border-gray-200 rounded-lg cursor-pointer py-1 px-2"
+                CLASSNAME={`flex items-center gap-1 text-xs
+                  rounded-lg py-1 px-3 ring ring-gray-200
+                  ${WhiteButtonStyles}`}
               />
               
               {/* --- Favorite --- */}
@@ -60,10 +84,26 @@ export async function Header() {
               </span>
               
               {/* --- Shopping Cart --- */}
-              <span className="hover:text-black/50 p-1 cursor-pointer">
-                <ShoppingCart size={20} />
-              </span>
+                <DropDownShoppingCart />
               
+                <div
+                  className="flex items-center gap-2"
+                >
+                  <Link
+                    href="/auth/login"
+                    className={`text-sm rounded-lg py-0.5 px-3 ring ring-gray-200
+                      ${WhiteButtonStyles}`}
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/auth/onboarding"
+                    className={`px-3 py-0.5 font-semibold text-sm rounded-lg
+                      ${BlackButtonStyles}`}
+                  >
+                    Get Started
+                  </Link>
+                </div>
               {/* --- Menu --- */}
               <ShowHeaderMenu />
             </div>

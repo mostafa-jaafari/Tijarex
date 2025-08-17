@@ -29,7 +29,7 @@ export function ScrollToTop() {
         <button
             onClick={scrollToTop}
             className="fixed bottom-4 cursor-pointer 
-                z-50 right-4 primary-button-b p-1"
+                z-50 right-4 primary-button-b p-1 text-white"
             aria-label="Scroll to top"
         >
             <ArrowUp size={24} />

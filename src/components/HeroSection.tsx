@@ -6,7 +6,7 @@ export function HeroSection(){
     return (
         <section
             className="relative px-6 w-full flex flex-col 
-                justify-center items-center"
+                justify-center items-center mt-2"
         >
             <div
                 className="relative w-full h-80 bg-gray-50 

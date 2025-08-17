@@ -5,6 +5,7 @@ import { BadgeCheck, Eye, Flame, ShoppingCart, Tag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
+import { WhiteButtonStyles } from '../Header';
 
 
 export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORIE, OWNER, STOCK }: ProductCardProps) {
@@ -38,15 +39,18 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                 >
                     <button
                         onClick={HandleQuickView}
-                        className='primary-button-b w-full flex justify-center 
-                            gap-1 text-sm items-center text-nowrap py-1 
-                            text-gray-200 hover:text-white ring ring-gray-700'
+                        className={`flex items-center gap-1 py-1 px-3 w-full 
+                            rounded-lg text-sm font-semibold text-nowrap
+                            bg-gradient-to-b from-neutral-700 to-black
+                            hover:from-black border-x border-t border-neutral-600
+                            cursor-pointer text-gray-200`}
                     >
                         <Eye size={16}/> Quick view
                     </button>
                     <button
-                        className='primary-button-w w-full flex justify-center 
-                            gap-1 text-sm items-center text-nowrap py-1'
+                        className={`flex items-center gap-1 py-1 px-3 w-full 
+                            rounded-lg text-sm font-semibold text-nowrap 
+                            ${WhiteButtonStyles}`}
                     >
                         <ShoppingCart size={18}/> Add to Cart
                     </button>

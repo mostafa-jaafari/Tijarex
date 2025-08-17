@@ -80,12 +80,13 @@ export function SwitchLanguage({ CLASSNAME }: { CLASSNAME?: string }) {
                 onClick={() => setIsOpen(false)}
               >
                 <button
+                  disabled={currentLocaleCode === code}
                   className={`flex items-center gap-2 w-full px-2 py-1 
                     text-sm transition-colors text-left 
                     ${currentLocaleCode === code ? 
-                      'primary-button text-white' 
+                      'text-teal-600 bg-gray-200' 
                       : 
-                      'text-gray-700 hover:bg-neutral-200'
+                      'text-gray-700 cursor-pointer'
                   }`}
                 >
                   <div

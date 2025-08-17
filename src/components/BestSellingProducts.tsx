@@ -37,7 +37,10 @@ export function BestSellingProducts() {
     }, []);
 
     return (
-        <section>
+        <section
+            id='best selling'
+            className='scroll-mt-25'
+        >
             <HeadlineSection
                 TITLE="Best Selling Products"
                 SHOWBUTTONS

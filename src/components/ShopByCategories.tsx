@@ -1,6 +1,7 @@
 import React from 'react'
 import { Smartphone, ShoppingBag, Watch, Sofa, Headphones, Shirt } from "lucide-react";
 import { HeadlineSection } from './HeadlineSection';
+import Link from 'next/link';
 
 
 export function ShopByCategories() {
@@ -44,7 +45,8 @@ export function ShopByCategories() {
     ];
   return (
     <section
-        className='w-full '
+        id='shop by categories'
+        className='w-full scroll-mt-25'
     >
         <HeadlineSection 
             TITLE='Shop by categories'
@@ -57,34 +59,40 @@ export function ShopByCategories() {
         >
             {categories.map((cat, i) => {
                 return (
-                    <div 
-                        key={i} 
-                        className="relative group h-40 w-40 p-2 primary-button-b
-                            flex flex-col justify-center items-center gap-2">
-                        <span
-                            className='primary-button-w text-teal-600 p-4 
-                                rounded-lg border border-gray-200'
-                        >
-                            <cat.icon 
-                                size={25}
-                                className='group-hover:scale-115 
-                                    transition-all duration-300'
-                            />
-                        </span>
-                        <h1
-                            className='font-semibold white'
-                        >
-                            {cat.title}
-                        </h1>
-                        {cat.isNew &&
+                    <Link
+                        href={`/shop?cat=${cat.title.toLowerCase()}`}
+                        key={i}
+                    >
+                        <div 
+                            className="relative group hover:shadow-lg h-40 w-40 p-2
+                                bg-gradient-to-b from-neutral-700 to-black rounded-lg
+                                hover:from-black
+                                flex flex-col justify-center items-center gap-2">
                             <span
-                                className='absolute right-2 top-2 text-black
-                                    text-sm bg-white rounded px-3 shadow'
+                                className='primary-button-w text-black p-4 
+                                    rounded-lg border border-gray-200'
                             >
-                                New
+                                <cat.icon 
+                                    size={25}
+                                    className='group-hover:scale-115 
+                                        transition-all duration-300'
+                                />
                             </span>
-                        }
-                    </div>
+                            <h1
+                                className='font-semibold text-white'
+                            >
+                                {cat.title}
+                            </h1>
+                            {cat.isNew &&
+                                <span
+                                    className='absolute right-2 top-2 text-white
+                                        text-sm bg-teal-600 rounded px-3 shadow'
+                                >
+                                    New
+                                </span>
+                            }
+                        </div>
+                    </Link>
                 )
             })}
         </div>

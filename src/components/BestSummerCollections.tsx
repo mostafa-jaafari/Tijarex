@@ -35,7 +35,8 @@ export function BestSummerCollections() {
     }, []);
     return (
         <section
-            className='w-full'
+            id='summer 2025'
+            className='w-full scroll-mt-25'
         >
             <HeadlineSection
                 TITLE='Discover our best of summer 2025'

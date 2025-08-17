@@ -1,7 +1,7 @@
 "use client";
 
 import { ProductType } from "@/types/product";
-import { PackageSearch } from "lucide-react";
+import { PackageSearch, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -85,18 +85,23 @@ export function InputHero() {
 
     return (
         <section ref={MenuRef} className="relative w-full max-w-[700px]">
-            <div className="w-full bg-white h-14 rounded-full overflow-hidden p-0.5 flex items-center">
+            <div 
+                className="w-full bg-white h-14 rounded-full overflow-hidden 
+                    p-0.5 flex items-center">
+                <span
+                    onClick={() => setShowSuggestionsMenu(true)}
+                    className="flex px-4"
+                >
+                    <Search size={18} className="text-gray-500" />
+                </span>
                 <input
                     type="text"
                     onFocus={() => setShowSuggestionsMenu(true)}
                     onChange={(e) => setSearchInput(e.target.value)}
                     value={searchInput}
                     placeholder="What are you looking for?"
-                    className="w-full h-full px-6 outline-none border-none rounded"
+                    className="w-full h-full outline-none border-none rounded"
                 />
-                <button className="px-6 text-lg cursor-pointer h-full rounded-full bg-black text-white">
-                    search
-                </button>
             </div>
 
             {/* Animated menu */}

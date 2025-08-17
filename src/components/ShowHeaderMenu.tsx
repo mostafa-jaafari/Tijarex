@@ -41,8 +41,8 @@ export function ShowHeaderMenu() {
                     border border-gray-100 shadow p-1
                     transform transition-all duration-200 origin-top-right
                     ${isShowMenu 
-                        ? "opacity-100 scale-y-100 translate-y-0" 
-                        : "opacity-0 -translate-y-2 pointer-events-none"
+                        ? "opacity-100 max-h-64 overflow-hidden opacity-100"
+                        : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
                     }
                 `}
             >
