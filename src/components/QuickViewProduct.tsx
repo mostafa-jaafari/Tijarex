@@ -274,14 +274,16 @@ export function QuickViewProduct() {
                             className="w-full flex flex-col items-center gap-2"
                         >
                             <button
-                                className="w-full flex justify-center items-center gap-1
-                                    primary-button-b py-2"
+                                className="w-full flex justify-center items-center 
+                                    gap-1 primary-button-b text-gray-200 
+                                    hover:text-white py-2"
                             >
                                 <ShoppingCart size={16} /> Add to Cart
                             </button>
                             <button
-                                className="w-full flex justify-center items-center gap-1
-                                    primary-button-w py-2"
+                                className="w-full flex justify-center 
+                                    items-center gap-1 primary-button-w 
+                                    py-2 ring ring-gray-200 text-teal-600"
                             >
                                 <Heart size={16} /> Add to Wishlist
                             </button>

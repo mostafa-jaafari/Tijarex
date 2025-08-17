@@ -6,10 +6,12 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import React from 'react'
 
-
 interface ShopPageProps{
     searchParams: {
-        cat: string;
+        cat?: string;
+        pf?: string;
+        pt?: string;
+        sortby?: string;
     };
 }
 
@@ -21,74 +23,145 @@ export async function generateMetadata({ searchParams }: ShopPageProps): Promise
     };
 }
 
-
-async function getShopProducts(){
-    const Res = await fetch(`http://localhost:3000/api/products`);
-    const { products } = await Res.json();
-    if(!Array.isArray(products)){
+async function getShopProducts(): Promise<ProductType[]>{
+    try {
+        const Res = await fetch(`http://localhost:3000/api/products`);
+        if (!Res.ok) {
+            throw new Error('Failed to fetch products');
+        }
+        const { products } = await Res.json();
+        if(!Array.isArray(products)){
+            return [];
+        }
+        return products;
+    } catch (error) {
+        console.error('Error fetching products:', error);
         return [];
     }
-    return products;
 }
-export default async function page({ searchParams }: ShopPageProps) {
-    const Products = await getShopProducts();
 
-  return (
-    <section
-        className='w-full min-h-70 shrink-0 bg-white p-4 shadow-md 
-            rounded-xl overflow-y-auto ring ring-gray-200'
-    >
-            <ShopInputSearch />
-            <div
-                className='flex items-center gap-3 justify-center py-3'
-            >
-                {["sports", "books", "fashion", "electronics"].map((sug, idx) => {
-                    return (
-                        <Link
-                            key={idx}
-                            href={`/shop?cat=${sug.toLowerCase().replace(" ", "")}`}
-                        >
-                            <span
-                                className='text-sm bg-gray-100 ring ring-gray-200 
-                                    rounded-full px-2 flex items-center gap-1
-                                    hover:bg-gray-200'
-                            >
-                                <Tag size={12} /> {sug}
-                            </span>
-                        </Link>
-                    )
-                })}
-            </div>
+function filterProducts(products: ProductType[], searchParams: ShopPageProps['searchParams']): ProductType[] {
+    
+    let filteredProducts = [...products];
+    if(!searchParams.pf && !searchParams.pt && !searchParams.cat && !searchParams.sortby){
+        return [];
+    }
+    // Filter by category
+    if (searchParams.cat) {
+        filteredProducts = filteredProducts.filter((p) =>
+            Array.isArray(p.category) && p.category.some((c) => c.toLowerCase() === searchParams.cat?.toLowerCase())
+        );
+    }
 
-            {Products.length > 0 ? 
-                (
-                    <div
-                        className='w-full grid grid-cols-4 gap-x-2 gap-y-6 py-6'
-                    >
-                        {Products.map((product: ProductType) => {
-                            return (
-                                <BestSellingProductUI
-                                    key={product.id}
-                                    PRODUCTCATEGORIE={product.category}
-                                    PRODUCTID={product.id}
-                                    PRODUCTIMAGES={product.product_images}
-                                    PRODUCTSALEPRICE={product.sale_price}
-                                    PRODUCTREGULARPRICE={product.regular_price}
-                                    PRODUCTTITLE={product.title}
-                                    STOCK={product.stock}
-                                    OWNER={product.owner}
-                                />
-                            )
-                        })}
-                    </div>
-                )
-                :
-                (
-                    <div>
-                        Not Founded
-                    </div>
-                )
+    // Filter by price range
+    if (searchParams.pf || searchParams.pt) {
+        const priceFrom = searchParams.pf ? parseFloat(searchParams.pf) : 0;
+        const priceTo = searchParams.pt ? parseFloat(searchParams.pt) : Infinity;
+        
+        filteredProducts = filteredProducts.filter((p) => {
+            const price = p.sale_price || p.regular_price;
+            return price >= priceFrom && price <= priceTo;
+        });
+    }
+
+    // Sort products
+    if (searchParams.sortby) {
+        filteredProducts.sort((a, b) => {
+            switch (searchParams.sortby) {
+                case 'price-low':
+                    return (a.sale_price || a.regular_price) - (b.sale_price || b.regular_price);
+                case 'price-high':
+                    return (b.sale_price || b.regular_price) - (a.sale_price || a.regular_price);
+                case 'name':
+                    return (a.name || a.title).localeCompare(b.name || b.title);
+                case 'rating':
+                    return (b.rating || 0) - (a.rating || 0);
+                default:
+                    return 0;
             }
-    </section>
-  )
+        });
+    }
+
+    return filteredProducts;
+}
+
+export default async function page({ searchParams }: ShopPageProps) {
+    const Products: ProductType[] = await getShopProducts();
+    const FiltredProducts = filterProducts(Products, searchParams);
+    const ReadedProducts = FiltredProducts.length === 0 ? Products : FiltredProducts;
+    return (
+        <section
+            className='w-full shrink-0 bg-white p-4 shadow-md 
+                rounded-xl overflow-y-auto ring ring-gray-200'
+        >
+                <ShopInputSearch />
+                <div
+                    className='flex items-center gap-3 justify-center py-3'
+                >
+                    {["sports", "books", "fashion", "electronics"].map((sug, idx) => {
+                        return (
+                            <Link
+                                key={idx}
+                                href={`/shop?cat=${sug.toLowerCase().replace(" ", "")}`}
+                            >
+                                <span
+                                    className='text-sm bg-gray-100 ring ring-gray-200 
+                                        rounded-full px-2 flex items-center gap-1
+                                        hover:bg-gray-200'
+                                >
+                                    <Tag size={12} /> {sug}
+                                </span>
+                            </Link>
+                        )
+                    })}
+                </div>
+
+                <div
+                    className='w-full flex justify-between'
+                >
+                    <span
+                        className='text-sm text-gray-500'
+                    >
+                        Showing ({ReadedProducts.length}) Products
+                    </span>
+                    <Link 
+                        href="/shop"
+                        className='text-red-500 text-sm font-semibold'
+                    >
+                        Clear Filters
+                    </Link>
+                </div>
+                {ReadedProducts.length > 0 ? 
+                    (
+                        <div
+                            className='w-full grid grid-cols-4 gap-x-2 gap-y-6 py-6'
+                        >
+                            {ReadedProducts.map((product: ProductType) => {
+                                return (
+                                    <BestSellingProductUI
+                                        key={product.id}
+                                        PRODUCTCATEGORIE={product.category}
+                                        PRODUCTID={product.id}
+                                        PRODUCTIMAGES={product.product_images}
+                                        PRODUCTSALEPRICE={product.sale_price}
+                                        PRODUCTREGULARPRICE={product.regular_price}
+                                        PRODUCTTITLE={product.name || product.title}
+                                        STOCK={product.stock}
+                                        OWNER={product.owner}
+                                    />
+                                )
+                            })}
+                        </div>
+                    )
+                    :
+                    (
+                        <div
+                            className='w-full min-h-40 flex items-center justify-center text-gray-500'
+                        >
+                            Not Founded
+                        </div>
+                    )
+                }
+        </section>
+    )
 }

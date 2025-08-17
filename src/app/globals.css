@@ -80,10 +80,8 @@ body {
 }
 .primary-button-w {
   background: linear-gradient(to bottom, #ffffff, #dbdbdb);
-  color: black;
   cursor: pointer;
   border-radius: 0.5rem; /* rounded-lg */
-  box-shadow: 0 0 0 1px #ffffff80; /* ring ring-black/50 */
   transition: all 0.2s;
 }
 
