@@ -7,16 +7,17 @@ import Link from 'next/link';
 import React from 'react'
 
 interface ShopPageProps{
-    searchParams: {
+    searchParams: Promise<{
         cat?: string;
         pf?: string;
         pt?: string;
         sortby?: string;
-    };
+    }>;
 }
 
 export async function generateMetadata({ searchParams }: ShopPageProps): Promise<Metadata>{
-    const category = searchParams.cat || "categorie";
+    const resolvedSearchParams = await searchParams;
+    const category = resolvedSearchParams.cat || "categorie";
     return {
         title: `Shop | ${category.charAt(0).toUpperCase() + category.slice(1)}`,
         description: `Browse products in ${category} category.`,
@@ -40,7 +41,12 @@ async function getShopProducts(): Promise<ProductType[]>{
     }
 }
 
-function filterProducts(products: ProductType[], searchParams: ShopPageProps['searchParams']): ProductType[] {
+function filterProducts(products: ProductType[], searchParams: {
+    cat?: string;
+    pf?: string;
+    pt?: string;
+    sortby?: string;
+}): ProductType[] {
     
     let filteredProducts = [...products];
     if(!searchParams.pf && !searchParams.pt && !searchParams.cat && !searchParams.sortby){
@@ -86,9 +92,11 @@ function filterProducts(products: ProductType[], searchParams: ShopPageProps['se
 }
 
 export default async function page({ searchParams }: ShopPageProps) {
+    const resolvedSearchParams = await searchParams;
     const Products: ProductType[] = await getShopProducts();
-    const FiltredProducts = filterProducts(Products, searchParams);
+    const FiltredProducts = filterProducts(Products, resolvedSearchParams);
     const ReadedProducts = FiltredProducts.length === 0 ? Products : FiltredProducts;
+    
     return (
         <section
             className='w-full shrink-0 bg-white p-4 shadow-md 
@@ -124,7 +132,7 @@ export default async function page({ searchParams }: ShopPageProps) {
                     >
                         Showing ({ReadedProducts.length}) Products
                     </span>
-                    {(searchParams.pf || searchParams.pt || searchParams.cat || searchParams.sortby) && (
+                    {(resolvedSearchParams.pf || resolvedSearchParams.pt || resolvedSearchParams.cat || resolvedSearchParams.sortby) && (
                         <Link 
                             href="/shop"
                             className='text-red-500 text-sm font-semibold'
