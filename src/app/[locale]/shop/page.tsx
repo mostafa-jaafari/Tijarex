@@ -124,12 +124,14 @@ export default async function page({ searchParams }: ShopPageProps) {
                     >
                         Showing ({ReadedProducts.length}) Products
                     </span>
-                    <Link 
-                        href="/shop"
-                        className='text-red-500 text-sm font-semibold'
-                    >
-                        Clear Filters
-                    </Link>
+                    {(searchParams.pf || searchParams.pt || searchParams.cat || searchParams.sortby) && (
+                        <Link 
+                            href="/shop"
+                            className='text-red-500 text-sm font-semibold'
+                            >
+                            Clear Filters
+                        </Link>
+                    )}
                 </div>
                 {ReadedProducts.length > 0 ? 
                     (

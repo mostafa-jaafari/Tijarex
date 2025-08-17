@@ -130,6 +130,20 @@ export function ShopFilter() {
           rounded-lg shadow-sm text-gray-300 hover:text-gray-100">
         Apply Filters
       </button>
+      {/* --- Clear Button --- */}
+      {(Params.get("pf") ||
+        Params.get("pt") ||
+        Params.get("cat") ||
+        Params.get("sortby")) && (
+        <Link
+          href="/shop"
+          className="w-full flex justify-center py-1 mt-2 
+          text-sm rounded-lg shadow-sm cursor-pointer
+          bg-red-600 hover:bg-red-700 text-white"
+        >
+          Clear Filters
+        </Link>
+      )}
     </aside>
   );
 }
