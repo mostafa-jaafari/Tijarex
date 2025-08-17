@@ -115,23 +115,23 @@ export function ProductsPage() {
         .filter(product => {
             // Search filter
             const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                product.category.toLowerCase().includes(searchQuery.toLowerCase());
+                product.category.map((cat) => cat.toLowerCase().includes(searchQuery.toLowerCase()));
             
             // Category filter
             const matchesCategory = selectedFilters["Category"] === "All" || 
-                                  product.category === selectedFilters["Category"];
+                product.category.map((cat) => cat.toLowerCase() === selectedFilters["Category"]);
             
             // Stock status filter
             const matchesStock = selectedFilters["Stock Status"] === "All" || 
-                               product.status === selectedFilters["Stock Status"];
+                product.status === selectedFilters["Stock Status"];
             
             // Price range filter
             const matchesPrice = selectedFilters["Price Range"] === "All" || 
-                               matchesPriceRange(product.sale_price, selectedFilters["Price Range"]);
+                matchesPriceRange(product.sale_price, selectedFilters["Price Range"]);
             
             // Sales performance filter
             const matchesSales = selectedFilters["Sales Performance"] === "All" || 
-                               matchesSalesPerformance(product.sales, selectedFilters["Sales Performance"]);
+                matchesSalesPerformance(product.sales, selectedFilters["Sales Performance"]);
             
             return matchesSearch && matchesCategory && matchesStock && matchesPrice && matchesSales;
         })
