@@ -4,6 +4,7 @@ import EarningsChart from '@/components/EarningsChart'
 import React from 'react'
 import QuickSetupGuide from '@/components/QuickSetupGuide'
 
+
 export const metadata = {
   title: "Seller Dashboard | Tijarex.ma",
   description: "Monitor your store performance, view earnings, and track popular products on your tijarex.ma seller dashboard.",
