@@ -1,5 +1,6 @@
 "use client";
 
+import { BlackButtonStyles } from "@/components/Header";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -87,7 +88,7 @@ export function LoginForm() {
       <form
         onSubmit={handleLogin}
         className="w-full max-w-[500] border border-gray-200 
-          p-12 rounded-xl"
+          p-12 rounded-xl bg-gradient-to-bl from-white from-80% to-neutral-200"
         noValidate
       >
         <h1 className="mb-8 text-center text-2xl font-bold uppercase text-teal-600">
@@ -136,7 +137,10 @@ export function LoginForm() {
           disabled={isLoading}
           className={`font-bold mt-4 py-2 focus:outline-none 
             w-full focus:shadow-lg flex items-center justify-center gap-1 rounded-xl
-            ${isLoading ? "bg-gray-300 text-gray-400 cursor-not-allowed" : "focus:ring-2 cursor-pointer primary-button"}`}
+            ${isLoading ?
+              "bg-gray-300 animate-pulse text-gray-400 cursor-not-allowed"
+              :
+              ` ${BlackButtonStyles}`}`}
         >
           {isLoading && (<div className="w-4 h-4 border-2 border-transparent border-t-current rounded-full animate-spin"/>)}Login
         </button>

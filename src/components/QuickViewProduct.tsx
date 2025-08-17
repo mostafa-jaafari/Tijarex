@@ -6,6 +6,7 @@ import { BadgeCheck, Heart, ShoppingCart, Star } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CalculateDiscount } from "./Functions/CalculateDiscount";
+import { BlackButtonStyles, WhiteButtonStyles } from "./Header";
 
 export function QuickViewProduct() {
     const { isShowQuickViewProduct, setIsShowQuickViewProduct, productID } = useQuickViewProduct();
@@ -71,15 +72,26 @@ export function QuickViewProduct() {
 
     return (
         <section
-            className={`fixed z-50 top-0 left-0 w-full h-screen bg-black/60
-                flex justify-center items-end transition-opacity duration-300
-                ${isShowQuickViewProduct ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+            className={`fixed z-50 top-0 left-0 w-full h-screen 
+                bg-black/60 flex justify-center items-end 
+                transition-opacity duration-300
+                ${isShowQuickViewProduct ? 
+                    "opacity-100"
+                    :
+                    "opacity-0 pointer-events-none"}
+                `}
         >
             <div
                 ref={QVPRef}
-                className={`min-w-1/2 max-h-140 mb-12 overflow-auto bg-white rounded-xl border 
-                    border-gray-200 p-6 transition-all duration-300 transform
-                    ${isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+                className={`min-w-1/2 max-h-140 mb-12 overflow-auto 
+                    bg-gradient-to-bl from-white from-50% to-teal-50
+                    rounded-xl border border-gray-200 p-6 
+                    transition-all duration-300 transform
+                    ${isShowQuickViewProduct ?
+                        "scale-100 opacity-100"
+                        :
+                        "scale-95 opacity-0"}
+                    `}
             >
                 {isShowQuickViewProduct && isLoading ? (
                     <div className="h-[70vh] w-full flex justify-center items-center">
@@ -106,16 +118,16 @@ export function QuickViewProduct() {
                                 quality={100}
                             />
                         </div>
-                        <div className="w-full grid grid-cols-4 gap-2">
+                        <div className="w-full grid grid-cols-6 gap-2">
                             {selectedProductDetails?.product_images.map((pic, idx) => (
                                 <button
                                     key={idx}
                                     disabled={currentImage === idx}
                                     onClick={() => setCurrentImage(idx)}
-                                    className={`relative w-full h-20 rounded-xl 
+                                    className={`relative w-full h-18 rounded-xl 
                                         flex-shrink-0 overflow-hidden bg-gray-200
                                         transition-all duration-300 border border-gray-200
-                                        ${currentImage === idx ? "ring-4 ring-teal-600" : "hover:ring-2 ring-gray-400 cursor-pointer"}`}
+                                        ${currentImage === idx ? "ring-2 ring-black" : "hover:ring-2 ring-gray-400 cursor-pointer"}`}
                                 >
                                     <Image
                                         src={pic || ""}
@@ -274,16 +286,17 @@ export function QuickViewProduct() {
                             className="w-full flex flex-col items-center gap-2"
                         >
                             <button
-                                className="w-full flex justify-center items-center 
-                                    gap-1 primary-button-b text-gray-200 
-                                    hover:text-white py-2"
+                                className={`w-full flex justify-center items-center 
+                                    gap-1 py-2 rounded-lg font-semibold
+                                    ${BlackButtonStyles}`}
                             >
                                 <ShoppingCart size={16} /> Add to Cart
                             </button>
                             <button
-                                className="w-full flex justify-center 
-                                    items-center gap-1 primary-button-w 
-                                    py-2 ring ring-gray-200 text-teal-600"
+                                className={`w-full flex justify-center 
+                                    items-center gap-1 py-2 rounded-lg
+                                    ring ring-gray-300 font-semibold
+                                    ${WhiteButtonStyles}`}
                             >
                                 <Heart size={16} /> Add to Wishlist
                             </button>
