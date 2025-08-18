@@ -50,7 +50,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} className="scroll-smooth">
       <body
-        className={`w-full overflow-x-scroll 
+        className={`w-full overflow-x-hidden 
           ${cairo.className} ${cinzel.variable} ${bebas_neue.variable} antialiased`}
           >
           <QuickViewProductContextProvider>
