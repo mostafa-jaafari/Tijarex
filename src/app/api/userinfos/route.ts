@@ -1,4 +1,4 @@
-import { db } from '@/Firebase';
+import { db } from '@/lib/FirebaseClient';
 import { UserInfosType } from '@/types/userinfos';
 import { doc, getDoc } from 'firebase/firestore';
 import { getServerSession } from 'next-auth';

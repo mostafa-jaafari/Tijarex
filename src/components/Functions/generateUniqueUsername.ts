@@ -1,4 +1,4 @@
-import { db } from "@/Firebase";
+import { db } from "@/lib/FirebaseClient";
 import { collection, getDocs } from "firebase/firestore";
 
 // دالة لتوليد username عشوائي من الاسم

@@ -1,7 +1,7 @@
 'use client';
 
 import { SuccessScreen } from '@/components/Animations/SuccessScreen';
-import { auth, db } from '@/Firebase';
+import { auth, db } from '@/lib/FirebaseClient';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { Check, MoveLeft } from 'lucide-react';
@@ -381,7 +381,7 @@ export function ProgressBarClient() {
   
   return (
     <>
-    <Head>
+      <Head>
         <title>{currentStep} | My App</title>
       </Head>
       <section
@@ -389,7 +389,8 @@ export function ProgressBarClient() {
           rounded-xl overflow-hidden'
       >
         <div 
-          className='w-full min-h-80 bg-teal-50/50 
+          className='w-full min-h-80 bg-gradient-to-tr
+            from-teal-50 from-10% to-white 
             pr-6 py-12 pl-12'
           >
           <div

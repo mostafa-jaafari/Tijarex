@@ -1,4 +1,4 @@
-import { db } from '@/Firebase';
+import { db } from '@/lib/FirebaseClient';
 import { ProductType } from '@/types/product';
 import { doc, getDoc } from 'firebase/firestore';
 import { NextResponse } from 'next/server';

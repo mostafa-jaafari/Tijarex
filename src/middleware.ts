@@ -33,7 +33,8 @@ export async function middleware(request: NextRequest) {
   const authPages = [
     `/${locale}/auth/login`,
     `/${locale}/auth/register`,
-    `/${locale}/auth/confirm-email`
+    `/${locale}/auth/confirm-email`,
+    `/${locale}/auth/verifyemail`,
   ];
   
   // Fixed: Check shop pages properly
