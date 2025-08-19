@@ -11,14 +11,14 @@ export default async function RootLayout({
   const session: Session | null = await getServerSession(authOptions);
   return (
     <main
-      className="w-full"
+      className="w-full bg-[#1A1A1A]"
     >
+      <SellerHeader session={session} />
       <section
           className="w-full flex"
           >
           <Sidebar />
           <div className="w-full">
-            <SellerHeader session={session} />
             {children}
           </div>
       </section>

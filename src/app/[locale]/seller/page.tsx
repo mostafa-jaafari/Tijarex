@@ -27,7 +27,7 @@ export const metadata = {
 export default async function page() {
   return (
     <main
-        className='w-full'
+        className='w-full bg-gray-50'
     >
       <section
           className='w-full flex'

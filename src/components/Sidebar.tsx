@@ -72,8 +72,8 @@ export function Sidebar() {
     return (
         <aside className={`
             ${isCollapsed ? 'w-16' : 'w-74'} 
-            bg-white border-r border-gray-200 h-screen transition-all duration-300 
-            flex flex-col sticky top-0 overflow-hidden
+            bg-gray-50 h-screen pb-14 transition-all duration-300 
+            flex flex-col sticky top-14 overflow-hidden
         `}>
             {/* Header */}
             <div 
