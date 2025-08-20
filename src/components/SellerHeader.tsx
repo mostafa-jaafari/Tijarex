@@ -78,7 +78,7 @@ export function SellerHeader({ session }: { session: Session | null }){
         <section
             className="sticky top-0 w-full flex items-center 
                 justify-between bg-[#1A1A1A] shadow
-                z-50 py-1.5 px-6 borderb border-gray-200"
+                z-50 py-2.5 px-6 borderb border-gray-200"
         >
             {/* --- Logo --- */}
             <Link href="/seller" className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                 </button>
                 <div 
                     className={`absolute overflow-hidden right-0 
-                        mt-4 w-72 rounded-xl shadow-lg border 
+                        mt-5 w-72 rounded-xl shadow-lg border 
                         bg-gradient-to-r from-white to-green-100
                         border-green-200 animate-fade-in
                         transition-all duration-200
@@ -219,7 +219,7 @@ export function SellerHeader({ session }: { session: Session | null }){
 
                 {/* Dropdown Menu */}
                 <div 
-                    className={`absolute overflow-hidden right-0 mt-4 
+                    className={`absolute overflow-hidden right-0 mt-4
                         w-72 bg-white rounded-xl shadow-lg border 
                         border-gray-200 animate-fade-in
                         ${isNotificationsOpen 
@@ -282,7 +282,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                     className="flex items-center gap-2 cursor-pointer">
                     <div
-                        className='relative w-12 h-12'
+                        className='relative w-10 h-10'
                     >
                         <Image
                             src={userInfos?.profileimage as string || session?.user?.image as string || ""}
@@ -291,14 +291,15 @@ export function SellerHeader({ session }: { session: Session | null }){
                             className="object-cover overflow-hidden rounded-full"
                         />
                         <span
-                            className="absolute w-3 h-3 rounded-full bg-green-500 right-1 bottom-0 border-2 border-white"
+                            className="absolute w-3 h-3 rounded-full bg-green-500 
+                                right-1 bottom-0 border-2 border-white"
                         />
                     </div>
                     <div
                         className="flex flex-col items-start"
                     >
                         <div
-                            className="w-full flex items-center justify-between"
+                            className="w-full flex items-center justify-between gap-3"
                         >
                             <span className="text-sm font-medium text-white">
                                 {isLoadingUserInfos ? (<span className="animate-pulse w-25 h-3 bg-gray-100 flex rounded"/>) : userInfos?.fullname}
@@ -313,7 +314,7 @@ export function SellerHeader({ session }: { session: Session | null }){
 
                 {/* Profile Dropdown */}
                 <div
-                    className={`absolute right-0 top-full mt-2 w-full 
+                    className={`absolute right-0 top-full mt-4 w-full 
                         bg-white shadow-lg border border-gray-200 
                         rounded-xl overflow-hidden animate-fade-in
                         min-w-60 transition-all duration-200

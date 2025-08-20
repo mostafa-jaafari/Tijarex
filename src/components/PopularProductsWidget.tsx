@@ -1,6 +1,4 @@
 "use client";
-
-import { useTranslations } from "next-intl";
 import { 
     Eye, 
     Package, 
@@ -25,7 +23,6 @@ interface PopularProduct extends ProductType {
 }
 
 export function PopularProductsWidget() {
-    const t = useTranslations("popularProducts");
     const [popularProducts, setPopularProducts] = useState<PopularProduct[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -175,7 +172,7 @@ export function PopularProductsWidget() {
                             </button>
                         </div>
                     ) : (
-                        popularProducts.map((product, index) => (
+                        popularProducts.map((product) => (
                             <div
                                 key={product.id}
                                 className="group relative flex items-start gap-3 p-4 hover:bg-gray-50 transition-all duration-200 border-b border-gray-100 last:border-b-0"

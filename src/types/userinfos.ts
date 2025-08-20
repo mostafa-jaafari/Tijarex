@@ -1,7 +1,6 @@
 import { type Timestamp } from "firebase/firestore";
 
 export type UserInfosType = {
-    confirmtermsandconditions: boolean;
     createdAt: Timestamp;
     email: string;
     fullname: string;
@@ -9,5 +8,6 @@ export type UserInfosType = {
     isNewUser: boolean;
     phonenumber: string;
     profileimage: string;
+    UserRole: "seller" | "affiliate" | "admin";
     totalbalance: number;
 };
