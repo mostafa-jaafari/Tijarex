@@ -84,7 +84,7 @@ export function ProductsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 12; // Increased for better grid layout
     
-    const [allProducts, setProducts] = useState<ProductType[] | []>([]);
+    const [allProducts, setAllProducts] = useState<ProductType[] | []>([]);
     const [loading, setLoading] = useState(true);
     const [favorites, setFavorites] = useState<Set<string>>(new Set());
     
@@ -124,7 +124,7 @@ export function ProductsPage() {
                 if (!res.ok) throw new Error("Failed to fetch products");
 
                 const data = await res.json();
-                setProducts(data.products);
+                setAllProducts(data.products);
             } catch (error) {
                 console.error(error);
             } finally {

@@ -3,8 +3,8 @@
 import React, { useState, useCallback, ReactNode, useRef } from "react";
 import Image from "next/image";
 import { useUserInfos } from "@/context/UserInfosContext"; 
-import { Info, Warehouse, Copy, Check, CreditCard, DollarSign, TrendingUp, Users, Shield, Clock, Zap, Loader2, UploadCloud, X } from "lucide-react";
-import { auth, db } from "@/lib/FirebaseClient";
+import { Info, Warehouse, Copy, Check, Shield, Clock, Zap, Loader2, UploadCloud, X } from "lucide-react";
+import { auth } from "@/lib/FirebaseClient";
 import imageCompression from "browser-image-compression";
 
 // PayPal imports
@@ -14,8 +14,6 @@ import {
     usePayPalScriptReducer // Hook to check the script loading status
 } from "@paypal/react-paypal-js";
 import type { OnApproveData, OnApproveActions, CreateOrderData, CreateOrderActions } from "@paypal/paypal-js";
-import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
-
 // ============================================================================
 // 1. Helper Hooks & Components (Self-contained within this file)
 // ============================================================================
