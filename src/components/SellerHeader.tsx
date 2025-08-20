@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { Session } from "next-auth";
 import { useUserInfos } from "@/context/UserInfosContext";
-import { BlackButtonStyles, WhiteButtonStyles } from "./Header";
 
 
 export function SellerHeader({ session }: { session: Session | null }){
