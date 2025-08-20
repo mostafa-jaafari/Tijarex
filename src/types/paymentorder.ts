@@ -10,7 +10,7 @@ export type PaymentMethod = 'paypal' | 'bank_transfer';
  */
 export interface Transaction {
   // Common Fields for all transactions
-  UserId: string;          // The user's unique ID (UID)
+  PaymentId: string;
   userEmail: string;          // The user's email
   amountMAD: number;          // The original amount in Moroccan Dirham
   status: TransactionStatus;

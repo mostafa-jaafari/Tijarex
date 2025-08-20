@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
         // 3. Create the new transaction object using our central type
         const newTransaction: Transaction = {
-            UserId: userUid,
+            PaymentId: userUid,
             userEmail: userEmail,
             amountMAD: Number(amount),
             status: "pending", // All bank transfers must be manually reviewed
