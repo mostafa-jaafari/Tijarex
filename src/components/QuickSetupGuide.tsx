@@ -3,10 +3,11 @@ import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
-import { BlackButtonStyles, WhiteButtonStyles } from './Header';
+import { WhiteButtonStyles } from './Header';
+import { useUserInfos } from '@/context/UserInfosContext';
 
 export default function QuickSetupGuide() {
-
+    const { userInfos, isLoadingUserInfos } = useUserInfos();
     const stepsConfig = [
         {
             title: "Create your account.",
@@ -25,7 +26,7 @@ export default function QuickSetupGuide() {
             btntitle: "Add balance",
             image: "/CIH-MASTERCARD.png",
             imagestyles: "absolute z-30 scale-140 group-hover:scale-180 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
-            iscompleted: false,
+            iscompleted: !!(userInfos?.totalbalance && userInfos.totalbalance > 0),
             link: {
                 label: "Activate your account with credit.",
                 href: "/seller/add-balance",
@@ -139,7 +140,9 @@ export default function QuickSetupGuide() {
                                         {card.link.label}
                                     </Link>
                                 </span>
-                                {card.iscompleted ? (
+                                {isLoadingUserInfos ? (
+                                    <div className='w-24 h-6 bg-gray-300 rounded-lg shadow-sm animate-pulse'/>
+                                ) : card.iscompleted ? (
                                     <button
                                         disabled
                                         className={`primary-button-b py-1 

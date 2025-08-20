@@ -9,6 +9,7 @@ import { Session } from "next-auth";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { WhiteButtonStyles } from "./Header";
 
+
 export function SellerHeader({ session }: { session: Session | null }){
     const ProfileHeaderNavs = [
         { label: "dashboard", icon: LayoutDashboard, href: "dashboard" },
