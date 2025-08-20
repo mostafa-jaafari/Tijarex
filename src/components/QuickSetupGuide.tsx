@@ -8,6 +8,7 @@ import { useUserInfos } from '@/context/UserInfosContext';
 
 export default function QuickSetupGuide() {
     const { userInfos, isLoadingUserInfos } = useUserInfos();
+
     const stepsConfig = [
         {
             title: "Create your account.",
@@ -44,14 +45,25 @@ export default function QuickSetupGuide() {
             }
         },
     ];
-    const [percent, setPercent] = useState(25);
+
+    // ✅ حساب النسبة المئوية حسب الخطوات المنجزة
+    const completedSteps = stepsConfig.filter(step => step.iscompleted).length;
+    const totalSteps = stepsConfig.length;
+    const progressPercent = Math.round((completedSteps / totalSteps) * 100);
+
+    const [percent, setPercent] = useState(progressPercent);
     const [animatedWidth, setAnimatedWidth] = useState("0%");
     const [displayedPercent, setDisplayedPercent] = useState(0);
+
+    // كلما تبدل progressPercent نحدّث percent
+    useEffect(() => {
+        setPercent(progressPercent);
+    }, [progressPercent]);
 
     // For smooth animation bar
     useEffect(() => {
         const timeout = setTimeout(() => {
-        setAnimatedWidth(`${percent}%`);
+            setAnimatedWidth(`${percent}%`);
         }, 50);
         return () => clearTimeout(timeout);
     }, [percent]);
@@ -62,26 +74,22 @@ export default function QuickSetupGuide() {
         const startTime = performance.now();
 
         const animate = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const currentValue = Math.round(progress * percent);
-        setDisplayedPercent(currentValue);
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentValue = Math.round(progress * percent);
+            setDisplayedPercent(currentValue);
 
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        }
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
         };
 
         requestAnimationFrame(animate);
     }, [percent]);
+
     return (
-        <section
-            className='relative w-full p-4 min-h-40 rounded-2xl 
-                bg-white border border-gray-200'
-        >
-            <h1
-                className='text-lg font-semibold text-gray-900 mb-3'
-            >
+        <section className='relative w-full p-4 min-h-40 rounded-2xl bg-white border border-gray-200'>
+            <h1 className='text-lg font-semibold text-gray-900 mb-3'>
                 Quick setup guide
             </h1>
 
@@ -92,102 +100,74 @@ export default function QuickSetupGuide() {
                 className='object-cover scale-x-[-1] opacity-10 group-hover:scale-140 transition-all duration-400'
                 loading='lazy'
             />
+
             <div className='w-full flex flex-shrink-0 items-center flex-wrap justify-between gap-2'>
-                {stepsConfig.map((card, idx) => {
-                    return (
-                        <div
-                            key={idx}
-                            className='group relative bg-teal-50 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl 
-                                overflow-hidden border border-gray-200 shadow shadow-gray-100'
-                        >
-                            <Image
-                                src="/Grid-Pattern.jpg"
-                                alt=''
-                                fill
-                                className='object-cover opacity-10 group-hover:scale-140 transition-all duration-400'
-                                loading='lazy'
-                            />
-                            <div
-                                className={card.imagestyles}
-                            >
-                                <Image 
-                                    src={card.image}
-                                    alt=''
-                                    width={120}
-                                    height={120}
-                                    quality={100}
-                                    priority
-                                />
-                            </div>
-                            <div
-                                className='absolute bottom-0 left-0 z-40 p-4
-                                    min-h-50 w-full flex flex-col justify-end
-                                    space-y-2 bg-gradient-to-t from-white via-white'
-                            >
-                                <h1
-                                    className='font-semibold text-teal-800'
-                                >
-                                    {card.title}
-                                </h1>
-                                <span>
-                                    <p className='text-xs text-gray-500'>
-                                        {card.description}
-                                    </p>
-                                    {/* <Link 
-                                        href={card.link.href} 
-                                        className='text-sm text-blue-600'
-                                    >
-                                        {card.link.label}
-                                    </Link> */}
-                                </span>
-                                {isLoadingUserInfos ? (
-                                    <div className='w-24 h-6 bg-gray-300 rounded-lg shadow-sm animate-pulse'/>
-                                ) : card.iscompleted ? (
-                                    <button
-                                        disabled
-                                        className={`primary-button-b py-1 
-                                            flex items-center gap-1 px-4 w-max 
-                                            text-sm cursor-not-allowed
-                                            text-white`}
-                                    >
-                                        Completed <CircleCheckBig size={16} />
-                                    </button>
-                                ) : (
-                                    <Link
-                                        href={card.link.href}
-                                        className={`rounded-lg py-1 px-4 w-max text-sm 
-                                                ${WhiteButtonStyles}
-                                                ring ring-gray-200`}
-                                    >
-                                        {card.btntitle}
-                                    </Link>
-                                )}
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
-            <div
-                className='w-full flex items-center gap-2 pt-3'
-            >
-                <div
-                    className='w-full'
-                >
+                {stepsConfig.map((card, idx) => (
                     <div
-                        className='rounded-full border border-teal-200 bg-teal-100'
+                        key={idx}
+                        className='group relative bg-teal-50 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl overflow-hidden border border-gray-200 shadow shadow-gray-100'
                     >
+                        <Image
+                            src="/Grid-Pattern.jpg"
+                            alt=''
+                            fill
+                            className='object-cover opacity-10 group-hover:scale-140 transition-all duration-400'
+                            loading='lazy'
+                        />
+                        <div className={card.imagestyles}>
+                            <Image 
+                                src={card.image}
+                                alt=''
+                                width={120}
+                                height={120}
+                                quality={100}
+                                priority
+                            />
+                        </div>
+                        <div
+                            className='absolute bottom-0 left-0 z-40 p-4
+                                min-h-50 w-full flex flex-col justify-end
+                                space-y-2 bg-gradient-to-t from-white via-white'
+                        >
+                            <h1 className='font-semibold text-teal-800'>
+                                {card.title}
+                            </h1>
+                            <span>
+                                <p className='text-xs text-gray-500'>
+                                    {card.description}
+                                </p>
+                            </span>
+                            {isLoadingUserInfos ? (
+                                <div className='w-24 h-6 bg-gray-300 rounded-lg shadow-sm animate-pulse'/>
+                            ) : card.iscompleted ? (
+                                <button
+                                    disabled
+                                    className={`primary-button-b py-1 flex items-center gap-1 px-4 w-max text-sm cursor-not-allowed text-white`}
+                                >
+                                    Completed <CircleCheckBig size={16} />
+                                </button>
+                            ) : (
+                                <Link
+                                    href={card.link.href}
+                                    className={`rounded-lg py-1 px-4 w-max text-sm 
+                                            ${WhiteButtonStyles}
+                                            ring ring-gray-200`}
+                                >
+                                    {card.btntitle}
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Progress bar */}
+            <div className='w-full flex items-center gap-2 pt-3'>
+                <div className='w-full'>
+                    <div className='rounded-full border border-teal-200 bg-teal-100'>
                         <span 
-                            className="relative flex h-2 rounded-full 
-                            bg-teal-600 transition-all 
-                            duration-1000 ease-out 
-                            after:absolute 
-                            after:right-0 
-                            after:-top-1 
-                            after:w-4 
-                            after:shadow 
-                            after:h-4 
-                            after:rounded-full
-                            after:bg-teal-600"
+                            className="relative flex h-2 rounded-full bg-teal-600 transition-all duration-1000 ease-out 
+                            after:absolute after:right-0 after:-top-1 after:w-4 after:shadow after:h-4 after:rounded-full after:bg-teal-600"
                             style={{ width: animatedWidth }}
                         ></span> 
                     </div>
@@ -195,5 +175,5 @@ export default function QuickSetupGuide() {
                 <p className='text-gray-500'>{displayedPercent}%</p>
             </div>
         </section>
-  )
+    )
 }
