@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         // --- NEW DATA STRUCTURE: Create a new document in the top-level 'transactions' collection ---
         const now = new Date();
         const newTransaction: Transaction = {
-            PaymentId: userUid,
+            UserId: userUid,
             userEmail: userEmail,
             paypalOrderId: paypalOrder.id,
             amountMAD: Number(amount),

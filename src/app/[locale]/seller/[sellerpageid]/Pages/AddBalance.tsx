@@ -199,9 +199,7 @@ export default function AddBalance() {
     setIsUploading(true);
 
     try {
-        // --- Cloudinary Signed Upload Flow ---
-
-        // 1. Get a signature from our server
+        // --- Step 1: Upload the image to Cloudinary (This part remains the same) ---
         const timestamp = Math.round(new Date().getTime() / 1000);
         const publicId = `proofs/${user.uid}/${Date.now()}`;
         
@@ -211,10 +209,8 @@ export default function AddBalance() {
             body: JSON.stringify({ paramsToSign: { timestamp, public_id: publicId } }),
         });
         const { signature } = await signatureResponse.json();
+        if (!signature) throw new Error("Could not get upload signature from server.");
 
-        if (!signature) throw new Error("Could not get upload signature.");
-
-        // 2. Prepare FormData to upload directly to Cloudinary
         const formData = new FormData();
         formData.append("file", proofFile);
         formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
@@ -222,7 +218,6 @@ export default function AddBalance() {
         formData.append("public_id", publicId);
         formData.append("signature", signature);
 
-        // 3. Make the POST request to Cloudinary
         const uploadResponse = await fetch(
             `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
             { method: "POST", body: formData }
@@ -233,23 +228,36 @@ export default function AddBalance() {
         
         const proofImageURL = cloudinaryData.secure_url;
 
-        // 4. Now that we have the URL, create the deposit record in Firestore
-        if(!user.email) return;
-        await setDoc(doc(db, "bank_transferts", user.email), {
-            userId: user.uid,
-            userEmail: user.email,
-            amount: Number(amount),
-            currency: "DH",
-            proofImageURL: proofImageURL,
-            status: "pending",
-            submittedAt: serverTimestamp(),
+        // --- Step 2: Call your new backend API route (This is the change) ---
+        // Instead of writing to Firestore here, we securely call our server.
+
+        const idToken = await user.getIdToken(true); // Get the user's auth token
+
+        const apiResponse = await fetch('/api/bank-transfer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`, // Authenticate the request
+            },
+            body: JSON.stringify({
+                amount: Number(amount),
+                proofImageURL: proofImageURL,
+            }),
         });
 
-
-        // 5. Success!
+        const result = await apiResponse.json();
+        if (!apiResponse.ok) {
+            // If our server returned an error, show it
+            throw new Error(result.error || "Failed to submit request to server.");
+        }
+        
+        // --- Step 3: Handle Success (This part remains the same) ---
         alert("✅ Success! Your deposit request has been submitted and is now under review.");
         setAmount("100");
         setProofFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ""; // Clear the file input
+        }
         
     } catch (err: unknown) {
         console.error("Deposit submission error:", err);
@@ -258,7 +266,7 @@ export default function AddBalance() {
     } finally {
         setIsUploading(false);
     }
-  };
+};
 
   const createPayPalOrder = async (data: CreateOrderData, actions: CreateOrderActions): Promise<string> => {
     if (!isAmountValid) {
@@ -427,7 +435,10 @@ export default function AddBalance() {
           <button
               onClick={handleBankTransferDeposit}
               disabled={!isAmountValid || !proofFile || isUploading}
-              className={`w-full flex items-center justify-center py-3 rounded-lg font-semibold text-base transition-colors ${ isAmountValid && proofFile && !isUploading ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-200 text-gray-500 cursor-not-allowed"}`}
+              className={`w-full flex items-center justify-center py-3 
+                rounded-lg font-semibold text-base transition-colors 
+                ${ isAmountValid && proofFile && !isUploading ? 
+                  "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" : "bg-gray-200 text-gray-500 cursor-not-allowed"}`}
           >
               {isUploading ? ( <> <Loader2 size={20} className="animate-spin mr-2" /> Submitting... </> ) : ( "Submit Deposit Request" )}
           </button>

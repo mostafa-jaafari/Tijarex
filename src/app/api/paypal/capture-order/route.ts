@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         const allTransactions = docData.transactions || [];        
         // 2. Find the index of the specific transaction we need to update.
         const transactionIndex = allTransactions.findIndex(
-            (t: Transaction) => t.paypalOrderId === orderId && t.PaymentId === userUid
+            (t: Transaction) => t.paypalOrderId === orderId && t.UserId === userUid
         );
 
         if (transactionIndex === -1) {
