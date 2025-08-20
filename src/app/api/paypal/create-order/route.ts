@@ -5,9 +5,10 @@ import { adminDb, adminAuth } from "@/lib/FirebaseAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { FieldValue } from "firebase-admin/firestore";
+import { Transaction } from "@/types/paymentorder";
 
 const MIN_DEPOSIT_AMOUNT_MAD = 50;
-const PROCESSING_CURRENCY = "EUR"; // The currency PayPal will actually process
+const PROCESSING_CURRENCY = "USD"; 
 
 export async function POST(req: NextRequest) {
     const headersList = await headers();
@@ -21,30 +22,32 @@ export async function POST(req: NextRequest) {
         const decodedToken = await adminAuth.verifyIdToken(token);
         const userEmail = decodedToken.email;
         const userUid = decodedToken.uid;
-        const { amount } = await req.json(); // This 'amount' is expected to be in MAD
+        const { amount } = await req.json();
 
         if (!userEmail) throw new Error("User email not found in auth token.");
         if (!amount || isNaN(Number(amount)) || Number(amount) < MIN_DEPOSIT_AMOUNT_MAD) {
             return NextResponse.json({ error: `Invalid amount. Minimum is ${MIN_DEPOSIT_AMOUNT_MAD} MAD.` }, { status: 400 });
         }
 
-        // --- NEW: Currency Conversion Logic ---
         const apiKey = process.env.EXCHANGERATE_API_KEY;
+        if (!apiKey) {
+            throw new Error("Currency conversion API key is not configured on the server.");
+        }
+        
         const conversionResponse = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/pair/MAD/${PROCESSING_CURRENCY}/${amount}`);
         if (!conversionResponse.ok) {
             throw new Error("Failed to fetch currency conversion rate.");
         }
         const conversionData = await conversionResponse.json();
         const convertedAmount = conversionData.conversion_result;
-        // --- END: Currency Conversion Logic ---
 
         const accessToken = await getPayPalAccessToken();
         const requestBody = {
             intent: "CAPTURE",
             purchase_units: [{
                 amount: {
-                    currency_code: PROCESSING_CURRENCY, // Use EUR for the PayPal request
-                    value: convertedAmount.toFixed(2), // Send the converted amount
+                    currency_code: PROCESSING_CURRENCY, 
+                    value: convertedAmount.toFixed(2),
                 },
             }],
         };
@@ -64,18 +67,26 @@ export async function POST(req: NextRequest) {
         
         const paypalOrder = await response.json();
 
-        // --- MODIFIED: Store both original and processed amounts ---
-        const transactionRef = adminDb.collection("transactions").doc();
-        await transactionRef.set({
+        // --- NEW DATA STRUCTURE: Create a new document in the top-level 'transactions' collection ---
+        const now = new Date();
+        const newTransaction: Transaction = {
             PaymentId: userUid,
+            userEmail: userEmail,
             paypalOrderId: paypalOrder.id,
-            amountMAD: Number(amount), // The original amount requested by the user
-            amountProcessed: convertedAmount, // The actual amount sent to PayPal
-            currencyProcessed: PROCESSING_CURRENCY, // The currency used for processing
+            amountMAD: Number(amount),
+            amountProcessed: convertedAmount,
+            currencyProcessed: PROCESSING_CURRENCY,
             status: "created",
-            createdAt: FieldValue.serverTimestamp(),
-        });
-        
+            paymentMethod: "paypal",
+            createdAt: now,
+        };
+
+        const userTransactionsDocRef = adminDb.collection("transactions").doc(userEmail);
+
+        await userTransactionsDocRef.set({
+            transactions: FieldValue.arrayUnion(newTransaction),
+        }, { merge: true });
+
         return NextResponse.json({ orderId: paypalOrder.id });
 
     } catch (error: unknown) {
