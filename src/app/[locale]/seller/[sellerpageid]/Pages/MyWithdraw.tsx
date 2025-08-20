@@ -1,6 +1,4 @@
-// components/MyWithdraw.js
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Transaction } from "@/types/paymentorder";
@@ -33,7 +31,7 @@ interface TransactionWithFirestore extends Omit<Transaction, 'createdAt' | 'upda
 const StatusBadge = ({ status }: { status: string; }) => {
   const baseClasses =
     "inline-flex items-center py-1.5 px-3 rounded-full text-xs font-medium transition-colors";
-  const dotClasses = "w-2 h-2 mr-2 rounded-full animate-pulse";
+  const dotClasses = `w-2 h-2 mr-2 rounded-full ${status.toLowerCase() === 'pending' ? '' : ''}";`;
 
   switch (status?.toLowerCase()) {
     case "approved":
@@ -51,10 +49,9 @@ const StatusBadge = ({ status }: { status: string; }) => {
         </span>
       );
     case "pending":
-    case "created":
       return (
-        <span className={`${baseClasses} bg-gray-100 text-gray-800 border border-gray-300`}>
-          <span className={`${dotClasses} bg-gray-600`}></span>
+        <span className={`${baseClasses} bg-yellow-100 text-yellow-600 border border-yellow-200`}>
+          <span className={`${dotClasses} animate-pulse bg-yellow-500`}></span>
           Pending
         </span>
       );
@@ -74,7 +71,7 @@ const PaymentMethodIcon = ({ method, size = 20 }: { method: string; size?: numbe
   switch (method) {
     case 'paypal':
       return (
-        <div className="relative overflow-hidden rounded-md w-6 h-6 bg-blue-50 flex items-center justify-center">
+        <div className="relative flex overflow-hidden rounded-md w-6 h-6 bg-blue-50 flex items-center justify-center">
           <Image
             src="/paypal-logo.png"
             alt="PayPal"
@@ -118,7 +115,7 @@ const TransactionRow = ({ transaction }: { transaction: TransactionWithFirestore
     <>
       <tr className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
         <td className="py-4 px-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 justify-center">
             <div className="p-2 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg">
               <Calendar size={16} className="text-gray-600" />
             </div>
@@ -133,11 +130,11 @@ const TransactionRow = ({ transaction }: { transaction: TransactionWithFirestore
           </div>
         </td>
         
-        <td className="py-4 px-6">
-          <div className="flex items-center gap-3">
+        <td className="py-4 px-6 text-start">
+          <div className="flex items-center justify-center gap-3">
             <PaymentMethodIcon method={transaction.paymentMethod} />
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
+            <div>
+              <div className="flex items-center justify-start gap-2">
                 <span className="font-medium text-gray-900 text-sm">
                   Balance {getTransactionType()}
                 </span>
@@ -162,7 +159,7 @@ const TransactionRow = ({ transaction }: { transaction: TransactionWithFirestore
         </td>
 
         <td className="py-4 px-6">
-          <div className="text-right">
+          <div className="text-center">
             <div className="font-bold text-gray-900 text-lg">
               {formatAmount(Math.abs(transaction.amountMAD))}
             </div>
@@ -174,12 +171,12 @@ const TransactionRow = ({ transaction }: { transaction: TransactionWithFirestore
           </div>
         </td>
 
-        <td className="py-4 px-6">
+        <td className="py-4 px-6 text-center">
           <StatusBadge status={transaction.status} />
         </td>
 
         <td className="py-4 px-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <button
               onClick={() => setShowDetails(!showDetails)}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -351,7 +348,8 @@ const MyWithdraw = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white hover:shadow border border-gray-200
+                rounded-2xl p-6 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Transactions</p>
@@ -369,7 +367,8 @@ const MyWithdraw = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white hover:shadow border border-gray-200
+                rounded-2xl p-6 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Approved</p>
@@ -387,7 +386,8 @@ const MyWithdraw = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white hover:shadow border border-gray-200
+                rounded-2xl p-6 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Pending</p>
@@ -405,7 +405,8 @@ const MyWithdraw = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white hover:shadow border border-gray-200
+                rounded-2xl p-6 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Amount</p>
@@ -486,11 +487,11 @@ const MyWithdraw = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-left text-sm">
-                <thead className="border-b bg-gray-50/50">
+                <thead className="border-b border-gray-300 bg-teal-50 text-center">
                   <tr>
                     <th className="py-4 px-6 font-semibold text-gray-700">Date</th>
                     <th className="py-4 px-6 font-semibold text-gray-700">Details</th>
-                    <th className="py-4 px-6 font-semibold text-gray-700 text-right">Amount</th>
+                    <th className="py-4 px-6 font-semibold text-gray-700">Amount</th>
                     <th className="py-4 px-6 font-semibold text-gray-700">Status</th>
                     <th className="py-4 px-6 font-semibold text-gray-700">Actions</th>
                   </tr>
