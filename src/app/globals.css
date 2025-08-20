@@ -41,25 +41,6 @@ body {
   font-family: var(--font-cenzel);
 }
 
-.checked-button{
-  background: linear-gradient(180deg, #3bf679, #31dd0f); /* Tailwind Blue-500 to Blue-600 */
-  color: white;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-.addbalance-button{
-  background: linear-gradient(180deg, #11db55, #198d02); /* Tailwind Blue-500 to Blue-600 */
-  color: white;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-.addbalance-button:hover {
-  background: linear-gradient(180deg, #1a9202, #198d02); /* lighter blue */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
@@ -70,7 +51,6 @@ body {
 
 .primary-button-b {
   background: linear-gradient(to bottom, #292929, black, #181818);
-  cursor: pointer;
   border-radius: 0.5rem; /* rounded-lg */
   transition: all 0.2s;
 }

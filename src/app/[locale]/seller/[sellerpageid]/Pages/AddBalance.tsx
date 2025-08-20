@@ -1,179 +1,307 @@
 "use client";
-import { useUserInfos } from '@/context/UserInfosContext';
-import { CircleCheckBig, Info, Warehouse } from 'lucide-react';
-import Image from 'next/image';
-import React from 'react'
 
-export default function AddBalance() {
-    const { isLoadingUserInfos, userInfos } = useUserInfos();
+import React, { useState, useCallback, ReactNode } from "react";
+import Image from "next/image";
+import { useUserInfos } from "@/context/UserInfosContext"; 
+import { Info, Warehouse, Copy, Check, CreditCard, DollarSign, TrendingUp, Users, Shield, Clock, Zap } from "lucide-react";
+import { auth } from "@/lib/FirebaseClient";
+
+// PayPal imports
+import { 
+    PayPalScriptProvider, 
+    PayPalButtons,
+    usePayPalScriptReducer // Hook to check the script loading status
+} from "@paypal/react-paypal-js";
+import type { OnApproveData, OnApproveActions, CreateOrderData, CreateOrderActions } from "@paypal/paypal-js";
+
+// ============================================================================
+// 1. Helper Hooks & Components (Self-contained within this file)
+// ============================================================================
+
+function useCopyToClipboard(): [string | null, (text: string) => void] {
+  const [copied, setCopied] = useState<string | null>(null);
+  const copy = useCallback((text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(text);
+      setTimeout(() => setCopied(null), 2000);
+    });
+  }, []);
+  return [copied, copy];
+}
+
+interface PaymentOptionProps {
+  title: string;
+  icon: ReactNode;
+  description: string;
+  badge?: string;
+  processingTime: string;
+  selected: boolean;
+  onClick: () => void;
+}
+const PaymentOption: React.FC<PaymentOptionProps> = ({ title, icon, description, badge, processingTime, selected, onClick }) => (
+    <div onClick={onClick} className={`relative border rounded-lg p-4 cursor-pointer transition-all duration-200 ${selected ? "border-blue-500 bg-blue-50 shadow-sm" : "border-gray-200 hover:border-gray-300 bg-white"}`}>
+      {badge && <div className="absolute -top-2.5 -right-2.5 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">{badge}</div>}
+      <div className="flex items-center gap-4">
+        <div className={`p-2 rounded-lg ${selected ? "bg-white" : "bg-gray-50"}`}>{icon}</div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-gray-900">{title}</h3>
+            {selected && <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center ring-4 ring-white"><Check size={12} className="text-white" /></div>}
+          </div>
+          <p className="text-sm text-gray-600 mt-1">{description}</p>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mt-2"><Clock size={12} /><span>{processingTime}</span></div>
+        </div>
+      </div>
+    </div>
+);
+
+
+interface QuickAmountButtonProps { 
+  amount: string; 
+  label?: string; 
+  onClick: () => void;
+  selected: boolean;
+}
+const QuickAmountButton: React.FC<QuickAmountButtonProps> = ({ amount, label, onClick, selected }) => (
+    <button onClick={onClick} className={`px-4 py-3 rounded-lg border text-center transition-all duration-200 ${selected ? "border-blue-500 bg-blue-500 text-white shadow-md" : "border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50"}`}>
+      <div className="font-semibold">{amount} DH</div>
+      {label && <div className="text-xs opacity-80">{label}</div>}
+    </button>
+);
+
+interface CopyableDetailRowProps { label: string; value: string }
+const CopyableDetailRow: React.FC<CopyableDetailRowProps> = ({ label, value }) => {
+  const [copied, copy] = useCopyToClipboard();
   return (
-    <section
-        className='w-full p-6 flex flex-col items-center'
+    <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+      <span className="text-sm font-medium text-gray-600">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-mono text-gray-800">{value}</span>
+        <button onClick={() => copy(value)} className="p-1 rounded-md hover:bg-gray-200 transition-colors" title="Copy to clipboard">
+          {copied === value ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-gray-400" />}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// This is a new wrapper component to handle the PayPal script's loading and error states.
+const PayPalPaymentButtons: React.FC<{ 
+    isAmountValid: boolean; 
+    isProcessing: boolean; 
+    createPayPalOrder: (data: CreateOrderData, actions: CreateOrderActions) => Promise<string>;
+    onApprovePayPalOrder: (data: OnApproveData, actions: OnApproveActions) => Promise<void>;
+}> = ({ isAmountValid, isProcessing, createPayPalOrder, onApprovePayPalOrder }) => {
+    
+    // This hook provides the state of the PayPal script (pending, rejected, resolved)
+    const [{ isPending, isRejected }] = usePayPalScriptReducer();
+
+    // Show a loading spinner while the PayPal script is being downloaded
+    if (isPending) {
+        return <div className="w-full h-24 flex items-center justify-center animate-pulse text-gray-500">Loading PayPal Options...</div>;
+    }
+    
+    // Show an error if the script fails to load (e.g., due to network issues)
+    if (isRejected) {
+        return <div className="w-full text-center text-red-600 bg-red-50 p-3 rounded-lg">Error loading PayPal script. Please refresh the page.</div>;
+    }
+
+    // Once loaded, render the actual buttons
+    return (
+        <PayPalButtons
+            style={{ layout: "vertical", color: "blue", shape: "rect", label: "pay", height: 48 }}
+            disabled={!isAmountValid || isProcessing}
+            createOrder={createPayPalOrder}
+            onApprove={onApprovePayPalOrder}
+        />
+    );
+};
+
+
+// ============================================================================
+// 2. Main Component
+// ============================================================================
+export default function AddBalance() {
+  const { isLoadingUserInfos, userInfos, refetch } = useUserInfos();
+  const [amount, setAmount] = useState("100");
+  const [paymentMethod, setPaymentMethod] = useState<"bank_transfer" | "paypal">("paypal");
+  const [error, setError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  // CRITICAL FIX: Store the client ID in a variable to check it.
+  const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+
+  const minAmount = 50;
+  const quickAmounts = [
+    { amount: "100", label: "Popular" }, { amount: "250" },
+    { amount: "500", label: "Best value" }, { amount: "1000" }
+  ];
+
+  const isAmountValid = Number(amount) >= minAmount;
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    setAmount(value);
+    if (error) setError(null);
+  };
+
+  const handleQuickAmount = (quickAmount: string) => {
+    setAmount(quickAmount);
+    if (error) setError(null);
+  };
+
+  const handleBankTransferDeposit = () => {
+    if (!isAmountValid) return;
+    alert(`Your deposit request for ${amount} DH has been submitted.`);
+  };
+
+  const createPayPalOrder = async (data: CreateOrderData, actions: CreateOrderActions): Promise<string> => {
+    if (!isAmountValid) {
+      setError(`The minimum amount is ${minAmount} DH.`);
+      return Promise.reject(new Error("Invalid amount"));
+    }
+    setError(null);
+
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("You must be logged in to make a payment.");
+
+      const idToken = await user.getIdToken();
+      const response = await fetch("/api/paypal/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
+        body: JSON.stringify({ amount: Number(amount) }),
+      });
+
+      const order = await response.json();
+      if (!response.ok) throw new Error(order.error || "Could not initiate transaction.");
+
+      return order.orderId;
+    } catch (err: unknown) {
+      if (err instanceof Error) setError(err.message);
+      else setError("An unexpected error occurred.");
+      return Promise.reject(err);
+    }
+  };
+
+  const onApprovePayPalOrder = async (data: OnApproveData, actions: OnApproveActions): Promise<void> => {
+    setIsProcessing(true);
+    setError(null);
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Authentication error.");
+
+      const idToken = await user.getIdToken();
+      const response = await fetch("/api/paypal/capture-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
+        body: JSON.stringify({ orderId: data.orderID }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Payment capture failed.");
+
+      alert("✅ Success! Your balance has been updated.");
+      setAmount("");
+      refetch();
+      // Ideally, trigger a refetch of userInfos here: userInfos.refetch();
+    } catch (err: unknown) {
+      if (err instanceof Error) setError(err.message);
+      else setError("An unexpected error occurred.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // CRITICAL FIX: Add a check for the PayPal Client ID. If it's missing, render an error message.
+  if (!paypalClientId) {
+      return (
+          <div className="w-full min-h-screen bg-gray-50 p-8 flex items-center justify-center">
+              <div className="max-w-md bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md">
+                  <p className="font-bold text-lg">Configuration Error</p>
+                  <p className="mt-2">The PayPal Client ID is missing. The application cannot process payments.</p>
+                  <p className="mt-2 text-sm">Please add `NEXT_PUBLIC_PAYPAL_CLIENT_ID` to your `.env.local` file and restart the server.</p>
+              </div>
+          </div>
+      );
+  }
+
+  return (
+    <PayPalScriptProvider
+      options={{
+        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+        "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+        currency: "USD",
+      }}
     >
-        <div
-            className='w-full p-4 rounded-2xl 
-                bg-white border border-gray-200'
-        >
-            {/* --- Title & Description --- */}
-            <span>
-                <h1
-                    className='text-lg font-semibold'
-                    >
-                    My balance
-                </h1>
-                <p
-                    className='text-gray-500'
-                >
-                    View and manage your balance purchases transactions.
-                </p>
-            </span>
-            {/* --- Notice --- */}
-            <div
-                className='w-full min-h-10 border border-orange-200 
-                    px-4 py-2 mt-6 rounded-2xl bg-orange-600/10 
-                    shadow shadow-orange-100 flex items-start gap-2'
-            >
-                <Info size={20} className='text-orange-700' />
-                <span>
-                    <h1 className='flex items-center gap-1 font-semibold'>Dear, <span className='text-orange-800'>{isLoadingUserInfos ? (<span className='flex w-25 h-3 rounded-full bg-orange-700/50 animate-pulse'/>) : userInfos?.fullname}.</span></h1>
-                    <p
-                        className='text-gray-700 px-2 py-1'
-                    >
-                        We’re just getting started, and we know how important online payments are for you. That’s why we’re working hard to bring card payment support very soon.
-                    </p>
-                </span>
-            </div>
-        </div>
-        
-        {/* --- Payment options --- */}
-        <div
-            className='w-full flex items-center justify-center 
-                gap-6 my-6'
-        >
-            {["", "/Paypal.png", "/Stripe.png", "/Cashplus.png"].map((card, idx) => {
-                return (
-                    <div
-                        key={idx}
-                        className={`relative border w-40 h-30 rounded-2xl
-                            ${idx === 1 || idx === 2 || idx === 3 ? "border-gray-100 cursor-not-allowed brightness-0 opacity-20" : "cursor-pointer border-gray-200"}
-                            ${idx === 0 && "outline-2 hover:shadow-lg shadow-blue-700/30 bg-blue-50 outline-blue-500 transition-all duration-200 text-blue-600"}
-                        `}
-                    >
-                        {idx !== 0 && (
-                            <Image
-                                src={card}
-                                alt=''
-                                fill
-                                className={`overflow-hidden rounded-2xl object-contain p-2 ${idx === 3 && "scale-160"}`}
-                                quality={100}
-                                priority
-                            />
-                        )}
-                        {idx === 0 && (
-                            <div
-                                className='relative w-full h-full flex 
-                                    flex-col gap-1 items-center 
-                                    justify-center'
-                            >
-                                <Warehouse size={20} />
-                                <b className=''>
-                                    Banque transfert
-                                </b>
-                                <span
-                                    className='absolute -right-2 -top-2 
-                                        p2 rounded-full bg-white'
-                                >
-                                    <CircleCheckBig size={20} />
-                                </span>
-                            </div>
-                        )}
-                    </div>
-                )
-            })}
-        </div>
-        {/* --- --- */}
-        <div
-            className='min-w-[500px] bg-white rounded-2xl 
-                border border-gray-200 min-h-[400px] 
-                overflow-hidden p-6'
-        >
-            {/* --- MasterCard Card --- */}
-            {/* <div 
-                className='relative w-full h-60'>
-                <Image 
-                    src="/MasterCardPhotopea.png"
-                    alt=''
-                    fill
-                    className='object-cover scale-180'
-                />
-            </div> */}
-            <span
-                className='mb-4'
-            >
-                <h1
-                    className='textlg font-semibold'
-                >
-                    Balance purchase
-                </h1>
-                <p
-                    className='text-sm text-neutral-600'
-                >
-                    Enter the amount of credit you would like to purchase.
-                </p>
-            </span>
-            {/* --- Input Amount --- */}
-            <div
-                className='flex flex-col my-4'
-            >
-                <label 
-                    htmlFor="Amount"
-                    className='text-sm text-gray-600 px-2 font-semibold'
-                >
-                    Amount <span className='text-red-700'>*</span>
-                </label>
-                <input 
-                    type="text"
-                    id='Amount'
-                    autoFocus
-                    name='Amount'
-                    placeholder='minimun amount is 300,00 dh'
-                    className='border border-gray-200 rounded-lg py-2 px-4
-                        outline-blue-600'
-                />
-            </div>
-            {/* --- Bank Transfert Details --- */}
-            <div
-                className='w-full bg-blue-50 rounded-lg border 
-                    border-blue-100 p-4'
-            >
-                <h1
-                    className='text-lg text-gray-500 mb-2'
-                >
-                    Bank Transfert Details
-                </h1>
-                <p
-                    className='text-sm text-gray-600'
-                >
-                    Please transfert the Amount to one of the following bank accounts
-                </p>
-                <div
-                    className='p-4 border border-gray-300 rounded-lg mt-2'
-                >
-                    <span className='flex items-center gap-2'><h1 className='font-semibold text-gray-600'>Name: </h1><span className='pr-1 text-gray-600'>Jamla.ma</span><button className='text-xs cursor-pointer text-blue-600'>Copy</button></span>
-                    <span className='flex items-center gap-2'><h1 className='font-semibold text-gray-600'>Bank: </h1><span className='pr-1 text-gray-600'>CIH Bank</span><button className='text-xs cursor-pointer text-blue-600'>Copy</button></span>
-                    <span className='flex items-center gap-2'><h1 className='font-semibold text-gray-600'>Account Number: </h1><span className='pr-1 text-gray-600'>1234 1234 1234 1234</span><button className='text-xs cursor-pointer text-blue-600'>Copy</button></span>
+      <div className="w-full min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Add Balance</h1>
+            <p className="text-gray-600 mt-1">Top up your account to continue using our services.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between"><div className="space-y-1"><p className="text-sm text-gray-600">Current Balance</p><p className="text-2xl font-bold text-gray-900">{isLoadingUserInfos ? "..." : `${userInfos?.totalbalance || 0} DH`}</p></div><div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"><DollarSign className="w-6 h-6 text-blue-600" /></div></div>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between"><div className="space-y-1"><p className="text-sm text-gray-600">Total Spent</p><p className="text-2xl font-bold text-gray-900">2,450 DH</p></div><div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"><TrendingUp className="w-6 h-6 text-green-600" /></div></div>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between"><div className="space-y-1"><p className="text-sm text-gray-600">Transactions</p><p className="text-2xl font-bold text-gray-900">127</p></div><div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center"><CreditCard className="w-6 h-6 text-purple-600" /></div></div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">1. Select or Enter Amount</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  {quickAmounts.map(({ amount: quickAmount, label }) => <QuickAmountButton key={quickAmount} amount={quickAmount} label={label} onClick={() => handleQuickAmount(quickAmount)} selected={amount === quickAmount} />)}
                 </div>
+                <div>
+                  <label htmlFor="custom-amount" className="block text-sm font-medium text-gray-700 mb-1.5">Custom Amount (DH)</label>
+                  <input id="custom-amount" type="text" value={amount} onChange={handleAmountChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors" placeholder={`Minimum ${minAmount} DH`} />
+                  {amount && !isAmountValid && <p className="text-sm text-red-600 mt-2">Minimum amount is {minAmount} DH.</p>}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">2. Choose Payment Method</h3>
+                <div className="space-y-4">
+                  <PaymentOption title="PayPal / Credit Card" icon={<Image src="/paypal-logo.png" alt="PayPal" width={24} height={24} />} description="Pay instantly and securely via PayPal or Card" badge="Instant" processingTime="Instant processing" selected={paymentMethod === "paypal"} onClick={() => setPaymentMethod("paypal")} />
+                  <PaymentOption title="Bank Transfer" icon={<Warehouse className="w-6 h-6 text-blue-600" />} description="Direct transfer to our bank account" processingTime="1-3 business days" selected={paymentMethod === "bank_transfer"} onClick={() => setPaymentMethod("bank_transfer")} />
+                </div>
+              </div>
             </div>
-            <div
-                className='mt-4 w-full flex justify-end gap-2'
-            >
-                <button
-                    className='primary-button cursor-pointer py-1 px-6 rounded-lg border border-gray-300'
-                >
-                    Deposit
-                </button>
+
+            <div className="space-y-6">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3"><Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" /><div className="flex-1"><h4 className="font-semibold text-green-900">Secure Payment</h4><p className="text-sm text-green-800">All transactions are encrypted and protected by bank-level security.</p></div></div>
+              
+              {error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3"><Info className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" /><p className="text-sm text-red-800">{error}</p></div>}
+
+              <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-8">
+                {paymentMethod === "bank_transfer" && (
+                  <div className="space-y-4"><h3 className="text-lg font-semibold text-gray-900">Bank Transfer Details</h3><div className="space-y-1 bg-gray-50 rounded-lg p-4 border"><CopyableDetailRow label="Bank" value="Attijariwafa Bank" /><CopyableDetailRow label="Account" value="1234567890123456" /><CopyableDetailRow label="SWIFT / BIC" value="BCMAMAMC" /><CopyableDetailRow label="IBAN" value="MA12345678901234567890" /></div><div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3"><Info className="w-5 h-5 text-yellow-700 mt-0.5 flex-shrink-0" /><div className="text-sm text-yellow-800"><p className="font-semibold">Important:</p><p>Please include your account ID in the transfer reference to speed up confirmation.</p></div></div><button onClick={handleBankTransferDeposit} disabled={!isAmountValid} className={`w-full py-3 rounded-lg font-semibold text-base transition-colors ${isAmountValid ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-200 text-gray-500 cursor-not-allowed"}`}>I Have Completed The Transfer</button></div>
+                )}
+
+                {paymentMethod === "paypal" && (
+                  <div className="space-y-4">
+                    <div className="text-center pb-2 border-b">
+                      <div className="flex items-center justify-center gap-2 mb-1"><Zap className="w-5 h-5 text-blue-600" /><h3 className="text-lg font-semibold text-gray-900">Complete Payment</h3></div>
+                      <p className="text-sm text-gray-600">Your balance will be updated instantly.</p>
+                    </div>
+                    {isProcessing 
+                        ? <div className="text-center p-4 animate-pulse">Processing...</div> 
+                        : <PayPalPaymentButtons 
+                            isAmountValid={isAmountValid}
+                            isProcessing={isProcessing}
+                            createPayPalOrder={createPayPalOrder}
+                            onApprovePayPalOrder={onApprovePayPalOrder}
+                          />
+                    }
+                  </div>
+                )}
+              </div>
             </div>
+          </div>
         </div>
-    </section>
-  )
+      </div>
+    </PayPalScriptProvider>
+  );
 }

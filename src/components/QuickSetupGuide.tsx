@@ -3,6 +3,7 @@ import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
+import { BlackButtonStyles, WhiteButtonStyles } from './Header';
 
 export default function QuickSetupGuide() {
 
@@ -122,9 +123,13 @@ export default function QuickSetupGuide() {
                                     min-h-50 w-full flex flex-col justify-end
                                     space-y-2 bg-gradient-to-t from-white via-white'
                             >
-                                <h1>{card.title}</h1>
+                                <h1
+                                    className='font-semibold'
+                                >
+                                    {card.title}
+                                </h1>
                                 <span>
-                                    <p className='text-sm text-gray-500'>
+                                    <p className='text-xs text-gray-500'>
                                         {card.description}
                                     </p>
                                     <Link 
@@ -137,16 +142,19 @@ export default function QuickSetupGuide() {
                                 {card.iscompleted ? (
                                     <button
                                         disabled
-                                        className='checked-button rounded-xl py-1 
+                                        className={`primary-button-b py-1 
                                             flex items-center gap-1 px-4 w-max 
-                                            text-sm cursor-not-allowed'
+                                            text-sm cursor-not-allowed
+                                            text-white`}
                                     >
                                         Completed <CircleCheckBig size={16} />
                                     </button>
                                 ) : (
                                     <Link
                                         href={card.link.href}
-                                        className='primary-button rounded-xl py-1 px-4 w-max text-sm cursor-pointer'
+                                        className={`rounded-lg py-1 px-4 w-max text-sm 
+                                                ${WhiteButtonStyles}
+                                                ring ring-gray-200`}
                                     >
                                         {card.btntitle}
                                     </Link>

@@ -106,7 +106,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                     className={`px-4 py-1 font-semibold text-green-700
                         ${WhiteButtonStyles} flex items-center gap-2 rounded-lg`}
                 >
-                    <DollarSign size={18} className="text-green-600"/> {isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} 0 Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
+                    <DollarSign size={18} className="text-green-600"/> {isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
                 </button>
                 <div 
                     className={`absolute overflow-hidden right-0 
