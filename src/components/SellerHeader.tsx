@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { Session } from "next-auth";
 import { useUserInfos } from "@/context/UserInfosContext";
-import { WhiteButtonStyles } from "./Header";
+import { BlackButtonStyles, WhiteButtonStyles } from "./Header";
 
 
 export function SellerHeader({ session }: { session: Session | null }){
@@ -82,20 +82,19 @@ export function SellerHeader({ session }: { session: Session | null }){
                 z-50 py-1.5 px-6 borderb border-gray-200"
         >
             {/* --- Logo --- */}
-            <Link
-                href="/seller"
-                className="relative flex flex-shrink-0 w-12 h-12 
-                    overflow-hidden"
-            >
-                <Image 
-                    src="/LOGO1.png"
-                    alt="Tijarex-Logo.png"
-                    fill
-                    className="object-contain"
-                    quality={100}
-                    priority
-                />
-            </Link>
+            <Link href="/seller" className="flex items-center gap-2">
+                    <div className="relative w-8 h-8">
+                        <Image 
+                            src="/LOGO1.png"
+                            alt="Tijarex-Logo.png"
+                            fill
+                            className="object-contain"
+                            quality={100}
+                            priority
+                        />
+                    </div>
+                    <span className="text-xl font-semibold text-white">Tijarex</span>
+                </Link>
             <div className="flex items-center gap-4">
                 {/* --- Balance --- */}
             <div
@@ -104,10 +103,16 @@ export function SellerHeader({ session }: { session: Session | null }){
             >
                 <button
                     onClick={() => setIsBalanceOpen(!isBalanceOpen)}
-                    className={`px-4 py-1 font-semibold text-green-700
-                        ${WhiteButtonStyles} flex items-center gap-2 rounded-lg`}
+                    className={`px-2 py-1 font-semibold
+                        flex items-center gap-2 rounded-lg
+                        ring ring-teal-900 bg-gray-900
+                        text-white
+                        cursor-pointer transition-colors
+                        `}
                 >
-                    <DollarSign size={18} className="text-green-600"/> {isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
+                    <DollarSign 
+                        size={18} 
+                        className="text-green-500"/> {isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
                 </button>
                 <div 
                     className={`absolute overflow-hidden right-0 

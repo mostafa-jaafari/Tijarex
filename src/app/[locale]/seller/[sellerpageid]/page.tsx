@@ -4,6 +4,7 @@ import { SingleProductPage } from "./Pages/SingleProductPage";
 import ProfilePage from "./Pages/ProfilePage";
 import AddBalance from "./Pages/AddBalance";
 import MyWithdraw from "./Pages/MyWithdraw";
+import MyStore from "./Pages/MyStore";
 
 interface PageProps {
   params: Promise<{
@@ -33,6 +34,9 @@ export default async function Page({ params, searchParams }: PageProps) {
       break;
     case "my-withdraw":
       TabRender = <MyWithdraw />
+      break;
+    case "my-store":
+      TabRender = <MyStore />;
       break;
     case "products":
       // Check if a product ID exists in searchParams

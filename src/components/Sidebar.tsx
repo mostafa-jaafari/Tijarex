@@ -8,40 +8,45 @@ import {
     HelpCircle, 
     ChevronLeft,
     ChevronRight,
-    User
+    User,
+    Store
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { useTranslations } from "next-intl"
 import { SwitchLanguage } from "./SwitchLanguage";
 import { useUserInfos } from "@/context/UserInfosContext";
 
 export function Sidebar() {
-    const t = useTranslations("sidebar");
     const [isCollapsed, setIsCollapsed] = useState(true);
     const Navigation_Links = [
         {
-            label: t("dashboard"),
+            label: "dashboard",
             icon: Home,
             href: "seller",
             badge: null,
         },
         {
-            label: t("products"),
+            label: "products",
             icon: ShoppingCart,
             href: "products",
             badge: "12",
         },
         {
-            label: t("orders"),
+            label: "orders",
             icon: ShoppingBag,
             href: "orders",
             badge: "3",
         },
         {
-            label: t("returns"),
+            label: "my store",
+            icon: Store,
+            href: "my-store",
+            badge: null,
+        },
+        {
+            label: "returns",
             icon: RotateCcw,
             href: "returns",
             badge: null,
@@ -50,17 +55,17 @@ export function Sidebar() {
 
     const Tools_Links = [
         {
-            label: t("manage_users"),
+            label: "manage_users",
             icon: User,
             href: "profile",
         },
         {
-            label: t("settings"),
+            label: "settings",
             icon: Settings,
             href: "settings",
         },
         {
-            label: t("help"),
+            label: "help",
             icon: HelpCircle,
             href: "help",
         },
@@ -70,15 +75,16 @@ export function Sidebar() {
 
     const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
-        <aside className={`
+        <aside className={`group
             ${isCollapsed ? 'w-16' : 'w-74'} 
             bg-gray-50 h-screen pb-14 transition-all duration-300 
-            flex flex-col sticky top-14 overflow-hidden
+            flex flex-col sticky top-14 overflow-hidden 
+            border-r border-gray-100 shadow
         `}>
             {/* Header */}
             <div 
-                className={`flex items-center justify-between px-4
-                    ${isCollapsed ? "py-4" : "py-2.5"} border-b border-gray-100`}>
+                className={`flex items-center justify-between 
+                    ${isCollapsed ? "p-2" : "py-2.5 px-4"} border-b border-gray-100`}>
                 {!isCollapsed && (
                     <div 
                         className="flex items-center gap-3">
@@ -86,20 +92,48 @@ export function Sidebar() {
                             <span className="text-white font-bold text-sm">J</span>
                         </div>
                         <div>
-                            <h1 className="font-semibold text-gray-900">{t("brand")}</h1>
-                            <p className="text-xs text-gray-500">{t("portal")}</p>
+                            <h1 className="font-semibold text-gray-900">
+                                Tijarex
+                            </h1>
+                            <p className="text-xs text-gray-500">
+                                Seller Portal
+                            </p>
                         </div>
                     </div>
                 )}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                    className="group h-max flex justify-center p-1.5 rounded-lg 
+                        text-gray-600"
                     title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                 >
                     {isCollapsed ? (
-                        <ChevronRight size={16} />
+                        <div 
+                            className="relative 
+                                w-8 h-8 bg-teal-600 rounded-lg 
+                                flex items-center justify-center">
+                            <span className="group-hover:opacity-0 
+                                group-hover:pointer-events-none 
+                                text-white font-bold text-sm">J</span>
+                            <span
+                                className="absolute flex inset-0 items-center 
+                                    justify-center text-white cursor-pointer"
+                            >
+                                <ChevronRight 
+                                    size={20} 
+                                    className="opacity-0 pointer-events-none 
+                                        group-hover:opacity-100 group-hover:pointer-events-auto 
+                                        transition-opacity"
+                                />
+                            </span>
+                        </div>
                     ) : (
-                        <ChevronLeft size={16} />
+                        <span
+                            className="hover:bg-teal-600 hover:text-white 
+                                cursor-pointer p-2 rounded-lg"
+                        >
+                            <ChevronLeft size={16} />
+                        </span>
                     )}
                 </button>
             </div>
@@ -110,10 +144,10 @@ export function Sidebar() {
                 <div className="px-3 mb-6">
                     {!isCollapsed && (
                         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 px-3">
-                            {t("navigation")}
+                            Navigation
                         </h2>
                     )}
-                    <nav className="space-y-1">
+                    <nav className={`${isCollapsed ? 'space-y-2' : 'space-y-1'}`}>
                         {Navigation_Links.map((nav, idx) => {
                             const isActive = params === nav.href;
                             return (
@@ -121,10 +155,11 @@ export function Sidebar() {
                                     href={`/seller/${nav.href !== "seller" ? nav.href : ""}`}
                                     key={idx}
                                     className={`
-                                        group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                                        group flex items-center capitalize px-3 py-2 text-sm 
+                                            font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-teal-50 text-teal-700 border-teal-600 border-l-2` 
-                                            : "text-gray-700 hover:bg-gray-50"
+                                            ? `bg-teal-50 shadow shadow-teal-600/20 text-teal-700 font-semibold border-teal-600 border-l-2` 
+                                            : "text-gray-700 hover:bg-gray-100"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
                                     `}
@@ -154,10 +189,10 @@ export function Sidebar() {
                 <div className="px-3">
                     {!isCollapsed && (
                         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 px-3">
-                            {t("tools")}
+                            Tools
                         </h2>
                     )}
-                    <nav className="space-y-1">
+                    <nav className={`${isCollapsed ? 'space-y-2' : 'space-y-1'}`}>
                         {Tools_Links.map((tool, idx) => {
                             const isActive = params === tool.href;
                             return (
@@ -167,8 +202,8 @@ export function Sidebar() {
                                     className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-teal-50 text-teal-700 border-teal-600 border-l-2` 
-                                            : "text-gray-700 hover:bg-gray-50"
+                                            ? `bg-teal-50 shadow shadow-teal-600/20 text-teal-700 font-semibold border-teal-600 border-l-2` 
+                                            : "text-gray-700 hover:bg-gray-100"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
                                     `}
