@@ -3,6 +3,7 @@ import { SellerStatisticCards } from '@/components/SellerStatisticCards'
 import EarningsChart from '@/components/EarningsChart'
 import React from 'react'
 import QuickSetupGuide from '@/components/QuickSetupGuide'
+import { WelcomeBanner } from '@/components/WelcomeBanner'
 
 
 export const metadata = {
@@ -35,6 +36,7 @@ export default async function page() {
         {/* --- section Content --- */}
         <section className='flex-1 flex flex-col p-4 space-y-4'>
         {/* --- Content Area --- */}
+          <WelcomeBanner />
           <QuickSetupGuide />
           <SellerStatisticCards />
           <EarningsChart />
