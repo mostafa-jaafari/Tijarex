@@ -179,11 +179,13 @@ export function SellerHeader({ session }: { session: Session | null }){
                     <div
                         className="w-full flex justify-center p-4"
                     >
-                        <button
-                            className="py-1 bg-green-600 w-full rounded-lg addbalance-button cursor-pointer"
+                        <Link
+                            href="/seller/add-balance"
+                            className="py-2 bg-green-600 w-full rounded-lg 
+                                cursor-pointer flex justify-center text-white"
                         >
                             Add balance
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

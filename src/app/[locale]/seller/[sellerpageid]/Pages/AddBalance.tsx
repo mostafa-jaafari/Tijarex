@@ -235,13 +235,13 @@ export default function AddBalance() {
 
         // 4. Now that we have the URL, create the deposit record in Firestore
         if(!user.email) return;
-        await setDoc(doc(db, "pending_deposits", user.email), {
+        await setDoc(doc(db, "bank_transferts", user.email), {
             userId: user.uid,
             userEmail: user.email,
             amount: Number(amount),
             currency: "DH",
             proofImageURL: proofImageURL,
-            status: "pending_review",
+            status: "pending",
             submittedAt: serverTimestamp(),
         });
 
