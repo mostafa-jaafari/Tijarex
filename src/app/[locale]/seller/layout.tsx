@@ -11,7 +11,7 @@ export default async function RootLayout({
   const session: Session | null = await getServerSession(authOptions);
   return (
     <main
-      className="w-full bg-[#1A1A1A]"
+      className="w-full bg-gray-50"
     >
       <SellerHeader session={session} />
       <section

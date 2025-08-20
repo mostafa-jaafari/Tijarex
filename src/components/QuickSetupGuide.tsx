@@ -92,12 +92,12 @@ export default function QuickSetupGuide() {
                 className='object-cover scale-x-[-1] opacity-10 group-hover:scale-140 transition-all duration-400'
                 loading='lazy'
             />
-            <div className='w-full flex flex-shrink-0 items-center justify-between gap-2'>
+            <div className='w-full flex flex-shrink-0 items-center flex-wrap justify-between gap-2'>
                 {stepsConfig.map((card, idx) => {
                     return (
                         <div
                             key={idx}
-                            className='group relative bg-white w-1/3 h-70 rounded-2xl 
+                            className='group relative bg-teal-600 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl 
                                 overflow-hidden border border-gray-200 shadow shadow-gray-100'
                         >
                             <Image
@@ -125,7 +125,7 @@ export default function QuickSetupGuide() {
                                     space-y-2 bg-gradient-to-t from-white via-white'
                             >
                                 <h1
-                                    className='font-semibold'
+                                    className='font-semibold text-teal-700'
                                 >
                                     {card.title}
                                 </h1>
@@ -135,7 +135,7 @@ export default function QuickSetupGuide() {
                                     </p>
                                     <Link 
                                         href={card.link.href} 
-                                        className='text-sm text-blue-600'
+                                        className='text-sm text-gray-900 font-semibold'
                                     >
                                         {card.link.label}
                                     </Link>
