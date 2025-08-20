@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useCallback, ReactNode } from "react";
+import React, { useState, useCallback, ReactNode, useRef } from "react";
 import Image from "next/image";
 import { useUserInfos } from "@/context/UserInfosContext"; 
-import { Info, Warehouse, Copy, Check, CreditCard, DollarSign, TrendingUp, Users, Shield, Clock, Zap } from "lucide-react";
-import { auth } from "@/lib/FirebaseClient";
+import { Info, Warehouse, Copy, Check, CreditCard, DollarSign, TrendingUp, Users, Shield, Clock, Zap, Loader2, UploadCloud, X } from "lucide-react";
+import { auth, db } from "@/lib/FirebaseClient";
+import imageCompression from "browser-image-compression";
 
 // PayPal imports
 import { 
@@ -13,6 +14,7 @@ import {
     usePayPalScriptReducer // Hook to check the script loading status
 } from "@paypal/react-paypal-js";
 import type { OnApproveData, OnApproveActions, CreateOrderData, CreateOrderActions } from "@paypal/paypal-js";
+import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 // ============================================================================
 // 1. Helper Hooks & Components (Self-contained within this file)
@@ -122,12 +124,17 @@ const PayPalPaymentButtons: React.FC<{
 // 2. Main Component
 // ============================================================================
 export default function AddBalance() {
-  const { isLoadingUserInfos, userInfos, refetch } = useUserInfos();
+  const { refetch } = useUserInfos();
   const [amount, setAmount] = useState("100");
   const [paymentMethod, setPaymentMethod] = useState<"bank_transfer" | "paypal">("paypal");
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
+    // State for File Upload
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   // CRITICAL FIX: Store the client ID in a variable to check it.
   const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
@@ -145,14 +152,112 @@ export default function AddBalance() {
     if (error) setError(null);
   };
 
+
+    // Handle quick amount selection
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setFileError("Please select an image file.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) { // 10MB
+      setFileError("File is too large. Maximum size is 10MB.");
+      return;
+    }
+    setFileError(null);
+
+    try {
+        const compressedFile = await imageCompression(file, { maxSizeMB: 2, maxWidthOrHeight: 1920, useWebWorker: true });
+        setProofFile(compressedFile);
+    } catch (error) {
+        console.error("Image compression failed:", error);
+        setProofFile(file);
+    }
+  };
+
   const handleQuickAmount = (quickAmount: string) => {
     setAmount(quickAmount);
     if (error) setError(null);
   };
 
-  const handleBankTransferDeposit = () => {
-    if (!isAmountValid) return;
-    alert(`Your deposit request for ${amount} DH has been submitted.`);
+// --- REWRITTEN FUNCTION for Bank Transfer Deposit with Cloudinary ---
+  const handleBankTransferDeposit = async () => {
+    if (!isAmountValid || !proofFile) {
+        setError("Please enter a valid amount and upload a proof of payment.");
+        return;
+    }
+    
+    const user = auth.currentUser;
+    if (!user) {
+        setError("You must be logged in to submit a deposit.");
+        return;
+    }
+
+    setError(null);
+    setIsUploading(true);
+
+    try {
+        // --- Cloudinary Signed Upload Flow ---
+
+        // 1. Get a signature from our server
+        const timestamp = Math.round(new Date().getTime() / 1000);
+        const publicId = `proofs/${user.uid}/${Date.now()}`;
+        
+        const signatureResponse = await fetch('/api/cloudinary/sign-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paramsToSign: { timestamp, public_id: publicId } }),
+        });
+        const { signature } = await signatureResponse.json();
+
+        if (!signature) throw new Error("Could not get upload signature.");
+
+        // 2. Prepare FormData to upload directly to Cloudinary
+        const formData = new FormData();
+        formData.append("file", proofFile);
+        formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
+        formData.append("timestamp", timestamp.toString());
+        formData.append("public_id", publicId);
+        formData.append("signature", signature);
+
+        // 3. Make the POST request to Cloudinary
+        const uploadResponse = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            { method: "POST", body: formData }
+        );
+        
+        const cloudinaryData = await uploadResponse.json();
+        if (!uploadResponse.ok) throw new Error(cloudinaryData.error?.message || "Cloudinary upload failed.");
+        
+        const proofImageURL = cloudinaryData.secure_url;
+
+        // 4. Now that we have the URL, create the deposit record in Firestore
+        if(!user.email) return;
+        await setDoc(doc(db, "pending_deposits", user.email), {
+            userId: user.uid,
+            userEmail: user.email,
+            amount: Number(amount),
+            currency: "DH",
+            proofImageURL: proofImageURL,
+            status: "pending_review",
+            submittedAt: serverTimestamp(),
+        });
+
+
+        // 5. Success!
+        alert("✅ Success! Your deposit request has been submitted and is now under review.");
+        setAmount("100");
+        setProofFile(null);
+        
+    } catch (err: unknown) {
+        console.error("Deposit submission error:", err);
+        if (err instanceof Error) setError(err.message);
+        else setError("An unexpected error occurred during submission.");
+    } finally {
+        setIsUploading(false);
+    }
   };
 
   const createPayPalOrder = async (data: CreateOrderData, actions: CreateOrderActions): Promise<string> => {
@@ -241,12 +346,6 @@ export default function AddBalance() {
             <p className="text-gray-600 mt-1">Top up your account to continue using our services.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between"><div className="space-y-1"><p className="text-sm text-gray-600">Current Balance</p><p className="text-2xl font-bold text-gray-900">{isLoadingUserInfos ? "..." : `${userInfos?.totalbalance || 0} DH`}</p></div><div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"><DollarSign className="w-6 h-6 text-blue-600" /></div></div>
-            <div className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between"><div className="space-y-1"><p className="text-sm text-gray-600">Total Spent</p><p className="text-2xl font-bold text-gray-900">2,450 DH</p></div><div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"><TrendingUp className="w-6 h-6 text-green-600" /></div></div>
-            <div className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between"><div className="space-y-1"><p className="text-sm text-gray-600">Transactions</p><p className="text-2xl font-bold text-gray-900">127</p></div><div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center"><CreditCard className="w-6 h-6 text-purple-600" /></div></div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -265,7 +364,7 @@ export default function AddBalance() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">2. Choose Payment Method</h3>
                 <div className="space-y-4">
                   <PaymentOption title="PayPal / Credit Card" icon={<Image src="/paypal-logo.png" alt="PayPal" width={24} height={24} />} description="Pay instantly and securely via PayPal or Card" badge="Instant" processingTime="Instant processing" selected={paymentMethod === "paypal"} onClick={() => setPaymentMethod("paypal")} />
-                  <PaymentOption title="Bank Transfer" icon={<Warehouse className="w-6 h-6 text-blue-600" />} description="Direct transfer to our bank account" processingTime="1-3 business days" selected={paymentMethod === "bank_transfer"} onClick={() => setPaymentMethod("bank_transfer")} />
+                  <PaymentOption title="Bank Transfer" icon={<Warehouse className="w-6 h-6 text-blue-600" />} description="Direct transfer to our bank account" processingTime="2h-4h hours" selected={paymentMethod === "bank_transfer"} onClick={() => setPaymentMethod("bank_transfer")} />
                 </div>
               </div>
             </div>
@@ -277,7 +376,62 @@ export default function AddBalance() {
 
               <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-8">
                 {paymentMethod === "bank_transfer" && (
-                  <div className="space-y-4"><h3 className="text-lg font-semibold text-gray-900">Bank Transfer Details</h3><div className="space-y-1 bg-gray-50 rounded-lg p-4 border"><CopyableDetailRow label="Bank" value="Attijariwafa Bank" /><CopyableDetailRow label="Account" value="1234567890123456" /><CopyableDetailRow label="SWIFT / BIC" value="BCMAMAMC" /><CopyableDetailRow label="IBAN" value="MA12345678901234567890" /></div><div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3"><Info className="w-5 h-5 text-yellow-700 mt-0.5 flex-shrink-0" /><div className="text-sm text-yellow-800"><p className="font-semibold">Important:</p><p>Please include your account ID in the transfer reference to speed up confirmation.</p></div></div><button onClick={handleBankTransferDeposit} disabled={!isAmountValid} className={`w-full py-3 rounded-lg font-semibold text-base transition-colors ${isAmountValid ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-200 text-gray-500 cursor-not-allowed"}`}>I Have Completed The Transfer</button></div>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                        Bank Transfer Details
+                    </h3>
+                    <div className="space-y-1 bg-gray-50 rounded-lg p-4 border border-gray-400">
+                        <CopyableDetailRow label="Bank" value="CIH Bank" />
+                        <CopyableDetailRow label="Account" value="4622670211007900" />
+                        <CopyableDetailRow label="SWIFT / BIC" value="CIHMMAMC" />
+                        <CopyableDetailRow label="IBAN" value="MA64230780462267021100790089" />
+                    </div>
+                    
+                    <div className="pt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Upload Proof of Payment <span className="text-red-500">*</span>
+              </label>
+
+              {proofFile ? (
+                  <div className="flex items-center justify-between p-2 pl-4 bg-green-50 border border-green-200 rounded-lg">
+                      <span className="text-sm font-medium text-green-800 truncate">{proofFile.name}</span>
+                      <button onClick={() => setProofFile(null)} className="p-1 text-gray-500 hover:text-red-600 rounded-full hover:bg-red-100">
+                          <X size={16} />
+                      </button>
+                  </div>
+              ) : (
+                  <button 
+                    onClick={() => fileInputRef.current?.click()} 
+                    className="w-full flex flex-col items-center justify-center 
+                        p-4 border-2 border-dashed border-gray-300 rounded-lg 
+                        hover:bg-gray-50 transition-colors cursor-pointer">
+                      <UploadCloud size={24} className="text-gray-400 mb-2" />
+                      <span className="text-sm font-semibold text-blue-600">Click to upload</span>
+                      <span className="text-xs text-gray-500 mt-1">PNG, JPG or GIF (Max 10MB)</span>
+                  </button>
+              )}
+
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/png, image/jpeg, image/gif" className="hidden" />
+
+              {fileError && <p className="text-sm text-red-600 mt-2">{fileError}</p>}
+          </div>
+
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3">
+              <Info className="w-5 h-5 text-yellow-700 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-yellow-800">
+                  <p className="font-semibold">Important:</p>
+                  <p>Deposits are reviewed manually. Your balance will be updated within 24 hours.</p>
+              </div>
+          </div>
+          
+          <button
+              onClick={handleBankTransferDeposit}
+              disabled={!isAmountValid || !proofFile || isUploading}
+              className={`w-full flex items-center justify-center py-3 rounded-lg font-semibold text-base transition-colors ${ isAmountValid && proofFile && !isUploading ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-200 text-gray-500 cursor-not-allowed"}`}
+          >
+              {isUploading ? ( <> <Loader2 size={20} className="animate-spin mr-2" /> Submitting... </> ) : ( "Submit Deposit Request" )}
+          </button>
+                    </div>
                 )}
 
                 {paymentMethod === "paypal" && (
