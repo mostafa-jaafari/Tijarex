@@ -31,7 +31,7 @@ export function SellerHeader({ session }: { session: Session | null }){
             iconstyles: "text-green-600"
         },{
             label: "My withdrawls",
-            href: "/seller",
+            href: "/seller/my-withdraw",
             icon: Warehouse,
             iconstyles: "text-yellow-500"
         },
@@ -155,12 +155,23 @@ export function SellerHeader({ session }: { session: Session | null }){
                             return (
                                 <Link 
                                     key={idx}
+                                    onClick={() => setIsBalanceOpen(false)}
                                     href={item.href}
                                     className="group flex items-center gap-2 
                                         hover:bg-green-100 hover:text-green-600 p-2 
                                         rounded-lg text-gray-600"
                                 >
-                                    <span className={`bg-white shadow p-2 rounded-lg group-hover:text-green-600 ${item.iconstyles}`}><item.icon size={20} /></span> <h1>{item.label}</h1>
+                                    <span 
+                                        className={`bg-white shadow p-2 rounded-lg 
+                                        group-hover:text-green-600 
+                                        ${item.iconstyles}`}>
+                                            <item.icon 
+                                        size={20}
+                                    />
+                                    </span>
+                                    <h1>
+                                        {item.label}
+                                    </h1>
                                 </Link>
                             )
                         })}

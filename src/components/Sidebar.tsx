@@ -82,7 +82,7 @@ export function Sidebar() {
                 {!isCollapsed && (
                     <div 
                         className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
                             <span className="text-white font-bold text-sm">J</span>
                         </div>
                         <div>
@@ -123,7 +123,7 @@ export function Sidebar() {
                                     className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-blue-50 text-blue-700 border-blue-600 border-l-2` 
+                                            ? `bg-teal-50 text-teal-700 border-teal-600 border-l-2` 
                                             : "text-gray-700 hover:bg-gray-50"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
@@ -132,7 +132,7 @@ export function Sidebar() {
                                 >
                                     <nav.icon 
                                         size={18} 
-                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-blue-600' : 'text-gray-500'}`} 
+                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-teal-600' : 'text-gray-500'}`} 
                                     />
                                     {!isCollapsed && (
                                         <div className="flex-1 flex items-center justify-between">
@@ -167,7 +167,7 @@ export function Sidebar() {
                                     className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-blue-50 text-blue-700 border-blue-600 border-l-2` 
+                                            ? `bg-teal-50 text-teal-700 border-teal-600 border-l-2` 
                                             : "text-gray-700 hover:bg-gray-50"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
@@ -176,7 +176,7 @@ export function Sidebar() {
                                 >
                                     <tool.icon 
                                         size={18} 
-                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-blue-600' : 'text-gray-500'}`} 
+                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-teal-600' : 'text-gray-500'}`} 
                                     />
                                     {!isCollapsed && (
                                         <span>{tool.label}</span>
@@ -197,9 +197,9 @@ export function Sidebar() {
                         >
                             <SwitchLanguage
                                 CLASSNAME="text-sm w-full flex items-center 
-                                    justify-between bg-blue-100 px-2 py-1 
-                                    rounded-full border border-blue-300 
-                                    text-blue-600"
+                                    justify-between bg-teal-100 px-2 py-1 
+                                    rounded-full border border-teal-300 
+                                    text-teal-600"
                             />
                         </div>
                         <div

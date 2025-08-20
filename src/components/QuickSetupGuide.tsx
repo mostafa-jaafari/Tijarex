@@ -97,7 +97,7 @@ export default function QuickSetupGuide() {
                     return (
                         <div
                             key={idx}
-                            className='group relative bg-teal-600 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl 
+                            className='group relative bg-teal-50 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl 
                                 overflow-hidden border border-gray-200 shadow shadow-gray-100'
                         >
                             <Image
@@ -125,7 +125,7 @@ export default function QuickSetupGuide() {
                                     space-y-2 bg-gradient-to-t from-white via-white'
                             >
                                 <h1
-                                    className='font-semibold text-teal-700'
+                                    className='font-semibold text-teal-800'
                                 >
                                     {card.title}
                                 </h1>
@@ -133,12 +133,12 @@ export default function QuickSetupGuide() {
                                     <p className='text-xs text-gray-500'>
                                         {card.description}
                                     </p>
-                                    <Link 
+                                    {/* <Link 
                                         href={card.link.href} 
-                                        className='text-sm text-gray-900 font-semibold'
+                                        className='text-sm text-blue-600'
                                     >
                                         {card.link.label}
-                                    </Link>
+                                    </Link> */}
                                 </span>
                                 {isLoadingUserInfos ? (
                                     <div className='w-24 h-6 bg-gray-300 rounded-lg shadow-sm animate-pulse'/>
@@ -174,11 +174,11 @@ export default function QuickSetupGuide() {
                     className='w-full'
                 >
                     <div
-                        className='rounded-full border border-blue-200 bg-blue-100'
+                        className='rounded-full border border-teal-200 bg-teal-100'
                     >
                         <span 
                             className="relative flex h-2 rounded-full 
-                            bg-blue-600 transition-all 
+                            bg-teal-600 transition-all 
                             duration-1000 ease-out 
                             after:absolute 
                             after:right-0 
@@ -187,7 +187,7 @@ export default function QuickSetupGuide() {
                             after:shadow 
                             after:h-4 
                             after:rounded-full
-                            after:bg-blue-600"
+                            after:bg-teal-600"
                             style={{ width: animatedWidth }}
                         ></span> 
                     </div>
