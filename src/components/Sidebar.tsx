@@ -9,7 +9,8 @@ import {
     ChevronLeft,
     ChevronRight,
     User,
-    Store
+    Store,
+    UploadCloud
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,6 +20,7 @@ import { SwitchLanguage } from "./SwitchLanguage";
 import { useUserInfos } from "@/context/UserInfosContext";
 
 export function Sidebar() {
+    const { isLoadingUserInfos, userInfos } = useUserInfos();
     const [isCollapsed, setIsCollapsed] = useState(true);
     const Navigation_Links = [
         {
@@ -51,6 +53,12 @@ export function Sidebar() {
             href: "returns",
             badge: null,
         },
+        ...(userInfos?.UserRole !== "affiliate" ? [{
+            label: "upload products",
+            icon: UploadCloud,
+            href: "upload-products",
+            badge: null,
+        }] : []),
     ];
 
     const Tools_Links = [
@@ -73,7 +81,6 @@ export function Sidebar() {
 
     const params = useParams().sellerpageid || "seller";
 
-    const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
         <aside className={`group
             ${isCollapsed ? 'w-16' : 'w-74'} 

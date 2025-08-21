@@ -5,6 +5,7 @@ import ProfilePage from "./Pages/ProfilePage";
 import AddBalance from "./Pages/AddBalance";
 import MyWithdraw from "./Pages/MyWithdraw";
 import MyStore from "./Pages/MyStore";
+import UploadProducts from "./Pages/UploadProducts";
 
 interface PageProps {
   params: Promise<{
@@ -37,6 +38,9 @@ export default async function Page({ params, searchParams }: PageProps) {
       break;
     case "my-store":
       TabRender = <MyStore />;
+      break;
+    case "upload-products":
+      TabRender = <UploadProducts />;
       break;
     case "products":
       // Check if a product ID exists in searchParams
