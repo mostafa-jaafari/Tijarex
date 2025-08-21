@@ -6,10 +6,6 @@ import { useUserInfos } from "@/context/UserInfosContext";
 
 export function SellerStatisticCards() {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
-    // totalcommissions: 0,
-    // totalclicks: 0,
-    // conversionrate: 0,
-    // totalrevenue: 0,
     const Affiliate_Cards = [
         {
             count: userInfos?.totalcommissions || 0,
@@ -101,9 +97,13 @@ export function SellerStatisticCards() {
                             rounded-2xl px-6 py-4 transition-all duration-200"
                     >
                         {/* Icon and Value Row */}
-                        <p className="text-sm font-medium text-gray-900">
-                            {card.title}
-                        </p>
+                        {isLoadingUserInfos ? (
+                            <span className="flex w-30 h-4 rounded-full bg-gray-300 animate-pulse"/>
+                        ) : (
+                            <p className="text-sm font-medium text-gray-900">
+                                {card.title}
+                            </p>
+                        )}
                         <div
                             className="flex items-center justify-between"
                         >
