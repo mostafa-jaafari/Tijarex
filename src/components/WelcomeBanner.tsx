@@ -52,7 +52,7 @@ export function WelcomeBanner() {
                 </h2>
                 <p className="mt-1 flex items-center gap-1 text-gray-600">
                   It&apos;s great to see you again. As one of our 
-                  <span className='text-teal-700'>{UserRole}</span>, here is what&apos;s new on your dashboard.
+                  {" " + UserRole.charAt(0).toUpperCase() + UserRole.slice(1)}, here is what&apos;s new on your dashboard.
                 </p>
             </div>
             

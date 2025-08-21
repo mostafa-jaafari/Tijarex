@@ -79,6 +79,7 @@ export function ProgressBarClient() {
             isNewUser: true,
             createdAt: new Date(),
             city: formInputs.city,
+            totalbalance: 0,
             ...(selectedRole === "seller"
               ? {
                   totalsales: 0,
