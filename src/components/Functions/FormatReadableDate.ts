@@ -1,3 +1,6 @@
+"use client";
+
+
 export function formatFirestoreDate(timestamp: { seconds: number; nanoseconds: number }): string {
   const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
 

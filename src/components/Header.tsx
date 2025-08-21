@@ -9,7 +9,7 @@ import { DropDownShoppingCart } from "./DropDownShoppingCart";
 export const WhiteButtonStyles = "border-b border-gray-400 hover:bg-gray-50 bg-white cursor-pointer text-gray-800";
 export const BlackButtonStyles = "text-white bg-gradient-to-b from-teal-600 to-teal-700 cursor-pointer hover:from-teal-600 hover:to-teal-600 border-x border-t border-teal-500 ring ring-teal-700 hover:ring-teal-600";
 
-export async function Header() {
+export function Header() {
   return (
       <section
         className="sticky top-0 z-50 bg-white backdrop-blur-sm

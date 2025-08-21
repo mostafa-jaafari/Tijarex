@@ -49,7 +49,7 @@ export const metadata: Metadata = {
 };
 export default function Home() {
   return (
-    <main className="w-full bg-red-500">
+    <main className="w-full">
       <Header />
       <HeroSection />
       <section

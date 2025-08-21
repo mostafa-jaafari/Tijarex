@@ -37,15 +37,20 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{locale: string}>;
 }) {
-  const {locale} = await params;
+  const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
   const messages = await getMessages();
   return (
-    <html lang={locale} className="scroll-smooth">
+    <html 
+      lang={locale} 
+      className="scroll-smooth"
+      suppressHydrationWarning={true}
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      style={{ fontFamily: inter.style.fontFamily }}>
       <body
-        className={`w-full overflow-x-hidden 
+        className={`w-full overflow-x-hidden
           ${inter.className} antialiased`}
           >
           <QuickViewProductContextProvider>

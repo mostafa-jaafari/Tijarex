@@ -72,7 +72,9 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
         refetch: fetchUserInfos // Expose the memoized fetch function as 'refetch'.
     };
 
-    if(!session) return;
+    if (!session && status !== "loading") {
+        return <>{children}</>;
+    }
     return (
         <UserInfosContext.Provider value={contextValue}>
             {children}
