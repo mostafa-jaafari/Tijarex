@@ -1,29 +1,42 @@
 "use client";
 
-import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign } from "lucide-react";
+import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign, Box } from "lucide-react";
 import CountUp from "./Animations/CountUp";
 import { useUserInfos } from "@/context/UserInfosContext";
 
 export function SellerStatisticCards() {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
-    const CardsDetails = [
+    // totalcommissions: 0,
+    // totalclicks: 0,
+    // conversionrate: 0,
+    // totalrevenue: 0,
+    const Affiliate_Cards = [
         {
-            count: userInfos?.totalcustomers || 0,
+            count: userInfos?.totalcommissions || 0,
             percent: 15,
             isPositive: true,
-            title: "Total Customers",
-            subtitle: "Active Customers",
-            icon: Users,
+            title: "Total Commissions",
+            subtitle: "Total Commissions",
+            icon: DollarSign,
             color: "blue"
         },
         {
-            count: userInfos?.totalorders || 0,
+            count: userInfos?.totalclicks || 0,
             percent: 23,
             isPositive: true,
-            title: "Total Orders",
-            subtitle: "Total Orders",
-            icon: ShoppingBag,
+            title: "Total Clicks",
+            subtitle: "Total Clicks",
+            icon: Users,
             color: "green"
+        },
+        {
+            count: userInfos?.conversionrate || 0,
+            percent: 8,
+            isPositive: false,
+            title: "Conversion Rate",
+            subtitle: "Conversion Rate",
+            icon: TrendingUp,
+            color: "red"
         },
         {
             count: userInfos?.totalrevenue || 0,
@@ -31,10 +44,43 @@ export function SellerStatisticCards() {
             isPositive: false,
             title: "Total Revenue",
             subtitle: "Total Revenue",
-            icon: DollarSign,
+            icon: ShoppingBag,
             color: "red"
         },
     ];
+
+
+    const Seller_Cards = [
+        {
+            count: userInfos?.totalsales || 0,
+            percent: 15,
+            isPositive: true,
+            title: "Total Sales",
+            subtitle: "Total sales",
+            icon: Box,
+            color: "blue"
+        },
+        {
+            count: userInfos?.netearnings || 0,
+            percent: 23,
+            isPositive: true,
+            title: "Net Earnings",
+            subtitle: "Net Earnings",
+            icon: DollarSign,
+            color: "green"
+        },
+        {
+            count: userInfos?.activeproducts || 0,
+            percent: 8,
+            isPositive: false,
+            title: "Active Products",
+            subtitle: "Active Products",
+            icon: Box,
+            color: "teal-600"
+        },
+    ];
+
+    const Statistics_Cards = userInfos?.UserRole === "seller" ? Seller_Cards : userInfos?.UserRole === "affiliate" ? Affiliate_Cards : [];
 
     const getIconColor = (color: string) => {
         switch (color) {
@@ -47,7 +93,7 @@ export function SellerStatisticCards() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {CardsDetails.map((card, idx) => {
+            {Statistics_Cards.map((card, idx) => {
                 return (
                     <div
                         key={idx}

@@ -79,10 +79,20 @@ export function ProgressBarClient() {
             isNewUser: true,
             createdAt: new Date(),
             city: formInputs.city,
-            totalbalance: 0,
-            totalcustomers: 0,
-            totalorders: 0,
-            totalrevenue: 0,
+            ...(selectedRole === "seller"
+              ? {
+                  totalsales: 0,
+                  netearnings: 0,
+                  activeproducts: 0,
+                }
+              : selectedRole === "affiliate"
+              ? {
+                  totalcommissions: 0,
+                  totalclicks: 0,
+                  conversionrate: 0,
+                  totalrevenue: 0,
+                }
+              : {}),
         });
         toast.success("Account created successfully, please check your email!");
         setCurrentStep(4); // Show the success animation
