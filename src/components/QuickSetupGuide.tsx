@@ -142,7 +142,12 @@ export default function QuickSetupGuide() {
                             ) : card.iscompleted ? (
                                 <button
                                     disabled
-                                    className={`primary-button-b py-1 flex items-center gap-1 px-4 w-max text-sm cursor-not-allowed text-white`}
+                                    className={`b py-1 flex items-center gap-1 px-4 
+                                        w-max text-sm cursor-not-allowed
+                                        bg-gradient-to-r from-teal-500 to-teal-600
+                                        text-white rounded-lg shadow-sm
+                                        hover:from-teal-600 hover:to-teal-700
+                                        transition-colors duration-200 ease-in-out`}
                                 >
                                     Completed <CircleCheckBig size={16} />
                                 </button>
