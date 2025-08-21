@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { applyActionCode } from "firebase/auth";
+import { applyActionCode, checkActionCode } from "firebase/auth";
 import { auth } from "@/lib/FirebaseClient";
 import { motion } from "framer-motion";
 import { Loader2, MailCheck, XCircle } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 // Define the possible states for clarity and type safety
 type VerificationStatus = 'verifying' | 'success' | 'error';
@@ -25,28 +26,55 @@ export function VerifyEmailPage() {
 
     const verifyEmail = async () => {
       try {
-        // Try to apply the action code directly
-        await applyActionCode(auth, oobCode);
-        setStatus('success');
+        // First check if the action code is valid - this will fail if user is deleted
+        const actionCodeInfo = await checkActionCode(auth, oobCode);
+        const userEmail = actionCodeInfo.data.email;
+        
+        toast.success(`Action code valid for email:  ${userEmail}`);
+        
+        try {
+          // Try to apply the verification code
+          await applyActionCode(auth, oobCode);
+          // If we reach here, verification was successful
+          toast.success("Email verification completed successfully");
+          setStatus('success');
+          
+        } catch (applyError) {
+          toast.error(`Apply code error: ${applyError}`);
+          
+          // Only treat as success if the error is specifically about already being used
+          // and the checkActionCode above succeeded (meaning user still exists)
+          if ((applyError as { code: string; })?.code === 'auth/invalid-action-code') {
+            // This usually means the code was already used
+            // Since checkActionCode succeeded, the user exists and was already verified
+            toast.error(`Code already used for ${userEmail} but user exists - treating as success`);
+            setStatus('success');
+          } else {
+            // Any other error during apply (expired, etc.)
+            toast.error(`Apply failed for ${userEmail}: ${applyError}`)
+            setStatus('error');
+            return;
+          }
+        }
+        
+        // Redirect after success
         setTimeout(() => {
           router.push("/auth/login");
         }, 3000);
         
-      } catch (error) {
-        console.error("Email Verification Error:", error);
+      } catch (checkError) {
+        toast.error(`Check action code error:  ${checkError}`);
         
-        // If the code is invalid/expired but was previously used successfully
-        // Firebase sometimes throws this error even for already-verified emails
-        if ((error as {code:string;})?.code === 'auth/invalid-action-code' || 
-            (error as {code:string;})?.code === 'auth/expired-action-code') {
-          console.log("Code may have been already used - treating as success");
-          setStatus('success');
-          setTimeout(() => {
-            router.push("/auth/login");
-          }, 3000);
-        } else {
-          setStatus('error');
+        // checkActionCode failed - this means either:
+        // 1. Code is invalid/expired
+        // 2. User account was deleted (Firebase invalidates codes for deleted users)
+        // 3. Other error
+        if ((checkError as { code: string; })?.code === 'auth/invalid-action-code') {
+          toast.success("Action code invalid - user may have been deleted or code is invalid");
+        } else if ((checkError as { code: string; })?.code === 'auth/expired-action-code') {
+          toast.success("Action code expired");
         }
+        setStatus('error');
       }
     };
 
@@ -68,7 +96,7 @@ export function VerifyEmailPage() {
     error: {
       icon: <XCircle size={48} className="text-red-500" />,
       title: "Verification Failed",
-      description: "This link may be invalid or expired. Please try logging in again to resend the verification email.",
+      description: "This link may be invalid, expired, or the account no longer exists. Please create a new account or contact support.",
     },
   };
 

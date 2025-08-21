@@ -1,36 +1,36 @@
 "use client";
 
 import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign } from "lucide-react";
-import { useTranslations } from "next-intl";
 import CountUp from "./Animations/CountUp";
+import { useUserInfos } from "@/context/UserInfosContext";
 
 export function SellerStatisticCards() {
-    const t = useTranslations("cards");
+    const { isLoadingUserInfos, userInfos } = useUserInfos();
     const CardsDetails = [
         {
-            count: 5690,
+            count: userInfos?.totalcustomers || 0,
             percent: 15,
             isPositive: true,
-            title: t("customers.title"),
-            subtitle: t("customers.subtitle"),
+            title: "Total Customers",
+            subtitle: "Active Customers",
             icon: Users,
             color: "blue"
         },
         {
-            count: 589,
+            count: userInfos?.totalorders || 0,
             percent: 23,
             isPositive: true,
-            title: t("orders.title"),
-            subtitle: t("orders.title"),
+            title: "Total Orders",
+            subtitle: "Total Orders",
             icon: ShoppingBag,
             color: "green"
         },
         {
-            count: 47590,
+            count: userInfos?.totalrevenue || 0,
             percent: 8,
             isPositive: false,
-            title: t("revenue.title"),
-            subtitle: t("revenue.title"),
+            title: "Total Revenue",
+            subtitle: "Total Revenue",
             icon: DollarSign,
             color: "red"
         },

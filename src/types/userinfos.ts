@@ -10,4 +10,7 @@ export type UserInfosType = {
     profileimage: string;
     UserRole: "seller" | "affiliate" | "admin";
     totalbalance: number;
+    totalcustomers: number;
+    totalorders: number;
+    totalrevenue: number;
 };
