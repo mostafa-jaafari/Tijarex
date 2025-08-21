@@ -40,8 +40,14 @@ export const metadata: Metadata = {
 export default async function page() {
     return (
     <main
-        className='w-full h-screen flex px-6
-            flex-col items-center justify-center'
+        className='w-full h-screen flex p-3 items-start justify-end'
+            style={{
+                backgroundImage: 'url(/Auth-Background.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: '#f0f4f8',
+            }}
     >
         <LoginForm />
     </main>

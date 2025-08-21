@@ -65,7 +65,7 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
         }
     }, [status, fetchUserInfos]);
 
-    
+
     // The value provided by the context now includes the 'refetch' function.
     const contextValue = { 
         userInfos, 

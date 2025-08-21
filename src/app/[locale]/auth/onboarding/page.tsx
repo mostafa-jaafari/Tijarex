@@ -7,14 +7,9 @@ export default function OnboardingPage() {
   return (
     <main 
         className="flex flex-col items-center justify-center 
-            min-h-screen bg-white font-sans p-4">
-      <div 
-        className="w-full max-w-5xl bg-white
-          border border-gray-200
-          rounded-xl shadow-lg space-y-8">
+            h-screen bg-gradient-to-t from-teal-900 to-black font-sans p-4">
         {/* Client component with interactivity */}
         <ProgressBarClient />
-      </div>
     </main>
   );
 }
