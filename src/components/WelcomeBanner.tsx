@@ -51,7 +51,8 @@ export function WelcomeBanner() {
                     Welcome back, {isLoadingUserInfos ? (<span className='flex w-30 h-5 rounded-lg bg-gray-200 animate-pulse'/>) : (<h1 className='font-bold text-teal-700'>{userInfos?.fullname || "seller"}</h1>)}!
                 </h2>
                 <p className="mt-1 flex items-center gap-1 text-gray-600">
-                    It&apos;s great to see you again. As one of our <p className='text-teal-700'>{UserRole}</p>, here is what&apos;s new on your dashboard.
+                  It&apos;s great to see you again. As one of our 
+                  <span className='text-teal-700'>{UserRole}</span>, here is what&apos;s new on your dashboard.
                 </p>
             </div>
             

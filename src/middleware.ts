@@ -10,9 +10,10 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
   // Extract locale from pathname (assuming format like /en/auth/login)
-  const pathnameIsMissingLocale = routing.locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
-  );
+  const pathnameIsMissingLocale = !routing.locales.some(
+  (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+);
+
 
   // Handle locale redirection first
   if (pathnameIsMissingLocale) {
