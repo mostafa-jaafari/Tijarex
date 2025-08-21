@@ -1,99 +1,135 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "@/lib/FirebaseClient";
-import { sendEmailVerification } from "firebase/auth";
+import { sendEmailVerification, User } from "firebase/auth";
 import { toast } from "sonner";
-import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { MailCheck, Loader2 } from "lucide-react";
 
-export function ConfirmPage() {
-  const [resetCount, setResetCount] = useState(6);
-  const [sending, setSending] = useState(false);
+// --- Main Confirmation Page Component ---
+export function ConfirmEmailPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [isSending, setIsSending] = useState<boolean>(false);
+  const [resendCooldown, setResendCooldown] = useState<number>(5); // Initial cooldown
+  const [resendAttempts, setResendAttempts] = useState<number>(0);
 
+  // Set the current user and start the initial cooldown timer on mount
   useEffect(() => {
-    if (resetCount <= 0) return;
-
-    const timer = setTimeout(() => {
-      setResetCount((prev) => prev - 1);
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUser(currentUser);
+    }
+    // Start the initial countdown
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [resetCount]);
-
+    return () => clearInterval(timer);
+  }, []);
+  
   const handleResendVerification = async () => {
-    const user = auth.currentUser;
+    if (!user || isSending || resendCooldown > 0) {
+      return;
+    }
 
-    if (user) {
-      try {
-        setSending(true);
-        await sendEmailVerification(user);
-        toast.success("Verification email resent.");
-        setResetCount(60); // reset the timer
-      } catch (error) {
-        toast.info("The verification email was already sent.");
-        console.log(error);
-      } finally {
-        setSending(false);
+    setIsSending(true);
+    try {
+      await sendEmailVerification(user);
+      toast.success("Verification email sent!", {
+        description: `Please check your inbox at ${user.email}`,
+      });
+
+      // Increment attempts and calculate the next, longer cooldown period
+      const newAttempts = resendAttempts + 1;
+      setResendAttempts(newAttempts);
+      setResendCooldown(30 * (newAttempts + 1)); // e.g., 30s -> 60s -> 90s
+
+    } catch (error: unknown) {
+      // Handle specific Firebase errors gracefully
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        typeof (error as { code?: unknown }).code === "string"
+      ) {
+        if ((error as { code: string }).code === 'auth/too-many-requests') {
+          toast.error("Too many requests.", {
+            description: "Please wait a while before trying again.",
+          });
+        } else {
+          toast.error("Something went wrong.", {
+            description: "Could not send verification email. Please try again later.",
+          });
+        }
+      } else {
+        toast.error("Something went wrong.", {
+          description: "Could not send verification email. Please try again later.",
+        });
       }
-    } else {
-      toast.error("No authenticated user found.");
+      console.error("Resend Verification Error:", error);
+    } finally {
+      setIsSending(false);
     }
   };
 
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const userEmail = user?.email || "your email address";
+  const canResend = resendCooldown === 0 && !isSending;
+
   return (
-    // <section 
-    //   className="w-1/2 rounded-xl bg-gray-50 
-    //     border border-gray-100 shadow flex flex-col 
-    //     justify-center items-center text-center px-12 
-    //     py-6 space-y-3"
-    // >
-    //   <Image
-    //     src="/Email-Pending.png"
-    //     alt="Email Confirmation Pending"
-    //     width={120}
-    //     height={120}
-    //     quality={100}
-    //     priority
-    //   />
-    //   <h1
-    //     className="text-2xl font-semibold"
-    //   >
-    //     Verify Your Email to Start Selling
-    //   </h1>
-    //   <p
-    //     className="text-gray-400 text-sm"
-    //   >
-    //     You’re almost ready! Please check your inbox and click 
-    //     the verification link to activate your seller account.
-    //   </p>
-    //   <button
-    //     disabled={sending || resetCount > 0}
-    //     onClick={handleResendVerification}
-    //     className={`
-    //       py-2 px-6 rounded-full transition-colors duration-200
-    //       ${sending || resetCount > 0 ? 'bg-gray-300 cursor-not-allowed text-gray-400' : 'bg-gradient-to-r from-black to-black/60 hover:from-black/60 hover:to-black text-white cursor-pointer'}
-    //     `}
-    //   >
-    //     {resetCount > 0 && (<span>({resetCount})</span>)} Resend Verification Email
-    //   </button>
-    // </section>
-    <section
-      className="flex flex-col gap-1"
-    >
-      <input 
-        type="number"
-        onChange={(e) => setPhoneNumber(e.target.value)}
-        placeholder="Enter your phone"
-        value={phoneNumber}
-        required
-        className="px-2 w-100 rounded-lg border border-gray-400 py-3"
-      />
-      <button
-        className="px-12 py-3 rounded-lg text-white bg-black"
+    <main className="min-h-screen w-full bg-[#0F1111] flex flex-col items-center justify-center p-4 font-sans">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center flex flex-col items-center"
       >
-        Send OTP
-      </button>
-    </section>
+        <div className="bg-blue-100 text-blue-600 rounded-full p-4 mb-6">
+          <MailCheck size={40} />
+        </div>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          Confirm your email
+        </h1>
+        <p className="text-gray-600 mt-3 mb-8">
+          We sent a verification link to{" "}
+          <strong className="text-gray-800">{userEmail}</strong>. Please check your
+          inbox to activate your account.
+        </p>
+
+        <button
+          disabled={!canResend}
+          onClick={handleResendVerification}
+          className={`
+            w-full relative overflow-hidden p-3 rounded-lg font-semibold text-base transition-all duration-300
+            ${canResend 
+              ? 'bg-gray-800 text-white hover:bg-gray-700 active:scale-[0.98]' 
+              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            }
+          `}
+        >
+          {/* Animated Cooldown Progress Bar */}
+          <AnimatePresence>
+            {resendCooldown > 0 && (
+              <motion.div
+                initial={{ width: "100%" }}
+                animate={{ width: "0%" }}
+                exit={{ width: "0%" }}
+                transition={{ duration: resendCooldown, ease: "linear" }}
+                className="absolute bottom-0 left-0 h-1 bg-blue-500/50"
+              />
+            )}
+          </AnimatePresence>
+          
+          {/* Button Text Logic */}
+          <span className="relative z-10 flex items-center justify-center gap-2">
+            {isSending && <Loader2 className="animate-spin" size={20} />}
+            {isSending 
+              ? "Sending..." 
+              : resendCooldown > 0 
+                ? `Resend in ${resendCooldown}s` 
+                : "Resend verification email"}
+          </span>
+        </button>
+      </motion.div>
+    </main>
   );
 }

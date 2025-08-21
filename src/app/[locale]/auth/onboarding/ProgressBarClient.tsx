@@ -10,6 +10,7 @@ import React, { ChangeEvent, useState, FC, ReactNode } from 'react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
 import { WhiteButtonStyles } from '@/components/Header';
+import { useRouter } from 'next/navigation';
 
 // --- TYPE DEFINITIONS for enhanced type safety ---
 interface IStep {
@@ -21,19 +22,23 @@ interface IStep {
 
 interface ISelectableOptionProps {
   label: string;
+  roledescription?: string;
   isSelected: boolean;
   onSelect: () => void;
 }
 
 // --- Reusable UI Component with TypeScript props ---
-const SelectableOption: FC<ISelectableOptionProps> = ({ label, isSelected, onSelect }) => (
+const SelectableOption: FC<ISelectableOptionProps> = ({ label, roledescription, isSelected, onSelect }) => (
     <div 
       onClick={onSelect} 
       className={`px-4 py-5 rounded-lg cursor-pointer transition-all 
         duration-200 border flex items-start justify-between gap-4 
         ${ isSelected ? 'bg-black text-white border-gray-800' : 'bg-gray-100 border-gray-100 hover:border-gray-300' }`}
     >
-      <span className="font-semibold">{label}</span>
+      <div>
+        <h1 className={isSelected ? "text-white" : "text-gray-600"}>{label}</h1>
+        <p className='text-xs text-gray-400'>{roledescription}</p>
+      </div>
       <div className={`w-5 h-5 rounded flex-shrink-0 mt-0.5 flex items-center justify-center border-2 transition-all duration-200 ${ isSelected ? 'bg-gray-800 border-gray-800' : 'bg-white border-gray-400' }`} >
         {isSelected && <Check className="w-4 h-4 text-white" />}
       </div>
@@ -42,6 +47,7 @@ const SelectableOption: FC<ISelectableOptionProps> = ({ label, isSelected, onSel
 
 // --- Main Onboarding Component ---
 export function ProgressBarClient() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [selectedHowDidYouHearAboutUs, setSelectedHowDidYouHearAboutUs] = useState<string>("");
@@ -65,12 +71,27 @@ export function ProgressBarClient() {
         const userCredential = await createUserWithEmailAndPassword(auth, formInputs.emailadress, formInputs.password);
         await sendEmailVerification(userCredential.user);
         await setDoc(doc(db, "users", formInputs.emailadress), {
-            fullname: formInputs.fullname, phonenumber: formInputs.phonenumber, email: formInputs.emailadress,
-            HowDidYouHearAboutUs: selectedHowDidYouHearAboutUs || 'skipped', UserRole: selectedRole, isNewUser: true,
-            createdAt: new Date(), city: formInputs.city,
+            fullname: formInputs.fullname,
+            phonenumber: formInputs.phonenumber,
+            email: formInputs.emailadress,
+            HowDidYouHearAboutUs: selectedHowDidYouHearAboutUs || 'skipped',
+            UserRole: selectedRole,
+            isNewUser: true,
+            createdAt: new Date(),
+            city: formInputs.city,
+            totalbalance: 0,
+            totalcustomers: 0,
+            totalorders: 0,
+            totalrevenue: 0,
         });
         toast.success("Account created successfully, please check your email!");
-        setCurrentStep(4);
+        setCurrentStep(4); // Show the success animation
+
+        // MODIFICATION: Automatically redirect after showing the success screen.
+        setTimeout(() => {
+          router.push('/auth/confirm-email'); // Corrected URL
+        }, 2000); // Redirect after 2 seconds
+
     } catch (error) {
         toast.error("Failed to create account. Please try again.");
         console.error("Account Creation Error:", error);
@@ -89,6 +110,7 @@ export function ProgressBarClient() {
       if (docSnap.exists()) { toast.error("Email already exists!"); return; }
       setCurrentStep(3);
     } else if (currentStep === 3) {
+      // MODIFICATION: This now handles the account creation and subsequent redirect.
       await handleCreateAccount();
     }
   };
@@ -103,8 +125,8 @@ export function ProgressBarClient() {
       description: "Choose your role to get started with a personalized setup.",
       content: (
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          {[ { label: "Become a Seller", role: "seller" }, { label: "Become an Affiliate", role: "affiliate" }].map((card) => (
-            <SelectableOption key={card.role} label={card.label} isSelected={selectedRole === card.role} onSelect={() => setSelectedRole(card.role)} />
+          {[ { label: "Become a Seller", role: "seller", roledescription: "Sell your products directly and grow your brand", }, { label: "Become an Affiliate", roledescription: "Earn commissions by promoting Jamla.ma products online", role: "affiliate" }].map((card) => (
+            <SelectableOption key={card.role} label={card.label} roledescription={card.roledescription} isSelected={selectedRole === card.role} onSelect={() => setSelectedRole(card.role)} />
           ))}
         </div>
       ),
@@ -182,7 +204,6 @@ export function ProgressBarClient() {
                       animate={{ y: 0, scale: 1 - offset * 0.05, top: offset * 20, opacity: 1 }}
                       exit={{ y: -50, opacity: 0, scale: 0.9 }}
                       transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                      // MODIFICATION: Added min-height to ensure cards cover each other
                       className="bg-white rounded-xl shadow-2xl p-8 w-full absolute min-h-[380px]"
                       style={{ zIndex: steps.length - step.id }}
                     >
@@ -203,7 +224,7 @@ export function ProgressBarClient() {
                 {currentStep === 3 ? "Finish" : "Next"}
               </button>
             </div>
-            {currentStep === 3 && ( <button onClick={handleNext} className="block w-full text-center mt-6 text-white text-sm hover:underline"> Skip customized setup → </button> )}
+            {currentStep === 3 && ( <button onClick={handleNext} className="block w-full text-center mt-6 text-white hover:text-gray-300 cursor-pointer text-sm"> Skip this step → </button> )}
           </div>
         ) : (
           <SuccessScreen />
