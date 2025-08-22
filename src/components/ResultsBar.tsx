@@ -51,14 +51,14 @@ export const ResultsBar = ({ resultCount, totalCount, sortBy, onSortChange }: Re
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between my-3 px-6 gap-4">
             {/* Results count text */}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-600">
                 Showing <span className="font-semibold text-neutral-800">{resultCount}</span> of <span className="font-semibold text-neutral-800">{totalCount}</span> results
             </p>
 
             {/* Custom Dropdown for Sorting */}
             <div className="flex items-center gap-3">
                 <label 
-                    className="text-sm font-medium text-gray-500 flex-shrink-0">
+                    className="text-sm font-medium text-gray-600 flex-shrink-0">
                         Sort by:
                 </label>
                 
@@ -70,7 +70,7 @@ export const ResultsBar = ({ resultCount, totalCount, sortBy, onSortChange }: Re
                         className="flex items-center justify-between w-full min-w-[200px] 
                             px-3 py-2 bg-neutral-100
                             rounded-lg text-sm text-neutral-800 focus:outline-none 
-                            ring ring-gray-200 focus:ring-neutral-400 focus:border-teal-500 
+                            ring ring-gray-300 focus:ring-neutral-400 focus:border-teal-500 
                             transition-colors hover:bg-neutral-200 cursor-pointer"
                         aria-haspopup="listbox"
                         aria-expanded={isOpen}
@@ -78,7 +78,7 @@ export const ResultsBar = ({ resultCount, totalCount, sortBy, onSortChange }: Re
                         <span>{selectedLabel}</span>
                         <ChevronDown
                             size={16}
-                            className={`ml-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                            className={`ml-4 text-gray-600 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                         />
                     </button>
 
