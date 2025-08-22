@@ -35,7 +35,7 @@ export const ControlsPanel = ({
 }: ControlsPanelProps) => {
     return (
         <div 
-            className="p-4 rounded-lg border border-gray-200 mb-3
+            className="p-6 rounded-lg border border-gray-200 mb-3
                 bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]">
             <div className="">
                 <Header 
@@ -55,7 +55,6 @@ export const ControlsPanel = ({
                             onChange={onSearchChange}
                             className="w-full pl-12 pr-10 py-2
                                 border border-neutral-700
-                                ring ring-neutral-800 
                                 rounded-lg
                                 focus:outline-none 
                                 focus:ring-1
@@ -63,7 +62,8 @@ export const ControlsPanel = ({
                                 text-gray-200
                                 bg-neutral-800
                                 placeholder:text-gray-400
-                                transition-colors"
+                                hover:bg-neutral-900 
+                            cursor-pointer transition-all"
                         />
                         {searchQuery && (
                             <button 
@@ -82,7 +82,12 @@ export const ControlsPanel = ({
                 <div className="flex items-center gap-2">
                     <button
                         onClick={onFilterToggle}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all"
+                        className="flex items-center gap-2 px-4 py-2.5 
+                            text-sm font-semibold rounded-lg 
+                            border border-neutral-700 
+                            text-gray-100 bg-neutral-800 
+                            hover:bg-neutral-900 
+                            cursor-pointer transition-all"
                     >
                         <SlidersHorizontal className="w-4 h-4" />
                         <span>Filters</span>
@@ -93,17 +98,27 @@ export const ControlsPanel = ({
                         )}
                     </button>
 
-                    <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                    <div 
+                        className="flex items-center gap-1 bg-neutral-800 
+                            border border-neutral-700 rounded-lg p-0.5">
                         <button 
                             onClick={() => onViewModeChange('grid')} 
-                            className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-white text-blue-600 shadow' : 'text-gray-500 hover:bg-gray-200'}`}
+                            className={`p-1.5 rounded-md transition-colors 
+                                ${viewMode === 'grid' ?
+                                    'bg-neutral-900 border border-neutral-700 text-gray-100'
+                                    :
+                                    'text-gray-500 hover:bg-neutral-900 cursor-pointer'}`}
                             aria-label="Grid view"
                         >
                             <Grid3X3 size={20} />
                         </button>
                         <button 
                             onClick={() => onViewModeChange('table')} 
-                            className={`p-2 rounded-md transition-colors ${viewMode === 'table' ? 'bg-white text-blue-600 shadow' : 'text-gray-500 hover:bg-gray-200'}`}
+                            className={`p-1.5 rounded-md transition-colors 
+                                ${viewMode === 'table' ?
+                                    'bg-neutral-900 border border-neutral-700 text-gray-100'
+                                    :
+                                    'text-gray-500 hover:bg-neutral-900 cursor-pointer'}`}
                             aria-label="List view"
                         >
                             <List size={20} />
