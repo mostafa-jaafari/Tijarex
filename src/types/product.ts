@@ -44,3 +44,18 @@ export interface ProductCardProps{
     };
     STOCK: number;
 }
+
+export interface ProductType2 {
+    id: string;
+    name: string;
+    product_images: string[];
+    category: string[];
+    sale_price: number;
+    regular_price: number;
+    commission?: number;
+    sales: number;
+    revenue: number;
+    status: "In Stock" | "Low Stock" | "Limited Edition" | "Pre-Order" | "Out of Stock";
+    stock: number;
+    lastUpdated: string; // ISO 8601 date string
+}

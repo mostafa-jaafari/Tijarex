@@ -1,5 +1,5 @@
 import OrdersPage from "./Pages/OrdersPage";
-import { ProductsPage } from "./Pages/ProductsPage";
+import ProductsPage from "./Pages/ProductsPage";
 import { SingleProductPage } from "./Pages/SingleProductPage";
 import ProfilePage from "./Pages/ProfilePage";
 import AddBalance from "./Pages/AddBalance";
