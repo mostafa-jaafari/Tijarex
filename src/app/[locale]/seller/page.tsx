@@ -34,7 +34,7 @@ export default async function page() {
           className='w-full flex'
       >
         {/* --- section Content --- */}
-        <section className='flex-1 flex flex-col p-4 space-y-4'>
+        <section className='flex-1 flex flex-col p-2 space-y-2'>
         {/* --- Content Area --- */}
           <WelcomeBanner />
           <QuickSetupGuide />

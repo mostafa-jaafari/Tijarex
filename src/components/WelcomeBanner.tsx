@@ -39,18 +39,22 @@ export function WelcomeBanner() {
   const UserRole = userInfos?.UserRole === "seller" ? "Sellers" : userInfos?.UserRole === "affiliate" ? "Affiliates" : "unknow"; // Default to 'seller' if role is not defined
   return (
     <div 
-      className="relative bg-teal-50 border border-gray-200 
-        w-full rounded-xl p-6 overflow-hidden">
+      className="relative bg-gradient-to-r from-[#1A1A1A] 
+        via-neutral-800 via-20% to-[#1A1A1A] 
+        border border-gray-200 w-full rounded-xl px-6 py-3 
+        overflow-hidden">
         {/* Decorative background element */}
-        <div className="absolute -top-4 -right-4 w-24 h-24 bg-teal-100 rounded-full opacity-50"></div>
-        <div className="absolute -bottom-8 -left-2 w-32 h-32 bg-teal-200 rounded-full opacity-50"></div>
+        {/* <div className="absolute -top-4 -right-4 w-24 h-24 bg-teal-100 rounded-full opacity-50"></div> */}
+        {/* <div className="absolute -bottom-8 -left-2 w-32 h-32 bg-teal-200 rounded-full opacity-50"></div> */}
 
-        <div className="relative z-10 flex items-start justify-between">
-            <div>
-                <h2 className="text-xl font-bold text-gray-800 flex gap-1 items-center">
-                    Welcome back, {isLoadingUserInfos ? (<span className='flex w-30 h-5 rounded-lg bg-gray-200 animate-pulse'/>) : (<h1 className='font-bold text-teal-700'>{userInfos?.fullname || "seller"}</h1>)}!
+        <div className="relative z-10 flex items-center justify-between">
+            <div
+              className='-space-y-1'
+            >
+                <h2 className="text-lg text-gray-300 flex gap-1 items-center">
+                    Welcome back, {isLoadingUserInfos ? (<span className='flex w-30 h-5 rounded-lg bg-gray-200 animate-pulse'/>) : (<h1 className='font-bold text-white'>{userInfos?.fullname || "seller"}</h1>)}!
                 </h2>
-                <p className="mt-1 flex items-center gap-1 text-gray-600">
+                <p className="mt-1 flex items-center gap-1 text-sm text-gray-500">
                   It&apos;s great to see you again. As one of our 
                   {" " + UserRole.charAt(0).toUpperCase() + UserRole.slice(1)}, here is what&apos;s new on your dashboard.
                 </p>
@@ -58,12 +62,12 @@ export function WelcomeBanner() {
             
             <button
                 onClick={handleDismiss}
-                className="p-2 text-gray-500 rounded-lg cursor-pointer
-                  hover:bg-gray-200 hover:text-gray-800 
+                className="p-1 text-gray-500 rounded-lg cursor-pointer
+                  hover:text-gray-300 
                   transition-colors"
                 aria-label="Dismiss welcome message"
             >
-                <X size={20} />
+                <X size={16} />
             </button>
         </div>
     </div>

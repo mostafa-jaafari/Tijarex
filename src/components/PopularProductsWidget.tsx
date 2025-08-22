@@ -116,7 +116,7 @@ export function PopularProductsWidget() {
     );
 
     return (
-        <section className="w-full max-w-md py-4 pr-4"> {/* Increased max-w for better spacing */}
+        <section className="w-full max-w-md py-2 pr-2"> {/* Increased max-w for better spacing */}
             <div 
                 className="bg-gradient-to-br from-10% from-white to-teal-50 border border-gray-200 
                     rounded-xl overflow-hidden">

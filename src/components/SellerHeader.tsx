@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRightLeft, Bell, ChevronDown, CreditCard, DollarSign, FileClock, Warehouse } from "lucide-react";
+import { ArrowRightLeft, Bell, ChevronDown, CreditCard, DollarSign, FileClock, LogOut, Warehouse } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -115,9 +115,9 @@ export function SellerHeader({ session }: { session: Session | null }){
                 </button>
                 <div 
                     className={`absolute overflow-hidden right-0 
-                        mt-5 w-72 rounded-xl shadow-lg border 
+                        mt-4 w-68 rounded-lg shadow-sm
                         bg-gradient-to-r from-white to-green-100
-                        border-green-200 animate-fade-in
+                        border border-gray-300 animate-fade-in
                         transition-all duration-200
                         ${isBalanceOpen 
                             ? "opacity-100 max-h-100 overflow-hidden opacity-100"
@@ -126,29 +126,39 @@ export function SellerHeader({ session }: { session: Session | null }){
                     >
                     <div
                         className="w-full
-                            bg-green-100"
+                            bg-gradient-to-r from-[#1A1A1A] via-neutral-800 
+                            to-[#1A1A1A]"
                     >
                         <div
-                            className="w-full p-4 flex items-center justify-between"
+                            className="w-full p-3 flex items-center justify-between"
                         >
-                            <span className="flex flex-col gap-2">
+                            <span className="flex flex-col gap-1">
                                 <h1 
-                                    className="flex items-center gap-1 uppercase 
+                                    className="flex items-center gap-1 capitalize 
                                         font-semibold text-gray-500"
                                 >
                                     <span 
-                                        className="w-2 h-2 bg-green-600 flex 
+                                        className="w-2 h-2 bg-green-400 flex 
                                             rounded-full animate-pulse"
                                     />
                                     Total Balance
                                 </h1>
-                                <b className="text-3xl flex items-center text-green-700">{isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} Dh</b>
+                                <b 
+                                    className="text-3xl flex items-center text-white">
+                                        {isLoadingUserInfos ? 
+                                            (
+                                                <span 
+                                                    className="w-14 h-4 rounded-full flex bg-green-700/50 
+                                                        animate-pulse"/>
+                                            )
+                                            :
+                                            userInfos?.totalbalance} Dh</b>
                             </span>
                             <span
                                 className="text-green-600 bg-white p-3 h-max 
                                     flex rounded-2xl shadow"
                             >
-                                <CreditCard size={30} />
+                                <CreditCard size={20} />
                             </span>
                         </div>
                     </div>
@@ -273,89 +283,75 @@ export function SellerHeader({ session }: { session: Session | null }){
             <span 
                 className="border-r border-gray-200 h-6 flex"
             />
-            {/* Profile Menu */}
-            <div 
-                ref={DropDownProfileRef} 
+            <div
+                ref={DropDownProfileRef}
                 className="relative"
             >
-                <button 
+                <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className="flex items-center gap-2 cursor-pointer">
+                    className="flex items-center gap-2 cursor-pointer 
+                        rounded-lg"
+                >
                     <div
-                        className='relative w-10 h-10'
+                    className='relative w-10 h-10'
                     >
-                        <Image
-                            src={userInfos?.profileimage as string || session?.user?.image as string || ""}
-                            alt={session?.user?.name as string || ""}
-                            fill
-                            className="object-cover overflow-hidden rounded-full"
-                        />
-                        <span
-                            className="absolute w-3 h-3 rounded-full bg-green-500 
-                                right-1 bottom-0 border-2 border-white"
-                        />
+                    <Image
+                        src={userInfos?.profileimage || session?.user?.image || ""}
+                        alt={session?.user?.name || ""}
+                        fill
+                        className="object-cover overflow-hidden rounded-full border-2 border-green-500"
+                    />
+                    <span
+                        className="absolute w-3 h-3 rounded-full bg-green-500 right-0 bottom-0 border-2 border-white"
+                    />
                     </div>
-                    <div
-                        className="flex flex-col items-start"
-                    >
-                        <div
-                            className="w-full flex items-center justify-between gap-3"
-                        >
-                            <span className="text-sm font-medium text-white">
-                                {isLoadingUserInfos ? (<span className="animate-pulse w-25 h-3 bg-gray-100 flex rounded"/>) : userInfos?.fullname}
-                            </span>
-                            <ChevronDown size={16} className="text-gray-500"/>
-                        </div>
-                        <span className="text-sm font-medium text-gray-500">
-                            {session?.user?.email}
+                    <div className="flex flex-col items-start leading-tight">
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-white">
+                        {isLoadingUserInfos ? (<span className="animate-pulse w-24 h-4 bg-gray-700 flex rounded-md" />) : userInfos?.fullname}
                         </span>
+                        <ChevronDown size={16} className="text-gray-400" />
+                    </div>
+                    <span className="text-xs text-gray-400">
+                        {session?.user?.email}
+                    </span>
                     </div>
                 </button>
-
-                {/* Profile Dropdown */}
-                <div
-                    className={`absolute right-0 top-full mt-4 w-full 
-                        bg-white shadow-lg border border-gray-200 
-                        rounded-xl overflow-hidden animate-fade-in
-                        min-w-60 transition-all duration-200
+                {/* Dropdown Menu (Conceptual) */}
+                <div 
+                    className={`absolute right-0 top-14 w-52 bg-white 
+                        border border-gray-200 rounded-lg shadow-lg 
+                        z-50 overflow-hidden
                         ${isProfileMenuOpen 
                             ? "opacity-100 max-h-100 overflow-hidden opacity-100"
-                            : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
-                        }`}
-                >
-                    {/* Profile Menu Items */}
-                    <div className="flex flex-col p-2">
-                        {ProfileHeaderNavs.map((nav, idx) => (
+                            : "opacity-0 max-h-0 overflow-hidden pointer-events-none"}
+                        transition-all duration-200`}
+                        >
+                    {/* Example Dropdown Items */}
+                    {ProfileHeaderNavs.map((item, idx) => {
+                        return (
                             <Link
                                 key={idx}
-                                onClick={() => setIsProfileMenuOpen(false)}
-                                href={`/seller/${nav.href !== "dashboard" ? nav.href : ""}`}
-                                className={`flex items-center px-2 py-1 text-gray-500 
-                                    rounded-lg hover:bg-teal-50 hover:text-teal-700
-                                    border border-transparent hover:border-teal-500 
-                                    transition-colors gap-2`}
-                            >
-                                {/* Optional Icon */}
-                                <span className="">
-                                    <nav.icon size={16} />
-                                </span>
-                                <span className="capitalize">{nav.label}</span>
+                                href="#" 
+                                className="flex items-center gap-3 px-3 py-2 text-sm
+                                    text-gray-800 hover:bg-gray-100 transition-colors">
+                                <item.icon size={16} className="text-gray-500"/>
+                                {item.label}
                             </Link>
-                        ))}
-                    </div>
-
-                    {/* Divider */}
-                    <div className="border-t border-gray-200"></div>
-
-                    {/* Sign Out Button */}
+                        )
+                    })}
                     <button
-                        onClick={() => signOut()}
-                        className="w-full cursor-pointer flex 
-                            items-center justify-center px-4 py-2 
-                            text-red-600 font-medium hover:bg-red-50 
-                            transition-colors"
+                        className="text-sm text-red-600 w-full text-left
+                            hover:bg-red-50 transition-colors
+                            flex items-center gap-3 px-3 py-1.5 
+                            cursor-pointer"
+                        onClick={() => signOut({ callbackUrl: '/auth/login' })}
                     >
-                        Sign Out
+                        <LogOut 
+                            size={16} 
+                            className="text-red-500"
+                        />
+                        Log Out
                     </button>
                 </div>
             </div>
