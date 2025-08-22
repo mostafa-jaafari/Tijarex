@@ -1,5 +1,8 @@
+// /components/filters/ProductFiltersPanel.tsx (Updated)
+
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
+import { CustomDropdown } from './UI/CustomDropdown';
 
 const productFilters = [
     { title: "Category", filters: ["All", "Electronics", "Clothing", "Home & Garden", "Books"] },
@@ -16,12 +19,14 @@ interface ProductFiltersPanelProps {
 
 export const ProductFiltersPanel = ({ selectedFilters, onFilterSelect, onClear }: ProductFiltersPanelProps) => {
     return (
-        <div className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm mb-6 space-y-4">
+        <div className="bg-neutral-900 p-6 border border-neutral-700/50 rounded-xl shadow-lg mb-6 space-y-4">
             <div className="flex items-center justify-between">
-                <h3 className="text-base font-semibold text-gray-800">Filter Products</h3>
+                <h3 className="text-base font-semibold text-white">Filter Products</h3>
                 <button
                     onClick={onClear}
-                    className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                    className="flex items-center gap-1.5 text-sm 
+                        text-teal-500 hover:text-teal-400 font-medium 
+                        cursor-pointer transition-colors"
                 >
                     <RefreshCw className="w-3.5 h-3.5" />
                     Clear All
@@ -29,18 +34,13 @@ export const ProductFiltersPanel = ({ selectedFilters, onFilterSelect, onClear }
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {productFilters.map((filter) => (
-                    <div key={filter.title}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">{filter.title}</label>
-                        <select
-                            value={selectedFilters[filter.title] || 'All'}
-                            onChange={(e) => onFilterSelect(filter.title, e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                        >
-                            {filter.filters.map(item => (
-                                <option key={item} value={item}>{item}</option>
-                            ))}
-                        </select>
-                    </div>
+                    <CustomDropdown
+                        key={filter.title}
+                        label={filter.title}
+                        options={filter.filters}
+                        selectedValue={selectedFilters[filter.title] || 'All'}
+                        onSelect={(item) => onFilterSelect(filter.title, item)}
+                    />
                 ))}
             </div>
         </div>

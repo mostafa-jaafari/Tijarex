@@ -55,7 +55,7 @@ export default function ProductsPage() {
                     resultCount={paginatedProducts.length}
                     totalCount={filteredCount}
                     sortBy={state.sortBy}
-                    onSortChange={(e) => actions.setSortBy(e.target.value)}
+                    onSortChange={actions.setSortBy}
                 />
 
                 <main>
