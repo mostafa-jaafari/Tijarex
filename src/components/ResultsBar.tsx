@@ -49,7 +49,7 @@ export const ResultsBar = ({ resultCount, totalCount, sortBy, onSortChange }: Re
     };
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between my-6 px-1 gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between my-3 px-6 gap-4">
             {/* Results count text */}
             <p className="text-sm text-gray-500">
                 Showing <span className="font-semibold text-neutral-800">{resultCount}</span> of <span className="font-semibold text-neutral-800">{totalCount}</span> results
@@ -70,7 +70,7 @@ export const ResultsBar = ({ resultCount, totalCount, sortBy, onSortChange }: Re
                         className="flex items-center justify-between w-full min-w-[200px] 
                             px-3 py-2 bg-neutral-100
                             rounded-lg text-sm text-neutral-800 focus:outline-none 
-                            focus:ring focus:ring-neutral-400 focus:border-teal-500 
+                            ring ring-gray-200 focus:ring-neutral-400 focus:border-teal-500 
                             transition-colors hover:bg-neutral-200 cursor-pointer"
                         aria-haspopup="listbox"
                         aria-expanded={isOpen}

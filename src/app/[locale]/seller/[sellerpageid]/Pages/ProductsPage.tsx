@@ -21,7 +21,7 @@ export default function ProductsPage() {
     } = state;
 
     return (
-        <div className="w-full bg-gray-50 min-h-screen p-3">
+        <div className="w-full p-3">
             <div className="max-w-screen-2xl mx-auto">
 
                 <ControlsPanel

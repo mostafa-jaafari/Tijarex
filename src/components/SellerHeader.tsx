@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { Session } from "next-auth";
 import { useUserInfos } from "@/context/UserInfosContext";
-import { BlackButtonStyles } from "./Header";
 
 
 export function SellerHeader({ session }: { session: Session | null }){
@@ -104,9 +103,9 @@ export function SellerHeader({ session }: { session: Session | null }){
                 <button
                     onClick={() => setIsBalanceOpen(!isBalanceOpen)}
                     className={`px-2 py-1 font-semibold
-                        flex items-center gap-2 rounded-lg
-                        ring ring-teal-900 bg-gray-900
-                        text-white
+                        flex items-center gap-3 rounded-lg
+                        border border-neutral-700 bg-neutral-800
+                        hover:bg-neutral-900 text-white
                         cursor-pointer transition-colors
                         `}
                 >
@@ -117,9 +116,8 @@ export function SellerHeader({ session }: { session: Session | null }){
                 <div 
                     className={`absolute overflow-hidden right-0 
                         mt-4 w-68 rounded-lg shadow-sm
-                        bg-gradient-to-r from-neutral-100
-                            to-white
-                        border border-gray-300 animate-fade-in
+                        bg-gradient-to-r from-neutral-100 to-white
+                        border border-neutral-300 shadow-sm animate-fade-in
                         transition-all duration-200
                         ${isBalanceOpen 
                             ? "opacity-100 max-h-100 overflow-hidden opacity-100"
@@ -198,8 +196,11 @@ export function SellerHeader({ session }: { session: Session | null }){
                         <Link
                             href="/seller/add-balance"
                             className={`w-full text-center justify-center
-                                ${BlackButtonStyles} capitalize
-                                py-1.5 rounded-lg`}
+                                bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]
+                                capitalize text-white
+                                shadow-sm
+                                hover:from-[#1A1A1A] hover:via-neutral-900 hover:to-black
+                                py-1.5 rounded-lg transition-colors`}
                         >
                             Add balance
                         </Link>
