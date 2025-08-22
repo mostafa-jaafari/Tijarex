@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { Session } from "next-auth";
 import { useUserInfos } from "@/context/UserInfosContext";
+import { BlackButtonStyles } from "./Header";
 
 
 export function SellerHeader({ session }: { session: Session | null }){
@@ -116,7 +117,8 @@ export function SellerHeader({ session }: { session: Session | null }){
                 <div 
                     className={`absolute overflow-hidden right-0 
                         mt-4 w-68 rounded-lg shadow-sm
-                        bg-gradient-to-r from-white to-green-100
+                        bg-gradient-to-r from-neutral-100
+                            to-white
                         border border-gray-300 animate-fade-in
                         transition-all duration-200
                         ${isBalanceOpen 
@@ -135,7 +137,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                             <span className="flex flex-col gap-1">
                                 <h1 
                                     className="flex items-center gap-1 capitalize 
-                                        font-semibold text-gray-500"
+                                        text-gray-400"
                                 >
                                     <span 
                                         className="w-2 h-2 bg-green-400 flex 
@@ -155,10 +157,10 @@ export function SellerHeader({ session }: { session: Session | null }){
                                             userInfos?.totalbalance} Dh</b>
                             </span>
                             <span
-                                className="text-green-600 bg-white p-3 h-max 
-                                    flex rounded-2xl shadow"
+                                className="text-green-600 h-max 
+                                    flex rounded-lg shadow bg-white p-1"
                             >
-                                <CreditCard size={20} />
+                                <CreditCard size={24} />
                             </span>
                         </div>
                     </div>
@@ -171,16 +173,16 @@ export function SellerHeader({ session }: { session: Session | null }){
                                     key={idx}
                                     onClick={() => setIsBalanceOpen(false)}
                                     href={item.href}
-                                    className="group flex items-center gap-2 
-                                        hover:bg-green-100 hover:text-green-600 p-2 
-                                        rounded-lg text-gray-600"
+                                    className="group flex items-center gap-3
+                                        hover:bg-gray-200 hover:text-black
+                                        px-2 py-1 rounded-lg text-gray-600"
                                 >
                                     <span 
                                         className={`bg-white shadow p-2 rounded-lg 
                                         group-hover:text-green-600 
                                         ${item.iconstyles}`}>
                                             <item.icon 
-                                        size={20}
+                                        size={16}
                                     />
                                     </span>
                                     <h1>
@@ -191,12 +193,13 @@ export function SellerHeader({ session }: { session: Session | null }){
                         })}
                     </div>
                     <div
-                        className="w-full flex justify-center p-4"
+                        className="w-full flex justify-center p-2"
                     >
                         <Link
                             href="/seller/add-balance"
-                            className="py-2 bg-green-600 w-full rounded-lg 
-                                cursor-pointer flex justify-center text-white"
+                            className={`w-full text-center justify-center
+                                ${BlackButtonStyles} capitalize
+                                py-1.5 rounded-lg`}
                         >
                             Add balance
                         </Link>
@@ -308,7 +311,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                     <div className="flex flex-col items-start leading-tight">
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-white">
-                        {isLoadingUserInfos ? (<span className="animate-pulse w-24 h-4 bg-gray-700 flex rounded-md" />) : userInfos?.fullname}
+                        {isLoadingUserInfos ? (<span className="animate-pulse w-24 h-3 bg-gray-700 flex rounded-md" />) : userInfos?.fullname}
                         </span>
                         <ChevronDown size={16} className="text-gray-400" />
                     </div>

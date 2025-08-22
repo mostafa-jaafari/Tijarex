@@ -88,7 +88,7 @@ export default function QuickSetupGuide() {
     }, [percent]);
 
     return (
-        <section className='relative w-full p-4 min-h-40 rounded-2xl bg-white border border-gray-200'>
+        <section className='relative w-full p-4 min-h-40 rounded-xl bg-white border border-gray-200'>
             <h1 className='text-lg font-semibold text-gray-900 mb-3'>
                 Quick setup guide
             </h1>

@@ -81,7 +81,7 @@ const EarningsChart: React.FC = () => {
   const t = useTranslations();
 
   return (
-    <div className="bg-white border border-gray-200 hovershadow-md rounded-2xl">
+    <div className="bg-white border border-gray-200 hovershadow-md rounded-xl">
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-gray-100">
         <div className="flex items-center space-x-3">
