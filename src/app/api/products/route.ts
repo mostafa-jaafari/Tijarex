@@ -1,36 +1,49 @@
-import { db } from '@/lib/FirebaseClient';
+import { adminDb } from '@/lib/FirebaseAdmin'; // IMPORTANT: Use the Admin SDK on the server
 import { ProductType } from '@/types/product';
-import { doc, getDoc } from 'firebase/firestore';
+// Remove Firestore client SDK imports; use Admin SDK methods instead
 import { NextResponse } from 'next/server';
 import NodeCache from 'node-cache';
 
-const cache = new NodeCache({ stdTTL: 300 }); // 5 minutes cache
+// Initialize cache with a 5-minute Time-To-Live (TTL)
+// The original code had 30 seconds, which is very short. 300 seconds = 5 minutes.
+const cache = new NodeCache({ stdTTL: 300 });
 
 export async function GET() {
   try {
-    const cacheKey = 'products';
+    const cacheKey = 'all-products';
 
-    // Check cache
-    let products = cache.get(cacheKey);
-    if (products) {
-      return NextResponse.json({ products, cached: true });
+    // 1. Check if the data is already in the cache
+    const cachedProducts = cache.get<ProductType[]>(cacheKey);
+    if (cachedProducts) {
+      // If found, return the cached data immediately
+      return NextResponse.json({ products: cachedProducts, source: 'cache' });
     }
 
-    // Fetch from Firestore
-    const docRef = doc(db, 'jamladata', 'jamla_products');
-    const docSnap = await getDoc(docRef);
+    // 2. If not in cache, fetch from Firestore using Admin SDK
+    const productsSnapshot = await adminDb.collection('products').get();
 
-    if (!docSnap.exists()) {
-      return NextResponse.json({ error: 'No data found' }, { status: 404 });
+    // 3. Check if the collection is empty
+    if (productsSnapshot.empty) {
+      // If there are no products, return a 404 error
+      return NextResponse.json({ error: 'No products found' }, { status: 404 });
     }
 
-    products = docSnap.data().globalproducts as ProductType;
+    // 4. Map the documents to an array of product objects
+    // This correctly combines the document ID with its data
+    const products: ProductType[] = productsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ProductType[];
 
-    // Cache the products
+    // 5. Store the freshly fetched data in the cache for subsequent requests
     cache.set(cacheKey, products);
 
-    return NextResponse.json({ products, cached: false });
+    // 6. Return the fetched data
+    return NextResponse.json({ products, source: 'firestore' });
+
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error', details: error }, { status: 500 });
+    console.error("Error fetching products:", error); // Log the actual error on the server
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json({ error: 'Internal Server Error', details: errorMessage }, { status: 500 });
   }
 }

@@ -47,6 +47,8 @@ export interface ProductCardProps{
 
 export interface ProductType2 {
     id: string;
+    sellerEmail: string;
+    sellerFullName: string;
     name: string;
     product_images: string[];
     category: string[];
