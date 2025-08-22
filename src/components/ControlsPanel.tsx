@@ -102,7 +102,7 @@ export const ControlsPanel = ({
                         className="flex items-center gap-1 bg-neutral-800 
                             border border-neutral-700 rounded-lg p-0.5">
                         <button 
-                            onClick={() => onViewModeChange('grid')} 
+                            onClick={() => onViewModeChange('grid')}
                             className={`p-1.5 rounded-md transition-colors 
                                 ${viewMode === 'grid' ?
                                     'bg-neutral-900 border border-neutral-700 text-gray-100'

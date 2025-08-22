@@ -27,7 +27,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
     return (
         <tr className="hover:bg-gray-50 transition-colors duration-150">
             {/* Product Cell */}
-            <td className="px-6 py-4 whitespace-nowrap">
+            <td className="text-start px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center gap-4">
                     <Link href={`/seller/products?p_id=${product.id}`} className="flex-shrink-0">
                         <div className="relative w-16 h-16 bg-gray-100 rounded-lg overflow-hidden group">
@@ -56,7 +56,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             </td>
 
             {/* Category Cell */}
-            <td className="px-6 py-4 whitespace-nowrap">
+            <td className="text-center px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-800">
                     {Array.isArray(product.category) ? product.category[0] : product.category}
                 </div>
@@ -65,7 +65,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             </td>
 
             {/* Price Cell */}
-            <td className="px-6 py-4 whitespace-nowrap">
+            <td className="text-center px-6 py-4 whitespace-nowrap">
                 <div className="text-sm font-semibold text-gray-800">
                     ${product.sale_price.toFixed(2)}
                 </div>
@@ -77,7 +77,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             </td>
 
             {/* Commission Cell */}
-            <td className="px-6 py-4 whitespace-nowrap">
+            <td className="text-center px-6 py-4 whitespace-nowrap">
                 <div className="text-sm font-semibold text-green-600">
                     {commissionRate}%
                 </div>
@@ -87,7 +87,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             </td>
 
             {/* Stock Cell */}
-            <td className="px-6 py-4 whitespace-nowrap">
+            <td className="text-center px-6 py-4 whitespace-nowrap">
                 <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${getStockBadge(product.status)}`}>
                     {product.status}
                 </span>
@@ -97,7 +97,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             </td>
 
             {/* Performance Cell */}
-            <td className="px-6 py-4 whitespace-nowrap">
+            <td className="text-center px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center gap-1.5 text-sm text-gray-800 font-medium">
                     <TrendingUp className="w-4 h-4 text-green-500" />
                     {product.sales.toLocaleString()} sold
@@ -108,7 +108,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             </td>
 
             {/* Actions Cell */}
-            <td className="px-6 py-4 whitespace-nowrap text-right">
+            <td className="text-center px-6 py-4 whitespace-nowrap text-right">
                 <div className="flex items-center justify-end gap-1">
                     <button
                         onClick={handleFavoriteClick}
