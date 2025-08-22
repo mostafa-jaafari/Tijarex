@@ -1,17 +1,25 @@
+"use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductType2 } from '@/types/product';
 import { getStockBadge } from './Functions/GetStockBadge';
 import { Heart, Eye, Share2, Star, TrendingUp } from 'lucide-react';
+import { useUserInfos } from '@/context/UserInfosContext';
+import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 
 interface ProductTableRowProps {
     product: ProductType2;
 }
 
 export const ProductTableRow = ({ product }: ProductTableRowProps) => {
-    // This state would typically be managed globally (e.g., in a context or Zustand/Redux)
-    // but is included here for demonstration.
+    const { userInfos } = useUserInfos();
+    const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
+
+    const HandleQuickView = () => {
+        setProductID(product.id as string || "");
+        setIsShowQuickViewProduct(true)
+    }
     const [isFavorite, setIsFavorite] = useState(false);
 
     const commissionRate = product.commission || 10;
@@ -40,7 +48,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
                         </div>
                     </Link>
                     <div className="min-w-0 flex-1">
-                        <Link href={`/seller/products?p_id=${product.id}`} className="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 hover:text-blue-600 transition-colors">
+                        <Link href={`/seller/products?p_id=${product.id}`} className="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 hover:text-teal-600 transition-colors">
                             {product.name}
                         </Link>
                         <div className="text-xs text-gray-500 mt-1">
@@ -121,17 +129,25 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
                     >
                         <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" aria-label="Quick view">
+                    <button 
+                        onClick={HandleQuickView}
+                        className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" aria-label="Quick view">
                         <Eye className="w-4 h-4" />
                     </button>
                     <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" aria-label="Share product">
                         <Share2 className="w-4 h-4" />
                     </button>
-                    <Link href={`/seller/promote?product_id=${product.id}`}>
-                        <span className="ml-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors">
+                    {userInfos?.UserRole !== "seller" && (
+                        <button 
+                            className={`ml-2 px-4 py-2 text-xs font-bold rounded-lg
+                                bg-gradient-to-r text-white 
+                                from-[#1A1A1A] via-neutral-900 to-[#1A1A1A] 
+                                hover:from-gray-500 cursor-pointer
+                                ring ring-neutral-200
+                                transition-colors`}>
                             Promote
-                        </span>
-                    </Link>
+                        </button>
+                    )}
                 </div>
             </td>
         </tr>
