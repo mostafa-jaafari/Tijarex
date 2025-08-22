@@ -164,7 +164,8 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
         }
         if(!selectedProduct) return;
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div 
+      className="w-full">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <div className="flex items-center space-x-4">

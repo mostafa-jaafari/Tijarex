@@ -478,10 +478,10 @@ export function ProductsPage() {
     };
 
     return (
-        <div className="w-full min-h-screen bg-gray-50">
+        <div className="w-full p-2">
             {/* Header Section */}
-            <div className="bg-white border-b border-gray-200">
-                <div className="w-full px-6 py-6">
+            <div className="bg-white border-b border-gray-300 rounded-lg">
+                <div className="w-full px-6 py-3">
                     <div className="mb-4">
                         <h1 className="text-2xl font-bold text-gray-900 mb-2">Affiliate Products</h1>
                         <p className="text-gray-600 text-sm">
@@ -609,8 +609,10 @@ export function ProductsPage() {
                 )}
             </div>
 
+
+
             {/* Results Summary */}
-            <div className="w-full px-6 py-4 bg-white border-b border-gray-200">
+            <div className="w-full px-6 py-3 mt-2 rounded-lg shadow-sm bg-white border-b border-gray-200">
                 <div className="flex items-center justify-between text-sm">
                     <div className="text-gray-600">
                         Showing <span className="font-semibold text-gray-900">{paginatedProducts.length}</span> of{' '}
@@ -623,7 +625,7 @@ export function ProductsPage() {
             </div>
 
             {/* Main Content */}
-            <div className="w-full p-6">
+            <div className="w-full py-2">
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {Array.from({ length: 12 }).map((_, i) => (

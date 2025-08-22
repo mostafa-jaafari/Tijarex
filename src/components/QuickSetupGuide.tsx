@@ -9,7 +9,7 @@ import { useUserInfos } from '@/context/UserInfosContext';
 export default function QuickSetupGuide() {
     const { userInfos, isLoadingUserInfos } = useUserInfos();
 
-    const stepsConfig = [
+    const ConfigSteps = [
         {
             title: "Create your account.",
             description: "Register your account and set up your basic details to start selling in minutes",
@@ -32,23 +32,35 @@ export default function QuickSetupGuide() {
                 label: "Activate your account with credit.",
                 href: "/seller/add-balance",
             }
-        },{
-            title: "Make your first order.",
-            description: "Test the system by placing a sample or real order and see how it works !",
-            btntitle: "Make first order",
+        },
+        userInfos?.UserRole === "seller" ? {
+            title: "Add your First Product",
+            description: "List your products to reach a wider audience and boost your sales",
+            btntitle: "Add products",
+            image: "/First-Order.png",
+            imagestyles: "absolute z-30 scale-125 group-hover:scale-160 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
+            iscompleted: !!(userInfos?.activeproducts && userInfos.activeproducts > 0),
+            link: {
+                label: "Start adding your products.",
+                href: "/seller/upload-products"
+            }
+        } : {
+            title: "Add your First Product.",
+            description: "Promote products to earn commissions as an affiliate marketer",
+            btntitle: "Find products",
             image: "/First-Order.png",
             imagestyles: "absolute z-30 scale-140 group-hover:scale-180 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
             iscompleted: false,
             link: {
-                label: "Try your first order now !",
-                href: "/seller"
+                label: "Start promoting products.",
+                href: "/seller/products"
             }
         },
     ];
 
     // ✅ حساب النسبة المئوية حسب الخطوات المنجزة
-    const completedSteps = stepsConfig.filter(step => step.iscompleted).length;
-    const totalSteps = stepsConfig.length;
+    const completedSteps = ConfigSteps.filter(step => step.iscompleted).length;
+    const totalSteps = ConfigSteps.length;
     const progressPercent = Math.round((completedSteps / totalSteps) * 100);
 
     const [percent, setPercent] = useState(progressPercent);
@@ -102,7 +114,7 @@ export default function QuickSetupGuide() {
             />
 
             <div className='w-full flex flex-shrink-0 items-center flex-wrap justify-between gap-2'>
-                {stepsConfig.map((card, idx) => (
+                {ConfigSteps.map((card, idx) => (
                     <div
                         key={idx}
                         className='group relative bg-teal-50 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl overflow-hidden border border-gray-200 shadow shadow-gray-100'

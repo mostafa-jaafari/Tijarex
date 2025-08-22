@@ -58,5 +58,11 @@ export default async function Page({ params, searchParams }: PageProps) {
       break;
   }
 
-  return <>{TabRender}</>;
+  return (
+    <div
+      className="w-full min-h-screen bg-gray-100"
+    >
+      {TabRender}
+    </div>
+  )
 }

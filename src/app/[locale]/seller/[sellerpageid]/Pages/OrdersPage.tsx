@@ -46,7 +46,7 @@ export default function OrdersPage() {
 
   const locale = useLocale();
   return (
-    <section className="w-full overflow-x-scroll bg-gray-50 min-h-screen">
+    <section className="w-full overflow-x-scroll">
 
       <FilterOrders 
         onChange={(e) => setSearchTerm(e.target.value)}

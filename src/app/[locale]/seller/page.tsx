@@ -28,7 +28,7 @@ export const metadata = {
 export default async function page() {
   return (
     <main
-        className='w-full bg-gray-50'
+        className='w-full bg-gray-100'
     >
       <section
           className='w-full flex'
@@ -42,7 +42,7 @@ export default async function page() {
           <EarningsChart />
         </section>
         {/* --- Sidebar --- */}
-          <PopularProductsWidget />
+          {/* <PopularProductsWidget /> */}
       </section>
     </main>
   )
