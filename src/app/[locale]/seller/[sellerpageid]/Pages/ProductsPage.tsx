@@ -10,18 +10,7 @@ import { ProductsTable } from '@/components/ProductsTable';
 import { EmptyState } from '@/components/EmptyState';
 import { Pagination } from '@/components/UI/PaginationProps';
 
-interface HeaderProps {
-    title: string;
-    description: string;
-}
-const Header = ({ title, description }: HeaderProps) => {
-    return (
-        <header className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
-            <p className="mt-2 text-base text-gray-600">{description}</p>
-        </header>
-    );
-};
+
 export default function ProductsPage() {
     // The hook provides all the data and logic
     const { state, actions } = useProductFilters();
@@ -34,10 +23,6 @@ export default function ProductsPage() {
     return (
         <div className="w-full bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
             <div className="max-w-screen-2xl mx-auto">
-                <Header 
-                    title="Affiliate Products" 
-                    description="Discover and promote products to earn commissions." 
-                />
 
                 <ControlsPanel
                     searchQuery={state.searchQuery}

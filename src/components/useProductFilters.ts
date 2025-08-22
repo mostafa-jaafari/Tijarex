@@ -4,6 +4,51 @@ import { ProductType2 } from '@/types/product';
 
 const ITEMS_PER_PAGE = 12;
 
+// --- Helper functions for matching filter criteria ---
+// These functions make the main filter logic much cleaner.
+
+const matchesSearch = (product: ProductType2, query: string): boolean => {
+    if (!query) return true; // Pass if no search query
+    const lowerCaseQuery = query.toLowerCase();
+    return (
+        product.name.toLowerCase().includes(lowerCaseQuery) ||
+        product.category.some(cat => cat.toLowerCase().includes(lowerCaseQuery))
+    );
+};
+
+const matchesCategory = (product: ProductType2, category: string | undefined): boolean => {
+    if (!category) return true; // Pass if no category filter is set
+    return product.category.includes(category);
+};
+
+const matchesStockStatus = (product: ProductType2, status: string | undefined): boolean => {
+    if (!status) return true; // Pass if no status filter is set
+    return product.status === status;
+};
+
+const matchesPriceRange = (price: number, range: string | undefined): boolean => {
+    if (!range) return true; // Pass if no price range filter is set
+    switch (range) {
+        case "Under $25": return price < 25;
+        case "$25-$50": return price >= 25 && price <= 50;
+        case "$50-$100": return price >= 50 && price <= 100;
+        case "Over $100": return price > 100;
+        default: return true;
+    }
+};
+
+const matchesCommissionRate = (commission: number, range: string | undefined): boolean => {
+    if (!range) return true; // Pass if no commission filter is set
+    switch (range) {
+        case "5-10%": return commission >= 5 && commission < 10;
+        case "10-15%": return commission >= 10 && commission < 15;
+        case "15-20%": return commission >= 15 && commission < 20;
+        case "20%+": return commission >= 20;
+        default: return true;
+    }
+};
+
+
 export const useProductFilters = () => {
     const [allProducts, setAllProducts] = useState<ProductType2[]>([]);
     const [loading, setLoading] = useState(true);
@@ -17,14 +62,13 @@ export const useProductFilters = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                // In a real app, you'd fetch from your API
-                const res = await fetch("/api/products"); 
+                const res = await fetch("/api/products");
                 if (!res.ok) throw new Error("Failed to fetch");
                 const data = await res.json();
                 setAllProducts(data.products || []);
             } catch (error) {
                 console.error("Failed to fetch products:", error);
-                setAllProducts([]); // Set to empty array on error
+                setAllProducts([]);
             } finally {
                 setLoading(false);
             }
@@ -33,14 +77,20 @@ export const useProductFilters = () => {
     }, []);
 
     const filteredAndSortedProducts = useMemo(() => {
+        // This is the core filtering logic.
+        // A product must pass EVERY condition to be included.
         return allProducts
             .filter(product => {
-                // Implement full filtering logic here based on `selectedFilters`
-                const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-                // ...etc
-                return matchesSearch;
+                const passSearch = matchesSearch(product, searchQuery);
+                const passCategory = matchesCategory(product, selectedFilters["Category"]);
+                const passStock = matchesStockStatus(product, selectedFilters["Stock Status"]);
+                const passPrice = matchesPriceRange(product.sale_price, selectedFilters["Price Range"]);
+                const passCommission = matchesCommissionRate(product.commission || 0, selectedFilters["Commission Rate"]);
+
+                return passSearch && passCategory && passStock && passPrice && passCommission;
             })
             .sort((a, b) => {
+                // Sorting logic remains the same
                 switch (sortBy) {
                     case "name_asc": return a.name.localeCompare(b.name);
                     case "name_desc": return b.name.localeCompare(a.name);
@@ -52,7 +102,7 @@ export const useProductFilters = () => {
                     default: return 0;
                 }
             });
-    }, [allProducts, searchQuery, sortBy]);
+    }, [allProducts, searchQuery, selectedFilters, sortBy]);
 
     const paginatedProducts = useMemo(() => {
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -60,18 +110,21 @@ export const useProductFilters = () => {
     }, [filteredAndSortedProducts, currentPage]);
 
     const totalPages = Math.ceil(filteredAndSortedProducts.length / ITEMS_PER_PAGE);
-
+    
+    // REFINED HANDLER TO MANAGE FILTER STATE
     const handleFilterSelect = (filterTitle: string, item: string) => {
+        setCurrentPage(1); // CRITICAL: Reset to page 1 on any filter change
         setSelectedFilters(prev => {
             const newFilters = { ...prev };
+            // If user selects "All" or an empty value, we remove the filter key from the state object.
             if (item === "All" || !item) {
                 delete newFilters[filterTitle];
             } else {
+                // Otherwise, we set or update the filter.
                 newFilters[filterTitle] = item;
             }
             return newFilters;
         });
-        setCurrentPage(1);
     };
 
     const clearAllFilters = () => {
@@ -79,7 +132,7 @@ export const useProductFilters = () => {
         setSearchQuery('');
         setCurrentPage(1);
     };
-    
+
     const activeFilterCount = Object.keys(selectedFilters).length;
     const hasActiveFilters = activeFilterCount > 0 || searchQuery !== '';
 
