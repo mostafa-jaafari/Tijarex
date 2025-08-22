@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ProductType2 } from '@/types/product';
 import { getStockBadge } from './Functions/GetStockBadge';
-import { Heart, Eye, Share2, Star, TrendingUp } from 'lucide-react';
+import { Heart, Eye, Star, TrendingUp, Copy } from 'lucide-react';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 
@@ -85,14 +85,16 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             </td>
 
             {/* Commission Cell */}
-            <td className="text-center px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-semibold text-green-600">
-                    {commissionRate}%
-                </div>
-                <div className="text-xs text-gray-500">
-                    Earn ${estimatedEarning.toFixed(2)}
-                </div>
-            </td>
+            {userInfos?.UserRole === "seller" ? null : (
+                <td className="text-center px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-semibold text-green-600">
+                        {commissionRate}%
+                    </div>
+                    <div className="text-xs text-gray-500">
+                        Earn ${estimatedEarning.toFixed(2)}
+                    </div>
+                </td>
+            )}
 
             {/* Stock Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
@@ -118,10 +120,11 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             {/* Actions Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap text-right">
                 <div className="flex items-center justify-end gap-1">
+                    {/* --- Add To Favorite --- */}
                     <button
                         onClick={handleFavoriteClick}
-                        className={`p-2 rounded-lg transition-colors ${
-                            isFavorite
+                        className={`p-2 cursor-pointer rounded-lg transition-colors 
+                            ${isFavorite
                                 ? 'text-red-500 bg-red-50 hover:bg-red-100'
                                 : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
                         }`}
@@ -129,13 +132,21 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
                     >
                         <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
                     </button>
+                    {/* --- Quick View --- */}
                     <button 
                         onClick={HandleQuickView}
-                        className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" aria-label="Quick view">
+                        className="cursor-pointer p-2 text-gray-400 
+                            hover:text-teal-600 hover:bg-teal-50 rounded-lg 
+                            transition-colors" 
+                            aria-label="Quick view">
                         <Eye className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" aria-label="Share product">
-                        <Share2 className="w-4 h-4" />
+                    {/* --- Copy Product Link --- */}
+                    <button 
+                        className="cursor-pointer p-2 text-gray-400 hover:text-green-600 
+                            hover:bg-green-50 rounded-lg transition-colors" 
+                        aria-label="Copy product link">
+                        <Copy className="w-4 h-4" />
                     </button>
                     {userInfos?.UserRole !== "seller" && (
                         <button 

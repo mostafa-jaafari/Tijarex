@@ -1,5 +1,6 @@
 import { ProductType2 } from '@/types/product';
 import { ProductTableRow } from './ProductTableRow'; // Create this component
+import { useUserInfos } from '@/context/UserInfosContext';
 
 interface ProductsTableProps {
     products: ProductType2[];
@@ -8,8 +9,8 @@ interface ProductsTableProps {
 
 export const ProductsTable = ({ products, loading }: ProductsTableProps) => {
     // Add a skeleton loader for the table view
+    const { userInfos } = useUserInfos();
     if (loading) return <p>Loading table...</p>; 
-
     return (
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
@@ -21,7 +22,9 @@ export const ProductsTable = ({ products, loading }: ProductsTableProps) => {
                             <th scope="col" className="w-[30%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Product</th>
                             <th scope="col" className="w-[12%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Category</th>
                             <th scope="col" className="w-[10%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Price</th>
-                            <th scope="col" className="w-[12%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Commission</th>
+                            {userInfos?.UserRole === "seller" ? null : (
+                                <th scope="col" className="w-[12%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Commission</th>
+                            )}
                             <th scope="col" className="w-[12%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Stock</th>
                             <th scope="col" className="w-[12%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Performance</th>
                             <th scope="col" className="w-[12%] text-center px-6 py-4 text-xs font-semibold text-gray-200 uppercase tracking-wider">Actions</th>
