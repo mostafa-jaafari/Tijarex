@@ -50,6 +50,7 @@ export interface ProductType2 {
     sellerEmail: string;
     sellerFullName: string;
     name: string;
+    isTrend?: boolean;
     product_images: string[];
     category: string[];
     sale_price: number;

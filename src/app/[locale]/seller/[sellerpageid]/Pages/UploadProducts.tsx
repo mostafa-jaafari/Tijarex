@@ -6,7 +6,8 @@ import { auth } from "@/lib/FirebaseClient";
 import imageCompression from "browser-image-compression";
 import { ColorInput, ColorOption } from "@/components/Upload-Products/ColorInput";
 import { SizeInput, SizeOption } from "@/components/Upload-Products/SizeInput";
-import { UploadCloud, X, Loader2, CheckCircle2, AlertTriangle, Package, DollarSign, ClipboardList } from "lucide-react";
+import { UploadCloud, X, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function UploadProductPage() {
     // Form State
@@ -50,6 +51,7 @@ export default function UploadProductPage() {
                 const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920 });
                 newFiles.push(compressedFile);
             } catch (error) {
+                toast.error(error as string)
                 newFiles.push(file);
             }
         }
