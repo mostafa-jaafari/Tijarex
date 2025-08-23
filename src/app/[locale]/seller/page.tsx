@@ -42,7 +42,7 @@ export default async function page() {
           <EarningsChart />
         </section>
         {/* --- Sidebar --- */}
-          {/* <PopularProductsWidget /> */}
+          <PopularProductsWidget />
       </section>
     </main>
   )

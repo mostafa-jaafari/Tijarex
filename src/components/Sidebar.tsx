@@ -84,9 +84,9 @@ export function Sidebar() {
     return (
         <aside className={`group
             ${isCollapsed ? 'w-16' : 'w-74'} 
-            bg-gray-50 h-screen pb-14 transition-all duration-300 
+            bg-gray-100 h-screen pb-14 transition-all duration-300 
             flex flex-col sticky top-15 overflow-hidden 
-            border-r border-gray-100 shadow rounded-tl-xl bg-gray-50
+            borde border-gray-100 rounded-tl-xl
         `}>
             {/* Header */}
             <div 
