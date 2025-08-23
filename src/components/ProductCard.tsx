@@ -4,18 +4,18 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Heart, ShoppingCart, Star, Zap, DollarSign, Users, TrendingUp } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, ShoppingCart, Star, DollarSign, Users, TrendingUp, Flame } from 'lucide-react';
 import { ProductType } from '@/types/product';
 
 
 // Utility function for stock status badge styling
-const getStockBadge = (status: string) => {
-    switch (status.toLowerCase()) {
-        case 'in stock': return 'bg-green-100 text-green-800 border-green-200';
-        case 'low stock': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-        default: return 'bg-red-100 text-red-800 border-red-200';
-    }
-};
+// const getStockBadge = (status: string) => {
+//     switch (status.toLowerCase()) {
+//         case 'in stock': return 'bg-green-100 text-green-800 border-green-200';
+//         case 'low stock': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+//         default: return 'bg-red-100 text-red-800 border-red-200';
+//     }
+// };
 
 interface ProductCardProps {
     product: ProductType;
@@ -88,23 +88,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                     className="absolute top-4 left-4 flex flex-col 
                     items-start gap-2"
                 >
-                    {product.sales > 500 && (
-                        <div 
-                            className="flex items-center gap-1.5 px-3 
-                                py-1.5 bg-black/60 backdrop-blur-sm 
-                                text-white text-xs font-semibold rounded-full"
-                        >
-                            <Zap 
-                                size={14}
-                            /> 
-                            Hot Seller
-                        </div>
-                    )}
                     {product.isTrend && (
                         <div 
-                            className="flex items-center gap-1.5 px-3 
-                                py-1.5 bg-purple-600/80 backdrop-blur-
-                                sm text-white text-xs font-semibold rounded-full"
+                            className="flex items-center gap-1 px-2 
+                                py-1.5 bg-[#1A1A1A] backdrop-blur-sm
+                                sm text-white text-xs font-semibold rounded-lg"
                         >
                             <TrendingUp 
                                 size={14}
@@ -191,15 +179,29 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
             {/* --- Content Section --- */}
             <div className="pt-3 space-y-1">
-                <h3 
-                    className="text-lg font-semibold text-neutral-800 
-                        tracking-tight line-clamp-2">
-                     <Link 
-                        href={`/seller/products?p_id=${product.id}`}
-                    >
-                        {product.name}
-                    </Link>
-                </h3>
+                <div
+                    className='flex gap-1 items-start justify-between'
+                >
+                    <h3 
+                        className="text-wrap font-semibold text-neutral-800">
+                        <Link 
+                            href={`/seller/products?p_id=${product.id}`}
+                        >
+                            {product.name}
+                        </Link>
+                    </h3>
+                    {product.sales > 500 && (
+                        <div 
+                            className="flex flex-shrink-0 items-center 
+                                font-semibold text-orange-500 text-xs"
+                        >
+                            <Flame 
+                                size={18}
+                            />
+                            Hot Seller
+                        </div>
+                    )}
+                </div>
 
                 {/* --- DYNAMIC CONTENT AREA --- */}
                 {/* This container has a fixed height to prevent layout shift on hover */}
