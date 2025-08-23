@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ProductType2 } from '@/types/product';
+import { ProductType } from '@/types/product';
 import { getStockBadge } from './Functions/GetStockBadge';
 import { Heart, Eye, Star, TrendingUp, Copy } from 'lucide-react';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 
 interface ProductTableRowProps {
-    product: ProductType2;
+    product: ProductType;
 }
 
 export const ProductTableRow = ({ product }: ProductTableRowProps) => {
@@ -22,8 +22,8 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
     }
     const [isFavorite, setIsFavorite] = useState(false);
 
-    const commissionRate = product.commission || 10;
-    const estimatedEarning = (product.sale_price * commissionRate) / 100;
+    // const commissionRate = product.commission || 10;
+    // const estimatedEarning = (product.sale_price * commissionRate) / 100;
 
     const handleFavoriteClick = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent row click events if any
@@ -88,17 +88,22 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             {userInfos?.UserRole === "seller" ? null : (
                 <td className="text-center px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-semibold text-green-600">
-                        {commissionRate}%
+                        {/* {commissionRate}% */}
+                        20%
                     </div>
                     <div className="text-xs text-gray-500">
-                        Earn ${estimatedEarning.toFixed(2)}
+                        {/* Earn ${estimatedEarning.toFixed(2)} */}
+                        Earn $20
                     </div>
                 </td>
             )}
 
             {/* Stock Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
-                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${getStockBadge(product.status)}`}>
+                <span 
+                    className={`inline-flex items-center px-2 py-1 text-xs 
+                        font-medium rounded-md border 
+                        ${getStockBadge(product.status)}`}>
                     {product.status}
                 </span>
                 <div className="text-xs text-gray-500 mt-1.5">

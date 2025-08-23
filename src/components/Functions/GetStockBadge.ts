@@ -1,6 +1,6 @@
-import { ProductType2 } from "@/types/product";
+import { ProductType } from "@/types/product";
 
-export const getStockBadge = (status: ProductType2['status']) => {
+export const getStockBadge = (status: ProductType['status']) => {
     switch (status) {
         case "In Stock":
             return "bg-emerald-50 text-emerald-700 border-emerald-200";

@@ -1,9 +1,9 @@
-import { ProductType2 } from '@/types/product';
+import { ProductType } from '@/types/product';
 import { ProductTableRow } from './ProductTableRow'; // Create this component
 import { useUserInfos } from '@/context/UserInfosContext';
 
 interface ProductsTableProps {
-    products: ProductType2[];
+    products: ProductType[];
     loading: boolean;
 }
 

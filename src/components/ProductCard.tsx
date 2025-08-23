@@ -205,7 +205,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
                 {/* --- DYNAMIC CONTENT AREA --- */}
                 {/* This container has a fixed height to prevent layout shift on hover */}
-                <div className="relative h-[68px]"> 
+                <div className="relative h-[62px]"> 
                     {/* Default State: Price, Stats */}
                     <motion.div
                         animate={{ opacity: isHovered ? 0 : 1, y: isHovered ? -10 : 0 }}
@@ -236,7 +236,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
                         transition={{ duration: 0.25, ease: 'easeInOut' }}
-                        className="absolute inset-0 flex flex-col items-center justify-between"
+                        className="absolute inset-0 flex flex-col 
+                            mt-2 items-center justify-between"
                     >
                         <div className="w-full flex justify-start items-end gap-1">
                             <p className="text-sm text-green-600">Est. Earning</p>

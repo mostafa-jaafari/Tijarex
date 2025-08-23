@@ -1,8 +1,8 @@
-import { ProductType2 } from '@/types/product';
+import { ProductType } from '@/types/product';
 import { ProductCard } from './ProductCard';
 
 interface ProductGridProps {
-    products: ProductType2[];
+    products: ProductType[];
     loading: boolean;
 }
 

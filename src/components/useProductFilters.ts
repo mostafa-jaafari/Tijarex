@@ -1,27 +1,35 @@
 "use client";
 import { useState, useEffect, useMemo } from 'react';
-import { ProductType2 } from '@/types/product';
+import { ProductType } from '@/types/product';
 
 const ITEMS_PER_PAGE = 12;
 
 // --- Helper functions for matching filter criteria ---
 // These functions make the main filter logic much cleaner.
 
-const matchesSearch = (product: ProductType2, query: string): boolean => {
-    if (!query) return true; // Pass if no search query
+const matchesSearch = (product: ProductType, query: string): boolean => {
+    if (!query) return true;
     const lowerCaseQuery = query.toLowerCase();
+
+    // حول category دايمًا لمصفوفة
+    const categories = Array.isArray(product.category)
+        ? product.category
+        : product.category
+            ? [product.category] // لو string → مصفوفة
+            : [];
+
     return (
         product.name.toLowerCase().includes(lowerCaseQuery) ||
-        product.category.some(cat => cat.toLowerCase().includes(lowerCaseQuery))
+        categories.some(cat => cat.toLowerCase().includes(lowerCaseQuery))
     );
 };
 
-const matchesCategory = (product: ProductType2, category: string | undefined): boolean => {
+const matchesCategory = (product: ProductType, category: string | undefined): boolean => {
     if (!category) return true; // Pass if no category filter is set
     return product.category.includes(category);
 };
 
-const matchesStockStatus = (product: ProductType2, status: string | undefined): boolean => {
+const matchesStockStatus = (product: ProductType, status: string | undefined): boolean => {
     if (!status) return true; // Pass if no status filter is set
     return product.status === status;
 };
@@ -37,20 +45,9 @@ const matchesPriceRange = (price: number, range: string | undefined): boolean =>
     }
 };
 
-const matchesCommissionRate = (commission: number, range: string | undefined): boolean => {
-    if (!range) return true; // Pass if no commission filter is set
-    switch (range) {
-        case "5-10%": return commission >= 5 && commission < 10;
-        case "10-15%": return commission >= 10 && commission < 15;
-        case "15-20%": return commission >= 15 && commission < 20;
-        case "20%+": return commission >= 20;
-        default: return true;
-    }
-};
-
 
 export const useProductFilters = () => {
-    const [allProducts, setAllProducts] = useState<ProductType2[]>([]);
+    const [allProducts, setAllProducts] = useState<ProductType[]>([]);
     const [loading, setLoading] = useState(true);
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
     const [searchQuery, setSearchQuery] = useState('');
@@ -85,9 +82,8 @@ export const useProductFilters = () => {
                 const passCategory = matchesCategory(product, selectedFilters["Category"]);
                 const passStock = matchesStockStatus(product, selectedFilters["Stock Status"]);
                 const passPrice = matchesPriceRange(product.sale_price, selectedFilters["Price Range"]);
-                const passCommission = matchesCommissionRate(product.commission || 0, selectedFilters["Commission Rate"]);
 
-                return passSearch && passCategory && passStock && passPrice && passCommission;
+                return passSearch && passCategory && passStock && passPrice;
             })
             .sort((a, b) => {
                 // Sorting logic remains the same
@@ -96,7 +92,6 @@ export const useProductFilters = () => {
                     case "name_desc": return b.name.localeCompare(a.name);
                     case "price_asc": return a.sale_price - b.sale_price;
                     case "price_desc": return b.sale_price - a.sale_price;
-                    case "commission_desc": return (b.commission || 0) - (a.commission || 0);
                     case "sales_desc": return b.sales - a.sales;
                     case "date_desc": return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
                     default: return 0;

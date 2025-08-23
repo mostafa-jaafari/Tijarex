@@ -16,7 +16,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
                     onClick={() => onPageChange(page)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         currentPage === page
-                            ? 'bg-blue-600 text-white shadow-sm'
+                            ? 'bg-teal-600 text-white shadow-sm'
                             : 'text-gray-700 hover:bg-gray-100'
                     }`}
                 >
