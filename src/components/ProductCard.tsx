@@ -5,15 +5,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-    ArrowLeft, ArrowRight, Heart, ShoppingCart,
-    Box, CheckCircle2, BarChart2, Eye,
-    Clock, XCircle,
+    ArrowLeft, ArrowRight, Heart,
+    Box, BarChart2, Eye,
     Flame,
-    ShoppingBag,
     Store,
 } from 'lucide-react';
 import { ProductType } from '@/types/product';
 import { useUserInfos } from '@/context/UserInfosContext';
+import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 
 // --- Helper Components for Badges ---
 
@@ -24,10 +23,15 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
     const { userInfos } = useUserInfos();
+    const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
 
+    const HandleQuickView = () => {
+        setProductID(product.id as string || "");
+        setIsShowQuickViewProduct(true)
+    }
     const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
         e.preventDefault();
         e.stopPropagation();
@@ -102,14 +106,45 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         <AnimatePresence>
                             {isHovered && (
                                 <>
-                                    <motion.button onClick={(e) => handleImageNavigation(e, -1)} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white/80 text-gray-800 rounded-full shadow-md hover:bg-white"> <ArrowLeft size={16} /> </motion.button>
-                                    <motion.button onClick={(e) => handleImageNavigation(e, 1)} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white/80 text-gray-800 rounded-full shadow-md hover:bg-white"> <ArrowRight size={16} /> </motion.button>
+                                    <motion.button 
+                                        onClick={(e) => handleImageNavigation(e, -1)} 
+                                        initial={{ opacity: 0, x: -10 }} 
+                                        animate={{ opacity: 1, x: 0 }} 
+                                        exit={{ opacity: 0, x: -10 }} 
+                                        className="absolute top-1/2 left-2 transform -translate-y-1/2 
+                                            p-2 bg-white/80 cursor-pointer text-gray-800 rounded-full
+                                            shadow-md hover:bg-white"
+                                    > <ArrowLeft 
+                                        size={16}
+                                    />
+                                    </motion.button>
+                                    <motion.button 
+                                        onClick={(e) => handleImageNavigation(e, 1)} 
+                                        initial={{ opacity: 0, x: 10 }} 
+                                        animate={{ opacity: 1, x: 0 }} 
+                                        exit={{ opacity: 0, x: 10 }} 
+                                        className="absolute top-1/2 right-2 transform -translate-y-1/2 
+                                            p-2 bg-white/80 cursor-pointer text-gray-800 rounded-full
+                                            shadow-md hover:bg-white"
+                                    > <ArrowRight 
+                                        size={16}
+                                    />
+                                    </motion.button>
                                 </>
                             )}
                         </AnimatePresence>
-                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                        <div 
+                            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2"
+                        >
                             {product.product_images.map((_, i) => (
-                                <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === currentImage ? 'w-5 bg-white' : 'w-1.5 bg-white/60'}`} />
+                                <div 
+                                    key={i} 
+                                    className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 
+                                        ${i === currentImage ?
+                                            'w-5 bg-white'
+                                            :
+                                            'w-1.5 bg-white/60'}`}
+                                />
                             ))}
                         </div>
                     </>
@@ -158,12 +193,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                                 <Store size={16} /> Add to Store
                             </button>
                         )}
-                        <Link 
-                            href={`/seller/products?p_id=${product.id}`}
+                        <button 
+                            onClick={HandleQuickView}
                             className="grow flex justify-center p-2.5 bg-gray-100 hover:bg-gray-200 
                                 text-gray-700 rounded-lg transition-colors">
                             <Eye size={16} />
-                        </Link>
+                        </button>
                     </motion.div>
                 </div>
             </div>
