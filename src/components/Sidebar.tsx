@@ -18,6 +18,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { SwitchLanguage } from "./SwitchLanguage";
 import { useUserInfos } from "@/context/UserInfosContext";
+import { BlackButtonStyles } from "./Header";
 
 export function Sidebar() {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
@@ -95,7 +96,11 @@ export function Sidebar() {
                 {!isCollapsed && (
                     <div 
                         className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
+                        <div 
+                            className={`w-8 h-8 rounded-lg flex items-center 
+                                justify-center
+                                ${BlackButtonStyles}`}
+                        >
                             <span className="text-white font-bold text-sm">J</span>
                         </div>
                         <div>
@@ -116,9 +121,11 @@ export function Sidebar() {
                 >
                     {isCollapsed ? (
                         <div 
-                            className="relative 
-                                w-8 h-8 bg-teal-600 rounded-lg 
-                                flex items-center justify-center">
+                            className={`relative 
+                                w-8 h-8 rounded-lg 
+                                flex items-center justify-center
+                                ${BlackButtonStyles}`}
+                        >
                             <span className="group-hover:opacity-0 
                                 group-hover:pointer-events-none 
                                 text-white font-bold text-sm">J</span>
@@ -136,7 +143,7 @@ export function Sidebar() {
                         </div>
                     ) : (
                         <span
-                            className="hover:bg-teal-600 hover:text-white 
+                            className="hover:bg-neutral-300 hover:text-neutral-500 
                                 cursor-pointer p-2 rounded-lg"
                         >
                             <ChevronLeft size={16} />
@@ -165,7 +172,7 @@ export function Sidebar() {
                                         group flex items-center capitalize px-3 py-2 text-sm 
                                             font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-teal-50 shadow shadow-teal-600/20 text-teal-700 font-semibold border-teal-600 border-l-2` 
+                                            ? `bg-neutral-50 shadow shadow-neutral-600/20 text-neutral-700 font-semibold border-neutral-600 border-l-2` 
                                             : "text-gray-700 hover:bg-gray-100"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
@@ -174,7 +181,7 @@ export function Sidebar() {
                                 >
                                     <nav.icon 
                                         size={18} 
-                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-teal-600' : 'text-gray-500'}`} 
+                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-neutral-800' : 'text-gray-500'}`} 
                                     />
                                     {!isCollapsed && (
                                         <div className="flex-1 flex items-center justify-between">
@@ -209,7 +216,7 @@ export function Sidebar() {
                                     className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-teal-50 shadow shadow-teal-600/20 text-teal-700 font-semibold border-teal-600 border-l-2` 
+                                            ? `bg-neutral-50 shadow shadow-neutral-600/20 text-neutral-700 font-semibold border-neutral-600 border-l-2` 
                                             : "text-gray-700 hover:bg-gray-100"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
@@ -218,7 +225,7 @@ export function Sidebar() {
                                 >
                                     <tool.icon 
                                         size={18} 
-                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-teal-600' : 'text-gray-500'}`} 
+                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-neutral-800' : 'text-gray-500'}`} 
                                     />
                                     {!isCollapsed && (
                                         <span>{tool.label}</span>
@@ -239,9 +246,9 @@ export function Sidebar() {
                         >
                             <SwitchLanguage
                                 CLASSNAME="text-sm w-full flex items-center 
-                                    justify-between bg-teal-100 px-2 py-1 
-                                    rounded-full border border-teal-300 
-                                    text-teal-600"
+                                    justify-between bg-neutral-100 px-2 py-1 
+                                    rounded-full border border-neutral-300 
+                                    text-neutral-600 cursor-pointer"
                             />
                         </div>
                         <div
