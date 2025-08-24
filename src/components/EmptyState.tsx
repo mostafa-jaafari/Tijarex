@@ -1,4 +1,5 @@
 import { RefreshCw } from 'lucide-react';
+import { BlackButtonStyles } from './Header';
 interface EmptyStateProps {
     onClear: () => void;
 }
@@ -9,7 +10,10 @@ export const EmptyState = ({ onClear }: EmptyStateProps) => (
         <p className="text-gray-500 mt-2">Try adjusting your filters or search terms.</p>
         <button 
             onClick={onClear} 
-            className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+            className={`mt-6 inline-flex items-center gap-2 px-5 py-2.5 
+                font-semibold rounded-lg hover:bg-blue-700
+                hover:from-neutral-900 hover:via-neutral-900 hover:to-neutral-900 cursor-pointer
+                ${BlackButtonStyles}`}
         >
             <RefreshCw size={16} /> Clear all filters
         </button>

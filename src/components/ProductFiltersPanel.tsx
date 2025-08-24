@@ -1,6 +1,5 @@
-// /components/filters/ProductFiltersPanel.tsx (Updated)
-
 import React from 'react';
+import { motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import { CustomDropdown } from './UI/CustomDropdown';
 
@@ -8,8 +7,13 @@ const productFilters = [
     { title: "Category", filters: ["All", "Electronics", "Clothing", "Home & Garden", "Books"] },
     { title: "Stock Status", filters: ["All", "In Stock", "Low Stock", "Out of Stock"] },
     { title: "Price Range", filters: ["All", "Under $25", "$25-$50", "$50-$100", "Over $100"] },
-    { title: "Commission Rate", filters: ["All", "5-10%", "10-15%", "15-20%", "20%+"] },
 ];
+
+// --- Animation Variants ---
+const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+};
 
 interface ProductFiltersPanelProps {
     selectedFilters: { [key: string]: string };
@@ -19,10 +23,16 @@ interface ProductFiltersPanelProps {
 
 export const ProductFiltersPanel = ({ selectedFilters, onFilterSelect, onClear }: ProductFiltersPanelProps) => {
     return (
-        <div 
-            className="p-6 rounded-b-lg borderb border-x border-gray-200 -mt-2
-                bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]">
-            <div className="flex items-center justify-between">
+        <motion.div
+            // Key is important for AnimatePresence to track the component
+            key="filters-panel"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="p-6 rounded-b-lg border-b border-x border-gray-200 -mt-2
+                bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]"
+        >
+            <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-semibold text-white">Filter Products</h3>
                 <button
                     onClick={onClear}
@@ -36,15 +46,17 @@ export const ProductFiltersPanel = ({ selectedFilters, onFilterSelect, onClear }
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {productFilters.map((filter) => (
-                    <CustomDropdown
-                        key={filter.title}
-                        label={filter.title}
-                        options={filter.filters}
-                        selectedValue={selectedFilters[filter.title] || 'All'}
-                        onSelect={(item) => onFilterSelect(filter.title, item)}
-                    />
+                    // Each dropdown is now a motion component to be staggered
+                    <motion.div key={filter.title} variants={itemVariants}>
+                        <CustomDropdown
+                            label={filter.title}
+                            options={filter.filters}
+                            selectedValue={selectedFilters[filter.title] || 'All'}
+                            onSelect={(item) => onFilterSelect(filter.title, item)}
+                        />
+                    </motion.div>
                 ))}
             </div>
-        </div>
+        </motion.div>
     );
 };

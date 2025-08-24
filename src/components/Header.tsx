@@ -7,7 +7,7 @@ import { DropDownShoppingCart } from "./DropDownShoppingCart";
 
 
 export const WhiteButtonStyles = "border-b border-gray-400 hover:bg-gray-50 bg-white cursor-pointer text-gray-800";
-export const BlackButtonStyles = "bg-gradient-to-r from-[#1A1A1A] to-[#1A1A1A]";
+export const BlackButtonStyles = "bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A] text-white";
 
 export function Header() {
   return (

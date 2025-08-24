@@ -49,10 +49,10 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
                     </Link>
                     <div className="min-w-0 flex-1">
                         <Link href={`/seller/products?p_id=${product.id}`} className="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 hover:text-teal-600 transition-colors">
-                            {product.name}
+                            {product.name.length > 30 ? `${product.name.slice(0, 30)}...` : product.name}
                         </Link>
                         <div className="text-xs text-gray-500 mt-1">
-                            ID: {product.id}
+                            ID: {product.id.length > 30 ? `${product.id.slice(0, 30)}...` : product.id}
                         </div>
                         <div className="flex items-center gap-1 mt-1.5">
                             <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />

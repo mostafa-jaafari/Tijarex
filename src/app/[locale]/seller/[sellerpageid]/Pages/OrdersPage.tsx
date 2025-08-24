@@ -2,12 +2,10 @@
 import { FilterOrders } from '@/components/FilterOrders';
 import { OrderType } from '@/types/orders';
 import { MoreHorizontal } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 export default function OrdersPage() {
-  const t = useTranslations("orderspage");
   const [searchTerm, setSearchTerm] = useState('');
   const [orders, setOrders] = useState<OrderType[] | []>([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +42,6 @@ export default function OrdersPage() {
     order.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const locale = useLocale();
   return (
     <section className="w-full overflow-x-scroll">
 
@@ -59,9 +56,11 @@ export default function OrdersPage() {
           {/* Table Header Info */}
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">{t("orderstable.title")}</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Title
+                </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  {filteredOrders.length} {locale === "ar" ? t("orderstable.ordersFound") : "order"}{filteredOrders.length !== 1 && locale !== "ar" ? 's' : ''} {locale !== "ar" && "found"}
+                  {filteredOrders.length}
                 </p>
             </div>
           </div>
@@ -72,25 +71,25 @@ export default function OrdersPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("orderTableHeaders.order")}
+                    Order
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("orderTableHeaders.customer")}
+                    customer
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("orderTableHeaders.status")}
+                    status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("orderTableHeaders.product")}
+                    product
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("orderTableHeaders.total")}
+                    total
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("orderTableHeaders.date")}
+                    date
                   </th>
                   <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t("orderTableHeaders.actions")}
+                    actions
                   </th>
                 </tr>
               </thead>

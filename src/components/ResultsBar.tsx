@@ -8,7 +8,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 const sortOptions = [
     { label: "Most Relevant", value: "relevance" },
     { label: "Best Selling", value: "sales_desc" },
-    { label: "Highest Commission", value: "commission_desc" },
     { label: "Price: Low to High", value: "price_asc" },
     { label: "Price: High to Low", value: "price_desc" },
     { label: "Newest Arrivals", value: "date_desc" },
