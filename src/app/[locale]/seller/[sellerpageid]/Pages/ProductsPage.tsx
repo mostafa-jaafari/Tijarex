@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useProductFilters } from '@/components/useProductFilters';
 import { ControlsPanel } from '@/components/ControlsPanel';
 import { ProductFiltersPanel } from '@/components/ProductFiltersPanel';
-import { ActiveFilters } from '@/components/ActiveFilters';
 import { ResultsBar } from '@/components/ResultsBar';
 import { ProductGrid } from '@/components/ProductGrid';
 import { ProductsTable } from '@/components/ProductsTable';
@@ -17,7 +16,7 @@ export default function ProductsPage() {
     const [showFilters, setShowFilters] = useState(false);
     
     const {
-        loading, viewMode, paginatedProducts, filteredCount, hasActiveFilters
+        loading, viewMode, paginatedProducts, filteredCount
     } = state;
 
     return (
@@ -33,14 +32,6 @@ export default function ProductsPage() {
                     viewMode={viewMode}
                     onViewModeChange={actions.setViewMode}
                 />
-
-                {hasActiveFilters && (
-                    <ActiveFilters 
-                        selectedFilters={state.selectedFilters}
-                        onClearFilter={actions.handleFilterSelect}
-                        onClearAll={actions.clearAllFilters}
-                    />
-                )}
 
                 {/* You would use Framer Motion here for smooth transitions */}
                 {showFilters && (

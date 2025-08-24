@@ -44,10 +44,10 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between w-full px-3 
-                    py-2.5 bg-neutral-800 border-none 
+                    py-2.5 bg-neutral-800 border border-neutral-700 
                     rounded-lg text-sm text-neutral-200 
-                    focus:outline-none focus:ring focus:ring-teal-100 
-                    focus:border-teal-500 transition-colors 
+                    focus:outline-none focus:ring focus:ring-neutral-100 
+                    focus:border-neutral-500 transition-colors 
                     hover:bg-neutral-700
                     cursor-pointer"
                 aria-haspopup="listbox"
@@ -77,8 +77,8 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
                                         onClick={() => handleSelect(option)}
                                         className={`w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors 
                                             ${selectedValue === option
-                                                ? 'bg-teal-600 text-white'
-                                                : 'text-neutral-200 hover:bg-teal-600 hover:text-white'
+                                                ? 'bg-neutral-600 text-white'
+                                                : 'text-neutral-200 hover:bg-neutral-600 hover:text-white'
                                         }`}
                                         role="option"
                                         aria-selected={selectedValue === option}

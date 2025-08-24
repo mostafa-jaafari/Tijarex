@@ -35,7 +35,7 @@ export const ControlsPanel = ({
 }: ControlsPanelProps) => {
     return (
         <div 
-            className="p-6 rounded-lg border border-gray-200 mb-3
+            className="p-6 rounded-lg border border-gray-200
                 bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]">
             <div className="">
                 <Header 
@@ -92,7 +92,10 @@ export const ControlsPanel = ({
                         <SlidersHorizontal className="w-4 h-4" />
                         <span>Filters</span>
                         {activeFilterCount > 0 && (
-                            <span className="ml-1 flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-blue-600 text-white text-xs font-bold rounded-full">
+                            <span 
+                                className="ml-1 flex items-center justify-center 
+                                    min-w-[20px] h-5 px-1.5 bg-teal-700 text-white 
+                                    text-xs font-bold rounded-full">
                                 {activeFilterCount}
                             </span>
                         )}

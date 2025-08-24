@@ -19,7 +19,9 @@ interface ProductFiltersPanelProps {
 
 export const ProductFiltersPanel = ({ selectedFilters, onFilterSelect, onClear }: ProductFiltersPanelProps) => {
     return (
-        <div className="bg-neutral-900 p-6 border border-neutral-700/50 rounded-xl shadow-lg mb-6 space-y-4">
+        <div 
+            className="p-6 rounded-b-lg borderb border-x border-gray-200 -mt-2
+                bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]">
             <div className="flex items-center justify-between">
                 <h3 className="text-base font-semibold text-white">Filter Products</h3>
                 <button
