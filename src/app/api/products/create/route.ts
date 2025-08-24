@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { adminDb, adminAuth } from '@/lib/FirebaseAdmin';
 import { v4 as uuidv4 } from 'uuid';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/FirebaseClient';
+import { UserInfosType } from '@/types/userinfos';
 
 export async function POST(request: Request) {
     const authHeader = request.headers.get('Authorization');
@@ -9,13 +14,16 @@ export async function POST(request: Request) {
     }
     const idToken = authHeader.split('Bearer ')[1];
 
+    const session = await getServerSession(authOptions);
     try {
         // 1. Authenticate user
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const uid = decodedToken.uid;
         
         // Fetch seller's user record to get their name and profile image
-        const userRecord = await adminAuth.getUser(uid);
+        if(!session) return;
+        const userDocRef = doc(db, "users", session?.user.email);
+        const userRecord = (await getDoc(userDocRef)).data() as UserInfosType;
 
         // 2. Get product data from request
         const body = await request.json();
@@ -62,8 +70,8 @@ export async function POST(request: Request) {
 
             // Server-generated owner details
             owner: {
-                name: userRecord.displayName || "Admin Seller", // Fallback name
-                image: userRecord.photoURL || `https://i.pravatar.cc/150?u=${uid}`, // Fallback image
+                name: userRecord.fullname || "Admin Seller", // Fallback name
+                image: userRecord.profileimage || `https://i.pravatar.cc/150?u=${uid}`, // Fallback image
             },
 
             // Default values for fields not in the form
