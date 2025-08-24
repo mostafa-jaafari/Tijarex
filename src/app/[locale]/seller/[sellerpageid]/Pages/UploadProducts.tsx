@@ -4,474 +4,324 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { auth } from "@/lib/FirebaseClient";
 import imageCompression from "browser-image-compression";
+import { motion, AnimatePresence } from "framer-motion";
 import { ColorInput, ColorOption } from "@/components/Upload-Products/ColorInput";
 import { SizeInput, SizeOption } from "@/components/Upload-Products/SizeInput";
-import { UploadCloud, X, Loader2, CheckCircle2, AlertTriangle, Image as ImageIcon } from "lucide-react";
+import { CategoryInput } from "@/components/CategoryInput";
+import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-// Define the type for the upload progress state
-interface UploadProgress {
-    [fileName: string]: number;
-}
+// --- Type Definitions ---
+interface UploadProgress { [fileName: string]: number; }
 
-// --- Reusable Form Components ---
-const FormSection = ({ title, children }: { title: string; children?: React.ReactNode }) => (
-    <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-        {children}
-    </div>
-);
-
-const LabeledInput = ({ label, id, children }: { label: string; id: string; children: React.ReactNode }) => (
-    <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
-        {children}
-    </div>
-);
-
-/**
- * NEW skeleton component for image processing.
- */
 const ImageProcessingSkeleton = ({ count }: { count: number }) => (
-    <>
-        {Array.from({ length: count }).map((_, i) => (
-            <div key={i} className="relative aspect-square bg-gray-200 rounded-lg animate-pulse"></div>
-        ))}
-    </>
+    Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="relative aspect-square bg-gray-200 rounded-lg animate-pulse"></div>
+    ))
 );
 
-
+// --- Main Page Component ---
 export default function UploadProductPage() {
     // --- State Management ---
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [categories, setCategories] = useState<string[]>([]);
-    const [currentCategory, setCurrentCategory] = useState("");
     const [regularPrice, setRegularPrice] = useState("");
     const [salePrice, setSalePrice] = useState("");
-    const [stock, setStock] = useState("");
+    const [stock, setStock] = useState(""); // State is a string to accommodate an empty input
     const [colors, setColors] = useState<ColorOption[]>([]);
     const [sizes, setSizes] = useState<SizeOption[]>([]);
-    const [isTrend, setIsTrend] = useState(false);
-    
-    // File & Upload State
     const [productFiles, setProductFiles] = useState<File[]>([]);
-    const [fileErrors, setFileErrors] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isProcessingImages, setIsProcessingImages] = useState(false);
     const [processingFileCount, setProcessingFileCount] = useState(0);
     const [uploadProgress, setUploadProgress] = useState<UploadProgress>({});
-    
-    // Component State
-    const [formError, setFormError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [uploadSuccess, setUploadSuccess] = useState(false);
-    const [purchaseType, setPurchaseType] = useState('fixed');
 
     // --- Form Reset Logic ---
     const resetForm = () => {
         setTitle("");
         setDescription("");
         setCategories([]);
-        setCurrentCategory("");
         setRegularPrice("");
         setSalePrice("");
-        setStock("");
+        setStock(""); // Reset stock to empty string
         setColors([]);
         setSizes([]);
-        setIsTrend(false);
         setProductFiles([]);
-        setFileErrors([]);
-        setPurchaseType("fixed");
-        if (fileInputRef.current) fileInputRef.current.value = "";
-    };
-
-    // --- Category & File Handling ---
-    const handleCategoryKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && currentCategory.trim() !== "") {
-            e.preventDefault();
-            if (!categories.includes(currentCategory.trim())) {
-                setCategories([...categories, currentCategory.trim()]);
-            }
-            setCurrentCategory("");
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
         }
     };
 
-    const removeCategory = (indexToRemove: number) => {
-        setCategories(categories.filter((_, index) => index !== indexToRemove));
-    };
-
+    // --- File Handling Logic ---
     const processFiles = async (files: File[]) => {
         if (!files.length) return;
-        
+        if (productFiles.length + files.length > 5) {
+            toast.error("You can only upload a maximum of 5 images.");
+            return;
+        }
         setIsProcessingImages(true);
         setProcessingFileCount(files.length);
-        setFileErrors([]);
-
         const newFiles: File[] = [];
-        const errors: string[] = [];
         for (const file of files) {
             if (!file.type.startsWith("image/")) {
-                errors.push(`${file.name}: Is not an image.`);
+                toast.error(`${file.name}: Is not a valid image file.`);
                 continue;
             }
             if (file.size > 10 * 1024 * 1024) {
-                errors.push(`${file.name}: Exceeds 10MB limit.`);
+                toast.error(`${file.name}: Exceeds the 10MB size limit.`);
                 continue;
             }
             try {
                 const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920 });
                 newFiles.push(compressedFile);
             } catch (error) {
-                const message = error instanceof Error ? error.message : "Image compression failed.";
-                toast.error(`Error processing ${file.name}: ${message}`);
-                errors.push(`${file.name}: Compression failed.`);
+                toast.error(`Could not process ${file.name}.`);
+                newFiles.push(file);
             }
         }
-        
-        setProductFiles(prev => [...prev, ...newFiles]);
-        setFileErrors(prevErrors => [...prevErrors, ...errors]);
+        setProductFiles(prev => [...prev, ...newFiles].slice(0, 5));
         if (fileInputRef.current) fileInputRef.current.value = "";
-        
         setIsProcessingImages(false);
         setProcessingFileCount(0);
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        processFiles(files);
-    };
-
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(true);
-    };
-    
-    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
-    };
-    
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => processFiles(Array.from(e.target.files || []));
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsDragging(true); };
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsDragging(false); };
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        e.stopPropagation();
         setIsDragging(false);
-        const files = Array.from(e.dataTransfer.files);
-        processFiles(files);
+        processFiles(Array.from(e.dataTransfer.files));
     };
+    const removeFile = (indexToRemove: number) => setProductFiles(prev => prev.filter((_, index) => index !== indexToRemove));
 
-    const removeFile = (indexToRemove: number) => {
-        setProductFiles(prev => prev.filter((_, index) => index !== indexToRemove));
-    };
+    // --- Submission Logic ---
+    const handleProductSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (isSubmitting || isProcessingImages) return;
 
-    // --- Form Submission Logic ---
-const handleProductSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setFormError(null);
-    setUploadSuccess(false);
-
-    if (!title || !regularPrice || productFiles.length === 0 || colors.length === 0 || sizes.length === 0) {
-        setFormError("Please fill all required fields: Title, Price, Images, Colors, and Sizes.");
-        return;
-    }
-
-    const user = auth.currentUser;
-    if (!user) {
-        setFormError("You must be logged in to upload a product.");
-        toast.error("Authentication required. Please log in.");
-        return;
-    }
-    
-    setIsSubmitting(true);
-    setUploadProgress({});
-
-    try {
-        // Step 1: Upload images to Cloudinary (this part is correct)
-        const uploadedImageUrls = await Promise.all(productFiles.map(async (file) => {
-            const timestamp = Math.round(new Date().getTime() / 1000);
-            const publicId = `products/${user.uid}/${Date.now()}_${file.name}`;
-            
-            const signatureResponse = await fetch('/api/cloudinary/sign-upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paramsToSign: { timestamp, public_id: publicId } }),
-            });
-            
-            if (!signatureResponse.ok) throw new Error("Could not get upload signature from server.");
-            const { signature } = await signatureResponse.json();
-            if (!signature) throw new Error("Invalid signature received.");
-
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
-            formData.append("timestamp", timestamp.toString());
-            formData.append("public_id", publicId);
-            formData.append("signature", signature);
-
-            return new Promise<string>((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`);
-                
-                xhr.upload.onprogress = (event) => {
-                    if (event.lengthComputable) {
-                        const percentCompleted = Math.round((event.loaded * 100) / event.total);
-                        setUploadProgress(prev => ({ ...prev, [file.name]: percentCompleted }));
-                    }
-                };
-
-                xhr.onload = () => {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        const cloudinaryData = JSON.parse(xhr.responseText);
-                        resolve(cloudinaryData.secure_url);
-                    } else {
-                        const cloudinaryData = JSON.parse(xhr.responseText);
-                        reject(new Error(cloudinaryData.error?.message || "A file failed to upload."));
-                    }
-                };
-                xhr.onerror = () => reject(new Error("Network error during file upload."));
-                xhr.send(formData);
-            });
-        }));
-
-        // ====================================================================
-        // FIXED: This object now matches the server's expected structure
-        // ====================================================================
-        const productData = {
-            // Renamed fields to snake_case
-            title: title,
-            name: title, // Server expects 'name', we can reuse 'title'
-            description: description,
-            category: categories, // Renamed from 'categories' to 'category'
-            regular_price: parseFloat(regularPrice),
-            sale_price: salePrice ? parseFloat(salePrice) : null,
-            stock: stock ? parseInt(stock, 10) : 0,
-            product_images: uploadedImageUrls, // Renamed from 'imageUrls'
-            
-            // Other fields from the client
-            colors: colors,
-            sizes: sizes,
-            isTrend: isTrend,
-
-            // Adding default values for fields the server expects
-            status: 'active',
-            currency: 'DH',
-        };
-        // ====================================================================
-
-        // Step 3: Get user token and send data to your create product API
-        const idToken = await user.getIdToken(true);
-
-        // NOTE: Make sure your API route is at '/api/products' if that is the correct path
-        const apiResponse = await fetch('/api/products/create', { 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${idToken}`,
-            },
-            body: JSON.stringify(productData),
-        });
-
-        if (!apiResponse.ok) {
-            const errorData = await apiResponse.json();
-            // This will now show the specific error from the server (e.g., "Missing required fields.")
-            throw new Error(errorData.error || "Failed to create product on the server.");
+        if (!title || !regularPrice || !stock || productFiles.length === 0) {
+            toast.error("Please fill required fields: Title, Price, Stock, and Images.");
+            return;
+        }
+        
+        const user = auth.currentUser;
+        if (!user) {
+            toast.error("You must be logged in to upload a product.");
+            return;
         }
 
-        // Step 4: Handle success
-        setUploadSuccess(true);
-        toast.success("Product listed successfully!");
-        resetForm();
-        
-    } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "An unexpected error occurred.";
-        console.error("Product submission error:", err);
-        setFormError(message);
-        toast.error(message);
-    } finally {
-        setIsSubmitting(false);
-    }
-};
+        setIsSubmitting(true);
+        setUploadProgress({});
+        toast.info("Uploading images, please wait...");
+
+        try {
+            const uploadedImageUrls = await Promise.all(
+                productFiles.map(file => {
+                    return new Promise<string>(async (resolve, reject) => {
+                        const publicId = `products/${user.uid}/${Date.now()}_${file.name}`;
+                        const timestamp = Math.round(new Date().getTime() / 1000);
+                        const paramsToSign = { public_id: publicId, timestamp };
+
+                        const sigResponse = await fetch('/api/cloudinary/sign-upload', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ paramsToSign }),
+                        });
+                        if (!sigResponse.ok) return reject(new Error("Failed to get upload signature."));
+                        
+                        const { signature } = await sigResponse.json();
+                        if (!signature) return reject(new Error("Invalid signature received."));
+
+                        const formData = new FormData();
+                        formData.append("file", file);
+                        formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
+                        formData.append("timestamp", timestamp.toString());
+                        formData.append("public_id", publicId);
+                        formData.append("signature", signature);
+
+                        const xhr = new XMLHttpRequest();
+                        xhr.open("POST", `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`);
+                        xhr.upload.onprogress = (event) => {
+                            if (event.lengthComputable) {
+                                const percent = Math.round((event.loaded * 100) / event.total);
+                                setUploadProgress(prev => ({ ...prev, [file.name]: percent }));
+                            }
+                        };
+                        xhr.onload = () => {
+                            if (xhr.status >= 200 && xhr.status < 300) {
+                                resolve(JSON.parse(xhr.responseText).secure_url);
+                            } else {
+                                reject(new Error(JSON.parse(xhr.responseText).error?.message || "A file failed to upload."));
+                            }
+                        };
+                        xhr.onerror = () => reject(new Error("Network error during file upload."));
+                        xhr.send(formData);
+                    });
+                })
+            );
+            toast.success("Images uploaded! Saving product details...");
+
+            const productData = {
+                title,
+                name: title,
+                description,
+                category: categories,
+                regular_price: parseFloat(regularPrice),
+                sale_price: salePrice ? parseFloat(salePrice) : null,
+                stock: parseInt(stock, 10), // Correctly converts string to number
+                colors,
+                sizes,
+                product_images: uploadedImageUrls,
+                status: 'active',
+                currency: 'DH',
+            };
+
+            const idToken = await user.getIdToken(true);
+            const apiResponse = await fetch('/api/products/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`,
+                },
+                body: JSON.stringify(productData),
+            });
+
+            if (!apiResponse.ok) {
+                const errorData = await apiResponse.json();
+                throw new Error(errorData.error || "Failed to save product on the server.");
+            }
+
+            toast.success("Product created successfully!");
+            resetForm();
+
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+            toast.error(message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
-        <section className="w-full flex justify-center">
-            {/* Corrected max-w-3/4 to a valid tailwind class like max-w-6xl */}
-            <div className="bg-gray-50/50 w-full max-w-6xl p-4 sm:p-6 lg:p-8">
-                <div className="max-w-7xl mx-auto">
-                    <header className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900">Create Item</h1>
-                        <p className="text-gray-500 mt-1">Dashboard / Create Item</p>
-                    </header>
-                    
-                    <form onSubmit={handleProductSubmit}>
-                        <fieldset disabled={isSubmitting} className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                            {/* --- Main Content (Left Column) --- */}
-                            <div className="lg:col-span-2 space-y-8">
-                                {/* File Upload */}
-                                <FormSection title="Upload File">
-                                    <div
-                                        onClick={() => fileInputRef.current?.click()}
-                                        onDragOver={handleDragOver}
-                                        onDragLeave={handleDragLeave}
-                                        onDrop={handleDrop}
-                                        className={`relative w-full h-56 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-colors ${isDragging ? 'border-teal-600 bg-teal-50' : 'border-gray-300'} ${isSubmitting ? 'cursor-not-allowed' : 'cursor-pointer hover:border-teal-500'}`}
-                                    >
-                                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" disabled={isSubmitting} />
-                                        <div className="text-center">
-                                            <UploadCloud size={48} className="text-gray-400 mx-auto mb-2" />
-                                            <p className="font-semibold text-gray-600">Click to upload or drag & drop</p>
-                                            <p className="text-sm text-gray-500">Max 10MB per image (PNG, JPG)</p>
-                                        </div>
-                                    </div>
-                                    {fileErrors.length > 0 && <p className="text-sm text-red-600 mt-2">{fileErrors.join(', ')}</p>}
+        <motion.section 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="w-full min-h-screen bg-gray-100 p-4 sm:p-6"
+        >
+            <form onSubmit={handleProductSubmit}>
+                <header className="max-w-7xl mx-auto flex items-center justify-between mb-6">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">Upload Product</h1>
+                        <p className="mt-1 text-sm text-gray-500">Add a new item to your marketplace inventory.</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button type="button" className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            Archive Product
+                        </button>
+                        <button type="submit" disabled={isSubmitting || isProcessingImages} className="px-5 py-2 text-sm font-semibold text-white bg-teal-600 rounded-lg hover:bg-teal-700 disabled:bg-teal-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+                            {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                            <span>{isSubmitting ? 'Uploading...' : 'Upload Product'}</span>
+                        </button>
+                    </div>
+                </header>
 
-                                    <div className="mt-4 grid grid-cols-3 sm:grid-cols-5 gap-4">
-                                        {productFiles.map((file, i) => (
-                                            <div key={i} className="relative group aspect-square border rounded-lg overflow-hidden">
-                                                <Image src={URL.createObjectURL(file)} alt="preview" fill style={{objectFit:"cover"}} />
-                                                <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-white/70 hover:bg-red-500 hover:text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10">
-                                                    <X size={16} />
-                                                </button>
-                                                {isSubmitting && (
-                                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                                        <div className="w-10/12 bg-gray-200 rounded-full h-2">
-                                                            <div className="bg-teal-600 h-2 rounded-full" style={{ width: `${uploadProgress[file.name] || 0}%` }}></div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                        {isProcessingImages && <ImageProcessingSkeleton count={processingFileCount} />}
-                                    </div>
-                                </FormSection>
+                <fieldset disabled={isSubmitting} className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    {/* --- LEFT COLUMN --- */}
+                    <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-6">
+                        <h2 className="text-lg font-semibold text-gray-800">Product Details</h2>
+                        
+                        <div>
+                            <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-1.5">Name Product</label>
+                            <input id="title" type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g., Premium Cotton Hoodie" className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all" />
+                        </div>
 
-                                {/* Purchase Type */}
-                                <FormSection title="Purchase Type">
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        {/* Added onClick handler to update state */}
-                                        <div onClick={() => setPurchaseType('fixed')} className={`p-4 border-2 rounded-lg transition-colors ${purchaseType === 'fixed' ? 'border-teal-600 bg-teal-50/50' : 'border-gray-200 cursor-pointer hover:border-gray-300'}`}>
-                                            <h4 className="font-semibold text-gray-800">Fixed Price</h4>
-                                            <p className="text-sm text-gray-500">Set a fixed price for your product.</p>
-                                        </div>
-                                        <div className="p-4 border-2 rounded-lg bg-gray-100 cursor-not-allowed opacity-60">
-                                            <h4 className="font-semibold text-gray-500">Timed Auction</h4>
-                                            <p className="text-sm text-gray-400">Not available.</p>
-                                        </div>
-                                        <div className="p-4 border-2 rounded-lg bg-gray-100 cursor-not-allowed opacity-60">
-                                            <h4 className="font-semibold text-gray-500">Open for Bids</h4>
-                                            <p className="text-sm text-gray-400">Not available.</p>
-                                        </div>
-                                    </div>
-                                </FormSection>
-                                
-                                {/* Main Details */}
-                                <FormSection title="Main Details">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                                        <div className="md:col-span-2">
-                                            <LabeledInput label="Product Title" id="title">
-                                                <input id="title" type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g., Handcrafted Wooden Chair" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" />
-                                            </LabeledInput>
-                                        </div>
-                                        <LabeledInput label="Regular Price (DH)" id="regularPrice">
-                                            <input id="regularPrice" type="number" value={regularPrice} onChange={e => setRegularPrice(e.target.value)} placeholder="350.00" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" />
-                                        </LabeledInput>
-                                        <LabeledInput label="Sale Price (Optional)" id="salePrice">
-                                            <input id="salePrice" type="number" value={salePrice} onChange={e => setSalePrice(e.target.value)} placeholder="275.00" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" />
-                                        </LabeledInput>
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Category</label>
+                            <CategoryInput categories={categories} setCategories={setCategories} />
+                        </div>
+                        
+                        <div>
+                            <div className="flex justify-between">
+                                <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
+                                <span className="text-xs text-gray-400">{description.length}/1000</span>
+                            </div>
+                            <textarea id="description" value={description} onChange={e => setDescription(e.target.value)} rows={5} maxLength={1000} placeholder="Describe the key features of your product..." className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all"></textarea>
+                        </div>
 
-                                        <div className="md:col-span-2">
-                                            <LabeledInput label="Categories" id="category">
-                                                <div className="flex flex-wrap gap-2 mb-2">
-                                                    {categories.map((cat, index) => (
-                                                        <div key={index} className="flex items-center bg-gray-200 text-gray-800 text-sm font-medium pl-3 pr-2 py-1 rounded-full">
-                                                            {cat}
-                                                            <button type="button" onClick={() => removeCategory(index)} className="ml-1.5 flex-shrink-0 h-5 w-5 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-300 hover:text-gray-700 focus:outline-none">
-                                                                <X size={14} />
-                                                            </button>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                <input id="category" type="text" value={currentCategory} onChange={e => setCurrentCategory(e.target.value)} onKeyDown={handleCategoryKeyDown} placeholder="Type a category and press Enter..." className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" />
-                                            </LabeledInput>
-                                        </div>
-                                        <LabeledInput label="Colors" id="colors">
-                                            <ColorInput colors={colors} setColors={setColors} />
-                                        </LabeledInput>
-                                        <LabeledInput label="Sizes" id="sizes">
-                                            <SizeInput sizes={sizes} setSizes={setSizes} />
-                                        </LabeledInput>
-                                        <LabeledInput label="Stock Quantity" id="stock">
-                                            <input id="stock" type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="95" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" />
-                                        </LabeledInput>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label htmlFor="regularPrice" className="block text-sm font-semibold text-gray-700 mb-1.5">Regular Price (DH)</label>
+                                <input id="regularPrice" type="number" value={regularPrice} onChange={e => setRegularPrice(e.target.value)} placeholder="299.99" className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all" />
+                            </div>
+                            <div>
+                                <label htmlFor="salePrice" className="block text-sm font-semibold text-gray-700 mb-1.5">Sale Price (Optional)</label>
+                                <input id="salePrice" type="number" value={salePrice} onChange={e => setSalePrice(e.target.value)} placeholder="249.99" className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all" />
+                            </div>
+                            <div>
+                                <label htmlFor="stock" className="block text-sm font-semibold text-gray-700 mb-1.5">Stock Quantity</label>
+                                <input id="stock" type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="99" className="w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all" />
+                            </div>
+                        </div>
+                    </div>
 
-                                        {/* Added UI for the isTrend state */}
-                                        <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                                            <div>
-                                                <h4 className="font-medium text-gray-700">Trending Item</h4>
-                                                <p className="text-sm text-gray-500">Mark this item as a trending product.</p>
-                                            </div>
-                                            <button type="button" role="switch" aria-checked={isTrend} onClick={() => setIsTrend(!isTrend)} className={`${isTrend ? 'bg-teal-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}>
-                                                <span className={`${isTrend ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`} />
-                                            </button>
-                                        </div>
-
-                                        <div className="md:col-span-2">
-                                            <LabeledInput label="Description" id="description">
-                                                <textarea id="description" value={description} onChange={e => setDescription(e.target.value)} rows={5} placeholder="Describe the product in detail..." className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500"></textarea>
-                                            </LabeledInput>
-                                        </div>
-                                    </div>
-                                </FormSection>
-
-                                {/* Submit Button Area */}
-                                <div className="pt-4">
-                                    {formError && <div className="bg-red-50 text-red-800 p-3 rounded-lg mb-4 text-sm flex items-center"><AlertTriangle size={16} className="inline mr-2" />{formError}</div>}
-                                    {uploadSuccess && <div className="bg-green-50 text-green-800 p-3 rounded-lg mb-4 text-sm flex items-center"><CheckCircle2 size={16} className="inline mr-2" />Success! Your product has been listed.</div>}
-                                    
-                                    <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto px-10 py-3 flex items-center justify-center border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-wait transition-colors">
-                                        {isSubmitting ? <><Loader2 size={20} className="animate-spin mr-2" /> Publishing...</> : "Create Item"}
-                                    </button>
+                    {/* --- RIGHT COLUMN --- */}
+                    <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-6">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700">Product Photos (Max 5)</label>
+                            <div
+                                onClick={() => fileInputRef.current?.click()}
+                                onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
+                                className={`relative mt-1.5 w-full flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg transition-colors ${isDragging ? 'border-teal-500 bg-teal-50' : 'border-gray-300'} ${isSubmitting || isProcessingImages ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:border-teal-400'}`}
+                            >
+                                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" disabled={isSubmitting || isProcessingImages} />
+                                <div className="text-center text-gray-500">
+                                    <Upload size={24} className="mx-auto mb-2 text-gray-400" />
+                                    <p className="text-sm font-semibold text-gray-600">Click to upload or drag and drop</p>
+                                    <p className="text-xs mt-1">Max 10MB per file. Up to 5 images.</p>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* --- Preview (Right Column) --- */}
-                            <aside className="space-y-8">
-                                <h3 className="text-lg font-semibold text-gray-800">Preview</h3>
-                                <div className="bg-white p-4 flex-shrink-0 min-w-[300px] rounded-xl border border-gray-200 shadow-sm sticky top-20">
-                                    <div className="relative aspect-square w-full rounded-lg overflow-hidden mb-4">
-                                        {productFiles.length > 0 ? (
-                                            <Image 
-                                                src={URL.createObjectURL(productFiles[0])} 
-                                                alt="preview" 
-                                                fill 
-                                                style={{objectFit:"cover"}}
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                                <ImageIcon className="text-gray-400" size={48} />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <h4 className="font-bold text-lg text-gray-900 truncate">{title || "Product Title"}</h4>
-                                    <div className="flex items-center gap-2 mt-1 mb-3">
-                                        <div className="w-6 h-6 bg-gray-300 rounded-full overflow-hidden">
-                                            {/* You can optionally show user's profile image here */}
-                                            {auth.currentUser?.photoURL && <Image src={auth.currentUser.photoURL} alt="creator" width={24} height={24} />}
-                                        </div>
-                                        <span className="text-sm text-gray-500">{auth.currentUser?.displayName || "Creator Name"}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
-                                        <span className="text-sm text-gray-600">Price</span>
-                                        <span className="font-semibold text-teal-700">{regularPrice ? `${regularPrice} DH` : "0.00 DH"}</span>
-                                    </div>
-                                </div>
-                            </aside>
-                        </fieldset>
-                    </form>
-                </div>
-            </div>
-        </section>
+                        <AnimatePresence>
+                            {(productFiles.length > 0 || isProcessingImages) && (
+                                <motion.div layout className="grid grid-cols-4 gap-4">
+                                    {productFiles.map((file, i) => (
+                                        <motion.div 
+                                            key={file.name + i} 
+                                            layout
+                                            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                                            className="relative group aspect-square border border-gray-200 rounded-lg overflow-hidden"
+                                        >
+                                            <Image src={URL.createObjectURL(file)} alt="preview" fill sizes="20vw" className="object-cover" />
+                                            <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-black/40 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all z-10">
+                                                <X size={14} />
+                                            </button>
+                                        </motion.div>
+                                    ))}
+                                    {isProcessingImages && <ImageProcessingSkeleton count={processingFileCount} />}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                        
+                        <div className="space-y-4 pt-2">
+                            <h3 className="text-base font-semibold text-gray-800">Variant</h3>
+                             <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Size</label>
+                                <SizeInput sizes={sizes} setSizes={setSizes} />
+                             </div>
+                             <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Color</label>
+                                <ColorInput colors={colors} setColors={setColors} />
+                             </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </motion.section>
     );
-}
+};

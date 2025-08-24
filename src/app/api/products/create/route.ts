@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
-import { adminDb, adminAuth } from '@/lib/FirebaseAdmin';
+import { adminDb, adminAuth } from '@/lib/FirebaseAdmin'; // IMPORTANT: Use ADMIN SDK
 import { v4 as uuidv4 } from 'uuid';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/FirebaseClient';
-import { UserInfosType } from '@/types/userinfos';
 
 export async function POST(request: Request) {
     const authHeader = request.headers.get('Authorization');
@@ -14,48 +9,42 @@ export async function POST(request: Request) {
     }
     const idToken = authHeader.split('Bearer ')[1];
 
-    const session = await getServerSession(authOptions);
     try {
-        // 1. Authenticate user
+        // 1. Authenticate user with Admin SDK
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const uid = decodedToken.uid;
         
-        // Fetch seller's user record to get their name and profile image
-        if(!session) return;
-        const userDocRef = doc(db, "users", session?.user.email);
-        const userRecord = (await getDoc(userDocRef)).data() as UserInfosType;
+        // 2. Get user details from Firebase Auth with Admin SDK
+        const userRecord = await adminAuth.getUser(uid);
 
-        // 2. Get product data from request
+        // 3. Get product data from request body
         const body = await request.json();
         const {
             title,
-            name,
             description,
-            category,
+            category, // Note: client sends 'categories', but server can receive as 'category'
             regular_price,
             sale_price,
-            stock,
-            status,
-            currency,
             colors,
             sizes,
-            isTrend,
             product_images,
+            stock = 99, // Set default values if not provided
+            status = 'active',
+            currency = 'DH',
         } = body;
         
-        // 3. Basic server-side validation
+        // 4. Basic server-side validation
         if (!title || !regular_price || !product_images || product_images.length === 0) {
             return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
         }
 
-        // 4. Construct the final product object with server-generated data
+        // 5. Construct the final product object
         const newProduct = {
-            id: `prod-${uuidv4()}`, // Generate a unique product ID
+            id: `prod-${uuidv4()}`,
+            createdAt: new Date().toISOString(),
             lastUpdated: new Date().toISOString(),
-
-            // Data from the form
             title,
-            name,
+            name: title, // Use title for the name field
             description,
             category,
             regular_price,
@@ -65,24 +54,19 @@ export async function POST(request: Request) {
             currency,
             colors,
             sizes,
-            isTrend,
             product_images,
-
-            // Server-generated owner details
             owner: {
-                name: userRecord.fullname || "Admin Seller", // Fallback name
-                image: userRecord.profileimage || `https://i.pravatar.cc/150?u=${uid}`, // Fallback image
+                uid: uid,
+                name: userRecord.displayName || "Seller", // Use Firebase Auth display name
+                image: userRecord.photoURL || `https://avatar.vercel.sh/${uid}`, // Use Firebase Auth photo URL
             },
-
-            // Default values for fields not in the form
             rating: 0,
             reviewCount: 0,
             sales: 0,
             revenue: 0,
         };
 
-        // 5. Save to Firestore
-        // We use the generated 'id' to set the document ID for easier retrieval
+        // 6. Save to Firestore using the Admin SDK
         await adminDb.collection('products').doc(newProduct.id).set(newProduct);
 
         return NextResponse.json({
@@ -93,6 +77,10 @@ export async function POST(request: Request) {
 
     } catch (error) {
         console.error('Error creating product:', error);
-        return NextResponse.json({ error: 'Failed to create product on the server.' }, { status: 500 });
+        // Provide more detailed error response in development
+        return NextResponse.json({ 
+            error: 'Failed to create product on the server.', 
+            details: (error as {message: string;}).message 
+        }, { status: 500 });
     }
 }

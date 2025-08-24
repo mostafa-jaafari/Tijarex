@@ -33,7 +33,6 @@ export default function ProductsPage() {
                     onViewModeChange={actions.setViewMode}
                 />
 
-                {/* You would use Framer Motion here for smooth transitions */}
                 {showFilters && (
                     <ProductFiltersPanel 
                         selectedFilters={state.selectedFilters}

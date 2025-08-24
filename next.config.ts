@@ -9,7 +9,8 @@ const nextConfig = {
       "images.unsplash.com",
       "s.gravatar.com",
       "i.pravatar.cc",
-      "res.cloudinary.com"
+      "res.cloudinary.com",
+      "avatar.vercel.sh"
     ]
   }
 };

@@ -1,9 +1,11 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export interface SizeOption {
   label: string;
-  available: boolean;
 }
 
 interface SizeInputProps {
@@ -12,61 +14,49 @@ interface SizeInputProps {
 }
 
 export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
-  const addSize = () => {
-    setSizes([...sizes, { label: '', available: true }]);
-  };
+    const [currentValue, setCurrentValue] = useState('');
 
-  const updateSize = (index: number, value: string) => {
-    const newSizes = [...sizes];
-    newSizes[index].label = value.toUpperCase();
-    setSizes(newSizes);
-  };
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            const newLabel = currentValue.trim().toUpperCase();
+            if (newLabel && !sizes.some(s => s.label === newLabel)) {
+                setSizes([...sizes, { label: newLabel }]);
+            }
+            setCurrentValue('');
+        }
+    };
+    
+    const removeSize = (indexToRemove: number) => {
+        setSizes(sizes.filter((_, index) => index !== indexToRemove));
+    };
 
-  const toggleAvailability = (index: number) => {
-    const newSizes = [...sizes];
-    newSizes[index].available = !newSizes[index].available;
-    setSizes(newSizes);
-  };
-  
-  const removeSize = (index: number) => {
-    setSizes(sizes.filter((_, i) => i !== index));
-  };
-
-  return (
-    <div className="space-y-3">
-      {sizes.map((size, index) => (
-        <div key={index} className="flex items-center gap-2 p-2 border rounded-md">
-          <input
-            type="text"
-            placeholder="Size (e.g., XL)"
-            value={size.label}
-            onChange={(e) => updateSize(index, e.target.value)}
-            className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
-          <div className="flex items-center flex-grow pl-2">
+    return (
+        <div className="w-full p-2 bg-white border border-gray-300 rounded-lg flex flex-wrap items-center gap-2 focus-within:ring-2 focus-within:ring-teal-400 focus-within:border-teal-500 transition-all">
+            <AnimatePresence>
+                {sizes.map((size, index) => (
+                    <motion.div
+                        key={size.label}
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-md"
+                    >
+                        <span>{size.label}</span>
+                        <button type="button" onClick={() => removeSize(index)} className="text-gray-500 hover:text-gray-800">
+                            <X size={14} />
+                        </button>
+                    </motion.div>
+                ))}
+            </AnimatePresence>
             <input
-              type="checkbox"
-              id={`size-${index}`}
-              checked={size.available}
-              onChange={() => toggleAvailability(index)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                type="text"
+                value={currentValue}
+                onChange={(e) => setCurrentValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={sizes.length === 0 ? "e.g., S, M, XL..." : "+ Add"}
+                className="flex-grow bg-transparent text-sm p-1.5 focus:outline-none placeholder:text-gray-400"
             />
-            <label htmlFor={`size-${index}`} className="ml-2 text-sm text-gray-700">
-              Available
-            </label>
-          </div>
-          <button type="button" onClick={() => removeSize(index)} className="p-2 text-red-500 hover:bg-red-100 rounded-full">
-            <X size={18} />
-          </button>
         </div>
-      ))}
-      <button
-        type="button"
-        onClick={addSize}
-        className="w-full px-4 py-2 text-sm font-medium text-blue-600 border border-dashed rounded-lg border-gray-400 hover:bg-blue-50"
-      >
-        + Add Size
-      </button>
-    </div>
-  );
+    );
 };
