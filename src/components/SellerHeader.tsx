@@ -11,10 +11,10 @@ import { useUserInfos } from "@/context/UserInfosContext";
 
 export function SellerHeader({ session }: { session: Session | null }){
     const ProfileHeaderNavs = [
-        { label: "dashboard", icon: LayoutDashboard, href: "dashboard" },
-        { label: "products", icon: Package, href: "products" },
+        { label: "dashboard", icon: LayoutDashboard, href: "" },
+        { label: "profile", icon: Package, href: "profile" },
         { label: "orders", icon: ShoppingCart, href: "orders" },
-        { label: "returns", icon: RotateCcw, href: "returns" },
+        { label: "my store", icon: RotateCcw, href: "my-store" },
     ];
 
     const Balance_Links = [
@@ -336,8 +336,9 @@ export function SellerHeader({ session }: { session: Session | null }){
                         return (
                             <Link
                                 key={idx}
-                                href="#" 
-                                className="flex items-center gap-3 px-3 py-2 text-sm
+                                onClick={() => setIsProfileMenuOpen(false)}
+                                href={`/seller/${item.href.toLowerCase().replace(" ", "")}`}
+                                className="capitalize flex items-center gap-3 px-3 py-2 text-sm
                                     text-gray-800 hover:bg-gray-100 transition-colors">
                                 <item.icon size={16} className="text-gray-500"/>
                                 {item.label}

@@ -52,7 +52,7 @@ export function WelcomeBanner() {
               className='-space-y-1'
             >
                 <h2 className="text-lg text-gray-300 flex gap-1 items-center">
-                    Welcome back, {isLoadingUserInfos ? (<span className='flex w-30 h-5 rounded-lg bg-gray-200 animate-pulse'/>) : (<h1 className='font-bold text-white'>{userInfos?.fullname || "seller"}</h1>)}!
+                    Welcome back, {isLoadingUserInfos ? (<span className='flex w-30 h-3 rounded bg-neutral-500 animate-pulse'/>) : (<h1 className='font-bold text-white'>{userInfos?.fullname || "seller"}</h1>)}!
                 </h2>
                 <p className="mt-1 flex items-center gap-1 text-sm text-gray-500">
                   It&apos;s great to see you again. As one of our 
