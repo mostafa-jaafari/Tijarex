@@ -10,6 +10,7 @@ import { SizeInput, SizeOption } from "@/components/Upload-Products/SizeInput";
 import { CategoryInput } from "@/components/CategoryInput";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { BlackButtonStyles } from "@/components/Header";
 
 // --- Type Definitions ---
 interface UploadProgress { [fileName: string]: number; }
@@ -226,35 +227,19 @@ export default function UploadProductPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-full min-h-screen bg-gray-100 p-4 sm:p-6"
+            className="w-full p-3 flex flex-col items-center"
         >
-            <form onSubmit={handleProductSubmit}>
-            <header className="max-w-7xl mx-auto flex items-center justify-between mb-6">
+            <form 
+                className="w-full"
+                onSubmit={handleProductSubmit}>
+            <header 
+                className={`p-6 max-w-7xl mx-auto flex items-center 
+                    justify-between mb-6 rounded-lg shadow-sm
+                    ${BlackButtonStyles}`}
+            >
                 <div>
-                <h1 className="text-2xl font-bold text-gray-800">Upload Product</h1>
-                <p className="mt-1 text-sm text-gray-500">Add a new item to your marketplace inventory.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                <button type="button" className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    Archive Product
-                </button>
-                <button
-                    type="submit"
-                    disabled={
-                        isSubmitting ||
-                        isProcessingImages ||
-                        !title ||
-                        !regularPrice ||
-                        !stock ||
-                        sizes.length === 0 ||
-                        colors.length === 0 ||
-                        productFiles.length === 0
-                    }
-                    className="px-5 py-2 text-sm font-semibold text-white bg-teal-600 rounded-lg hover:bg-teal-700 disabled:bg-teal-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
-                >
-                    {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-                    <span>{isSubmitting ? 'Uploading...' : 'Upload Product'}</span>
-                </button>
+                <h1 className="text-3xl font-bold tracking-tight text-white">Upload Product</h1>
+                <p className="mt-2 text-gray-400">Add a new item to your marketplace inventory.</p>
                 </div>
             </header>
 
@@ -320,26 +305,18 @@ export default function UploadProductPage() {
                     <motion.div layout className="grid grid-cols-4 gap-4">
                         {productFiles.map((productFile, i) => (
                         <motion.div 
-                            key={productFile.url} // Use the stable URL as the key
+                            key={productFile.url}
                             layout
                             initial={{ opacity: 0, scale: 0.8 }} 
                             animate={{ opacity: 1, scale: 1 }} 
                             exit={{ opacity: 0, scale: 0.8 }}
-                            className="relative group aspect-square border border-gray-200 rounded-lg overflow-hidden"
+                            className="relative group aspect-square border 
+                                border-gray-200 rounded-lg overflow-hidden"
                         >
                             <Image src={productFile.url} alt="preview" fill sizes="20vw" className="object-cover" />
                             <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-black/40 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all z-10">
-                            <X size={14} />
+                                <X size={14} />
                             </button>
-                            {/* Progress bar for each image */}
-                            {isSubmitting && uploadProgress[productFile.file.name] !== undefined && (
-                            <div className="absolute bottom-0 left-0 w-full h-2 bg-gray-200">
-                                <div
-                                className="h-full bg-teal-500 transition-all"
-                                style={{ width: `${uploadProgress[productFile.file.name]}%` }}
-                                />
-                            </div>
-                            )}
                         </motion.div>
                         ))}
                         {isProcessingImages && <ImageProcessingSkeleton count={processingFileCount} />}
@@ -357,8 +334,31 @@ export default function UploadProductPage() {
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Color</label>
                     <ColorInput colors={colors} setColors={setColors} />
                      </div>
-                </div>
-                </div>
+                    </div>
+                    <div className="w-full flex items-center 
+                        justify-end gap-3">
+                        <button
+                            type="submit"
+                            disabled={
+                                isSubmitting ||
+                                isProcessingImages ||
+                                !title ||
+                                !regularPrice ||
+                                !stock ||
+                                categories.length === 0 ||
+                                sizes.length === 0 ||
+                                colors.length === 0 ||
+                                productFiles.length === 0
+                            }
+                            className="px-6 py-3 text-sm font-semibold text-white 
+                                bg-teal-600 rounded-lg hover:bg-teal-700 
+                                disabled:bg-neutral-300 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                        >
+                            {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                            <span>{isSubmitting ? 'Uploading...' : 'Upload Product'}</span>
+                        </button>
+                    </div>
+                    </div>
             </fieldset>
             </form>
         </motion.section>
