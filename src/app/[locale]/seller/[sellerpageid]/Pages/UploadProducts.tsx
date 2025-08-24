@@ -83,6 +83,8 @@ export default function UploadProductPage() {
         setIsTrend(false);
         setProductFiles([]);
         setFileErrors([]);
+        setPurchaseType("fixed");
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     // --- Category & File Handling ---
@@ -122,13 +124,14 @@ export default function UploadProductPage() {
                 const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920 });
                 newFiles.push(compressedFile);
             } catch (error) {
-                toast.error(error instanceof Error ? error.message : "Image compression failed.");
-                newFiles.push(file);
+                const message = error instanceof Error ? error.message : "Image compression failed.";
+                toast.error(`Error processing ${file.name}: ${message}`);
+                errors.push(`${file.name}: Compression failed.`);
             }
         }
         
         setProductFiles(prev => [...prev, ...newFiles]);
-        setFileErrors(errors);
+        setFileErrors(prevErrors => [...prevErrors, ...errors]);
         if (fileInputRef.current) fileInputRef.current.value = "";
         
         setIsProcessingImages(false);
@@ -165,93 +168,137 @@ export default function UploadProductPage() {
     };
 
     // --- Form Submission Logic ---
-    const handleProductSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setFormError(null);
-        setUploadSuccess(false);
+const handleProductSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormError(null);
+    setUploadSuccess(false);
 
-        if (!title || !regularPrice || productFiles.length === 0 || colors.length === 0 || sizes.length === 0) {
-            setFormError("Please fill all required fields: Title, Price, Images, Colors, and Sizes.");
-            return;
-        }
+    if (!title || !regularPrice || productFiles.length === 0 || colors.length === 0 || sizes.length === 0) {
+        setFormError("Please fill all required fields: Title, Price, Images, Colors, and Sizes.");
+        return;
+    }
 
-        const user = auth.currentUser;
-        if (!user) {
-            setFormError("You must be logged in to upload a product.");
-            return;
-        }
-        
-        setIsSubmitting(true);
-        setUploadProgress({});
+    const user = auth.currentUser;
+    if (!user) {
+        setFormError("You must be logged in to upload a product.");
+        toast.error("Authentication required. Please log in.");
+        return;
+    }
+    
+    setIsSubmitting(true);
+    setUploadProgress({});
 
-        try {
-            const uploadedImageUrls = await Promise.all(productFiles.map(async (file) => {
-                const timestamp = Math.round(new Date().getTime() / 1000);
-                const publicId = `products/${user.uid}/${Date.now()}_${file.name}`;
-                
-                const signatureResponse = await fetch('/api/cloudinary/sign-upload', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paramsToSign: { timestamp, public_id: publicId } }),
-                });
-                const { signature } = await signatureResponse.json();
-                if (!signature) throw new Error("Could not get upload signature.");
-
-                const formData = new FormData();
-                formData.append("file", file);
-                formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
-                formData.append("timestamp", timestamp.toString());
-                formData.append("public_id", publicId);
-                formData.append("signature", signature);
-
-                return new Promise<string>((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open("POST", `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`);
-                    
-                    xhr.upload.onprogress = (event) => {
-                        if (event.lengthComputable) {
-                            const percentCompleted = Math.round((event.loaded * 100) / event.total);
-                            setUploadProgress(prev => ({ ...prev, [file.name]: percentCompleted }));
-                        }
-                    };
-
-                    xhr.onload = () => {
-                        if (xhr.status >= 200 && xhr.status < 300) {
-                            const cloudinaryData = JSON.parse(xhr.responseText);
-                            resolve(cloudinaryData.secure_url);
-                        } else {
-                            const cloudinaryData = JSON.parse(xhr.responseText);
-                            reject(new Error(cloudinaryData.error?.message || "A file failed to upload."));
-                        }
-                    };
-                    xhr.onerror = () => reject(new Error("Network error during file upload."));
-                    xhr.send(formData);
-                });
-            }));
-
-            const productData = { /* ...product data object... */ };
-            const idToken = await user.getIdToken(true);
-            const apiResponse = await fetch('/api/products/create', { /* ...API request... */ });
-
-            if (!apiResponse.ok) { /* ...error handling... */ }
-
-            setUploadSuccess(true);
-            toast.success("Product listed successfully!");
-            resetForm();
+    try {
+        // Step 1: Upload images to Cloudinary (this part is correct)
+        const uploadedImageUrls = await Promise.all(productFiles.map(async (file) => {
+            const timestamp = Math.round(new Date().getTime() / 1000);
+            const publicId = `products/${user.uid}/${Date.now()}_${file.name}`;
             
-        } catch (err: unknown) {
-            console.error("Product submission error:", err);
-            setFormError(err instanceof Error ? err.message : "An unexpected error occurred.");
-        } finally {
-            setIsSubmitting(false);
+            const signatureResponse = await fetch('/api/cloudinary/sign-upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paramsToSign: { timestamp, public_id: publicId } }),
+            });
+            
+            if (!signatureResponse.ok) throw new Error("Could not get upload signature from server.");
+            const { signature } = await signatureResponse.json();
+            if (!signature) throw new Error("Invalid signature received.");
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
+            formData.append("timestamp", timestamp.toString());
+            formData.append("public_id", publicId);
+            formData.append("signature", signature);
+
+            return new Promise<string>((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`);
+                
+                xhr.upload.onprogress = (event) => {
+                    if (event.lengthComputable) {
+                        const percentCompleted = Math.round((event.loaded * 100) / event.total);
+                        setUploadProgress(prev => ({ ...prev, [file.name]: percentCompleted }));
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        const cloudinaryData = JSON.parse(xhr.responseText);
+                        resolve(cloudinaryData.secure_url);
+                    } else {
+                        const cloudinaryData = JSON.parse(xhr.responseText);
+                        reject(new Error(cloudinaryData.error?.message || "A file failed to upload."));
+                    }
+                };
+                xhr.onerror = () => reject(new Error("Network error during file upload."));
+                xhr.send(formData);
+            });
+        }));
+
+        // ====================================================================
+        // FIXED: This object now matches the server's expected structure
+        // ====================================================================
+        const productData = {
+            // Renamed fields to snake_case
+            title: title,
+            name: title, // Server expects 'name', we can reuse 'title'
+            description: description,
+            category: categories, // Renamed from 'categories' to 'category'
+            regular_price: parseFloat(regularPrice),
+            sale_price: salePrice ? parseFloat(salePrice) : null,
+            stock: stock ? parseInt(stock, 10) : 0,
+            product_images: uploadedImageUrls, // Renamed from 'imageUrls'
+            
+            // Other fields from the client
+            colors: colors,
+            sizes: sizes,
+            isTrend: isTrend,
+
+            // Adding default values for fields the server expects
+            status: 'active',
+            currency: 'DH',
+        };
+        // ====================================================================
+
+        // Step 3: Get user token and send data to your create product API
+        const idToken = await user.getIdToken(true);
+
+        // NOTE: Make sure your API route is at '/api/products' if that is the correct path
+        const apiResponse = await fetch('/api/products/create', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`,
+            },
+            body: JSON.stringify(productData),
+        });
+
+        if (!apiResponse.ok) {
+            const errorData = await apiResponse.json();
+            // This will now show the specific error from the server (e.g., "Missing required fields.")
+            throw new Error(errorData.error || "Failed to create product on the server.");
         }
-    };
+
+        // Step 4: Handle success
+        setUploadSuccess(true);
+        toast.success("Product listed successfully!");
+        resetForm();
+        
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "An unexpected error occurred.";
+        console.error("Product submission error:", err);
+        setFormError(message);
+        toast.error(message);
+    } finally {
+        setIsSubmitting(false);
+    }
+};
 
     return (
-        <section
-            className="w-full flex justify-center"
-        >
-            <div className="bg-gray-50/50 w-full max-w-3/4 p-4 sm:p-6 lg:p-8">
+        <section className="w-full flex justify-center">
+            {/* Corrected max-w-3/4 to a valid tailwind class like max-w-6xl */}
+            <div className="bg-gray-50/50 w-full max-w-6xl p-4 sm:p-6 lg:p-8">
                 <div className="max-w-7xl mx-auto">
                     <header className="mb-8">
                         <h1 className="text-3xl font-bold text-gray-900">Create Item</h1>
@@ -271,18 +318,20 @@ export default function UploadProductPage() {
                                         onDrop={handleDrop}
                                         className={`relative w-full h-56 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-colors ${isDragging ? 'border-teal-600 bg-teal-50' : 'border-gray-300'} ${isSubmitting ? 'cursor-not-allowed' : 'cursor-pointer hover:border-teal-500'}`}
                                     >
-                                        <UploadCloud size={48} className="text-gray-400 mb-2" />
-                                        <p className="text-sm text-gray-500">Max 10MB, PNG, JPG</p>
-                                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" />
+                                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" disabled={isSubmitting} />
+                                        <div className="text-center">
+                                            <UploadCloud size={48} className="text-gray-400 mx-auto mb-2" />
+                                            <p className="font-semibold text-gray-600">Click to upload or drag & drop</p>
+                                            <p className="text-sm text-gray-500">Max 10MB per image (PNG, JPG)</p>
+                                        </div>
                                     </div>
                                     {fileErrors.length > 0 && <p className="text-sm text-red-600 mt-2">{fileErrors.join(', ')}</p>}
 
-                                    {/* NEW: Image Preview Grid with Loading State */}
                                     <div className="mt-4 grid grid-cols-3 sm:grid-cols-5 gap-4">
                                         {productFiles.map((file, i) => (
                                             <div key={i} className="relative group aspect-square border rounded-lg overflow-hidden">
                                                 <Image src={URL.createObjectURL(file)} alt="preview" fill style={{objectFit:"cover"}} />
-                                                <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-white/70 hover:bg-red-500 hover:text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-white/70 hover:bg-red-500 hover:text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10">
                                                     <X size={16} />
                                                 </button>
                                                 {isSubmitting && (
@@ -301,7 +350,8 @@ export default function UploadProductPage() {
                                 {/* Purchase Type */}
                                 <FormSection title="Purchase Type">
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div className={`p-4 border-2 rounded-lg cursor-pointer ${purchaseType === 'fixed' ? 'border-teal-600' : 'border-gray-200'}`}>
+                                        {/* Added onClick handler to update state */}
+                                        <div onClick={() => setPurchaseType('fixed')} className={`p-4 border-2 rounded-lg transition-colors ${purchaseType === 'fixed' ? 'border-teal-600 bg-teal-50/50' : 'border-gray-200 cursor-pointer hover:border-gray-300'}`}>
                                             <h4 className="font-semibold text-gray-800">Fixed Price</h4>
                                             <p className="text-sm text-gray-500">Set a fixed price for your product.</p>
                                         </div>
@@ -355,7 +405,18 @@ export default function UploadProductPage() {
                                         <LabeledInput label="Stock Quantity" id="stock">
                                             <input id="stock" type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="95" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500" />
                                         </LabeledInput>
-                                        
+
+                                        {/* Added UI for the isTrend state */}
+                                        <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                            <div>
+                                                <h4 className="font-medium text-gray-700">Trending Item</h4>
+                                                <p className="text-sm text-gray-500">Mark this item as a trending product.</p>
+                                            </div>
+                                            <button type="button" role="switch" aria-checked={isTrend} onClick={() => setIsTrend(!isTrend)} className={`${isTrend ? 'bg-teal-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}>
+                                                <span className={`${isTrend ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`} />
+                                            </button>
+                                        </div>
+
                                         <div className="md:col-span-2">
                                             <LabeledInput label="Description" id="description">
                                                 <textarea id="description" value={description} onChange={e => setDescription(e.target.value)} rows={5} placeholder="Describe the product in detail..." className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500"></textarea>
@@ -369,7 +430,7 @@ export default function UploadProductPage() {
                                     {formError && <div className="bg-red-50 text-red-800 p-3 rounded-lg mb-4 text-sm flex items-center"><AlertTriangle size={16} className="inline mr-2" />{formError}</div>}
                                     {uploadSuccess && <div className="bg-green-50 text-green-800 p-3 rounded-lg mb-4 text-sm flex items-center"><CheckCircle2 size={16} className="inline mr-2" />Success! Your product has been listed.</div>}
                                     
-                                    <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto px-10 py-3 flex items-center justify-center border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-wait">
+                                    <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto px-10 py-3 flex items-center justify-center border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 disabled:cursor-wait transition-colors">
                                         {isSubmitting ? <><Loader2 size={20} className="animate-spin mr-2" /> Publishing...</> : "Create Item"}
                                     </button>
                                 </div>
@@ -395,7 +456,10 @@ export default function UploadProductPage() {
                                     </div>
                                     <h4 className="font-bold text-lg text-gray-900 truncate">{title || "Product Title"}</h4>
                                     <div className="flex items-center gap-2 mt-1 mb-3">
-                                        <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                                        <div className="w-6 h-6 bg-gray-300 rounded-full overflow-hidden">
+                                            {/* You can optionally show user's profile image here */}
+                                            {auth.currentUser?.photoURL && <Image src={auth.currentUser.photoURL} alt="creator" width={24} height={24} />}
+                                        </div>
                                         <span className="text-sm text-gray-500">{auth.currentUser?.displayName || "Creator Name"}</span>
                                     </div>
                                     <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">

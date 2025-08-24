@@ -178,7 +178,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </div>
 
             {/* --- Content Section --- */}
-            <div className="pt-3 space-y-1">
+            <div className="relative pt-3 space-y-1 h-full">
                 <div
                     className='flex gap-1 items-start justify-between'
                 >
@@ -187,10 +187,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         <Link 
                             href={`/seller/products?p_id=${product.id}`}
                         >
-                            {product.name}
+                            {product.name.length > 32 ? `${product.name.slice(0, 32)}...` : product.name}
                         </Link>
                     </h3>
-                    {product.sales > 500 && (
+                    {/* {product.sales > 500 && (
                         <div 
                             className="flex flex-shrink-0 items-center 
                                 font-semibold text-orange-500 text-xs"
@@ -200,12 +200,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                             />
                             Hot Seller
                         </div>
-                    )}
+                    )} */}
                 </div>
 
                 {/* --- DYNAMIC CONTENT AREA --- */}
                 {/* This container has a fixed height to prevent layout shift on hover */}
-                <div className="relative h-[62px]"> 
+                <div className="relative h-[62px] "> 
                     {/* Default State: Price, Stats */}
                     <motion.div
                         animate={{ opacity: isHovered ? 0 : 1, y: isHovered ? -10 : 0 }}
@@ -236,7 +236,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
                         transition={{ duration: 0.25, ease: 'easeInOut' }}
-                        className="absolute inset-0 flex flex-col 
+                        className="absolute bottom-0 left-0 w-full flex flex-col 
                             mt-2 items-center justify-between"
                     >
                         <div className="w-full flex justify-start items-end gap-1">
