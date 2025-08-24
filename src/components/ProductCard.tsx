@@ -44,8 +44,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         setIsFavorite(prev => !prev);
     };
     
-    const shortDescription = product.description?.length > 60 ? `${product.description.slice(0, 60)}...` : product.description;
-
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
@@ -139,6 +137,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                             {product.product_images.map((_, i) => (
                                 <div 
                                     key={i} 
+                                    onClick={() => setCurrentImage(i)} 
                                     className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 
                                         ${i === currentImage ?
                                             'w-5 bg-white'
@@ -195,7 +194,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         )}
                         <button 
                             onClick={HandleQuickView}
-                            className="grow flex justify-center p-2.5 bg-gray-100 hover:bg-gray-200 
+                            className="cursor-pointer shadow-sm grow flex justify-center p-2.5 bg-gray-100 hover:bg-gray-200 
                                 text-gray-700 rounded-lg transition-colors">
                             <Eye size={16} />
                         </button>
