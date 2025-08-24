@@ -1,31 +1,21 @@
 "use client";
-import { FilterOrders } from '@/components/FilterOrders';
-import { OrderType } from '@/types/orders';
-import { MoreHorizontal } from 'lucide-react';
+
+import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import { MoreHorizontal } from 'lucide-react';
+import { OrderType } from '@/types/orders';
+import { useOrders } from '@/components/useOrders'; 
+import { OrdersControlsPanel } from '@/components/OrdersControlsPanel';
+import { OrdersFilterPanel } from '@/components/OrdersFilterPanel';
 
-export default function OrdersPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [orders, setOrders] = useState<OrderType[] | []>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function fetchProducts() {
-        try {
-            const res = await fetch("/api/currentuserorders");
-            if (!res.ok) throw new Error("Failed to fetch products");
+// Reusable components you already have
+import { ResultsBar } from '@/components/ResultsBar';
+import { Pagination } from '@/components/UI/PaginationProps';
+import { EmptyState } from '@/components/EmptyState';
 
-            const data = await res.json();
-            setOrders(data.orders);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    }
-    fetchProducts();
-}, []);
-  const getStatusColor = (status: string) => {
+// Helper function for status badge styling
+const getStatusColor = (status: string) => {
     const colors = {
       completed: 'bg-green-100 text-green-800 border-green-200',
       pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -34,228 +24,126 @@ export default function OrdersPage() {
       cancelled: 'bg-red-100 text-red-800 border-red-200',
     };
     return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
+};
 
-  const filteredOrders = orders?.filter(order =>
-    order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.product_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+// Skeleton component for the table's loading state
+const TableSkeleton = () => (
+    [...Array(5)].map((_, i) => (
+      <tr key={i} className="animate-pulse">
+        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24 mx-auto"></div></td>
+        <td className="px-6 py-4"><div className="flex items-center gap-3"><div className="w-8 h-8 bg-gray-200 rounded-full"></div><div><div className="h-4 bg-gray-200 rounded w-24"></div></div></div></td>
+        <td className="px-6 py-4"><div className="h-6 w-20 bg-gray-200 rounded-full mx-auto"></div></td>
+        <td className="px-6 py-4"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-gray-200 rounded-md"></div><div><div className="h-4 bg-gray-200 rounded w-32"></div></div></div></td>
+        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16 mx-auto"></div></td>
+        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div></td>
+        <td className="px-6 py-4 text-center"><div className="w-8 h-8 bg-gray-200 rounded-lg mx-auto"></div></td>
+      </tr>
+    ))
+);
 
-  return (
-    <section className="w-full overflow-x-scroll">
+export default function OrdersPage() {
+    const { state, actions } = useOrders();
+    const [showFilters, setShowFilters] = useState(false);
 
-      <FilterOrders 
-        onChange={(e) => setSearchTerm(e.target.value)}
-        searchTerm={searchTerm}
-      />
+    return (
+        <div className="w-full p-3 space-y-4">
+            <div className="max-w-screen-2xl mx-auto">
+                <OrdersControlsPanel
+                    searchQuery={state.searchQuery}
+                    onSearchChange={(e) => actions.setSearchQuery(e.target.value)}
+                    onSearchClear={() => actions.setSearchQuery('')}
+                    activeFilterCount={state.activeFilterCount}
+                    onFilterToggle={() => setShowFilters(!showFilters)}
+                />
 
-      {/* Orders Table */}
-      <div className="p-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Table Header Info */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Title
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  {filteredOrders.length}
-                </p>
-            </div>
-          </div>
+                <AnimatePresence>
+                    {showFilters && (
+                        <OrdersFilterPanel
+                            selectedFilters={state.selectedFilters}
+                            onFilterSelect={actions.handleFilterSelect}
+                            onClear={actions.clearAllFilters}
+                        />
+                    )}
+                </AnimatePresence>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Order
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    product
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    total
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    date
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {loading ? (
-                  <tr className="animate-pulse">
-                    {/* Order ID + Date */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="h-4 bg-gray-300 rounded w-24 mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-16"></div>
-                    </td>
+                <ResultsBar
+                    resultCount={state.orders.length}
+                    totalCount={state.totalCount}
+                    sortBy={state.sortBy}
+                    onSortChange={actions.setSortBy}
+                />
 
-                    {/* Seller (Image + Name + Email) */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                        <div>
-                          <div className="h-4 bg-gray-300 rounded w-24 mb-1"></div>
-                          <div className="h-3 bg-gray-200 rounded w-32"></div>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="h-5 w-16 bg-gray-300 rounded-full"></div>
-                    </td>
-
-                    {/* Product (Image + Name + Quantity) */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-300 rounded-md"></div>
-                        <div>
-                          <div className="h-4 bg-gray-300 rounded w-36 mb-1"></div>
-                          <div className="h-3 bg-gray-200 rounded w-20"></div>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Total */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="h-4 bg-gray-300 rounded w-16"></div>
-                    </td>
-
-                    {/* Date */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="h-4 bg-gray-300 rounded w-20"></div>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        {[...Array(4)].map((_, i) => (
-                          <div key={i} className="w-8 h-8 bg-gray-200 rounded-lg"></div>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                )
-                :
-                filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{order.id}</div>
-                      <div className="text-xs text-gray-500">12/20/2025</div>
-                    </td>
-                    
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div
-                            className='relative w-8 h-8 overflow-hidden rounded-full'
-                        >
-                        <Image
-                          className="object-cover"
-                          src={order.seller.profile_image}
-                          alt={order.seller.name}
-                          fill
-                          onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = `data:image/svg+xml,${encodeURIComponent(`
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                                <rect width="32" height="32" fill="#e5e7eb"/>
-                                <text x="16" y="20" text-anchor="middle" fill="#9ca3af" font-size="12" font-family="Arial">
-                                ${order.seller.name.charAt(0)}
-                                </text>
-                                </svg>
-                                `)}`;
-                            }}
-                            />
+                <main>
+                    {state.totalCount === 0 && !state.loading ? (
+                        <EmptyState onClear={actions.clearAllFilters} />
+                    ) : (
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            {['Order', 'Customer', 'Status', 'Product', 'Total', 'Date', 'Actions'].map(header => (
+                                                <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    {header}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {state.loading ? (
+                                            <TableSkeleton />
+                                        ) : (
+                                            state.orders.map((order: OrderType) => (
+                                                <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="text-sm font-semibold text-teal-600">#{order.id.slice(0, 7).toUpperCase()}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center gap-3">
+                                                            <Image className="w-8 h-8 rounded-full object-cover" src={order.seller.profile_image} alt={order.seller.name} width={32} height={32} />
+                                                            <div>
+                                                                <div className="text-sm font-medium text-gray-900">{order.seller.name}</div>
+                                                                <div className="text-xs text-gray-500">{order.seller.email}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
+                                                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center gap-3">
+                                                            <Image className="w-10 h-10 rounded-lg border border-gray-200 object-cover" src={order.product_image} alt={order.product_name} width={40} height={40}/>
+                                                            <div>
+                                                                <div className="text-sm font-medium text-gray-900 max-w-[200px] truncate">{order.product_name}</div>
+                                                                <div className="text-xs text-gray-500">Qty: {order.quantity}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-800">${order.total_mount.toFixed(2)}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(order.ordred_in).toLocaleDateString()}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                                            <MoreHorizontal size={16} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{order.seller.name}</div>
-                          <div className="text-xs text-gray-500">{order.seller.email}</div>
                         </div>
-                      </div>
-                    </td>
-                    
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                      </span>
-                    </td>
-                    
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div
-                            className='relative w-10 h-10 overflow-hidden rounded-lg border border-gray-200'
-                        >
-                            <Image
-                            className="object-cover"
-                            src={order.product_image}
-                            alt={order.product_name}
-                            fill
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = `data:image/svg+xml,${encodeURIComponent(`
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                                    <rect width="40" height="40" fill="#f3f4f6" rx="4"/>
-                                    <path d="M20 14l-6 8h12l-6-8z" fill="#d1d5db"/>
-                                    </svg>
-                                    `)}`;
-                                }}
-                            />
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900 max-w-[200px] truncate">
-                            {order.product_name}
-                          </div>
-                          <div className="text-xs text-gray-500">Qty: {order.quantity}</div>
-                        </div>
-                      </div>
-                    </td>
-                    
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-gray-900">
-                        ${order.total_mount.toFixed(2)}
-                      </div>
-                    </td>
-                    
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">order.date</div>
-                    </td>
-                    
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        {/* <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                          <Eye size={16} />
-                        </button> */}
-                        {/* <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
-                          <Edit size={16} />
-                        </button>
-                        <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                          <Trash2 size={16} />
-                        </button> */}
-                        <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
-                          <MoreHorizontal size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    )}
+                </main>
+                
+                <Pagination
+                    currentPage={state.currentPage}
+                    totalPages={state.totalPages}
+                    onPageChange={actions.setCurrentPage}
+                />
+            </div>
         </div>
-      </div>
-    </section>
-  );
+    );
 }
