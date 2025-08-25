@@ -6,6 +6,7 @@ import AddBalance from "./Pages/AddBalance";
 import MyWithdraw from "./Pages/MyWithdraw";
 import MyStore from "./Pages/MyStore";
 import UploadProducts from "./Pages/UploadProducts";
+import FavoritesProductsPage from "./Pages/FavoritesProductsPage";
 
 interface PageProps {
   params: Promise<{
@@ -42,6 +43,9 @@ export default async function Page({ params, searchParams }: PageProps) {
     case "upload-products":
       TabRender = <UploadProducts />;
       break;
+    case "favorites":
+      TabRender = <FavoritesProductsPage />;
+      break;
     case "products":
       // Check if a product ID exists in searchParams
       const productId = typeof resolvedSearchParams.p_id === "string" ? resolvedSearchParams.p_id : undefined;
@@ -52,7 +56,6 @@ export default async function Page({ params, searchParams }: PageProps) {
         TabRender = <ProductsPage />;
       }
       break;
-
     default:
       TabRender = <div className="w-full h-screen bg-gray-200 flex items-center justify-center text-6xl font-bold">Page not found</div>;
       break;

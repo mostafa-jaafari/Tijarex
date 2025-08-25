@@ -14,6 +14,7 @@ import { ProductType } from '@/types/product';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { BlackButtonStyles } from './Header';
+import { toast } from 'sonner';
 
 // --- Helper Components for Badges ---
 
@@ -28,7 +29,8 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
     const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
-    const [isFavorite, setIsFavorite] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(userInfos?.favoriteProductIds?.includes(product.id) || false
+    );
 
     const HandleQuickView = () => {
         setProductID(product.id as string || "");
@@ -40,10 +42,36 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
         setCurrentImage((prev) => (prev + direction + product.product_images.length) % product.product_images.length);
     };
 
-    const toggleFavorite = (e: React.MouseEvent) => {
+    const toggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
+        // Optimistically update the UI
+        const previousIsFavorite = isFavorite;
         setIsFavorite(prev => !prev);
+
+        try {
+            const response = await fetch('/api/products/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId: product.id }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update favorites.');
+            }
+            
+            const result = await response.json();
+            // You can optionally sync state with the server's response
+            setIsFavorite(result.isFavorite);
+            toast.success(result.isFavorite ? 'Added to favorites!' : 'Removed from favorites.');
+
+        } catch (error) {
+            // If the API call fails, revert the UI change
+            setIsFavorite(previousIsFavorite);
+            console.error(error);
+            toast.error((error as { message: string; }).message);
+        }
     };
     
     return (
@@ -96,7 +124,7 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
                 <motion.button
                     onClick={toggleFavorite}
                     whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-sm bg-black/20 transition-colors duration-300 ${isFavorite ? 'text-red-500' : 'text-white'}`}
+                    className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-sm bg-black/20 transition-colors duration-300 ${isFavorite ? 'text-teal-400' : 'text-white'}`}
                 >
                     <Heart className={`w-5 h-5 transition-all ${isFavorite ? 'fill-current' : ''}`} />
                 </motion.button>

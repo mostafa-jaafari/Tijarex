@@ -10,6 +10,7 @@ export type UserInfosType = {
     profileimage: string;
     UserRole: "seller" | "affiliate" | "admin";
     totalbalance: number;
+    favoriteProductIds: string[];
     // --- Affiliate Statistics Cards ---
     totalcommissions?: number;
     totalclicks?: number;
