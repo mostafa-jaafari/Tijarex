@@ -351,8 +351,11 @@ export default function UploadProductPage() {
                                     productFiles.length === 0
                                 }
                                 className="px-6 py-3 text-sm font-semibold text-white 
-                                    bg-teal-600 rounded-lg hover:bg-teal-700 
-                                    disabled:bg-neutral-300 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                                    cursor-pointer bg-teal-600 rounded-lg hover:bg-teal-700 
+                                    disabled:bg-neutral-300 
+                                    disabled:text-neutral-500 
+                                    disabled:cursor-not-allowed 
+                                    transition-colors flex items-center gap-2"
                             >
                                 {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                                 <span>{isSubmitting ? 'Uploading...' : 'Upload Product'}</span>

@@ -19,11 +19,7 @@ export type ProductType = {
     label: string;
     available: boolean;
   }[];
-  colors: {
-    name: string;
-    color: string;
-    selected: boolean;
-  }[];
+  colors: string[];
   owner?: {
     name: string;
     image: string;

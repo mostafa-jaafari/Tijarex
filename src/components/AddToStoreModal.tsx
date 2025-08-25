@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ProductType } from '@/types/product';
-import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, DollarSign, Edit3 } from 'lucide-react';
 import Image from 'next/image';
 
 interface AddToStoreModalProps {
@@ -14,21 +14,26 @@ interface AddToStoreModalProps {
 }
 
 export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToStoreModalProps) => {
-    // State for the affiliate's commission
     const [commission, setCommission] = useState<number>(0);
-    // State for editable fields, initialized with original product data
     const [editedName, setEditedName] = useState(product?.name ?? "");
     const [editedDescription, setEditedDescription] = useState(product?.description ?? "");
 
-    // Calculate the new price in real-time
+    // Effect to update state when a new product is selected while modal is open
+    useEffect(() => {
+        if (product) {
+            setEditedName(product.name);
+            setEditedDescription(product.description);
+            setCommission(0); // Reset commission for new product
+        }
+    }, [product]);
+    
     const newSalePrice = useMemo(() => {
         return (product?.sale_price ?? 0) + commission;
     }, [product?.sale_price, commission]);
 
-    if (!isOpen || !product) return null;
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!product) return;
         const editedProductData = {
             ...product,
             name: editedName,
@@ -38,90 +43,112 @@ export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToSto
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-            >
-                {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b">
-                    <h3 className="text-xl font-semibold">Add Product to Your Store</h3>
-                    <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-200">
-                        <X size={20} />
-                    </button>
+        <AnimatePresence>
+            {isOpen && product && (
+                <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="bg-[#1e1e1e] border border-neutral-700 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col font-sans"
+                    >
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-5 border-b border-neutral-700 flex-shrink-0">
+                            <h3 className="text-lg font-semibold text-white">Add Product to Your Store</h3>
+                            <button onClick={onClose} className="p-1.5 rounded-full text-neutral-400 hover:bg-neutral-700 transition-colors">
+                                <X size={18} />
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <form onSubmit={handleSubmit} className="p-6 flex-grow overflow-y-auto">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* Left Column: Image & Details */}
+                                <div className="md:col-span-1 space-y-4">
+                                     <div className="aspect-square relative w-full">
+                                        <Image
+                                            src={product.product_images[0]}
+                                            alt={product.name}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            className="rounded-lg object-cover"
+                                        />
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <div className='p-3 bg-neutral-800/50 border border-neutral-700 rounded-lg'>
+                                            <p className='text-xs text-neutral-400 mb-1'>Original Price</p>
+                                            <p className='text-white font-semibold'>{product.sale_price.toFixed(2)} {product.currency}</p>
+                                        </div>
+                                         <div className='p-3 bg-neutral-800/50 border border-neutral-700 rounded-lg'>
+                                            <p className='text-xs text-neutral-400 mb-1'>Available Stock</p>
+                                            <p className='text-white font-semibold'>{product.stock.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right Column: Form Inputs */}
+                                <div className="md:col-span-2 space-y-5">
+                                    <div>
+                                        <label htmlFor="name" className="block text-sm font-medium text-neutral-300 mb-1.5">Product Title</label>
+                                        <div className="relative">
+                                            <Edit3 size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                value={editedName}
+                                                onChange={(e) => setEditedName(e.target.value)}
+                                                className="w-full bg-[#111] border border-neutral-700 rounded-lg shadow-sm py-2.5 pl-9 pr-3 text-white placeholder:text-neutral-500 focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label htmlFor="commission" className="block text-sm font-medium text-neutral-300 mb-1.5">Your Commission ({product.currency})</label>
+                                        <div className="relative">
+                                            <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                            <input
+                                                type="number"
+                                                id="commission"
+                                                value={commission}
+                                                onChange={(e) => setCommission(parseFloat(e.target.value) || 0)}
+                                                className="w-full bg-[#111] border border-neutral-700 rounded-lg shadow-sm py-2.5 pl-9 pr-3 text-white placeholder:text-neutral-500 focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                                                placeholder="e.g., 50.00"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between items-center p-4 bg-teal-500/10 border border-teal-500/30 rounded-lg text-white">
+                                        <span className="text-base font-semibold">New Selling Price:</span>
+                                        <span className="text-xl font-bold">{newSalePrice.toFixed(2)} {product.currency}</span>
+                                    </div>
+                                    
+                                    <div>
+                                        <label htmlFor="description" className="block text-sm font-medium text-neutral-300 mb-1.5">Description (Optional)</label>
+                                        <textarea
+                                            id="description"
+                                            value={editedDescription}
+                                            onChange={(e) => setEditedDescription(e.target.value)}
+                                            rows={5}
+                                            className="w-full bg-[#111] border border-neutral-700 rounded-lg shadow-sm p-3 text-white placeholder:text-neutral-500 focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        {/* Footer */}
+                        <div className="flex justify-end items-center gap-3 p-5 border-t border-neutral-700 flex-shrink-0">
+                            <button type="button" onClick={onClose} className="py-2 px-5 bg-neutral-700 text-white rounded-lg font-semibold hover:bg-neutral-600 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" onClick={handleSubmit} className="py-2 px-5 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors">
+                                Add to My Store
+                            </button>
+                        </div>
+                    </motion.div>
                 </div>
-
-                {/* Body */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                    <div className="flex gap-6">
-                        <div className="w-1/3">
-                            <Image
-                                src={product.product_images[0]}
-                                alt={product.name}
-                                width={200}
-                                height={200}
-                                className="rounded-lg object-cover aspect-square"
-                            />
-                        </div>
-                        <div className="w-2/3 space-y-4">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Product Title</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    value={editedName}
-                                    onChange={(e) => setEditedName(e.target.value)}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea
-                                    id="description"
-                                    value={editedDescription}
-                                    onChange={(e) => setEditedDescription(e.target.value)}
-                                    rows={4}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="border-t pt-4 space-y-4">
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Original Price:</span>
-                            <span className="font-semibold">{product.sale_price.toFixed(2)} {product.currency}</span>
-                        </div>
-                        <div>
-                            <label htmlFor="commission" className="block text-sm font-medium text-gray-700">Your Commission ({product.currency})</label>
-                             <input
-                                type="number"
-                                id="commission"
-                                value={commission}
-                                onChange={(e) => setCommission(parseFloat(e.target.value) || 0)}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                placeholder="e.g., 10.00"
-                            />
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
-                            <span className="text-lg font-bold text-teal-700">New Selling Price:</span>
-                            <span className="text-xl font-bold text-teal-700">{newSalePrice.toFixed(2)} {product.currency}</span>
-                        </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex justify-end gap-3 pt-4">
-                        <button type="button" onClick={onClose} className="py-2 px-4 bg-gray-200 rounded-lg font-semibold">
-                            Cancel
-                        </button>
-                        <button type="submit" className="py-2 px-4 bg-gray-800 text-white rounded-lg font-semibold hover:bg-black">
-                            Confirm and Add to My Store
-                        </button>
-                    </div>
-                </form>
-            </motion.div>
-        </div>
+            )}
+        </AnimatePresence>
     );
 };

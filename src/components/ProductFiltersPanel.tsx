@@ -6,7 +6,7 @@ import { CustomDropdown } from './UI/CustomDropdown';
 const productFilters = [
     { title: "Category", filters: ["All", "Electronics", "Clothing", "Home & Garden", "Books"] },
     { title: "Stock Status", filters: ["All", "In Stock", "Low Stock", "Out of Stock"] },
-    { title: "Price Range", filters: ["All", "Under $25", "$25-$50", "$50-$100", "Over $100"] },
+    { title: "Price Range", filters: ["All", "Under 25Dh", "25Dh-50Dh", "50Dh-100Dh", "Over 100Dh"] },
 ];
 
 // --- Animation Variants ---

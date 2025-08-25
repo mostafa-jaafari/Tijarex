@@ -13,6 +13,7 @@ import {
 import { ProductType } from '@/types/product';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
+import { BlackButtonStyles } from './Header';
 
 // --- Helper Components for Badges ---
 
@@ -187,17 +188,19 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
                         {userInfos?.UserRole === "affiliate" && (
                             <button 
                                 onClick={() => onAddToStore(product)}
-                                className="w-full py-2.5 bg-gray-800 hover:bg-black 
+                                className={`cursor-pointer w-full py-2.5 
                                     text-white rounded-lg flex justify-center 
                                     items-center gap-2 text-sm font-semibold 
-                                    transition-colors"
+                                    transition-colors
+                                    ${BlackButtonStyles}`}
                             >
                                 <Store size={16} /> Add to Store
                             </button>
                         )}
                         <button 
                             onClick={HandleQuickView}
-                            className="cursor-pointer shadow-sm grow flex justify-center p-2.5 bg-gray-100 hover:bg-gray-200 
+                            className="border border-gray-200 cursor-pointer shadow-sm grow 
+                                flex justify-center p-2.5 bg-gray-100 hover:bg-gray-200 
                                 text-gray-700 rounded-lg transition-colors">
                             <Eye size={16} />
                         </button>

@@ -43,8 +43,14 @@ export const ColorInput: React.FC<ColorInputProps> = ({ colors, setColors }) => 
                         className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-md"
                     >
                         <span>{color.name}</span>
-                        <button type="button" onClick={() => removeColor(index)} className="text-gray-500 hover:text-gray-800">
-                            <X size={14} />
+                        <button 
+                            type="button" 
+                            onClick={() => removeColor(index)}
+                            className="text-gray-500 hover:text-gray-800"
+                        >
+                            <X 
+                                size={14}
+                            />
                         </button>
                     </motion.div>
                 ))}
