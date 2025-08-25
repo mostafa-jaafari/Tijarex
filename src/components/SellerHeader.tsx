@@ -1,15 +1,15 @@
 "use client";
 import { ArrowRightLeft, Bell, ChevronDown, CreditCard, DollarSign, FileClock, LogOut, Warehouse } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
-import { Session } from "next-auth";
 import { useUserInfos } from "@/context/UserInfosContext";
 
 
-export function SellerHeader({ session }: { session: Session | null }){
+export function SellerHeader(){
+    const session = useSession();
     const ProfileHeaderNavs = [
         { label: "dashboard", icon: LayoutDashboard, href: "" },
         { label: "profile", icon: Package, href: "profile" },
@@ -300,8 +300,8 @@ export function SellerHeader({ session }: { session: Session | null }){
                     className='relative w-10 h-10'
                     >
                     <Image
-                        src={userInfos?.profileimage || session?.user?.image || ""}
-                        alt={session?.user?.name || ""}
+                        src={userInfos?.profileimage || session?.data?.user?.image || ""}
+                        alt={session?.data?.user?.name || ""}
                         fill
                         className="object-cover overflow-hidden rounded-full border-2 border-green-500"
                     />
@@ -317,7 +317,7 @@ export function SellerHeader({ session }: { session: Session | null }){
                         <ChevronDown size={16} className="text-gray-400" />
                     </div>
                     <span className="text-xs text-gray-400">
-                        {session?.user?.email}
+                        {session?.data?.user?.email}
                     </span>
                     </div>
                 </button>

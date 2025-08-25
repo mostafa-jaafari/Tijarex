@@ -85,9 +85,13 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
 
 // The custom hook to consume the context.
 export const useUserInfos = () => {
-    const context = useContext(UserInfosContext);
-    if (context === undefined){
-        throw new Error("useUserInfos must be used within a UserInfosContextProvider");
-    }
-    return context;
+  const context = useContext(UserInfosContext);
+  if (context === undefined) {
+    return {
+      userInfos: null,
+      isLoadingUserInfos: false,
+      refetch: () => {}
+    };
+  }
+  return context;
 };

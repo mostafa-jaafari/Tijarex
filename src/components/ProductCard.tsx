@@ -175,9 +175,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         <div className="flex items-center gap-2">
                             <Percent size={16} className="text-gray-400" />
                             <div>
-                                <div className="font-semibold">{product.stock.toLocaleString()}
-                                </div>
-                                <div className="text-xs text-gray-400">Commissions</div> 
+                                <input 
+                                    type="number"
+                                    name=""
+                                    id=""
+                                    placeholder='commission !'
+                                    className=''
+                                />
                             </div>
                         </div>
                     ) : (
