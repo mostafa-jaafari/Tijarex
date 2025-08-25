@@ -60,7 +60,7 @@ export const useProductFilters = () => {
             setLoading(true);
             try {
                 const res = await fetch("/api/products");
-                if (!res.ok) throw new Error("Failed to fetch");
+                if (!res.ok) throw new Error("Failed to fetch products from useProductFilters");
                 const data = await res.json();
                 setAllProducts(data.products || []);
             } catch (error) {

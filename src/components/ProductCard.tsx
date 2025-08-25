@@ -9,7 +9,6 @@ import {
     Box, BarChart2, Eye,
     Flame,
     Store,
-    Percent,
 } from 'lucide-react';
 import { ProductType } from '@/types/product';
 import { useUserInfos } from '@/context/UserInfosContext';
@@ -20,15 +19,15 @@ import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 
 interface ProductCardProps {
     product: ProductType;
+    onAddToStore: (product: ProductType) => void;
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
     const { userInfos } = useUserInfos();
     const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
-    const [AffiliateSellPrice, setAffiliateSellPrice] = useState();
 
     const HandleQuickView = () => {
         setProductID(product.id as string || "");
@@ -171,25 +170,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         <Box size={16} className="text-gray-400" />
                         <div> <div className="font-semibold">{product.stock.toLocaleString()}</div> <div className="text-xs text-gray-400">Stock</div> </div>
                     </div>
-                    {userInfos?.UserRole === "affiliate" ? (
-                        <div className="flex items-center gap-2">
-                            <Percent size={16} className="text-gray-400" />
-                            <div>
-                                <input 
-                                    type="number"
-                                    name=""
-                                    id=""
-                                    placeholder='commission !'
-                                    className=''
-                                />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-2">
-                            <Box size={16} className="text-gray-400" />
-                            <div> <div className="font-semibold">{product.stock.toLocaleString()}</div> <div className="text-xs text-gray-400">Stock</div> </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* --- ACTION AREA (FIXED) --- */}
@@ -205,7 +185,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         className="flex items-center gap-2"
                     >
                         {userInfos?.UserRole === "affiliate" && (
-                            <button className="w-full py-2.5 bg-gray-800 hover:bg-black text-white rounded-lg flex justify-center items-center gap-2 text-sm font-semibold transition-colors">
+                            <button 
+                                onClick={() => onAddToStore(product)}
+                                className="w-full py-2.5 bg-gray-800 hover:bg-black 
+                                    text-white rounded-lg flex justify-center 
+                                    items-center gap-2 text-sm font-semibold 
+                                    transition-colors"
+                            >
                                 <Store size={16} /> Add to Store
                             </button>
                         )}

@@ -4,6 +4,7 @@ import { ProductCard } from './ProductCard';
 interface ProductGridProps {
     products: ProductType[];
     loading: boolean;
+    onAddToStore: (product: ProductType) => void;
 }
 
 export const ProductCardSkeleton = () => (
@@ -17,7 +18,7 @@ export const ProductCardSkeleton = () => (
     </div>
 );
 
-export const ProductGrid = ({ products, loading }: ProductGridProps) => {
+export const ProductGrid = ({ products, loading, onAddToStore }: ProductGridProps) => {
     if (loading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -29,7 +30,7 @@ export const ProductGrid = ({ products, loading }: ProductGridProps) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {products.map(product => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard onAddToStore={onAddToStore} key={product.id} product={product} />
             ))}
         </div>
     );

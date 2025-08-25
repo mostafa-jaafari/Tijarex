@@ -8,6 +8,9 @@ import { ProductGrid } from '@/components/ProductGrid';
 import { ProductsTable } from '@/components/ProductsTable';
 import { EmptyState } from '@/components/EmptyState';
 import { Pagination } from '@/components/UI/PaginationProps';
+import { toast } from 'sonner';
+import { ProductType } from '@/types/product';
+import { AddToStoreModal } from '@/components/AddToStoreModal';
 
 
 export default function ProductsPage() {
@@ -18,6 +21,43 @@ export default function ProductsPage() {
     const {
         loading, viewMode, paginatedProducts, filteredCount
     } = state;
+
+    // --- New State for the Modal ---
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
+
+    const handleOpenAddToStore = (product: ProductType) => {
+        setSelectedProduct(product);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedProduct(null);
+    };
+
+    const handleSubmitAddToStore = async (editedProduct: ProductType, commission: number) => {
+        const loadingToast = toast.loading("Adding product to your store...");
+
+        try {
+            const response = await fetch('/api/affiliate/addproducttostore', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product: editedProduct, commission }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add product.');
+            }
+
+            toast.success('Product added successfully!', { id: loadingToast });
+            handleCloseModal();
+
+        } catch (error) {
+            toast.error('Something went wrong. Please try again.', { id: loadingToast });
+            console.error(error);
+        }
+    };
 
     return (
         <div className="w-full p-3">
@@ -52,7 +92,11 @@ export default function ProductsPage() {
                     {filteredCount === 0 && !loading ? (
                         <EmptyState onClear={actions.clearAllFilters} />
                     ) : viewMode === 'grid' ? (
-                        <ProductGrid products={paginatedProducts} loading={loading} />
+                        <ProductGrid 
+                            products={paginatedProducts} 
+                            loading={loading}
+                            onAddToStore={handleOpenAddToStore}
+                        />
                     ) : (
                         <ProductsTable products={paginatedProducts} loading={loading} />
                     )}
@@ -64,6 +108,13 @@ export default function ProductsPage() {
                     onPageChange={actions.setCurrentPage}
                 />
             </div>
+            {/* Render the Modal */}
+            <AddToStoreModal
+                isOpen={isModalOpen}
+                product={selectedProduct}
+                onClose={handleCloseModal}
+                onSubmit={handleSubmitAddToStore}
+            />
         </div>
     );
 }
