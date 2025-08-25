@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductType } from '@/types/product';
-import { getStockBadge } from './Functions/GetStockBadge';
 import { Heart, Eye, Star, TrendingUp, Copy } from 'lucide-react';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
+import { getStockBadge } from './Functions/GetStockBadge';
 
 interface ProductTableRowProps {
     product: ProductType;
@@ -100,12 +100,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
 
             {/* Stock Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
-                <span 
-                    className={`inline-flex items-center px-2 py-1 text-xs 
-                        font-medium rounded-md border 
-                        ${getStockBadge(product.status)}`}>
-                    {product.status}
-                </span>
+                {getStockBadge(product.stock)}
                 <div className="text-xs text-gray-500 mt-1.5">
                     {product.stock} units left
                 </div>

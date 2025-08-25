@@ -4,53 +4,55 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export interface ColorOption {
-  name: string;
-}
-
+// The props now expect a simple array of strings.
 interface ColorInputProps {
-  colors: ColorOption[];
-  setColors: React.Dispatch<React.SetStateAction<ColorOption[]>>;
+  colors: string[];
+  setColors: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export const ColorInput: React.FC<ColorInputProps> = ({ colors, setColors }) => {
     const [currentValue, setCurrentValue] = useState('');
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Add color on Enter or Comma
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
-            const newName = currentValue.trim();
-            if (newName && !colors.some(c => c.name.toLowerCase() === newName.toLowerCase())) {
-                setColors([...colors, { name: newName }]);
+            const newColor = currentValue.trim();
+
+            // Add the new color if it's not empty and not already in the list
+            if (newColor && !colors.some(c => c.toLowerCase() === newColor.toLowerCase())) {
+                setColors([...colors, newColor]);
             }
+            
+            // Clear the input field
             setCurrentValue('');
         }
     };
     
-    const removeColor = (indexToRemove: number) => {
-        setColors(colors.filter((_, index) => index !== indexToRemove));
+    // The remove logic is simpler as we just filter the array of strings
+    const removeColor = (colorToRemove: string) => {
+        setColors(colors.filter(color => color !== colorToRemove));
     };
 
     return (
         <div className="w-full p-2 bg-white border border-gray-300 rounded-lg flex flex-wrap items-center gap-2 focus-within:ring-2 focus-within:ring-teal-400 focus-within:border-teal-500 transition-all">
             <AnimatePresence>
-                {colors.map((color, index) => (
+                {colors.map((color) => (
                     <motion.div
-                        key={color.name}
+                        key={color} // Use the color name itself as the key
                         initial={{ opacity: 0, scale: 0.5 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.5 }}
                         className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-md"
                     >
-                        <span>{color.name}</span>
+                        {/* Display the color string directly */}
+                        <span>{color}</span> 
                         <button 
                             type="button" 
-                            onClick={() => removeColor(index)}
+                            onClick={() => removeColor(color)}
                             className="text-gray-500 hover:text-gray-800"
                         >
-                            <X 
-                                size={14}
-                            />
+                            <X size={14} />
                         </button>
                     </motion.div>
                 ))}
