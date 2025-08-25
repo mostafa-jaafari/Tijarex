@@ -43,12 +43,12 @@ export function Sidebar() {
             href: "orders",
             badge: "3",
         },
-        {
+        ...(userInfos?.UserRole === "affiliate" ? [{
             label: "my store",
             icon: Store,
             href: "my-store",
             badge: null,
-        },
+        }] : []),
         {
             label: "returns",
             icon: RotateCcw,
