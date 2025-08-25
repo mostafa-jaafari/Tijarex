@@ -10,7 +10,8 @@ import {
     ChevronRight,
     User,
     Store,
-    UploadCloud
+    UploadCloud,
+    Heart
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -52,6 +53,12 @@ export function Sidebar() {
             label: "returns",
             icon: RotateCcw,
             href: "returns",
+            badge: null,
+        },
+        {
+            label: "favorites",
+            icon: Heart,
+            href: "favorites",
             badge: null,
         },
         ...(userInfos?.UserRole !== "affiliate" ? [{

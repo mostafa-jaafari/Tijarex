@@ -101,7 +101,9 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             {/* Stock Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
                 {getStockBadge(product.stock)}
-                <div className="text-xs text-gray-500 mt-1.5">
+                <div 
+                    className="text-xs text-gray-500 mt-1.5"
+                >
                     {product.stock} units left
                 </div>
             </td>
