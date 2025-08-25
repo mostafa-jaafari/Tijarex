@@ -6,7 +6,7 @@ import { auth } from "@/lib/FirebaseClient";
 import imageCompression from "browser-image-compression";
 import { motion, AnimatePresence } from "framer-motion";
 import { ColorInput } from "@/components/Upload-Products/ColorInput";
-import { SizeInput, SizeOption } from "@/components/Upload-Products/SizeInput";
+import { SizeInput } from "@/components/Upload-Products/SizeInput";
 import { CategoryInput } from "@/components/Upload-Products/CategoryInput";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -35,7 +35,7 @@ export default function UploadProductPage() {
     const [salePrice, setSalePrice] = useState("");
     const [stock, setStock] = useState("");
     const [colors, setColors] = useState<string[]>([]);
-    const [sizes, setSizes] = useState<SizeOption[]>([]);
+    const [sizes, setSizes] = useState<string[]>([]);
     const [productFiles, setProductFiles] = useState<ProductFile[]>([]); // <-- UPDATED STATE
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);

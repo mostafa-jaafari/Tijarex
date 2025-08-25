@@ -4,46 +4,54 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export interface SizeOption {
-  label: string;
-}
-
+// Props now expect a simple array of strings.
 interface SizeInputProps {
-  sizes: SizeOption[];
-  setSizes: React.Dispatch<React.SetStateAction<SizeOption[]>>;
+  sizes: string[];
+  setSizes: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
     const [currentValue, setCurrentValue] = useState('');
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Add size on Enter or Comma
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
-            const newLabel = currentValue.trim().toUpperCase();
-            if (newLabel && !sizes.some(s => s.label === newLabel)) {
-                setSizes([...sizes, { label: newLabel }]);
+            const newSize = currentValue.trim().toUpperCase(); // Keep auto-uppercase for consistency
+
+            // Add the new size if it's not empty and not already in the list
+            if (newSize && !sizes.some(s => s.toUpperCase() === newSize)) {
+                setSizes([...sizes, newSize]);
             }
+            
+            // Clear the input field
             setCurrentValue('');
         }
     };
     
-    const removeSize = (indexToRemove: number) => {
-        setSizes(sizes.filter((_, index) => index !== indexToRemove));
+    // The remove logic now filters the array of strings directly
+    const removeSize = (sizeToRemove: string) => {
+        setSizes(sizes.filter(size => size !== sizeToRemove));
     };
 
     return (
         <div className="w-full p-2 bg-white border border-gray-300 rounded-lg flex flex-wrap items-center gap-2 focus-within:ring-2 focus-within:ring-teal-400 focus-within:border-teal-500 transition-all">
             <AnimatePresence>
-                {sizes.map((size, index) => (
+                {sizes.map((size) => (
                     <motion.div
-                        key={size.label}
+                        key={size} // Use the size string itself as the key
                         initial={{ opacity: 0, scale: 0.5 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.5 }}
                         className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-md"
                     >
-                        <span>{size.label}</span>
-                        <button type="button" onClick={() => removeSize(index)} className="text-gray-500 hover:text-gray-800">
+                        {/* Display the size string directly */}
+                        <span>{size}</span>
+                        <button 
+                            type="button" 
+                            onClick={() => removeSize(size)} 
+                            className="text-gray-500 hover:text-gray-800"
+                        >
                             <X size={14} />
                         </button>
                     </motion.div>

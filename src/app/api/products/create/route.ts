@@ -44,7 +44,6 @@ export async function POST(request: Request) {
             createdAt: new Date().toISOString(),
             lastUpdated: new Date().toISOString(),
             title,
-            name: title, // Use title for the name field
             description,
             category,
             regular_price,

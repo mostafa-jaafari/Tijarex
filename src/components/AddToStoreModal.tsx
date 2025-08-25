@@ -15,13 +15,13 @@ interface AddToStoreModalProps {
 
 export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToStoreModalProps) => {
     const [commission, setCommission] = useState<number>(0);
-    const [editedName, setEditedName] = useState(product?.name ?? "");
+    const [editedName, setEditedName] = useState(product?.title ?? "");
     const [editedDescription, setEditedDescription] = useState(product?.description ?? "");
 
     // Effect to update state when a new product is selected while modal is open
     useEffect(() => {
         if (product) {
-            setEditedName(product.name);
+            setEditedName(product.title);
             setEditedDescription(product.description);
             setCommission(0); // Reset commission for new product
         }
@@ -69,7 +69,7 @@ export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToSto
                                      <div className="aspect-square relative w-full">
                                         <Image
                                             src={product.product_images[0]}
-                                            alt={product.name}
+                                            alt={product.title}
                                             fill
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             className="rounded-lg object-cover"

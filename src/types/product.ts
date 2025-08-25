@@ -1,6 +1,5 @@
 export type ProductType = {
   id: string;
-  name: string;
   category: string[];
   product_images: string[];
   sale_price: number;
