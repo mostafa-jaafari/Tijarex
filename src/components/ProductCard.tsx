@@ -1,56 +1,49 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { AnimatePresence, motion } from 'framer-motion';
-import {
-    ArrowLeft, ArrowRight, Heart,
-    Box, BarChart2, Eye,
-    Flame,
-    Store,
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { ProductType } from '@/types/product';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { BlackButtonStyles } from './Header';
 import { toast } from 'sonner';
+import { ProductCardUI } from './UI/ProductCardUI';
 
-// --- Helper Components for Badges ---
-
-
+// --- Props for the Container Component ---
 interface ProductCardProps {
     product: ProductType;
     onAddToStore: (product: ProductType) => void;
 }
 
 export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
-    const { userInfos } = useUserInfos();
+    // --- All Hooks and Logic Live Here ---
+    const { userInfos, refetch } = useUserInfos(); // Assuming a refetch function exists
     const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
-    const [currentImage, setCurrentImage] = useState(0);
-    const [isHovered, setIsHovered] = useState(false);
-    const [isFavorite, setIsFavorite] = useState(userInfos?.favoriteProductIds?.includes(product.id) || false
+
+    // The 'isFavorite' state is managed by this smart component
+    const [isFavorite, setIsFavorite] = useState(
+        userInfos?.favoriteProductIds?.includes(product.id) || false
     );
 
-    const HandleQuickView = () => {
+    // Effect to sync favorite status if userInfos changes (e.g., after login)
+    useEffect(() => {
+        setIsFavorite(userInfos?.favoriteProductIds?.includes(product.id) || false);
+    }, [userInfos, product.id]);
+
+
+    // --- All Functions with Logic Live Here ---
+    const handleQuickView = () => {
         setProductID(product.id as string || "");
-        setIsShowQuickViewProduct(true)
-    }
-    const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setCurrentImage((prev) => (prev + direction + product.product_images.length) % product.product_images.length);
+        setIsShowQuickViewProduct(true);
     };
 
-    const toggleFavorite = async (e: React.MouseEvent) => {
+    const handleToggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Optimistically update the UI
         const previousIsFavorite = isFavorite;
-        setIsFavorite(prev => !prev);
+        setIsFavorite(prev => !prev); // Optimistic UI update
 
         try {
+            // CORRECTED API ROUTE: In previous steps we created /api/user/favorites
             const response = await fetch('/api/products/favorites', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -58,183 +51,37 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update favorites.');
+                // The API will send a specific error message if it can
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update favorites.');
             }
             
             const result = await response.json();
-            // You can optionally sync state with the server's response
-            setIsFavorite(result.isFavorite);
+            setIsFavorite(result.isFavorite); // Sync with server's response
             toast.success(result.isFavorite ? 'Added to favorites!' : 'Removed from favorites.');
+            
+            // Optionally, refetch user data to update context everywhere
+            if(refetch) refetch(); 
 
         } catch (error) {
-            // If the API call fails, revert the UI change
-            setIsFavorite(previousIsFavorite);
-            console.error(error);
-            toast.error((error as { message: string; }).message);
+            setIsFavorite(previousIsFavorite); // Revert UI on failure
+            toast.error((error as Error).message);
         }
     };
-    
+
+    const handleAddToStore = () => {
+        onAddToStore(product);
+    };
+
+    // --- Render the UI component, passing down props ---
     return (
-        <div
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className="font-sans bg-white border border-gray-200 
-                rounded-lg overflow-hidden group p-3 transition-all 
-                duration-300 ease-in-out hover:shadow-xl hover:-translate-y-0.5"
-        >
-            {/* --- Product Image --- */}
-            <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
-                <Link href={`/seller/products?p_id=${product.id}`} className="block w-full h-full">
-                    <AnimatePresence initial={false}>
-                        <motion.div
-                            key={currentImage}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="absolute inset-0"
-                        >
-                            <Image
-                                src={product.product_images[currentImage]}
-                                alt={product.title}
-                                fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="object-cover w-full h-full"
-                            />
-                        </motion.div>
-                    </AnimatePresence>
-                </Link>
-
-                <div className="absolute top-3 left-3 flex flex-col items-start gap-2">
-                    {product.sales > 500 && (
-                        <p
-                            className='py-1 px-2 text-orange-400 rounded-full 
-                            flex items-center gap-1 text-xs 
-                            font-semibold bg-orange-900 shadow-sm'
-                        >
-                            <Flame 
-                                size={16}
-                                className='fill-current'
-                            />
-                                Hot Seller
-                        </p>
-                    )}
-                </div>
-                
-                <motion.button
-                    onClick={toggleFavorite}
-                    whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-sm bg-black/20 transition-colors duration-300 ${isFavorite ? 'text-teal-400' : 'text-white'}`}
-                >
-                    <Heart className={`w-5 h-5 transition-all ${isFavorite ? 'fill-current' : ''}`} />
-                </motion.button>
-
-                {product.product_images.length > 1 && (
-                    <>
-                        <AnimatePresence>
-                            {isHovered && (
-                                <>
-                                    <motion.button 
-                                        onClick={(e) => handleImageNavigation(e, -1)} 
-                                        initial={{ opacity: 0, x: -10 }} 
-                                        animate={{ opacity: 1, x: 0 }} 
-                                        exit={{ opacity: 0, x: -10 }} 
-                                        className="absolute top-1/2 left-2 transform -translate-y-1/2 
-                                            p-2 bg-white/80 cursor-pointer text-gray-800 rounded-full
-                                            shadow-md hover:bg-white"
-                                    > <ArrowLeft 
-                                        size={16}
-                                    />
-                                    </motion.button>
-                                    <motion.button 
-                                        onClick={(e) => handleImageNavigation(e, 1)} 
-                                        initial={{ opacity: 0, x: 10 }} 
-                                        animate={{ opacity: 1, x: 0 }} 
-                                        exit={{ opacity: 0, x: 10 }} 
-                                        className="absolute top-1/2 right-2 transform -translate-y-1/2 
-                                            p-2 bg-white/80 cursor-pointer text-gray-800 rounded-full
-                                            shadow-md hover:bg-white"
-                                    > <ArrowRight 
-                                        size={16}
-                                    />
-                                    </motion.button>
-                                </>
-                            )}
-                        </AnimatePresence>
-                        <div 
-                            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2"
-                        >
-                            {product.product_images.map((_, i) => (
-                                <div 
-                                    key={i} 
-                                    onClick={() => setCurrentImage(i)} 
-                                    className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 
-                                        ${i === currentImage ?
-                                            'w-5 bg-white'
-                                            :
-                                            'w-1.5 bg-white/60'}`}
-                                />
-                            ))}
-                        </div>
-                    </>
-                )}
-            </div>
-
-            {/* --- Content Section --- */}
-            <div className="pt-3 px-1">
-                <h3 className="font-semibold text-neutral-800 truncate">
-                    <Link href={`/seller/products?p_id=${product.id}`}>{product.title}</Link>
-                </h3>
-                <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-lg font-bold text-teal-600">{product.sale_price.toFixed(2)} {product.currency}</span>
-                    {product.regular_price > product.sale_price && <span className="text-sm text-gray-400 line-through">{product.regular_price.toFixed(2)} {product.currency}</span>}
-                </div>
-
-                <div className="mt-4 grid grid-cols-3 gap-x-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                        <BarChart2 size={16} className="text-gray-400" />
-                        <div> <div className="font-semibold">{product.sales.toLocaleString()}</div> <div className="text-xs text-gray-400">Sales</div> </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Box size={16} className="text-gray-400" />
-                        <div> <div className="font-semibold">{product.stock.toLocaleString()}</div> <div className="text-xs text-gray-400">Stock</div> </div>
-                    </div>
-                </div>
-
-                {/* --- ACTION AREA (FIXED) --- */}
-                {/* This wrapper div reserves the space for the buttons, preventing layout shift */}
-                <div className="group-hover:mt-3 h-0 group-hover:h-[44px] transition-all duration-200">
-                    <motion.div
-                        animate={{
-                            opacity: isHovered ? 1 : 0,
-                            y: isHovered ? 0 : 5
-                        }}
-                        initial={{ opacity: 0, y: 5 }}
-                        transition={{ duration: 0.25, ease: 'easeInOut' }}
-                        className="flex items-center gap-2"
-                    >
-                        {userInfos?.UserRole === "affiliate" && (
-                            <button 
-                                onClick={() => onAddToStore(product)}
-                                className={`cursor-pointer w-full py-2.5 
-                                    text-white rounded-lg flex justify-center 
-                                    items-center gap-2 text-sm font-semibold 
-                                    transition-colors
-                                    ${BlackButtonStyles}`}
-                            >
-                                Drop to <Store size={16} />
-                            </button>
-                        )}
-                        <button 
-                            onClick={HandleQuickView}
-                            className="border border-gray-200 cursor-pointer shadow-sm grow 
-                                flex justify-center p-2.5 bg-gray-100 hover:bg-gray-200 
-                                text-gray-700 rounded-lg transition-colors">
-                            <Eye size={16} />
-                        </button>
-                    </motion.div>
-                </div>
-            </div>
-        </div>
+        <ProductCardUI
+            product={product}
+            isFavorite={isFavorite}
+            isAffiliate={userInfos?.UserRole === "affiliate"}
+            onToggleFavorite={handleToggleFavorite}
+            onQuickView={handleQuickView}
+            onAddToStore={handleAddToStore}
+        />
     );
 };
