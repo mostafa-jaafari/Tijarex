@@ -66,7 +66,7 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
             {/* Category Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-800">
-                    {Array.isArray(product.category) ? product.category[0] : product.category}
+                    {Array.isArray(product.category) && (<><span className='bg-teal-600 text-white px-3 rounded-full'>{product.category[0]}</span>{product.category.length > 1 && "..."}</>)}
                 </div>
                 {/* In a real app, this would come from product data */}
                 <div className="text-xs text-gray-500 mt-1">Partner Seller</div>
@@ -110,12 +110,9 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
 
             {/* Performance Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center gap-1.5 text-sm text-gray-800 font-medium">
+                <div className="flex justify-center gap-1.5 text-sm text-gray-800 font-medium">
                     <TrendingUp className="w-4 h-4 text-green-500" />
                     {product.sales.toLocaleString()} sold
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                    ${product.revenue >= 1000 ? `${product.revenue / 1000}K` : product.revenue >= 1000000 ? `${product.revenue / 1000000}M` : product.revenue} revenue
                 </div>
             </td>
 
