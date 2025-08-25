@@ -46,6 +46,13 @@ export default function ProductsPage() {
                 body: JSON.stringify({ product: editedProduct, commission }),
             });
 
+            if (response.status === 409) {
+                // The product already exists
+                toast.error('This product is already in your store.', { id: loadingToast });
+                handleCloseModal();
+                return; // Stop execution
+            }
+            
             if (!response.ok) {
                 throw new Error('Failed to add product.');
             }

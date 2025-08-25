@@ -301,7 +301,7 @@ export function SellerHeader(){
                     >
                     <Image
                         src={userInfos?.profileimage || session?.data?.user?.image || ""}
-                        alt={session?.data?.user?.name || ""}
+                        alt={userInfos?.fullname || ""}
                         fill
                         className="object-cover overflow-hidden rounded-full border-2 border-green-500"
                     />

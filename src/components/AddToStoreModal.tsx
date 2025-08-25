@@ -3,9 +3,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { ProductType } from '@/types/product';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, DollarSign, Edit3, Percent, Store } from 'lucide-react';
+import { X, Edit3, Percent, Store } from 'lucide-react';
 import Image from 'next/image';
-import { BlackButtonStyles, WhiteButtonStyles } from './Header';
+import { WhiteButtonStyles } from './Header';
 
 interface AddToStoreModalProps {
     product: ProductType | null;
