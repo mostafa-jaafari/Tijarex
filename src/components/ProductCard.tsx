@@ -9,6 +9,7 @@ import {
     Box, BarChart2, Eye,
     Flame,
     Store,
+    Percent,
 } from 'lucide-react';
 import { ProductType } from '@/types/product';
 import { useUserInfos } from '@/context/UserInfosContext';
@@ -27,6 +28,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
+    const [AffiliateSellPrice, setAffiliateSellPrice] = useState();
 
     const HandleQuickView = () => {
         setProductID(product.id as string || "");
@@ -169,10 +171,21 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         <Box size={16} className="text-gray-400" />
                         <div> <div className="font-semibold">{product.stock.toLocaleString()}</div> <div className="text-xs text-gray-400">Stock</div> </div>
                     </div>
-                    {/* <div className="flex items-center gap-2">
-                        <Box size={16} className="text-gray-400" />
-                        <div> <div className="font-semibold">{product.stock.toLocaleString()}</div> <div className="text-xs text-gray-400">Stock</div> </div>
-                    </div> */}
+                    {userInfos?.UserRole === "affiliate" ? (
+                        <div className="flex items-center gap-2">
+                            <Percent size={16} className="text-gray-400" />
+                            <div>
+                                <div className="font-semibold">{product.stock.toLocaleString()}
+                                </div>
+                                <div className="text-xs text-gray-400">Commissions</div> 
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            <Box size={16} className="text-gray-400" />
+                            <div> <div className="font-semibold">{product.stock.toLocaleString()}</div> <div className="text-xs text-gray-400">Stock</div> </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* --- ACTION AREA (FIXED) --- */}

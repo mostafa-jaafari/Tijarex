@@ -17,7 +17,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         currentPage === page
                             ? 'bg-teal-600 text-white shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-100'
+                            : 'cursor-pointer text-gray-700 hover:bg-gray-200'
                     }`}
                 >
                     {page}

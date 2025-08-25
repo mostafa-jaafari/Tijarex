@@ -7,7 +7,7 @@ import imageCompression from "browser-image-compression";
 import { motion, AnimatePresence } from "framer-motion";
 import { ColorInput, ColorOption } from "@/components/Upload-Products/ColorInput";
 import { SizeInput, SizeOption } from "@/components/Upload-Products/SizeInput";
-import { CategoryInput } from "@/components/CategoryInput";
+import { CategoryInput } from "@/components/Upload-Products/CategoryInput";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { BlackButtonStyles } from "@/components/Header";
