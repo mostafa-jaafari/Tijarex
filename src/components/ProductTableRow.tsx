@@ -3,16 +3,18 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductType } from '@/types/product';
-import { Heart, Eye, Star, TrendingUp, Copy } from 'lucide-react';
+import { Heart, Eye, Star, TrendingUp, Copy, Tag, Store } from 'lucide-react';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { getStockBadge } from './Functions/GetStockBadge';
+import { BlackButtonStyles } from './Header';
 
 interface ProductTableRowProps {
     product: ProductType;
+    onAddToStore: (product: ProductType) => void;
 }
 
-export const ProductTableRow = ({ product }: ProductTableRowProps) => {
+export const ProductTableRow = ({ product, onAddToStore }: ProductTableRowProps) => {
     const { userInfos } = useUserInfos();
     const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
 
@@ -65,12 +67,8 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
 
             {/* Category Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-800">
-                    {Array.isArray(product.category) && (<><span className='bg-teal-600 text-white px-3 py-0.5 rounded-full'>{product.category[0]}</span>{product.category.length > 1 && "..."}</>)}
-                </div>
-                {/* In a real app, this would come from product data */}
-                <div className="text-xs text-gray-500 mt-1">
-                    {product.owner?.name}
+                <div className="text-sm text-gray-800 flex flex-col items-center">
+                    {Array.isArray(product.category) && (<><span className='bg-teal-600 text-white px-3 py-0.5 rounded-full flex items-center w-max gap-1'><Tag size={16}/>{product.category[0]}</span>{product.category.length > 1 && "..."}</>)}
                 </div>
             </td>
 
@@ -143,21 +141,20 @@ export const ProductTableRow = ({ product }: ProductTableRowProps) => {
                         <Eye className="w-4 h-4" />
                     </button>
                     {/* --- Copy Product Link --- */}
-                    <button 
-                        className="cursor-pointer p-2 text-gray-400 hover:text-green-600 
-                            hover:bg-green-50 rounded-lg transition-colors" 
-                        aria-label="Copy product link">
-                        <Copy className="w-4 h-4" />
-                    </button>
+                    {userInfos?.UserRole === "seller" && (
+                        <button 
+                            className="cursor-pointer p-2 text-gray-400 hover:text-green-600 
+                                hover:bg-green-50 rounded-lg transition-colors" 
+                            aria-label="Copy product link">
+                            <Copy className="w-4 h-4" />
+                        </button>
+                    )}
                     {userInfos?.UserRole !== "seller" && (
                         <button 
-                            className={`ml-2 px-4 py-2 text-xs font-bold rounded-lg
-                                bg-gradient-to-r text-white 
-                                from-[#1A1A1A] via-neutral-900 to-[#1A1A1A] 
-                                hover:from-gray-500 cursor-pointer
-                                ring ring-neutral-200
-                                transition-colors`}>
-                            Promote
+                            onClick={() => onAddToStore(product)}
+                            className={`flex text-sm px-2 py-1 gap-1 cursor-pointer rounded-lg
+                                ${BlackButtonStyles}`}>
+                            Drop to <Store size={16} />
                         </button>
                     )}
                 </div>

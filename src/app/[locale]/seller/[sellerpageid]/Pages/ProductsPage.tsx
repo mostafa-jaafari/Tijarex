@@ -98,7 +98,11 @@ export default function ProductsPage() {
                             onAddToStore={handleOpenAddToStore}
                         />
                     ) : (
-                        <ProductsTable products={paginatedProducts} loading={loading} />
+                        <ProductsTable 
+                            products={paginatedProducts}
+                            loading={loading}
+                            onAddToStore={handleOpenAddToStore}
+                        />
                     )}
                 </main>
                 

@@ -3,8 +3,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { ProductType } from '@/types/product';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, DollarSign, Edit3 } from 'lucide-react';
+import { X, DollarSign, Edit3, Percent, Store } from 'lucide-react';
 import Image from 'next/image';
+import { BlackButtonStyles, WhiteButtonStyles } from './Header';
 
 interface AddToStoreModalProps {
     product: ProductType | null;
@@ -106,14 +107,14 @@ export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToSto
                                     <div>
                                         <label htmlFor="commission" className="block text-sm font-medium text-neutral-300 mb-1.5">Your Commission ({product.currency})</label>
                                         <div className="relative">
-                                            <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                            <Percent size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                                             <input
                                                 type="number"
                                                 id="commission"
                                                 value={commission}
-                                                onChange={(e) => setCommission(parseFloat(e.target.value) || 0)}
+                                                onChange={(e) => setCommission(parseFloat(e.target.value))}
                                                 className="w-full bg-[#111] border border-neutral-700 rounded-lg shadow-sm py-2.5 pl-9 pr-3 text-white placeholder:text-neutral-500 focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                                                placeholder="e.g., 50.00"
+                                                placeholder="Commission (Dh)"
                                             />
                                         </div>
                                     </div>
@@ -142,8 +143,13 @@ export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToSto
                             <button type="button" onClick={onClose} className="py-2 px-5 bg-neutral-700 text-white rounded-lg font-semibold hover:bg-neutral-600 transition-colors">
                                 Cancel
                             </button>
-                            <button type="submit" onClick={handleSubmit} className="py-2 px-5 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors">
-                                Add to My Store
+                            <button 
+                                type="submit" 
+                                onClick={handleSubmit} 
+                                className={`py-2 px-5 rounded-lg cursor-pointer
+                                    font-semibold flex items-center gap-1
+                                    ${WhiteButtonStyles}`}>
+                                Drop to <Store size={20}/>
                             </button>
                         </div>
                     </motion.div>

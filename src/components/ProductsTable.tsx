@@ -5,9 +5,10 @@ import { useUserInfos } from '@/context/UserInfosContext';
 interface ProductsTableProps {
     products: ProductType[];
     loading: boolean;
+    onAddToStore: (product: ProductType) => void;
 }
 
-export const ProductsTable = ({ products, loading }: ProductsTableProps) => {
+export const ProductsTable = ({ products, loading, onAddToStore }: ProductsTableProps) => {
     // Add a skeleton loader for the table view
     const { userInfos } = useUserInfos();
     if (loading) return <p>Loading table...</p>; 
@@ -32,7 +33,11 @@ export const ProductsTable = ({ products, loading }: ProductsTableProps) => {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                         {products.map(product => (
-                            <ProductTableRow key={product.id} product={product} />
+                            <ProductTableRow 
+                                key={product.id} 
+                                product={product}
+                                onAddToStore={onAddToStore}
+                            />
                         ))}
                     </tbody>
                 </table>

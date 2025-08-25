@@ -68,7 +68,7 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
                         >
                             <Image
                                 src={product.product_images[currentImage]}
-                                alt={product.name}
+                                alt={product.title}
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover w-full h-full"
@@ -155,7 +155,7 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
             {/* --- Content Section --- */}
             <div className="pt-3 px-1">
                 <h3 className="font-semibold text-neutral-800 truncate">
-                    <Link href={`/seller/products?p_id=${product.id}`}>{product.name}</Link>
+                    <Link href={`/seller/products?p_id=${product.id}`}>{product.title}</Link>
                 </h3>
                 <div className="flex items-baseline gap-2 mt-2">
                     <span className="text-lg font-bold text-teal-600">{product.sale_price.toFixed(2)} {product.currency}</span>
@@ -194,7 +194,7 @@ export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {
                                     transition-colors
                                     ${BlackButtonStyles}`}
                             >
-                                <Store size={16} /> Add to Store
+                                Drop to <Store size={16} />
                             </button>
                         )}
                         <button 
