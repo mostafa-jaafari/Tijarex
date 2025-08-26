@@ -40,10 +40,10 @@ export async function POST(req: Request) {
         const newAffiliateProduct = {
             ...product,
             originalProductId: product.id, // IMPORTANT: Keep a reference to the original
-            affiliateOwnerId: session.user.email, // Link to the affiliate
-            originalPrice: product.sale_price, // Store the original price
+            affiliateOwnerEmail: session.user.email, // Link to the affiliate
+            originalPrice: product.original_sale_price, // Store the original price
             affiliateCommission: commission,
-            sale_price: product.sale_price + commission, // Updated price
+            sale_price: product.original_sale_price + commission, // Updated price
             createdAt: new Date().toISOString(),
             // Ensure sales start at 0 for the affiliate's version
             sales: 0, 

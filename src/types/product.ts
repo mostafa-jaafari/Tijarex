@@ -1,34 +1,30 @@
+export type ReviewTypes = {
+  image: string;
+  createdAt: string;
+  fullname: string | "unknown";
+  reviewtext: string;
+}
 export type ProductType = {
   id: string;
   category: string[];
   product_images: string[];
-  sale_price: number;
-  regular_price: number;
+  original_sale_price: number;
+  original_regular_price: number;
   stock: number;
-  status: string;
   title: string;
   sales: number;
-  revenue: number;
   lastUpdated: string;
   rating: number;
   currency: string;
-  reviewCount: number;
+  reviews: ReviewTypes[];
   description: string;
-  sizes: {
-    label: string;
-    available: boolean;
-  }[];
+  sizes: string[];
   colors: string[];
   owner?: {
     name: string;
     image: string;
+    email: string;
   };
-  isTrend: boolean;
-  // 🆕 حقول خاصة بالـ Affiliate
-  affiliateOwnerId?: string;
-  originalPrice?: number;
-  affiliateCommission?: number;
-  createdAt?: string;
 };
 
 export interface ProductCardProps{
