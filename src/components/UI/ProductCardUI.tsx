@@ -40,11 +40,18 @@ export const ProductCardUI = ({
         <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="font-sans bg-white border border-gray-200 rounded-lg overflow-hidden group p-3 transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-0.5"
+            className="font-sans bg-white border border-gray-200 
+                rounded-lg overflow-hidden group p-3 transition-all 
+                duration-300 ease-in-out hover:shadow-xl 
+                hover:-translate-y-0.5"
         >
             {/* --- Image Section --- */}
-            <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
-                <Link href={`/seller/products?p_id=${product.id}`} className="block w-full h-full">
+            <div 
+                className="relative w-full aspect-[4/3] rounded-lg 
+                    overflow-hidden bg-teal-100 border border-gray-100">
+                <Link 
+                    href={`/seller/products?p_id=${product.id}`} 
+                    className="block w-full h-full">
                     <AnimatePresence initial={false}>
                         <motion.div
                             key={currentImage}
@@ -74,9 +81,14 @@ export const ProductCardUI = ({
                 <motion.button
                     onClick={onToggleFavorite} // Use prop
                     whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-sm bg-black/20 transition-colors duration-300 ${isFavorite ? 'text-teal-400' : 'text-white'}`}
+                    className={`absolute top-3 right-3 w-9 h-9 flex 
+                        items-center justify-center rounded-full 
+                        cursor-pointer backdrop-blur-sm
+                        transition-colors duration-300 
+                        ${isFavorite ? 'bg-teal-600/80' : 'bg-black/20'}`}
                 >
-                    <Heart className={`w-5 h-5 transition-all ${isFavorite ? 'fill-current' : ''}`} />
+                    <Heart className={`w-5 h-5 transition-all 
+                            ${isFavorite ? 'fill-white text-white' : ' text-white'}`} />
                 </motion.button>
 
                 {product.product_images.length > 1 && (
@@ -91,9 +103,21 @@ export const ProductCardUI = ({
                             )}
                         </AnimatePresence>
                         {/* Image Dots */}
-                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                        <div 
+                            className={`absolute bottom-1 left-1/2 -translate-x-1/2 
+                                backdrop-blur-sm bg-teal-600/80 rounded-full 
+                                py-0.5 px-3 flex gap-1
+                                `}>
                             {product.product_images.map((_, i) => (
-                                <div key={i} onClick={() => setCurrentImage(i)} className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === currentImage ? 'w-5 bg-white' : 'w-1.5 bg-white/60'}`} />
+                                <div 
+                                    key={i} 
+                                    onClick={() => setCurrentImage(i)} 
+                                    className={`h-2 cursor-pointer rounded-full 
+                                        transition-all duration-300 
+                                        ${i === currentImage ?
+                                            'w-5 bg-white'
+                                            :
+                                            'w-2 bg-white/40'}`} />
                             ))}
                         </div>
                     </>
