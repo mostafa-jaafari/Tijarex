@@ -197,7 +197,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
               >
                   <Image
                 src={selectedProduct?.product_images[selectedImageIndex]}
-                alt={selectedProduct.name}
+                alt={selectedProduct.title}
                 fill
                 className="object-cover"
               />
@@ -244,11 +244,11 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
             {/* Product Title and Price */}
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {selectedProduct.name}
+                {selectedProduct.title}
               </h1>
               <div className="flex items-center space-x-4 mb-4">
                 <span className="text-2xl font-bold text-gray-900">
-                  {selectedProduct.currency} {selectedProduct.sale_price.toLocaleString()}
+                  {selectedProduct.currency} {selectedProduct.original_sale_price.toLocaleString()}
                 </span>
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-1">
@@ -269,17 +269,15 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                 {selectedProduct.sizes.map((size, index) => (
                   <button
                     key={index}
-                    onClick={() => size.available && setSelectedSize(size.label)}
-                    disabled={!size.available}
+                    onClick={() => setSelectedSize(size)}
                     className={`py-3 px-4 text-sm font-medium rounded-lg border transition-all ${
-                      selectedSize === size.label
+                      selectedSize === size
                         ? 'border-black bg-black text-white'
-                        : size.available
-                        ? 'border-gray-300 hover:border-gray-400 text-gray-900'
-                        : 'border-gray-200 text-gray-400 cursor-not-allowed'
+                        :
+                        'border-gray-300 hover:border-gray-400 text-gray-900'
                     }`}
                   >
-                    {size.label}
+                    {size}
                   </button>
                 ))}
               </div>
@@ -296,12 +294,12 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                     className={`w-8 h-8 rounded-full border-2 transition-all ${
                       selectedColor === index ? 'border-gray-800' : 'border-gray-300'
                     }`}
-                    style={{ backgroundColor: colorOption.color }}
-                    title={colorOption.name}
+                    style={{ backgroundColor: colorOption }}
+                    title={colorOption}
                   />
                 ))}
                 <span className="text-sm text-gray-600 ml-2">
-                  {selectedProduct.colors[selectedColor].name}
+                  {selectedProduct.colors[selectedColor]}
                 </span>
               </div>
             </div>
