@@ -80,6 +80,7 @@ export function ProgressBarClient() {
             createdAt: new Date(),
             city: formInputs.city,
             totalbalance: 0,
+            profileimage: "https://avatar.vercel.sh/ZGa2Fxcr3ANUcQkEFbR7jsN6j0h1",
             ...(selectedRole === "seller"
               ? {
                   totalsales: 0,

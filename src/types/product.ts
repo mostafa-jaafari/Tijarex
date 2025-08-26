@@ -14,6 +14,7 @@ export type ProductType = {
   title: string;
   sales: number;
   lastUpdated: string;
+  createdAt: string;
   rating: number;
   currency: string;
   reviews: ReviewTypes[];
@@ -25,6 +26,7 @@ export type ProductType = {
     image: string;
     email: string;
   };
+  productrevenu: number;
 };
 
 export interface ProductCardProps{

@@ -191,12 +191,18 @@ export default function UploadProductPage() {
             toast.success("Images uploaded! Saving product details...");
 
             const productData = {
-                title, name: title, description, category: categories,
+                title, 
+                name: title, 
+                description, 
+                category: categories,
                 regular_price: parseFloat(regularPrice),
                 sale_price: salePrice ? parseFloat(salePrice) : null,
                 stock: parseInt(stock, 10),
-                colors, sizes, product_images: uploadedImageUrls,
-                status: 'active', currency: 'DH',
+                colors, 
+                sizes, 
+                product_images: uploadedImageUrls,
+                status: 'active', 
+                currency: 'DH',
             };
 
             const idToken = await user.getIdToken(true);
