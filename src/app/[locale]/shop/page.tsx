@@ -65,7 +65,7 @@ function filterProducts(products: ProductType[], searchParams: {
         const priceTo = searchParams.pt ? parseFloat(searchParams.pt) : Infinity;
         
         filteredProducts = filteredProducts.filter((p) => {
-            const price = p.sale_price || p.regular_price;
+            const price = p.original_sale_price || p.original_regular_price;
             return price >= priceFrom && price <= priceTo;
         });
     }
@@ -75,11 +75,11 @@ function filterProducts(products: ProductType[], searchParams: {
         filteredProducts.sort((a, b) => {
             switch (searchParams.sortby) {
                 case 'price-low':
-                    return (a.sale_price || a.regular_price) - (b.sale_price || b.regular_price);
+                    return (a.original_sale_price || a.original_regular_price) - (b.original_sale_price || b.original_regular_price);
                 case 'price-high':
-                    return (b.sale_price || b.regular_price) - (a.sale_price || a.regular_price);
+                    return (b.original_sale_price || b.original_regular_price) - (a.original_sale_price || a.original_regular_price);
                 case 'name':
-                    return (a.name || a.title).localeCompare(b.name || b.title);
+                    return (a.title || a.title).localeCompare(b.title || b.title);
                 case 'rating':
                     return (b.rating || 0) - (a.rating || 0);
                 default:
@@ -153,9 +153,9 @@ export default async function page({ searchParams }: ShopPageProps) {
                                         PRODUCTCATEGORIE={product.category}
                                         PRODUCTID={product.id}
                                         PRODUCTIMAGES={product.product_images}
-                                        PRODUCTSALEPRICE={product.sale_price}
-                                        PRODUCTREGULARPRICE={product.regular_price}
-                                        PRODUCTTITLE={product.name || product.title}
+                                        PRODUCTSALEPRICE={product.original_sale_price}
+                                        PRODUCTREGULARPRICE={product.original_regular_price}
+                                        PRODUCTTITLE={product.title || product.title}
                                         STOCK={product.stock}
                                         OWNER={product.owner}
                                     />
