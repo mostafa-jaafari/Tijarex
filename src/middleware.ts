@@ -3,91 +3,91 @@ import { routing } from './i18n/routing';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Create next-intl middleware
 const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  // Extract locale from pathname (assuming format like /en/auth/login)
+
+  // 1. Handle Locale
   const pathnameIsMissingLocale = !routing.locales.some(
-  (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
-);
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+  );
 
-
-  // Handle locale redirection first
   if (pathnameIsMissingLocale) {
-    const response = intlMiddleware(request);
-    if (response) return response;
+    return intlMiddleware(request);
   }
 
-  // Get current locale from pathname or default
   const locale = pathname.split('/')[1] || routing.defaultLocale;
-  
-  // Check authentication
-  const token = await getToken({ 
+
+  // 2. Get User Token (which now includes the role)
+  const token = await getToken({
     req: request,
-    secret: process.env.NEXTAUTH_SECRET 
+    secret: process.env.NEXTAUTH_SECRET,
   });
-  
-  // Define different page types
+  const isAuthenticated = !!token;
+  const userRole = token?.role as string | undefined;
+
+  // 3. Define Page Types
   const authPages = [
     `/${locale}/auth/login`,
     `/${locale}/auth/register`,
     `/${locale}/auth/confirm-email`,
     `/${locale}/auth/verifyemail`,
   ];
+  const isAuthPage = authPages.some((page) => pathname.startsWith(page));
+  const isLandingPage = pathname === `/${locale}`;
   
-  // Fixed: Check shop pages properly
-  const isShopPage = pathname.startsWith(`/${locale}/shop`);
-  const isOnboardingPage = pathname === `/${locale}/auth/onboarding`;
-  const isNotProtectedPage = isShopPage || isOnboardingPage;
+  const publicPages = [
+    `/${locale}/shop`,
+    `/${locale}/auth/onboarding`,
+  ];
+  const isPublicPage = publicPages.some(page => pathname.startsWith(page));
 
-  const isAuthPage = authPages.some(page => pathname.startsWith(page));
-  const isLandingPage = pathname === `/${locale}`; // Landing page (root with locale)
-  
-  // Landing page logic: only accessible to non-logged-in users
-  if (isLandingPage) {
-    if (token) {
-      // Logged-in user trying to access landing page → redirect to seller
+  // 4. Handle Redirects for Logged-in Users on Public Pages
+  if (isAuthenticated && (isLandingPage || isAuthPage)) {
+    // If a logged-in user tries to access login/landing, redirect to their dashboard
+    if (userRole === 'seller') {
       return NextResponse.redirect(new URL(`/${locale}/seller`, request.url));
-    } else {
-      // Not logged-in user → allow access to landing page
-      const response = intlMiddleware(request);
-      return response || NextResponse.next();
     }
+    // Default redirect for affiliates or users with other roles
+    return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
+  }
+
+  // Allow access to other public pages for everyone
+  if (isPublicPage || isAuthPage || isLandingPage) {
+    return intlMiddleware(request) || NextResponse.next();
+  }
+
+  // 5. Handle Protected Pages: From here on, all routes require authentication
+  if (!isAuthenticated) {
+    const loginUrl = new URL(`/${locale}/auth/login`, request.url);
+    loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
   
-  // Auth pages logic: only accessible to non-logged-in users
-  if (isAuthPage) {
-    if (token) {
-      // Logged-in user trying to access auth pages → redirect to seller
-      return NextResponse.redirect(new URL(`/${locale}/seller`, request.url));
-    } else {
-      // Not logged-in user → allow access to auth pages
-      const response = intlMiddleware(request);
-      return response || NextResponse.next();
-    }
+  // 6. Enforce Strict Role-Based Routing for Authenticated Users
+  const isAffiliatePath = pathname.startsWith(`/${locale}/affiliate`);
+  const isSellerPath = pathname.startsWith(`/${locale}/seller`);
+
+  if (userRole === 'seller' && !isSellerPath) {
+    // If a seller is anywhere but a seller path, redirect them.
+    return NextResponse.redirect(new URL(`/${locale}/seller`, request.url));
   }
   
-  // Shop pages and onboarding: accessible without authentication
-  if (isNotProtectedPage) {
-    const response = intlMiddleware(request);
-    return response || NextResponse.next();
+  if (userRole === 'affiliate' && !isAffiliatePath) {
+    // If an affiliate is anywhere but an affiliate path, redirect them.
+    return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
   }
   
-  // Protected pages logic: require authentication
-  if (!token) {
-    // Not logged-in user trying to access protected pages → redirect to landing
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+  if (!userRole) {
+    // User is logged in but has no role, send them to login.
+    return NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url));
   }
-  
-  // Apply next-intl middleware for other cases
-  const response = intlMiddleware(request);
-  return response || NextResponse.next();
+
+  // If all checks pass, allow access.
+  return intlMiddleware(request) || NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next|.*\\..*).*)'
-  ]
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
 };

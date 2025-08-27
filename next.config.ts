@@ -44,6 +44,11 @@ const nextConfig: NextConfig = {
         hostname: "avatar.vercel.sh",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.dribbble.com",
+        pathname: "/**",
+      },
     ],
   },
 };

@@ -130,8 +130,8 @@ export const ProductCardUI = ({
                     <Link href={`/seller/products?p_id=${product.id}`}>{product.title}</Link>
                 </h3>
                 <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-lg font-bold text-teal-600">{product.sale_price.toFixed(2)} {product.currency}</span>
-                    {product.regular_price > product.sale_price && <span className="text-sm text-gray-400 line-through">{product.regular_price.toFixed(2)} {product.currency}</span>}
+                    <span className="text-lg font-bold text-teal-600">{product.original_sale_price.toFixed(2)} {product.currency}</span>
+                    {product.original_regular_price > product.original_sale_price && <span className="text-sm text-gray-400 line-through">{product.original_regular_price.toFixed(2)} {product.currency}</span>}
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-x-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2"><BarChart2 size={16} className="text-gray-400" /><div><div className="font-semibold">{product.sales.toLocaleString()}</div><div className="text-xs text-gray-400">Sales</div></div></div>

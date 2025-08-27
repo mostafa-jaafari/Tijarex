@@ -29,8 +29,8 @@ export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToSto
     }, [product]);
     
     const newSalePrice = useMemo(() => {
-        return (product?.sale_price ?? 0) + commission;
-    }, [product?.sale_price, commission]);
+        return (product?.original_sale_price ?? 0) + commission;
+    }, [product?.original_sale_price, commission]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -79,7 +79,7 @@ export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToSto
                                     <div className='space-y-2'>
                                         <div className='p-3 bg-neutral-800/50 border border-neutral-700 rounded-lg'>
                                             <p className='text-xs text-neutral-400 mb-1'>Original Price</p>
-                                            <p className='text-white font-semibold'>{product.sale_price.toFixed(2)} {product.currency}</p>
+                                            <p className='text-white font-semibold'>{product.original_sale_price.toFixed(2)} {product.currency}</p>
                                         </div>
                                          <div className='p-3 bg-neutral-800/50 border border-neutral-700 rounded-lg'>
                                             <p className='text-xs text-neutral-400 mb-1'>Available Stock</p>

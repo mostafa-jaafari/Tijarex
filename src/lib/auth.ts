@@ -4,8 +4,9 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db, auth as ClientAuth } from "@/lib/FirebaseClient";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { genareteUniqueUsername } from "@/components/Functions/generateUniqueUsername";
+import { UserInfosType } from "@/types/userinfos";
 
-// Extend NextAuth types
+// Extend NextAuth types to include the 'role'
 declare module "next-auth" {
   interface Session {
     user: {
@@ -13,16 +14,19 @@ declare module "next-auth" {
       email: string;
       name: string;
       image: string;
+      role?: string; // <-- ADDED: Role is now part of the session user object
     };
-  }
-
-  interface JWT {
-    id: string;
-    picture: string;
   }
 }
 
-// Extend the Profile type to include picture property
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role?: string; // <-- ADDED: Role is now part of the JWT token
+  }
+}
+
+// Interfaces for different OAuth profiles
 interface ExtendedProfile {
   sub?: string;
   email?: string;
@@ -49,56 +53,58 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          if (credentials?.email && credentials?.password) {
-            const userCredential = await signInWithEmailAndPassword(
-              ClientAuth,
-              credentials.email,
-              credentials.password
-            );
-
-            const user = userCredential.user;
-            return {
-              id: user.uid,
-              email: user.email,
-              name: user.displayName || "UnknowUser",
-              image: user.photoURL || "https://s.gravatar.com/avatar/0743d216d4ce5aea55b0a45675d313e4?s=64&d=mp",
-            };
+          if (!credentials?.email || !credentials?.password) {
+            return null;
           }
-          return null;
+          
+          const userCredential = await signInWithEmailAndPassword(
+            ClientAuth,
+            credentials.email,
+            credentials.password
+          );
+
+          const user = userCredential.user;
+          return {
+            id: user.uid,
+            email: user.email,
+            name: user.displayName,
+            image: user.photoURL,
+          };
         } catch (error) {
           console.error("Error during Firebase sign-in:", error);
           return null;
         }
       },
-    })
+    }),
   ],
   callbacks: {
     async signIn({ user, profile }) {
+      // This callback runs for OAuth providers. For credentials, user data
+      // should already exist from your registration flow.
       try {
         if (profile?.email) {
           const userRef = doc(db, "users", profile.email);
           const userSnap = await getDoc(userRef);
 
-          const fallbackName =
-            profile.name ||
-            (profile as GitHubProfile).login ||
-            profile.email?.split("@")[0]?.replace(/\./g, " ").replace(/\b\w/g, c => c.toUpperCase()) ||
-            "User";
-            const UniqueUserName = await genareteUniqueUsername(profile?.name || fallbackName)
-
-
           if (!userSnap.exists()) {
+            const fallbackName =
+              profile.name ||
+              (profile as GitHubProfile).login ||
+              profile.email?.split("@")[0] ||
+              "User";
+            const uniqueUserName = await genareteUniqueUsername(fallbackName);
+
             await setDoc(userRef, {
-              id: profile.sub || user.id,
+              id: user.id,
               email: profile.email,
               name: fallbackName,
               profileimage: user.image,
               isPrivateProfile: false,
-              username: UniqueUserName,
+              username: uniqueUserName,
+              UserRole: "affiliate", // Assign a default role on creation
             });
           }
         }
-
         return true;
       } catch (error) {
         console.error("🔥 Firestore error in signIn callback:", error);
@@ -106,42 +112,36 @@ export const authOptions: AuthOptions = {
       }
     },
 
-    async jwt({ token, account, profile, user }) {
-      if (account && profile) {
-        const extendedProfile = profile as ExtendedProfile;
-
-        token.id = extendedProfile.sub || user?.id || "";
-        token.email = extendedProfile.email || user?.email || "";
-        token.name =
-          extendedProfile.name ||
-          (profile as GitHubProfile).login ||
-          extendedProfile.email?.split("@")[0] ||
-          "User";
-        token.picture =
-          extendedProfile.picture ||
-          extendedProfile.image ||
-          user?.image ||
-          "";
-      }
-
-      if (account?.type === "credentials" && user) {
+    async jwt({ token, user }) {
+      // This function is called first to create/update the JWT.
+      // The role is added here.
+      if (user) {
         token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
-        token.picture = user.image || "";
       }
 
+      if (token.email) {
+        const userRef = doc(db, "users", token.email);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data() as UserInfosType;
+          // IMPORTANT: Add the role to the token
+          token.role = userData.UserRole || "affiliate"; 
+        } else {
+          // Default role if user doc doesn't exist for some reason
+          token.role = "affiliate";
+        }
+      }
       return token;
     },
 
-
     async session({ session, token }) {
-      session.user = {
-        id: token.id as string,
-        email: token.email as string,
-        name: token.name as string,
-        image: (token.picture as string) || session.user?.image || "",
-      };
+      // This function makes token data available to the client-side session object.
+      // We must pass the role from the token to the session here.
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.role = token.role; // <-- CRITICAL FIX: Pass role to the session
+      }
       return session;
     },
   },

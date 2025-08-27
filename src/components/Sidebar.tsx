@@ -11,7 +11,8 @@ import {
     User,
     Store,
     UploadCloud,
-    Heart
+    Heart,
+    Layout
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +29,7 @@ export function Sidebar() {
         {
             label: "dashboard",
             icon: Home,
-            href: "seller",
+            href: userInfos?.UserRole === "affiliate" ? "affiliate" : "seller",
             badge: null,
         },
         {
@@ -75,6 +76,11 @@ export function Sidebar() {
             icon: User,
             href: "profile",
         },
+        ...(userInfos?.UserRole === "affiliate" ? [{
+            label: "Templates",
+            icon: Layout,
+            href: "store-templates",
+        }] : []),
         {
             label: "settings",
             icon: Settings,
@@ -86,15 +92,15 @@ export function Sidebar() {
             href: "help",
         },
     ];
-
-    const params = useParams().sellerpageid || "seller";
-
+// affiliatepageid
+    const AffiliagePageId = useParams().affiliatepageid || "affiliate";
+    const SellerPageId = useParams().sellerpageid || "seller";
+    const params = userInfos?.UserRole === "affiliate" ? AffiliagePageId || "affiliate" : SellerPageId || "seller";
     return (
         <aside className={`group
             ${isCollapsed ? 'w-16' : 'w-74'} 
-            bg-gray-100 h-screen pb-14 transition-all duration-300 
-            flex flex-col sticky top-15 overflow-hidden 
-            borde border-gray-100 rounded-tl-xl
+            h-screen pb-14 transition-all duration-300 
+            flex flex-col sticky top-0 overflow-hidden
         `}>
             {/* Header */}
             <div 
@@ -173,13 +179,13 @@ export function Sidebar() {
                             const isActive = params === nav.href;
                             return (
                                 <Link
-                                    href={`/seller/${nav.href !== "seller" ? nav.href : ""}`}
+                                    href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${nav.href !== "seller" && nav.href !== "affiliate" ? nav.href : ""}`}
                                     key={idx}
                                     className={`
                                         group flex items-center capitalize px-3 py-2 text-sm 
                                             font-medium rounded-lg transition-colors
-                                        ${isActive 
-                                            ? `bg-neutral-50 shadow shadow-neutral-600/20 text-neutral-700 font-semibold border-neutral-600 border-l-2` 
+                                        ${isActive
+                                            ? `bg-neutral-50 shadow shadow-neutral-600/20 text-neutral-700 font-semibold border-neutral-600 border-l-3` 
                                             : "text-gray-700 hover:bg-gray-100"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}
@@ -218,12 +224,12 @@ export function Sidebar() {
                             const isActive = params === tool.href;
                             return (
                                 <Link
-                                    href={`/seller/${tool.href !== "seller" ? tool.href : ""}`}
+                                    href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${tool.href !== "seller" ? tool.href : ""}`}
                                     key={idx}
                                     className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
-                                            ? `bg-neutral-50 shadow shadow-neutral-600/20 text-neutral-700 font-semibold border-neutral-600 border-l-2` 
+                                            ? `bg-neutral-50 shadow shadow-neutral-600/20 text-neutral-700 font-semibold border-neutral-600 border-l-3` 
                                             : "text-gray-700 hover:bg-gray-100"
                                         }
                                         ${isCollapsed ? 'justify-center' : 'justify-start'}

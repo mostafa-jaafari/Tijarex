@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ProductType } from "@/types/product";
+import { getStockBadge } from "./Functions/GetStockBadge";
 
 interface PopularProduct extends ProductType {
     growth?: number;
@@ -59,19 +60,6 @@ export function PopularProductsWidget() {
     useEffect(() => {
         fetchProducts();
     }, []);
-
-    const getStockBadge = (stock: string) => {
-        switch (stock) {
-            case "In Stock":
-                return "bg-emerald-50 text-emerald-700 border-emerald-200";
-            case "Low Stock":
-                return "bg-amber-50 text-amber-700 border-amber-200";
-            case "Out of Stock":
-                return "bg-red-50 text-red-700 border-red-200";
-            default:
-                return "bg-gray-100 text-gray-700 border-gray-200";
-        }
-    };
 
     // --- UX ENHANCEMENT: Refined Rank Badge Colors ---
     // Changed the default badge from blue to a neutral gray to better match the theme.
@@ -186,7 +174,7 @@ export function PopularProductsWidget() {
                                 <div className="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-gray-100 border group-hover:shadow-lg group-hover:border-teal-200 transition">
                                     <Image
                                         src={product.product_images?.[0] || "/api/placeholder/56/56"}
-                                        alt={product.name}
+                                        alt={product.title}
                                         width={56}
                                         height={56}
                                         className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
@@ -199,7 +187,7 @@ export function PopularProductsWidget() {
                                     <div className="flex items-start justify-between">
                                         <div className="min-w-0">
                                             <h4 className="font-semibold text-sm text-gray-800 truncate group-hover:text-teal-600 transition-colors">
-                                                {product.name}
+                                                {product.title}
                                             </h4>
                                             <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
                                                 <span>{Array.isArray(product.category) ? product.category[0] : product.category}</span>
@@ -221,7 +209,7 @@ export function PopularProductsWidget() {
                                         <div>
                                             {/* Revenue is now the most prominent metric */}
                                             <p className="text-base font-bold text-gray-900">
-                                                {formatRevenue(product.sales, product.sale_price)}
+                                                {formatRevenue(product.sales, product.original_sale_price)}
                                             </p>
                                             <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                                                 <span>{product.sales.toLocaleString()} sold</span>
@@ -232,8 +220,8 @@ export function PopularProductsWidget() {
                                         </div>
 
                                         <div className="flex flex-col items-end gap-1.5">
-                                             <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getStockBadge(product.status)}`}>
-                                                {product.status}
+                                             <span className={`px-2 py-0.5 text-xs font-medium rounded-full`}>
+                                                {getStockBadge(product.stock)}
                                             </span>
                                         </div>
                                     </div>

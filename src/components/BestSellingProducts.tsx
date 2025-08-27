@@ -18,10 +18,7 @@ export function BestSellingProducts() {
                 if (!Res.ok) throw new Error("Failed to fetch products");
                 const { products } = await Res.json();
                 if (Array.isArray(products)) {
-                    const SelectedProduct = products.filter(
-                        (product: ProductType) => product.isTrend
-                    );
-                    setTrendsProducts(SelectedProduct);
+                    setTrendsProducts(products);
                 } else {
                     setTrendsProducts([]);
                 }
@@ -91,8 +88,8 @@ export function BestSellingProducts() {
                             PRODUCTCATEGORIE={product.category}
                             PRODUCTID={product.id}
                             PRODUCTIMAGES={product.product_images}
-                            PRODUCTSALEPRICE={product.sale_price}
-                            PRODUCTREGULARPRICE={product.regular_price}
+                            PRODUCTSALEPRICE={product.original_sale_price}
+                            PRODUCTREGULARPRICE={product.original_regular_price}
                             PRODUCTTITLE={product.title}
                             STOCK={product.stock}
                             OWNER={product.owner}

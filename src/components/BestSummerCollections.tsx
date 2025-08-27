@@ -86,8 +86,8 @@ export function BestSummerCollections() {
                             PRODUCTCATEGORIE={product.category}
                             PRODUCTID={product.id}
                             PRODUCTIMAGES={product.product_images}
-                            PRODUCTSALEPRICE={product.sale_price}
-                            PRODUCTREGULARPRICE={product.regular_price}
+                            PRODUCTSALEPRICE={product.original_sale_price}
+                            PRODUCTREGULARPRICE={product.original_regular_price}
                             PRODUCTTITLE={product.title}
                             STOCK={product.stock}
                             OWNER={product.owner}

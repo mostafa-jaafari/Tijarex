@@ -11,6 +11,7 @@ import { ProductCardUI } from './UI/ProductCardUI';
 interface ProductCardProps {
     product: ProductType;
     onAddToStore: (product: ProductType) => void;
+    onUnfavorited?: (productId: string) => void;
 }
 
 export const ProductCard = ({ product, onAddToStore }: ProductCardProps) => {

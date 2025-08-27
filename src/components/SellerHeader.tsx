@@ -9,6 +9,7 @@ import { useUserInfos } from "@/context/UserInfosContext";
 
 
 export function SellerHeader(){
+    const { isLoadingUserInfos, userInfos } = useUserInfos();
     const session = useSession();
     const ProfileHeaderNavs = [
         { label: "dashboard", icon: LayoutDashboard, href: "" },
@@ -20,17 +21,17 @@ export function SellerHeader(){
     const Balance_Links = [
         {
             label: "My balance purchases",
-            href: "/seller",
+            href: "/",
             icon: FileClock,
             iconstyles: "text-orange-400"
         },{
             label: "All transactions",
-            href: "/seller",
+            href: "/",
             icon: ArrowRightLeft,
             iconstyles: "text-green-600"
         },{
             label: "My withdrawls",
-            href: "/seller/my-withdraw",
+            href: `/${userInfos?.UserRole === "affiliate" ? "affiliate" : "seller"}/my-withdraw`,
             icon: Warehouse,
             iconstyles: "text-yellow-500"
         },
@@ -73,7 +74,6 @@ export function SellerHeader(){
         return () => document.removeEventListener("mousedown", hideMenuRef);
     },[]);
 
-    const { isLoadingUserInfos, userInfos } = useUserInfos();
     return (
         <section
             className="sticky top-0 w-full flex items-center 
@@ -81,7 +81,7 @@ export function SellerHeader(){
                 z-50 py-2.5 px-6 borderb border-gray-200"
         >
             {/* --- Logo --- */}
-            <Link href="/seller" className="flex items-center gap-2">
+            <Link href={userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"} className="flex items-center gap-2">
                     <div className="relative w-8 h-8">
                         <Image 
                             src="/LOGO1.png"
@@ -115,12 +115,12 @@ export function SellerHeader(){
                 </button>
                 <div 
                     className={`absolute overflow-hidden right-0 
-                        mt-4 w-68 rounded-lg shadow-sm
+                        mt-4 w-68 rounded-lg
                         bg-gradient-to-r from-neutral-100 to-white
                         border border-neutral-300 shadow-sm animate-fade-in
                         transition-all duration-200
                         ${isBalanceOpen 
-                            ? "opacity-100 max-h-100 overflow-hidden opacity-100"
+                            ? "max-h-100 overflow-hidden opacity-100"
                             : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
                         }`}
                     >
@@ -194,7 +194,7 @@ export function SellerHeader(){
                         className="w-full flex justify-center p-2"
                     >
                         <Link
-                            href="/seller/add-balance"
+                            href={`/${userInfos?.UserRole === "affiliate" ? "seller" : "affiliate"}/add-balance`}
                             className={`w-full text-center justify-center
                                 bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]
                                 capitalize text-white
@@ -237,7 +237,7 @@ export function SellerHeader(){
                         w-72 bg-white rounded-xl shadow-lg border 
                         border-gray-200 animate-fade-in
                         ${isNotificationsOpen 
-                            ? "opacity-100 max-h-100 overflow-hidden opacity-100"
+                            ? "opacity-100 max-h-100 overflow-hidden"
                             : "opacity-0 max-h-0 overflow-hidden pointer-events-none"}
                         transition-all duration-200`}
                     >
@@ -327,7 +327,7 @@ export function SellerHeader(){
                         border border-gray-200 rounded-lg shadow-lg 
                         z-50 overflow-hidden
                         ${isProfileMenuOpen 
-                            ? "opacity-100 max-h-100 overflow-hidden opacity-100"
+                            ? "opacity-100 max-h-100 overflow-hidden"
                             : "opacity-0 max-h-0 overflow-hidden pointer-events-none"}
                         transition-all duration-200`}
                         >
@@ -337,7 +337,7 @@ export function SellerHeader(){
                             <Link
                                 key={idx}
                                 onClick={() => setIsProfileMenuOpen(false)}
-                                href={`/seller/${item.href.toLowerCase().replace(" ", "")}`}
+                                href={`/${userInfos?.UserRole === "affiliate" ? "affiliate" : "seller"}/${item.href.toLowerCase().replace(" ", "")}`}
                                 className="capitalize flex items-center gap-3 px-3 py-2 text-sm
                                     text-gray-800 hover:bg-gray-100 transition-colors">
                                 <item.icon size={16} className="text-gray-500"/>

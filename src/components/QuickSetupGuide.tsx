@@ -19,7 +19,7 @@ export default function QuickSetupGuide() {
             iscompleted: true,
             link: {
                 label: "Start your journey with us !",
-                href: "/seller"
+                href: userInfos?.UserRole === "seller" ? "/seller" : "/affiliate",
             }
         },{
             title: "Add balance",
@@ -30,7 +30,7 @@ export default function QuickSetupGuide() {
             iscompleted: !!(userInfos?.totalbalance && userInfos.totalbalance > 0),
             link: {
                 label: "Activate your account with credit.",
-                href: "/seller/add-balance",
+                href: "add-balance",
             }
         },
         userInfos?.UserRole === "seller" ? {
@@ -42,18 +42,18 @@ export default function QuickSetupGuide() {
             iscompleted: !!(userInfos?.activeproducts && userInfos.activeproducts > 0),
             link: {
                 label: "Start adding your products.",
-                href: "/seller/upload-products"
+                href: "upload-products"
             }
         } : {
-            title: "Add your First Product.",
-            description: "Promote products to earn commissions as an affiliate marketer",
+            title: "Drop your First Product.",
+            description: "Drop products to your store and earn commissions as an affiliate marketer",
             btntitle: "Find products",
             image: "/First-Order.png",
             imagestyles: "absolute z-30 scale-140 group-hover:scale-180 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
             iscompleted: false,
             link: {
                 label: "Start promoting products.",
-                href: "/seller/products"
+                href: "products"
             }
         },
     ];
@@ -165,7 +165,7 @@ export default function QuickSetupGuide() {
                                 </button>
                             ) : (
                                 <Link
-                                    href={card.link.href}
+                                    href={`${userInfos ? (userInfos.UserRole === "seller" ? "seller" : "affiliate") : "/"}/${card.link.href}`}
                                     className={`rounded-lg py-1 px-4 w-max text-sm 
                                             ${WhiteButtonStyles}
                                             ring ring-gray-200`}
