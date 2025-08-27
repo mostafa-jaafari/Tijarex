@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import { CustomDropdown } from './UI/CustomDropdown';
+import { PrimaryDark } from '@/app/[locale]/page';
 
 const productFilters = [
     { title: "Category", filters: ["All", "Electronics", "Clothing", "Home & Garden", "Books"] },
@@ -29,8 +30,7 @@ export const ProductFiltersPanel = ({ selectedFilters, onFilterSelect, onClear }
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="p-6 rounded-b-lg border-b border-x border-gray-200 -mt-2
-                bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]"
+            className={`mt-3 bg-gradient-to-tr ${PrimaryDark} p-6 rounded-lg border border-gray-700`}
         >
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-semibold text-white">Filter Products</h3>

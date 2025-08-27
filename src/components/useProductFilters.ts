@@ -19,7 +19,7 @@ const matchesSearch = (product: ProductType, query: string): boolean => {
             : [];
 
     return (
-        product.name.toLowerCase().includes(lowerCaseQuery) ||
+        product.title.toLowerCase().includes(lowerCaseQuery) ||
         categories.some(cat => cat.toLowerCase().includes(lowerCaseQuery))
     );
 };
@@ -27,11 +27,6 @@ const matchesSearch = (product: ProductType, query: string): boolean => {
 const matchesCategory = (product: ProductType, category: string | undefined): boolean => {
     if (!category) return true; // Pass if no category filter is set
     return product.category.includes(category);
-};
-
-const matchesStockStatus = (product: ProductType, status: string | undefined): boolean => {
-    if (!status) return true; // Pass if no status filter is set
-    return product.status === status;
 };
 
 const matchesPriceRange = (price: number, range: string | undefined): boolean => {
@@ -80,18 +75,17 @@ export const useProductFilters = () => {
             .filter(product => {
                 const passSearch = matchesSearch(product, searchQuery);
                 const passCategory = matchesCategory(product, selectedFilters["Category"]);
-                const passStock = matchesStockStatus(product, selectedFilters["Stock Status"]);
-                const passPrice = matchesPriceRange(product.sale_price, selectedFilters["Price Range"]);
+                const passPrice = matchesPriceRange(product.original_sale_price, selectedFilters["Price Range"]);
 
-                return passSearch && passCategory && passStock && passPrice;
+                return passSearch && passCategory && passPrice;
             })
             .sort((a, b) => {
                 // Sorting logic remains the same
                 switch (sortBy) {
-                    case "name_asc": return a.name.localeCompare(b.name);
-                    case "name_desc": return b.name.localeCompare(a.name);
-                    case "price_asc": return a.sale_price - b.sale_price;
-                    case "price_desc": return b.sale_price - a.sale_price;
+                    case "name_asc": return a.title.localeCompare(b.title);
+                    case "name_desc": return b.title.localeCompare(a.title);
+                    case "price_asc": return a.original_sale_price - b.original_sale_price;
+                    case "price_desc": return b.original_sale_price - a.original_sale_price;
                     case "sales_desc": return b.sales - a.sales;
                     case "date_desc": return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
                     default: return 0;

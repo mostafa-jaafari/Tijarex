@@ -70,6 +70,11 @@ export default async function Page({ params, searchParams }: PageProps) {
       className="w-full overflow-auto bg-gray-100"
     >
       {TabRender}
+      <footer>
+        <p className='text-sm text-gray-500 text-center py-4'>
+          &copy; 2024 Tijarex. All rights reserved.
+        </p>
+      </footer>
     </div>
   )
 }

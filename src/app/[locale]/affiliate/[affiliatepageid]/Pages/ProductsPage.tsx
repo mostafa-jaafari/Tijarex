@@ -67,7 +67,7 @@ export default function ProductsPage() {
     };
 
     return (
-        <div className="w-full p-3">
+        <div className="w-full py-3 px-6">
             <div className="max-w-screen-2xl mx-auto">
 
                 <ControlsPanel
@@ -78,6 +78,7 @@ export default function ProductsPage() {
                     onFilterToggle={() => setShowFilters(!showFilters)}
                     viewMode={viewMode}
                     onViewModeChange={actions.setViewMode}
+                    showFilters={showFilters}
                 />
 
                 {showFilters && (
