@@ -88,7 +88,7 @@ export function StatisticCards() {
     };
 
     return (
-        <div className="pb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             {Statistics_Cards.map((card, idx) => {
                 return (
                     <div

@@ -46,7 +46,7 @@ export function WelcomeBanner() {
             <div
               className='flex flex-col items-center'
             >
-                <p className="text-xl text-neutral-800 flex gap-1 items-center">
+                <p className="text-2xl text-neutral-800 flex gap-1 items-center">
                     Welcome back, {isLoadingUserInfos ? (<span className='flex w-30 h-4 rounded-full bg-neutral-300 animate-pulse'/>) : (<h1 className='font-bold text-purple-600'>{userInfos?.fullname || "seller"} !</h1>)}
                 </p>
                 <p className="mt-1 flex items-center gap-1 text-sm text-neutral-500">

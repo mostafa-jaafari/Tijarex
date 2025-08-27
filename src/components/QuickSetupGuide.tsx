@@ -3,16 +3,17 @@ import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
-import { useUserInfos } from '@/context/UserInfosContext';
 import { PrimaryDark } from '@/app/[locale]/page';
 import { ProductType } from '@/types/product';
-import { useAffiliateProducts } from '@/context/AffiliateProductsContext';
+import { UserInfosType } from '@/types/userinfos';
 
 
-
-export default function QuickSetupGuide() {
-    const { userInfos, isLoadingUserInfos } = useUserInfos();
-    const { affiliateProducts, isAffiliateProductsLoading } = useAffiliateProducts();
+interface QuickSetupGuideProps {
+    userInfos: UserInfosType | null;
+    affiliateProducts: ProductType[];
+    isLoadingUserInfos: boolean;
+}
+export default function QuickSetupGuide({ userInfos, affiliateProducts, isLoadingUserInfos }: QuickSetupGuideProps) {
     const ConfigSteps = [
         {
             title: "Create your account.",
@@ -98,6 +99,10 @@ export default function QuickSetupGuide() {
         requestAnimationFrame(animate);
     }, [percent]);
     const CompletedSteps = ConfigSteps.filter(step => step.iscompleted).length;
+    
+    if(CompletedSteps === ConfigSteps.length) {
+        return null;
+    }
     return (
         <section 
             className='relative w-full p-4 min-h-[400px] rounded-xl 
