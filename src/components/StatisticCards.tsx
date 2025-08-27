@@ -1,10 +1,10 @@
 "use client";
 
-import { TrendingUp, TrendingDown, Users, ShoppingBag, DollarSign, Box } from "lucide-react";
+import { TrendingUp, TrendingDown, ShoppingBag, DollarSign, Box } from "lucide-react";
 import CountUp from "./Animations/CountUp";
 import { useUserInfos } from "@/context/UserInfosContext";
 
-export function SellerStatisticCards() {
+export function StatisticCards() {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
     const Affiliate_Cards = [
         {
@@ -18,12 +18,12 @@ export function SellerStatisticCards() {
         },
         {
             count: userInfos?.totalclicks || 0,
-            percent: 23,
-            isPositive: true,
-            title: "Total Clicks",
-            subtitle: "Total Clicks",
-            icon: Users,
-            color: "green"
+            percent: null,
+            isPositive: null,
+            title: "Total Products",
+            subtitle: "Total Products",
+            icon: Box,
+            color: null
         },
         {
             count: userInfos?.conversionrate || 0,
@@ -88,12 +88,12 @@ export function SellerStatisticCards() {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="pb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             {Statistics_Cards.map((card, idx) => {
                 return (
                     <div
                         key={idx}
-                        className="bg-white hover:shadow border border-gray-200
+                        className="bg-white border border-gray-200
                             rounded-xl px-6 py-4 transition-all duration-200"
                     >
                         {/* Icon and Value Row */}
@@ -123,7 +123,7 @@ export function SellerStatisticCards() {
                                     <span>{card.isPositive ? '+' : ''}{card.percent}%</span>
                                 </div>
                             </div>
-                            <div className={`p-2 rounded-lg ${getIconColor(card.color)}`}>
+                            <div className={`p-2 rounded-lg ${getIconColor(card?.color !== null ? card?.color : "")}`}>
                                 <card.icon className="w-5 h-5" />
                             </div>
                         </div>

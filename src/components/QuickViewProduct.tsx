@@ -6,7 +6,6 @@ import { BadgeCheck, Heart, ShoppingCart, Star } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CalculateDiscount } from "./Functions/CalculateDiscount";
-import { BlackButtonStyles, WhiteButtonStyles } from "./Header";
 
 export function QuickViewProduct() {
     const { isShowQuickViewProduct, setIsShowQuickViewProduct, productID } = useQuickViewProduct();
@@ -181,18 +180,18 @@ export function QuickViewProduct() {
                                 <ins
                                     className="no-underline text-xl text-gray-600"
                                 >
-                                    {selectedProductDetails?.sale_price} Dh
+                                    {selectedProductDetails?.original_sale_price} Dh
                                 </ins>
                                 <del
                                     className="text-gray-400 text-sm"
                                 >
-                                    {selectedProductDetails?.regular_price} Dh
+                                    {selectedProductDetails?.original_regular_price} Dh
                                 </del>
                             </span>
                             <p
                                 className="text-sm uppercase text-teal-600 px-3"
                             >
-                                {CalculateDiscount(selectedProductDetails?.sale_price, selectedProductDetails?.regular_price)}% off
+                                {CalculateDiscount(selectedProductDetails?.original_sale_price, selectedProductDetails?.original_regular_price)}% off
                             </p>
                         </div>
                         <div
@@ -217,7 +216,9 @@ export function QuickViewProduct() {
                             <span
                                 className="text-gray-400"
                             >
-                                {selectedProductDetails?.rating} ({selectedProductDetails?.reviewCount} reviews)
+                                {selectedProductDetails?.rating} ({Array.isArray(selectedProductDetails?.reviews) 
+                                    ? selectedProductDetails?.reviews.length 
+                                    : (selectedProductDetails?.reviews || 0)} reviews)
                             </span>
                         </div>
                         <div
@@ -244,15 +245,15 @@ export function QuickViewProduct() {
                                 className="flex items-center gap-3 py-3"
                             >
                                 {selectedProductDetails?.colors.map((col, idx) => {
-                                    const selectedcol = selectedColor === "" ? selectedProductDetails?.colors[0].color : selectedColor;
+                                    const selectedcol = selectedColor === "" ? selectedProductDetails?.colors[0] : selectedColor;
                                     return (
                                         <span 
                                             key={idx}
-                                            onClick={() => setSelectedColor(col.color)}
-                                            style={{ backgroundColor: col.color }}
+                                            onClick={() => setSelectedColor(col)}
+                                            style={{ backgroundColor: col }}
                                             className={`flex transition-all duration-200 
                                                 w-6 h-6 rounded-full
-                                                ${selectedcol === col.color ? "ring-2 border border-gray-200 ring-teal-600" : "cursor-pointer"}`}
+                                                ${selectedcol === col ? "ring-2 border border-gray-200 ring-teal-600" : "cursor-pointer"}`}
                                         />
                                     )
                                 })}
@@ -287,16 +288,14 @@ export function QuickViewProduct() {
                         >
                             <button
                                 className={`w-full flex justify-center items-center 
-                                    gap-1 py-2 rounded-lg font-semibold
-                                    ${BlackButtonStyles}`}
+                                    gap-1 py-2 rounded-lg font-semibold`}
                             >
                                 <ShoppingCart size={16} /> Add to Cart
                             </button>
                             <button
                                 className={`w-full flex justify-center 
                                     items-center gap-1 py-2 rounded-lg
-                                    ring ring-gray-300 font-semibold
-                                    ${WhiteButtonStyles}`}
+                                    ring ring-gray-300 font-semibold`}
                             >
                                 <Heart size={16} /> Add to Wishlist
                             </button>

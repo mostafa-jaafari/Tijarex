@@ -5,7 +5,6 @@ import { ProductType } from '@/types/product';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Edit3, Percent, Store } from 'lucide-react';
 import Image from 'next/image';
-import { WhiteButtonStyles } from './Header';
 
 interface AddToStoreModalProps {
     product: ProductType | null;
@@ -147,8 +146,7 @@ export const AddToStoreModal = ({ product, isOpen, onClose, onSubmit }: AddToSto
                                 type="submit" 
                                 onClick={handleSubmit} 
                                 className={`py-2 px-5 rounded-lg cursor-pointer
-                                    font-semibold flex items-center gap-1
-                                    ${WhiteButtonStyles}`}>
+                                    font-semibold flex items-center gap-1`}>
                                 Drop to <Store size={20}/>
                             </button>
                         </div>

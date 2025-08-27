@@ -29,6 +29,18 @@ export type ProductType = {
   productrevenu: number;
 };
 
+export type AffiliateProduct = ProductType & {
+    affiliateId: string;
+    commissionRate: number;
+    isActive: boolean;
+    AffiliateOriginalProductId: string;
+    AffiliateOwnerEmail: string;
+    AffiliateCommission: number;
+    Affiliate_sale_price: number;
+    AffiliateCreatedAt: string;
+    Affiliatesales: 0;
+};
+
 export interface ProductCardProps{
     PRODUCTIMAGES: string[];
     PRODUCTID: string | number;

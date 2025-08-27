@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Heart, Home, ArrowLeft, ArrowRight, Box, BarChart2, Eye, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { BlackButtonStyles } from '@/components/Header';
+import { BlackButtonStyles } from '@/components/PublicHeader';
 
 // --- DATA TYPE (Ensure this matches your global ProductType) ---
 interface ProductType {

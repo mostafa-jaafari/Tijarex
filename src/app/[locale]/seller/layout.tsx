@@ -1,4 +1,4 @@
-import { SellerHeader } from "@/components/SellerHeader";
+import { PrivateHeader } from "@/components/PrivateHeader";
 import { Sidebar } from "@/components/Sidebar";
 
 export default async function RootLayout({
@@ -10,7 +10,7 @@ export default async function RootLayout({
         <main
           className="w-full bg-[#1A1A1A]"
         >
-          <SellerHeader />
+          <PrivateHeader />
           <section
               className="w-full flex"
               >

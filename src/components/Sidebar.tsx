@@ -20,7 +20,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { SwitchLanguage } from "./SwitchLanguage";
 import { useUserInfos } from "@/context/UserInfosContext";
-import { BlackButtonStyles } from "./Header";
+import { PrimaryDark } from "@/app/[locale]/page";
 
 export function Sidebar() {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
@@ -100,7 +100,7 @@ export function Sidebar() {
         <aside className={`group
             ${isCollapsed ? 'w-16' : 'w-74'} 
             h-screen pb-14 transition-all duration-300 
-            flex flex-col sticky top-0 overflow-hidden
+            flex flex-col sticky top-0 overflow-auto
         `}>
             {/* Header */}
             <div 
@@ -111,8 +111,8 @@ export function Sidebar() {
                         className="flex items-center gap-3">
                         <div 
                             className={`w-8 h-8 rounded-lg flex items-center 
-                                justify-center
-                                ${BlackButtonStyles}`}
+                                justify-center ${PrimaryDark}
+                                ring ring-neutral-200 shadow`}
                         >
                             <span className="text-white font-bold text-sm">J</span>
                         </div>
@@ -136,8 +136,8 @@ export function Sidebar() {
                         <div 
                             className={`relative 
                                 w-8 h-8 rounded-lg 
-                                flex items-center justify-center
-                                ${BlackButtonStyles}`}
+                                flex items-center justify-center ${PrimaryDark}
+                                ring ring-neutral-200 shadow`}
                         >
                             <span className="group-hover:opacity-0 
                                 group-hover:pointer-events-none 

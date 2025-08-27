@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, Store } from 'lucide-react';
 import { ProductType } from '@/types/product';
-import { BlackButtonStyles } from '../Header';
 
 // --- Props for the UI Component ---
 interface ProductCardUIProps {
@@ -147,7 +146,7 @@ export const ProductCardUI = ({
                         className="flex items-center gap-2"
                     >
                         {isAffiliate && ( // Use prop
-                            <button onClick={onAddToStore} className={`cursor-pointer w-full py-2.5 text-white rounded-lg flex justify-center items-center gap-2 text-sm font-semibold transition-colors ${BlackButtonStyles}`}>
+                            <button onClick={onAddToStore} className={`cursor-pointer w-full py-2.5 text-white rounded-lg flex justify-center items-center gap-2 text-sm font-semibold transition-colors`}>
                                 Drop to <Store size={16} />
                             </button>
                         )}

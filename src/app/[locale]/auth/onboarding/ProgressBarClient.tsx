@@ -9,7 +9,7 @@ import Head from 'next/head';
 import React, { ChangeEvent, useState, FC, ReactNode } from 'react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
-import { WhiteButtonStyles } from '@/components/Header';
+import { WhiteButtonStyles } from '@/components/PublicHeader';
 import { useRouter } from 'next/navigation';
 
 // --- TYPE DEFINITIONS for enhanced type safety ---

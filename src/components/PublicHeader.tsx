@@ -6,10 +6,7 @@ import { ShowHeaderMenu } from "./ShowHeaderMenu";
 import { DropDownShoppingCart } from "./DropDownShoppingCart";
 
 
-export const WhiteButtonStyles = "border-b border-gray-400 hover:bg-gray-50 bg-white cursor-pointer text-gray-800";
-export const BlackButtonStyles = "bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A] text-white";
-
-export function Header() {
+export function PublicHeader() {
   return (
       <section
         className="sticky top-0 z-50 bg-white backdrop-blur-sm
@@ -64,8 +61,7 @@ export function Header() {
               {/* --- Switch Languages --- */}
               <SwitchLanguage
                 CLASSNAME={`flex items-center gap-1 text-xs
-                  rounded-lg py-1 px-3 ring ring-gray-200
-                  ${WhiteButtonStyles}`}
+                  rounded-lg py-1 px-3 ring ring-gray-200`}
               />
               
               {/* --- Favorite --- */}
@@ -91,15 +87,13 @@ export function Header() {
                 >
                   <Link
                     href="/auth/login"
-                    className={`text-sm rounded-lg py-0.5 px-3 ring ring-gray-200
-                      ${WhiteButtonStyles}`}
+                    className={`text-sm rounded-lg py-0.5 px-3 ring ring-gray-200`}
                   >
                     Sign in
                   </Link>
                   <Link
                     href="/auth/onboarding"
-                    className={`px-3 py-0.5 font-semibold text-sm rounded-lg
-                      ${BlackButtonStyles}`}
+                    className={`px-3 py-0.5 font-semibold text-sm rounded-lg`}
                   >
                     Get Started
                   </Link>

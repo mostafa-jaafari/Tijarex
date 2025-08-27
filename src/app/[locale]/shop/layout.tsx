@@ -1,5 +1,5 @@
 import Footer from '@/components/Footer'
-import { Header } from '@/components/Header'
+import { Header } from '@/components/PublicHeader'
 import { ShopFilter } from '@/components/ShopFilter'
 import React from 'react'
 

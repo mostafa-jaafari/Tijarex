@@ -10,8 +10,6 @@ import { SizeInput } from "@/components/Upload-Products/SizeInput";
 import { CategoryInput } from "@/components/Upload-Products/CategoryInput";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { BlackButtonStyles } from "@/components/Header";
-
 // --- Type Definitions ---
 interface UploadProgress { [fileName: string]: number; }
 interface ProductFile {
@@ -240,8 +238,7 @@ export default function UploadProductPage() {
                 onSubmit={handleProductSubmit}>
                 <header 
                     className={`p-6 max-w-7xl mx-auto flex items-center 
-                        justify-between mb-6 rounded-lg
-                        ${BlackButtonStyles}`}
+                        justify-between mb-6 rounded-lg`}
                 >
                     <div>
                     <h1 className="text-3xl font-bold tracking-tight text-white">Upload Product</h1>

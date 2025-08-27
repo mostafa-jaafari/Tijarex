@@ -7,7 +7,6 @@ import { Heart, Eye, Star, TrendingUp, Copy, Tag, Store } from 'lucide-react';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { getStockBadge } from './Functions/GetStockBadge';
-import { BlackButtonStyles } from './Header';
 
 interface ProductTableRowProps {
     product: ProductType;
@@ -25,7 +24,7 @@ export const ProductTableRow = ({ product, onAddToStore }: ProductTableRowProps)
     const [isFavorite, setIsFavorite] = useState(false);
 
     // const commissionRate = product.commission || 10;
-    // const estimatedEarning = (product.sale_price * commissionRate) / 100;
+    // const estimatedEarning = (product.original_sale_price * commissionRate) / 100;
 
     const handleFavoriteClick = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent row click events if any
@@ -59,7 +58,7 @@ export const ProductTableRow = ({ product, onAddToStore }: ProductTableRowProps)
                         <div className="flex items-center gap-1 mt-1.5">
                             <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
                             {/* In a real app, rating would come from product data */}
-                            <span className="text-xs text-gray-600 font-medium">{product.rating} ({product.reviewCount} reviews)</span>
+                            <span className="text-xs text-gray-600 font-medium">{product.rating} ({Array.isArray(product.reviews) ? product.reviews.length : product.reviews} reviews)</span>
                         </div>
                     </div>
                 </div>
@@ -75,11 +74,11 @@ export const ProductTableRow = ({ product, onAddToStore }: ProductTableRowProps)
             {/* Price Cell */}
             <td className="text-center px-6 py-4 whitespace-nowrap">
                 <div className="text-sm font-semibold text-gray-800">
-                    ${product.sale_price.toFixed(2)}
+                    ${product.original_sale_price.toFixed(2)}
                 </div>
-                {product.regular_price > product.sale_price && (
+                {product.original_regular_price > product.original_sale_price && (
                     <div className="text-xs text-gray-400 line-through">
-                        ${product.regular_price.toFixed(2)}
+                        ${product.original_regular_price.toFixed(2)}
                     </div>
                 )}
             </td>
@@ -152,8 +151,7 @@ export const ProductTableRow = ({ product, onAddToStore }: ProductTableRowProps)
                     {userInfos?.UserRole !== "seller" && (
                         <button 
                             onClick={() => onAddToStore(product)}
-                            className={`flex text-sm px-2 py-1 gap-1 cursor-pointer rounded-lg
-                                ${BlackButtonStyles}`}>
+                            className={`flex text-sm px-2 py-1 gap-1 cursor-pointer rounded-lg`}>
                             Drop to <Store size={16} />
                         </button>
                     )}

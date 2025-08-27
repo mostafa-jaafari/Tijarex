@@ -3,12 +3,16 @@ import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
-import { WhiteButtonStyles } from './Header';
 import { useUserInfos } from '@/context/UserInfosContext';
+import { PrimaryDark } from '@/app/[locale]/page';
+import { ProductType } from '@/types/product';
+import { useAffiliateProducts } from '@/context/AffiliateProductsContext';
+
+
 
 export default function QuickSetupGuide() {
     const { userInfos, isLoadingUserInfos } = useUserInfos();
-
+    const { affiliateProducts, isAffiliateProductsLoading } = useAffiliateProducts();
     const ConfigSteps = [
         {
             title: "Create your account.",
@@ -50,7 +54,7 @@ export default function QuickSetupGuide() {
             btntitle: "Find products",
             image: "/First-Order.png",
             imagestyles: "absolute z-30 scale-140 group-hover:scale-180 group-hover:translate-y-6 transition-transform duration-400 ease-out w-full flex justify-center items-center",
-            iscompleted: false,
+            iscompleted: userInfos?.UserRole === "affiliate" ? (affiliateProducts.length > 0) : false,
             link: {
                 label: "Start promoting products.",
                 href: "products"
@@ -64,9 +68,7 @@ export default function QuickSetupGuide() {
     const progressPercent = Math.round((completedSteps / totalSteps) * 100);
 
     const [percent, setPercent] = useState(progressPercent);
-    const [animatedWidth, setAnimatedWidth] = useState("0%");
-    const [displayedPercent, setDisplayedPercent] = useState(0);
-
+    const [animatedWidth, setAnimatedWidth] = useState("2%");
     // كلما تبدل progressPercent نحدّث percent
     useEffect(() => {
         setPercent(progressPercent);
@@ -88,9 +90,6 @@ export default function QuickSetupGuide() {
         const animate = (currentTime: number) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            const currentValue = Math.round(progress * percent);
-            setDisplayedPercent(currentValue);
-
             if (progress < 1) {
                 requestAnimationFrame(animate);
             }
@@ -98,13 +97,14 @@ export default function QuickSetupGuide() {
 
         requestAnimationFrame(animate);
     }, [percent]);
-
+    const CompletedSteps = ConfigSteps.filter(step => step.iscompleted).length;
     return (
-        <section className='relative w-full p-4 min-h-40 rounded-xl bg-white border border-gray-200'>
+        <section 
+            className='relative w-full p-4 min-h-[400px] rounded-xl 
+                bg-white border border-gray-200'>
             <h1 className='text-lg font-semibold text-gray-900 mb-3'>
                 Quick setup guide
             </h1>
-
             <Image
                 src="/Pattern-1.jpg"
                 alt=''
@@ -117,7 +117,7 @@ export default function QuickSetupGuide() {
                 {ConfigSteps.map((card, idx) => (
                     <div
                         key={idx}
-                        className='group relative bg-teal-50 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl overflow-hidden border border-gray-200 shadow shadow-gray-100'
+                        className='group relative bg-purple-100 flex-shrink-0 grow min-w-[220] max-w-[300px] h-70 rounded-2xl overflow-hidden border border-gray-200 shadow shadow-gray-100'
                     >
                         <Image
                             src="/Grid-Pattern.jpg"
@@ -141,7 +141,7 @@ export default function QuickSetupGuide() {
                                 min-h-50 w-full flex flex-col justify-end
                                 space-y-2 bg-gradient-to-t from-white via-white'
                         >
-                            <h1 className='font-semibold text-teal-800'>
+                            <h1 className='font-semibold text-neutral-800'>
                                 {card.title}
                             </h1>
                             <span>
@@ -154,11 +154,10 @@ export default function QuickSetupGuide() {
                             ) : card.iscompleted ? (
                                 <button
                                     disabled
-                                    className={`b py-1 flex items-center gap-1 px-4 
+                                    className={`px-2 text-[13px] py-1.5 flex items-center gap-1 
                                         w-max text-sm cursor-not-allowed
-                                        bg-gradient-to-r from-teal-500 to-teal-600
+                                        ${PrimaryDark}
                                         text-white rounded-lg shadow-sm
-                                        hover:from-teal-600 hover:to-teal-700
                                         transition-colors duration-200 ease-in-out`}
                                 >
                                     Completed <CircleCheckBig size={16} />
@@ -166,9 +165,10 @@ export default function QuickSetupGuide() {
                             ) : (
                                 <Link
                                     href={`${userInfos ? (userInfos.UserRole === "seller" ? "seller" : "affiliate") : "/"}/${card.link.href}`}
-                                    className={`rounded-lg py-1 px-4 w-max text-sm 
-                                            ${WhiteButtonStyles}
-                                            ring ring-gray-200`}
+                                    className={`rounded-lg px-2 py-1.5 
+                                        w-max text-sm border-b border-gray-400
+                                        ring ring-neutral-300 shadow-sm 
+                                        text-[13px] hover:bg-purple-50`}
                                 >
                                     {card.btntitle}
                                 </Link>
@@ -181,15 +181,15 @@ export default function QuickSetupGuide() {
             {/* Progress bar */}
             <div className='w-full flex items-center gap-2 pt-3'>
                 <div className='w-full'>
-                    <div className='rounded-full border border-teal-200 bg-teal-100'>
+                    <div className='rounded-full border border-neutral-200 bg-neutral-100'>
                         <span 
-                            className="relative flex h-2 rounded-full bg-teal-600 transition-all duration-1000 ease-out 
-                            after:absolute after:right-0 after:-top-1 after:w-4 after:shadow after:h-4 after:rounded-full after:bg-teal-600"
+                            className="relative flex h-2 rounded-full bg-black transition-all duration-1000 ease-out 
+                            after:absolute after:right-0 after:-top-1 after:w-4 after:shadow after:h-4 after:rounded-full after:bg-black"
                             style={{ width: animatedWidth }}
                         ></span> 
                     </div>
                 </div>
-                <p className='text-gray-500'>{displayedPercent}%</p>
+                <p className='text-gray-500'>{CompletedSteps}/{ConfigSteps.length}</p>
             </div>
         </section>
     )

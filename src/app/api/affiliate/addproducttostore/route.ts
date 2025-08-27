@@ -39,14 +39,13 @@ export async function POST(req: Request) {
         // 3. Create the new product object for the affiliate
         const newAffiliateProduct = {
             ...product,
-            originalProductId: product.id, // IMPORTANT: Keep a reference to the original
-            affiliateOwnerEmail: session.user.email, // Link to the affiliate
-            originalPrice: product.original_sale_price, // Store the original price
-            affiliateCommission: commission,
-            sale_price: product.original_sale_price + commission, // Updated price
-            createdAt: new Date().toISOString(),
-            // Ensure sales start at 0 for the affiliate's version
-            sales: 0, 
+            AffiliateOriginalProductId: product.id, // IMPORTANT: Keep a reference to the original
+            AffiliateOwnerEmail: session.user.email, // Link to the Affiliate
+            AffiliateCommission: commission,
+            Affiliate_sale_price: product.original_sale_price + commission, // Updated price
+            AffiliateCreatedAt: new Date().toISOString(),
+            // Ensure sales start at 0 for the Affiliate's version
+            Affiliatesales: 0, 
         };
         
         // IMPORTANT: Remove the original ID so Firestore generates a new one

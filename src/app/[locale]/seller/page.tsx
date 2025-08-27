@@ -1,5 +1,5 @@
 import { PopularProductsWidget } from '@/components/PopularProductsWidget'
-import { SellerStatisticCards } from '@/components/SellerStatisticCards'
+import { StatisticCards } from '@/components/StatisticCards'
 import EarningsChart from '@/components/EarningsChart'
 import React from 'react'
 import QuickSetupGuide from '@/components/QuickSetupGuide'
@@ -38,7 +38,7 @@ export default async function page() {
         {/* --- Content Area --- */}
           <WelcomeBanner />
           <QuickSetupGuide />
-          <SellerStatisticCards />
+          <StatisticCards />
           <EarningsChart />
         </section>
         {/* --- Sidebar --- */}
