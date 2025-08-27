@@ -9,7 +9,7 @@ import { useAffiliateProducts } from '@/context/AffiliateProductsContext';
 import { useUserInfos } from '@/context/UserInfosContext';
 
 export function ClientPage() {
-    const { isLoadingUserInfos, userInfos } = useUserInfos();
+    const { isLoadingUserInfos, userInfos, setIsFinishSetup, isFinishSetup } = useUserInfos();
     const { isAffiliateProductsLoading, affiliateProducts } = useAffiliateProducts();
     
     if(isLoadingUserInfos || isAffiliateProductsLoading) {
@@ -34,19 +34,27 @@ export function ClientPage() {
             className='w-full min-h-[400px] max-h-[510px]
                 flex gap-3 items-start overflow-hidden'
             >
-            <QuickSetupGuide
-                affiliateProducts={affiliateProducts}
-                userInfos={userInfos}
-                isLoadingUserInfos={isLoadingUserInfos}
-            />
-            <PopularProductsWidget />
+                <QuickSetupGuide
+                    affiliateProducts={affiliateProducts}
+                    userInfos={userInfos}
+                    isLoadingUserInfos={isLoadingUserInfos}
+                    setIsFinishSetup={setIsFinishSetup}
+                />
+                {isFinishSetup && (
+                    <EarningsChart />
+                )}
+                <PopularProductsWidget
+                    isFinishSetup={isFinishSetup}
+                />
             </div>
             <StatisticCards />
-            <EarningsChart />
+            {!isFinishSetup && (
+                <EarningsChart />
+            )}
             <footer>
-            <p className='text-sm text-gray-500 text-center py-4'>
-                &copy; 2024 Tijarex. All rights reserved.
-            </p>
+                <p className='text-sm text-gray-500 text-center py-4'>
+                    &copy; 2024 Tijarex. All rights reserved.
+                </p>
             </footer>
         </div>
         </section>

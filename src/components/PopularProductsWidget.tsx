@@ -55,7 +55,7 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage 
         </section>
     )
 }
-export function PopularProductsWidget() {
+export function PopularProductsWidget({ isFinishSetup }: { isFinishSetup: boolean; }) {
     const [TrendingProducts, setTrendingProducts] = useState<ProductType[]>([]);
     const [isLoadingTrends, setIsLoadingTrends] = useState(false);
     useEffect(() => {
@@ -81,8 +81,8 @@ export function PopularProductsWidget() {
     }, []);
   return (
     <section
-        className='bg-white border border-gray-200 rounded-xl p-4
-            min-w-[400px] min-h-[400px] max-h-[510px] overflow-auto'
+        className={`bg-white border border-gray-200 rounded-xl p-4
+            min-w-[400px] ${isFinishSetup ? "h-[510px]" : "h-[400px]"} overflow-auto`}
     >
         <div
             className='w-full flex items-start justify-between'

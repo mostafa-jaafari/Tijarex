@@ -7,9 +7,11 @@ import { createContext, ReactNode, useContext, useEffect, useState, useCallback 
 // --- FIX 1: Add a 'refetch' function to the context type ---
 // This allows other components to ask the context to update its data.
 type UserInfosContextType = {
-  userInfos: UserInfosType | null;
-  isLoadingUserInfos: boolean;
-  refetch: () => void; // The function to trigger a data refresh
+    userInfos: UserInfosType | null;
+    isLoadingUserInfos: boolean;
+    refetch: () => void; // The function to trigger a data refresh
+    isFinishSetup: boolean;
+    setIsFinishSetup: (value: boolean) => void;
 };
 
 // The context is created with 'undefined' to ensure the provider is always used.
@@ -18,6 +20,7 @@ const UserInfosContext = createContext<UserInfosContextType | undefined>(undefin
 export function UserInfosContextProvider({ children }: { children: ReactNode; }){
     const [userInfos, setUserInfos] = useState<UserInfosType | null>(null);
     const [isLoadingUserInfos, setIsLoadingUserInfos] = useState(true);
+    const [isFinishSetup, setIsFinishSetup] = useState(false);
     
     // --- FIX 2: Destructure 'status' from useSession ---
     // 'status' is the most reliable way to track authentication state.
@@ -70,7 +73,9 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
     const contextValue = { 
         userInfos, 
         isLoadingUserInfos, 
-        refetch: fetchUserInfos // Expose the memoized fetch function as 'refetch'.
+        refetch: fetchUserInfos,
+        isFinishSetup,
+        setIsFinishSetup
     };
 
     if (!session && status !== "loading") {
