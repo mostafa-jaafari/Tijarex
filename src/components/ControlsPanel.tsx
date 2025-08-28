@@ -60,18 +60,21 @@ export const ControlsPanel = ({
                     {/* Filters Button */}
                     <button
                         onClick={onFilterToggle}
-                        className={`flex items-center gap-2 px-4 cursor-pointer py-2 rounded-lg
-                            ring ring-neutral-300 border-b border-neutral-500 text-sm
+                        className={`flex items-center gap-2 px-4 cursor-pointer 
+                            py-2 rounded-lg ring ring-neutral-300 border-b 
+                            text-neutral-700 border-neutral-500 text-sm
                             ${showFilters 
-                                ? "bg-white hover:bg-neutral-50 border-gray-300 text-black" 
-                                : "bg-neutral-50 hover:bg-white border-gray-300 text-black"
+                                ? "bg-white hover:bg-neutral-50 border-gray-300" 
+                                : "bg-neutral-50 hover:bg-white border-gray-300"
                         }`}
                     >
                         <SlidersHorizontal className="w-4 h-4" />
                         <span>Filters</span>
                         {activeFilterCount > 0 && (
                             <span 
-                                className="ml-1 flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-purple-600 text-white text-xs font-semibold rounded-full">
+                                className="ml-1 flex items-center justify-center 
+                                    min-w-[20px] h-5 px-1.5 rounded-full
+                                    border border-purple-400 text-purple-600 text-xs font-semibold">
                                 {activeFilterCount}
                             </span>
                         )}
@@ -81,8 +84,10 @@ export const ControlsPanel = ({
                     <div className="flex items-center bg-gray-100 rounded-lg p-1">
                         <button 
                             onClick={() => onViewModeChange('grid')}
-                            className={`p-2 rounded-md transition-colors ${
-                                viewMode === 'grid' 
+                            className={`flex items-center gap-2 px-4 cursor-pointer 
+                                py-2 rounded-lg ring ring-neutral-300 border-b 
+                                text-neutral-700 border-neutral-500 text-sm 
+                                ${viewMode === 'grid' 
                                     ? 'bg-black text-white' 
                                     : 'text-gray-500 hover:text-black'
                             }`}

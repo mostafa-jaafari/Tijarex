@@ -1,8 +1,8 @@
 "use client";
+import { useGlobaleProducts } from '@/context/GlobalProductsContext';
 import { ProductType } from '@/types/product';
 import { SquareArrowOutUpRight } from 'lucide-react';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react'
 
 interface WidgetCardProps {
     title?: string;
@@ -56,82 +56,64 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage 
     )
 }
 export function PopularProductsWidget({ isFinishSetup }: { isFinishSetup: boolean; }) {
-    const [TrendingProducts, setTrendingProducts] = useState<ProductType[]>([]);
-    const [isLoadingTrends, setIsLoadingTrends] = useState(false);
-    useEffect(() => {
-        const handleFetchTrendsProducts = async () => {
-            setIsLoadingTrends(true);
-            try {
-                const Res = await fetch("/api/products");
-                if (!Res.ok) throw new Error("Failed to fetch products");
-                const { products } = await Res.json();
-                if (Array.isArray(products)) {
-                    setTrendingProducts(products as ProductType[] || []);
-                } else {
-                    setTrendingProducts([]);
-                }
-            } catch (err) {
-                console.error(err as string);
-            } finally {
-                setIsLoadingTrends(false);
-            }
-        }
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
 
-        handleFetchTrendsProducts();
-    }, []);
-  return (
-    <section
-        className={`bg-white border border-gray-200 rounded-xl p-4
-            min-w-[400px] ${isFinishSetup ? "h-[510px]" : "h-[400px]"} overflow-auto`}
-    >
-        <div
-            className='w-full flex items-start justify-between'
+    // const TrendingProducts = globalProductsData?.sort((a, b) => b.sales - a.sales).slice(0, 4) as ProductType[] || [];
+    return (
+        <section
+            className={`bg-white border border-gray-200 rounded-xl p-4
+                min-w-[400px] ${isFinishSetup ? "h-[510px]" : "h-[400px]"} overflow-auto`}
         >
-            <h1 className='text-lg font-semibold text-gray-900 mb-3'>
-                Trending Products
-            </h1>
-            <span
-                className='text-xs text-blue-600 font-semibold flex items-center gap-1 cursor-pointer hover:underline'
+            <div
+                className='w-full flex items-start justify-between'
             >
-                View All <SquareArrowOutUpRight size={14}/>
-            </span>
-        </div>
-        <div
-            className='grid grid-cols-2 gap-3'
-        >
-            {isLoadingTrends ? (
-                Array(4).fill(0).map((_, idx) => (
-                    <div
-                        key={idx}
-                        className='w-full min-h-30 rounded-xl 
-                            space-y-2 p-2 border border-gray-200 overflow-hidden flex flex-col justify-end'
-                    >
-                        <div className='w-full h-30 bg-gray-300 animate-pulse rounded-lg mb-2'/>
-                        <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
-                        <span className='flex w-full h-4 rounded-full bg-gray-200 animate-pulse' />
+                <h1 className='text-lg font-semibold text-gray-900 mb-3'>
+                    Trending Products
+                </h1>
+                <span
+                    className='text-xs text-blue-600 font-semibold flex items-center gap-1 cursor-pointer hover:underline'
+                >
+                    View All <SquareArrowOutUpRight size={14}/>
+                </span>
+            </div>
+            <div
+                className='w-full grid grid-cols-2 gap-3'
+            >
+                {isLoadingGlobalProducts ? (
+                    Array(4).fill(0).map((_, idx) => (
                         <div
-                            className='flex items-center gap-2'
+                            key={idx}
+                            className='w-full min-h-30 rounded-xl 
+                                space-y-2 p-2 border border-gray-200 overflow-hidden flex flex-col justify-end'
                         >
-                            <span className='flex w-20 h-4 rounded-full bg-gray-200 animate-pulse' />
+                            <div className='w-full h-30 bg-gray-300 animate-pulse rounded-lg mb-2'/>
+                            <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
+                            <span className='flex w-full h-4 rounded-full bg-gray-200 animate-pulse' />
+                            <div
+                                className='flex items-center gap-2'
+                            >
+                                <span className='flex w-20 h-4 rounded-full bg-gray-200 animate-pulse' />
+                            </div>
                         </div>
-                    </div>
+                    ))
+                ) : globalProductsData.length > 0 ? globalProductsData.map((product, idx) => (
+                    <WidgetCard 
+                        key={idx}
+                        regularprice={product.original_regular_price}
+                        saleprice={product.original_sale_price}
+                        sold={product.sales}
+                        stock={product.stock}
+                        title={product.title}
+                        productimage={product.product_images[0]}
+                    />
                 ))
-            ) : TrendingProducts.length > 0 ? TrendingProducts.map((product, idx) => (
-                <WidgetCard 
-                    key={idx}
-                    regularprice={product.original_regular_price}
-                    saleprice={product.original_sale_price}
-                    sold={product.sales}
-                    stock={product.stock}
-                    title={product.title}
-                    productimage={product.product_images[0]}
-                />
-            ))
-            :
-            <div>
-                hello world no products available
-            </div>}
-        </div>
-    </section>
-  )
+                :
+                <div
+                    className='w-full flex justify-center my-6 text-sm text-neutral-500'
+                >
+                    No Products founded !
+                </div>}
+            </div>
+        </section>
+    )
 }

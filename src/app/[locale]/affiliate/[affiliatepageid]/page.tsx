@@ -67,7 +67,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <div
-      className="w-full overflow-auto bg-gray-100"
+      className="w-full overflow-auto bg-gray-100 px-6"
     >
       {TabRender}
       <footer>

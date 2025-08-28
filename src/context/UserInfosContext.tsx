@@ -3,6 +3,7 @@
 import { UserInfosType } from "@/types/userinfos";
 import { useSession } from "next-auth/react";
 import { createContext, ReactNode, useContext, useEffect, useState, useCallback } from "react";
+import { toast } from "sonner";
 
 // --- FIX 1: Add a 'refetch' function to the context type ---
 // This allows other components to ask the context to update its data.
@@ -22,30 +23,30 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
     const [isLoadingUserInfos, setIsLoadingUserInfos] = useState(true);
     const [isFinishSetup, setIsFinishSetup] = useState(false);
     
-    // --- FIX 2: Destructure 'status' from useSession ---
-    // 'status' is the most reliable way to track authentication state.
-    // It can be 'loading', 'authenticated', or 'unauthenticated'.
     const { data: session, status } = useSession();
 
-    // --- FIX 3: Wrap the fetch logic in useCallback ---
-    // This creates a stable, memoized function that we can safely use in useEffect
-    // and expose as our 'refetch' function.
     const fetchUserInfos = useCallback(async () => {
-        // Only proceed if the user is actually authenticated.
         if (status !== "authenticated") {
             return;
         }
         
         setIsLoadingUserInfos(true);
         try{
-            const res = await fetch('/api/userinfos'); // Using your API route name
-            if(!res.ok) {
-                // If the fetch fails (e.g., user profile doesn't exist yet), clear the data.
-                setUserInfos(null);
-                throw new Error("Failed to fetch user infos");
+            const res = await fetch('/api/userinfos');
+            let data = null;
+            try {
+                data = await res.json();
+            } catch (err) {
+                toast.error("Response is not JSON:" + err);
             }
-            const data = await res.json();
-            setUserInfos(data.userinfos as UserInfosType || null);
+
+           if (!res.ok || !data?.userinfos) {
+           setUserInfos(null);
+           return;
+           }
+
+           setUserInfos(data.userinfos);
+
         } catch(error){
             console.error("Error in fetchUserInfos:", error);
             // In case of error, ensure userInfos is null.
@@ -53,7 +54,7 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
         } finally {
             setIsLoadingUserInfos(false);
         }
-    }, [status]); // The function is recreated only when 'status' changes.
+    }, [status]);
     
     // --- FIX 4: The main useEffect now depends on 'status' and the memoized function ---
     useEffect(() => {

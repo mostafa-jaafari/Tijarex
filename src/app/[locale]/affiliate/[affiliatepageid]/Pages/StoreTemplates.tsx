@@ -108,7 +108,7 @@ export default function StoreTemplates() {
                         >
                             <div className="relative w-full aspect-[16/10] rounded-t-xl overflow-hidden">
                                 <Image
-                                    src={tpl.image}
+                                    src={tpl.image || ""}
                                     alt={tpl.title}
                                     fill
                                     className="object-cover transition-transform duration-300 group-hover:scale-105"

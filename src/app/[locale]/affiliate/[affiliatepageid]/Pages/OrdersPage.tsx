@@ -100,7 +100,13 @@ export default function OrdersPage() {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center gap-3">
-                                                            <Image className="w-8 h-8 rounded-full object-cover" src={order.seller.profile_image} alt={order.seller.name} width={32} height={32} />
+                                                            <Image 
+                                                                className="w-8 h-8 rounded-full object-cover" 
+                                                                src={order?.seller.profile_image || ""}
+                                                                alt={order.seller.name} 
+                                                                width={32} 
+                                                                height={32} 
+                                                            />
                                                             <div>
                                                                 <div className="text-sm font-medium text-gray-900">{order.seller.name}</div>
                                                                 <div className="text-xs text-gray-500">{order.seller.email}</div>
@@ -114,7 +120,13 @@ export default function OrdersPage() {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center gap-3">
-                                                            <Image className="w-10 h-10 rounded-lg border border-gray-200 object-cover" src={order.product_image} alt={order.product_name} width={40} height={40}/>
+                                                            <Image 
+                                                                className="w-10 h-10 rounded-lg border border-gray-200 object-cover" 
+                                                                src={order.product_image || ""} 
+                                                                alt={order.product_name} 
+                                                                width={40} 
+                                                                height={40}
+                                                            />
                                                             <div>
                                                                 <div className="text-sm font-medium text-gray-900 max-w-[200px] truncate">{order.product_name}</div>
                                                                 <div className="text-xs text-gray-500">Qty: {order.quantity}</div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useGlobaleProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
 import { PackageSearch } from "lucide-react";
 import Link from "next/link";
@@ -28,19 +29,11 @@ export function ShopInputSearch() {
         document.addEventListener("mousedown", handleHideMenu);
         return () => document.removeEventListener("mousedown", handleHideMenu);
     }, []);
-
-    const [globalProductsData, setGlobalProductsData] = useState<ProductType[] | []>([]);
+    const { globalProductsData } = useGlobaleProducts();
     const [isLoadingSearch, setIsLoadingSearch] = useState(false);
     const [searchResult, setSearchResult] = useState<ProductType[] | []>([]);
     
-    useEffect(() => {
-        const handleFetchSearch = async () => {
-            const Res = await fetch("/api/products");
-            const { products } = await Res.json();
-            setGlobalProductsData(products as ProductType[]);
-        }
-        handleFetchSearch();
-    },[])
+    
     useEffect(() => {
         if(searchInput === ""){
             setSearchResult([]);
@@ -98,7 +91,7 @@ export function ShopInputSearch() {
                         focus-within:rounded-xl
                         transition-all duration-300
                         shadow-sm
-                        ring ring-gray-100
+                        ring
                         h-10 
                         rounded-full 
                         overflow-hidden p-0.5 flex items-center">
@@ -116,7 +109,7 @@ export function ShopInputSearch() {
                 <div
                     className={`absolute left-0 top-full z-30 w-full mt-1 origin-top transition-all duration-300 ease-out ${
                         showSuggestionsMenu
-                            ? "opacity-100 max-h-64 overflow-hidden opacity-100"
+                            ? "max-h-64 overflow-hidden opacity-100"
                             : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
                     }`}
                 >

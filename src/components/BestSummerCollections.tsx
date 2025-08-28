@@ -1,38 +1,14 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { HeadlineSection } from './HeadlineSection'
 import { BestSellingProductUI } from './UI/BestSellingProductUI'
-import { ProductType } from '@/types/product';
+import { useGlobaleProducts } from '@/context/GlobalProductsContext';
 
 
 export function BestSummerCollections() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const [summerProducts, setSummerProducts] = useState<ProductType[]>([]);
-    const [isLoadingSummers, setIsLoadingSummers] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    useEffect(() => {
-        const handleFetchSummersProducts = async () => {
-            setIsLoadingSummers(true);
-            try {
-                const Res = await fetch("/api/products");
-                if (!Res.ok) throw new Error("Failed to fetch products");
-                const { products } = await Res.json();
-                if (Array.isArray(products)) {
-                    const SelectedProduct = products.slice(0, 5);
-                    setSummerProducts(SelectedProduct);
-                } else {
-                    setSummerProducts([]);
-                }
-            } catch (err) {
-                console.error(err as string);
-                setError(err as string || "Unknown error occurred");
-            } finally {
-                setIsLoadingSummers(false);
-            }
-        }
-
-        handleFetchSummersProducts();
-    }, []);
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
+    const summerProducts = globalProductsData.slice(0, 6);
     return (
         <section
             id='summer 2025'
@@ -43,7 +19,7 @@ export function BestSummerCollections() {
                 SHOWBUTTONS
                 SCROLLREF={scrollRef}
             />
-            {isLoadingSummers && (
+            {isLoadingGlobalProducts && (
                 <div
                     className='w-full flex items-center flex-nowrap 
                         overflow-x-auto scrollbar-hide gap-2'
@@ -69,12 +45,9 @@ export function BestSummerCollections() {
                     })}
                 </div>
             )}
-            {error && (
-                <div className="text-center py-8 text-red-500">Error: {error}</div>
-            )}
 
             {/* Products list */}
-            {!isLoadingSummers && !error && (
+            {!isLoadingGlobalProducts && (
                 <div
                     ref={scrollRef}
                     className='w-full flex items-center flex-nowrap 

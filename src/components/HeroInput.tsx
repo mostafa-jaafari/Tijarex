@@ -1,5 +1,6 @@
 "use client";
 
+import { useGlobaleProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
 import { PackageSearch, Search } from "lucide-react";
 import Link from "next/link";
@@ -29,18 +30,11 @@ export function InputHero() {
         return () => document.removeEventListener("mousedown", handleHideMenu);
     }, []);
 
-    const [globalProductsData, setGlobalProductsData] = useState<ProductType[] | []>([]);
+    const { globalProductsData } = useGlobaleProducts();
     const [isLoadingSearch, setIsLoadingSearch] = useState(false);
     const [searchResult, setSearchResult] = useState<ProductType[] | []>([]);
     
-    useEffect(() => {
-        const handleFetchSearch = async () => {
-            const Res = await fetch("/api/products");
-            const { products } = await Res.json();
-            setGlobalProductsData(products as ProductType[]);
-        }
-        handleFetchSearch();
-    },[])
+    
     useEffect(() => {
         if(searchInput === ""){
             setSearchResult([]);
@@ -108,7 +102,7 @@ export function InputHero() {
             <div
                 className={`absolute left-0 top-full w-full mt-1 origin-top transition-all duration-300 ease-out ${
                     showSuggestionsMenu
-                        ? "opacity-100 max-h-64 overflow-hidden opacity-100"
+                        ? "max-h-64 overflow-hidden opacity-100"
                         : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
                 }`}
             >

@@ -11,6 +11,7 @@ import { UserInfosContextProvider } from "@/context/UserInfosContext";
 import { Metadata } from "next";
 import { QuickViewProductContextProvider } from "@/context/QuickViewProductContext";
 import { QuickViewProduct } from "@/components/QuickViewProduct";
+import { GlobalProductsProvider } from "@/context/GlobalProductsContext";
 
 
 export const metadata: Metadata = {
@@ -53,18 +54,20 @@ export default async function RootLayout({
         className={`w-full overflow-x-hidden
           ${inter.className} antialiased`}
           >
-          <QuickViewProductContextProvider>
-            <NextAuthSessionProvider>
-              <UserInfosContextProvider>
-                <Toaster position="top-center" />
-                <NextIntlClientProvider locale={locale} messages={messages}>
-                  <QuickViewProduct />
-                    {children}
-                </NextIntlClientProvider>
-                <ScrollToTop />
-              </UserInfosContextProvider>
-            </NextAuthSessionProvider>
-          </QuickViewProductContextProvider>
+          <NextAuthSessionProvider>
+            <GlobalProductsProvider>
+              <QuickViewProductContextProvider>
+                  <UserInfosContextProvider>
+                    <Toaster position="top-center" />
+                    <NextIntlClientProvider locale={locale} messages={messages}>
+                      <QuickViewProduct />
+                        {children}
+                    </NextIntlClientProvider>
+                    <ScrollToTop />
+                  </UserInfosContextProvider>
+              </QuickViewProductContextProvider>
+            </GlobalProductsProvider>
+          </NextAuthSessionProvider>
       </body>
     </html>
   );

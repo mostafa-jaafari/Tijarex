@@ -302,12 +302,14 @@ export function PrivateHeader(){
                     <div
                     className='relative w-8 h-8'
                     >
-                    <Image
-                        src={userInfos?.profileimage || session?.data?.user?.image || ""}
-                        alt={userInfos?.fullname || ""}
-                        fill
-                        className="object-cover overflow-hidden rounded-lg ring-2 border border-neutral-800 ring-green-500"
-                    />
+                        {(userInfos?.profileimage || session?.data?.user?.image) && (
+                            <Image
+                                src={userInfos?.profileimage || session?.data?.user?.image as string}
+                                alt={userInfos?.fullname || "User avatar"}
+                                fill
+                                className="object-cover overflow-hidden rounded-lg ring-2 border border-neutral-800 ring-green-500"
+                            />
+                            )}
                         <span
                             className="absolute w-3 h-3 rounded-full bg-green-500 right-0 bottom-0 border-2 border-white"
                         />

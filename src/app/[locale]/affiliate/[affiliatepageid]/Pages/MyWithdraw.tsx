@@ -71,7 +71,7 @@ const PaymentMethodIcon = ({ method, size = 20 }: { method: string; size?: numbe
   switch (method) {
     case 'paypal':
       return (
-        <div className="relative flex overflow-hidden rounded-md w-6 h-6 bg-blue-50 flex items-center justify-center">
+        <div className="relative overflow-hidden rounded-md w-6 h-6 bg-blue-50 flex items-center justify-center">
           <Image
             src="/paypal-logo.png"
             alt="PayPal"

@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { ProductType } from '@/types/product';
+import { useGlobaleProducts } from '@/context/GlobalProductsContext';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -42,36 +43,18 @@ const matchesPriceRange = (price: number, range: string | undefined): boolean =>
 
 
 export const useProductFilters = () => {
-    const [allProducts, setAllProducts] = useState<ProductType[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('sales_desc');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string }>({});
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true);
-            try {
-                const res = await fetch("/api/products");
-                if (!res.ok) throw new Error("Failed to fetch products from useProductFilters");
-                const data = await res.json();
-                setAllProducts(data.products || []);
-            } catch (error) {
-                console.error("Failed to fetch products:", error);
-                setAllProducts([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProducts();
-    }, []);
 
     const filteredAndSortedProducts = useMemo(() => {
         // This is the core filtering logic.
         // A product must pass EVERY condition to be included.
-        return allProducts
+        return globalProductsData
             .filter(product => {
                 const passSearch = matchesSearch(product, searchQuery);
                 const passCategory = matchesCategory(product, selectedFilters["Category"]);
@@ -91,7 +74,7 @@ export const useProductFilters = () => {
                     default: return 0;
                 }
             });
-    }, [allProducts, searchQuery, selectedFilters, sortBy]);
+    }, [globalProductsData, searchQuery, selectedFilters, sortBy]);
 
     const paginatedProducts = useMemo(() => {
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -127,7 +110,7 @@ export const useProductFilters = () => {
 
     return {
         state: {
-            loading,
+            isLoadingGlobalProducts,
             viewMode,
             searchQuery,
             sortBy,

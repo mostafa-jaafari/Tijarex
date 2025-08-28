@@ -196,11 +196,11 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                    className='relative w-full h-full'
               >
                   <Image
-                src={selectedProduct?.product_images[selectedImageIndex]}
-                alt={selectedProduct.title}
-                fill
-                className="object-cover"
-              />
+                    src={selectedProduct?.product_images[selectedImageIndex] || ""}
+                    alt={selectedProduct.title}
+                    fill
+                    className="object-cover"
+                  />
               </div>
               <button
                 onClick={() => handleImageChange('prev')}
@@ -229,7 +229,7 @@ export function SingleProductPage({ ProductId }: { ProductId: string }) {
                   }`}
                 >
                   <Image
-                    src={image}
+                    src={image || ""}
                     fill
                     alt={`Product view ${index + 1}`}
                     className="w-full h-full object-cover"

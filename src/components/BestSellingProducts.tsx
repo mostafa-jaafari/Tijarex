@@ -1,38 +1,13 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { HeadlineSection } from './HeadlineSection';
 import { BestSellingProductUI } from './UI/BestSellingProductUI';
-import { ProductType } from '@/types/product';
+import { useGlobaleProducts } from '@/context/GlobalProductsContext';
 
 export function BestSellingProducts() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const [trendProducts, setTrendsProducts] = useState<ProductType[]>([]);
-    const [isLoadingTrends, setIsLoadingTrends] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const handleFetchTrendsProducts = async () => {
-            setIsLoadingTrends(true);
-            try {
-                const Res = await fetch("/api/products");
-                if (!Res.ok) throw new Error("Failed to fetch products");
-                const { products } = await Res.json();
-                if (Array.isArray(products)) {
-                    setTrendsProducts(products);
-                } else {
-                    setTrendsProducts([]);
-                }
-            } catch (err) {
-                console.error(err as string);
-                setError(err as string || "Unknown error occurred");
-            } finally {
-                setIsLoadingTrends(false);
-            }
-        }
-
-        handleFetchTrendsProducts();
-    }, []);
-
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
+    const trendProducts = globalProductsData.sort((a, b) => b.sales - a.sales).slice(0, 10); // Top 10 best selling products
     return (
         <section
             id='best selling'
@@ -45,7 +20,7 @@ export function BestSellingProducts() {
             />
 
             {/* Loading / Error handling */}
-            {isLoadingTrends && (
+            {isLoadingGlobalProducts && (
                 <div
                     className='w-full flex items-center flex-nowrap 
                         overflow-x-auto scrollbar-hide gap-2'
@@ -71,12 +46,9 @@ export function BestSellingProducts() {
                     })}
                 </div>
             )}
-            {error && (
-                <div className="text-center py-8 text-red-500">Error: {error}</div>
-            )}
 
             {/* Products list */}
-            {!isLoadingTrends && !error && (
+            {!isLoadingGlobalProducts && (
                 <div
                     ref={scrollRef}
                     className='w-full flex items-center flex-nowrap 
