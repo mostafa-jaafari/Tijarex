@@ -1,7 +1,7 @@
 "use client";
+import { PrimaryDark } from '@/app/[locale]/page';
 import { useGlobaleProducts } from '@/context/GlobalProductsContext';
-import { ProductType } from '@/types/product';
-import { SquareArrowOutUpRight } from 'lucide-react';
+import { Copy, Eye, Flame, SquareArrowOutUpRight } from 'lucide-react';
 import Image from 'next/image';
 
 interface WidgetCardProps {
@@ -15,12 +15,12 @@ interface WidgetCardProps {
 const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage }: WidgetCardProps) => {
     return (
         <section
-            className='w-full min-h-40 rounded-xl 
+            className='w-full rounded-xl 
                 bg-white border border-gray-200 p-1 flex flex-col 
                 justify-end'
         >
             <div
-                className='relative w-full h-30 bg-gray-100 
+                className='relative w-full h-35 bg-gray-100 
                     overflow-hidden shadow-sm rounded-lg mb-2'
             >
                 <Image
@@ -31,6 +31,15 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage 
                     loading='lazy'
                     quality={100}
                 />
+                <div
+                    className='absolute top-2 left-2'
+                >
+                    <span
+                        className='flex w-max rounded-lg shadow-sm p-1 bg-white'
+                    >
+                        <Flame size={20} className='text-orange-600 fill-orange-600'/>
+                    </span>
+                </div>
             </div>
             <div
                 className='px-2'
@@ -52,17 +61,36 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage 
                     {saleprice} Dh <del className='text-neutral-400 text-xs font-normal'>{regularprice} Dh</del>
                 </span>
             </div>
+            <div
+                className='flex items-center gap-1 p-2'
+            >
+                <button
+                    className={`text-xs flex items-center gap-2
+                        w-full justify-center py-2 
+                        ${PrimaryDark} cursor-pointer hover:bg-gradient-to-r
+                    `}
+                >
+                    <Copy size={14} /> Get Affiliate Link
+                </button>
+                <button
+                    className='ring ring-neutral-300 border-b border-neutral-400 rounded-lg shadow 
+                        text-neutral-500 hover:ring-neutral-400 
+                        cursor-pointer hover:text-neutral-700 px-2 py-2
+                        transition-all duration-200'
+                >
+                    <Eye size={16} />
+                </button>
+            </div>
         </section>
     )
 }
-export function PopularProductsWidget({ isFinishSetup }: { isFinishSetup: boolean; }) {
+export function PopularProductsWidget() {
     const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
 
     // const TrendingProducts = globalProductsData?.sort((a, b) => b.sales - a.sales).slice(0, 4) as ProductType[] || [];
     return (
         <section
-            className={`bg-white border border-gray-200 rounded-xl p-4
-                min-w-[400px] ${isFinishSetup ? "h-[510px]" : "h-[400px]"} overflow-auto`}
+            className="grow p-4 rounded-xl bg-white ring ring-gray-200"
         >
             <div
                 className='w-full flex items-start justify-between'
@@ -80,7 +108,7 @@ export function PopularProductsWidget({ isFinishSetup }: { isFinishSetup: boolea
                 className='w-full grid grid-cols-2 gap-3'
             >
                 {isLoadingGlobalProducts ? (
-                    Array(4).fill(0).map((_, idx) => (
+                    Array(2).fill(0).map((_, idx) => (
                         <div
                             key={idx}
                             className='w-full min-h-30 rounded-xl 
@@ -97,15 +125,17 @@ export function PopularProductsWidget({ isFinishSetup }: { isFinishSetup: boolea
                         </div>
                     ))
                 ) : globalProductsData.length > 0 ? globalProductsData.map((product, idx) => (
-                    <WidgetCard 
-                        key={idx}
-                        regularprice={product.original_regular_price}
-                        saleprice={product.original_sale_price}
-                        sold={product.sales}
-                        stock={product.stock}
-                        title={product.title}
-                        productimage={product.product_images[0]}
-                    />
+                    Array(2).fill(0).map((_, index) => (
+                        <WidgetCard 
+                            key={index + idx}
+                            regularprice={product.original_regular_price}
+                            saleprice={product.original_sale_price}
+                            sold={product.sales}
+                            stock={product.stock}
+                            title={product.title}
+                            productimage={product.product_images[0]}
+                        />
+                    ))
                 ))
                 :
                 <div

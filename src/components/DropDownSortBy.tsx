@@ -30,8 +30,8 @@ export const DropDownSortBy = ({ onSelect }: DropDownSortByProps) => {
         >
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full py-2 rounded-lg font-semibold 
-                    py-1 flex items-center justify-between
+                className={`w-full rounded-lg font-semibold 
+                    py-1.5 flex items-center justify-between
                     px-3 ring cursor-pointer ring-gray-300 shadow-sm
                     hover:bg-gray-100
                     ${isOpen ? "bg-white" : "bg-gray-100"}`}

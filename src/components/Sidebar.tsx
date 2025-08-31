@@ -105,7 +105,7 @@ export function Sidebar() {
             {/* Header */}
             <div 
                 className={`flex items-center justify-between 
-                    ${isCollapsed ? "p-2" : "py-2.5 px-4"} border-b border-gray-100`}>
+                    ${isCollapsed ? "p-2" : "py-2.5 px-4"}`}>
                 {!isCollapsed && (
                     <div 
                         className="flex items-center gap-3">
@@ -166,7 +166,7 @@ export function Sidebar() {
             </div>
 
             {/* Navigation Content */}
-            <div className="flex-1 py-4">
+            <div className="flex-1 py-2">
                 {/* Primary Navigation */}
                 <div className="px-3 mb-6">
                     {!isCollapsed && (
@@ -251,7 +251,7 @@ export function Sidebar() {
             </div>
 
             {/* User Profile & Sign Out */}
-            <div className="border-t border-gray-100 p-4">
+            <div className="px-4">
                 {!isCollapsed && (
                     <div className="flex space-y-2 flex-col items-center">
                         <div

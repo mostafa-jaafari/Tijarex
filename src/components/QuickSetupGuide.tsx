@@ -3,32 +3,35 @@ import { CircleCheckBig } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { PrimaryDark } from '@/app/[locale]/page';
-import { ProductType } from '@/types/product';
-import { UserInfosType } from '@/types/userinfos';
+import { PrimaryDark, PrimaryLight } from '@/app/[locale]/page';
+import { useUserInfos } from '@/context/UserInfosContext';
 
-interface QuickSetupGuideProps {
-  userInfos: UserInfosType | null;
-  affiliateProducts: ProductType[];
-  isLoadingUserInfos: boolean;
-  setIsFinishSetup: (value: boolean) => void;
-}
-
-export default function QuickSetupGuide({
-  userInfos,
-  affiliateProducts,
-  isLoadingUserInfos,
-  setIsFinishSetup,
-}: QuickSetupGuideProps) {
+export default function QuickSetupGuide() {
+  const { userInfos, isLoadingUserInfos, setIsFinishSetup } = useUserInfos();
+  // const [affiliateProducts, setAffiliateProducts] = useState<ProductType[]>([]);
+  // useEffect(() => {
+  //   async function fetchAffiliateProducts() {
+  //     if (userInfos?.UserRole === "affiliate") {
+  //       try {
+  //         const response = await fetch('/api/affiliate/affiliateproducts');
+  //         const data = await response.json();
+  //         setAffiliateProducts(data);
+  //       } catch (error) {
+  //         console.error("Error fetching affiliate products:", error);
+  //       }
+  //     }
+  //   }
+  //   fetchAffiliateProducts();
+  // }, [userInfos?.UserRole]);
   const ConfigSteps = [
     {
       title: "Create your account.",
-      description: "Register your account and set up your basic details to start selling in minutes",
+      description: "Create your account to get started with Tijarex.",
       btntitle: "Create account",
       image: "/create-account-avatar.png",
       imagestyles:
         "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
-      iscompleted: true,
+      iscompleted: false,
       link: {
         label: "Start your journey with us !",
         href: userInfos?.UserRole === "seller" ? "/seller" : "/affiliate",
@@ -36,7 +39,7 @@ export default function QuickSetupGuide({
     },
     {
       title: "Add balance",
-      description: "Top up your balance to start fulfilling your orders smoothly",
+      description: "Top up your balance to start earn commissions.",
       btntitle: "Add balance",
       image: "/CIH-MASTERCARD.png",
       imagestyles:
@@ -63,13 +66,14 @@ export default function QuickSetupGuide({
         }
       : {
           title: "Drop your First Product.",
-          description: "Drop products to your store and earn commissions as an affiliate marketer",
+          description: "Find and promote products to start earning commissions.",
           btntitle: "Find products",
           image: "/First-Order.png",
           imagestyles:
             "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
           iscompleted:
-            userInfos?.UserRole === "affiliate" ? affiliateProducts.length > 0 : false,
+            // userInfos?.UserRole === "affiliate" ? affiliateProducts.length > 0 : false,
+            true,
           link: {
             label: "Start promoting products.",
             href: "products",
@@ -96,7 +100,7 @@ export default function QuickSetupGuide({
 
   return (
     <section
-      className="relative w-full p-4 min-h-[400px] rounded-xl bg-white border border-gray-200"
+      className="relative w-full max-w-[650px] p-4 rounded-xl bg-white ring ring-gray-200"
     >
       <h1 className="text-lg font-semibold text-gray-900 mb-3">Quick setup guide</h1>
       <Image
@@ -107,11 +111,14 @@ export default function QuickSetupGuide({
         loading="lazy"
       />
 
-      <div className="w-full flex flex-wrap justify-between gap-2">
+      <div className="w-full grid grid-cols-3 gap-2">
         {ConfigSteps.map((card, idx) => (
           <div
             key={idx}
-            className="group relative bg-purple-100 flex-shrink-0 grow min-w-[220px] max-w-[300px] h-[280px] rounded-2xl overflow-hidden border border-gray-200 shadow"
+            className="group relative bg-purple-100 
+              flex-shrink-0 w-full
+              h-[240px] rounded-xl overflow-hidden ring
+              ring-gray-300 shadow"
           >
             <Image
               src="/Grid-Pattern.jpg"
@@ -121,10 +128,17 @@ export default function QuickSetupGuide({
               loading="lazy"
             />
             <div className={card.imagestyles}>
-              <Image src={card.image} alt="" width={120} height={120} quality={100} priority />
+              <Image 
+                src={card.image} 
+                alt="" 
+                width={120} 
+                height={120} 
+                quality={100} 
+                priority
+              />
             </div>
             <div className="absolute bottom-0 left-0 z-40 p-4 min-h-[120px] w-full flex flex-col justify-end space-y-2 bg-gradient-to-t from-white via-white">
-              <h1 className="font-semibold text-neutral-800">{card.title}</h1>
+              <h1 className="font-semibold text-neutral-700 text-sm">{card.title}</h1>
               <p className="text-xs text-gray-500">{card.description}</p>
 
               {isLoadingUserInfos ? (
@@ -132,14 +146,14 @@ export default function QuickSetupGuide({
               ) : card.iscompleted ? (
                 <button
                   disabled
-                  className={`px-2 text-[13px] py-1.5 flex items-center gap-1 w-max cursor-not-allowed ${PrimaryDark} text-white rounded-lg shadow-sm`}
+                  className={`flex items-center gap-1 cursor-not-allowed w-max ${PrimaryDark}`}
                 >
                   Completed <CircleCheckBig size={16} />
                 </button>
               ) : (
                 <Link
                   href={`/${userInfos ? (userInfos.UserRole === "seller" ? "seller" : "affiliate") : ""}/${card.link.href}`}
-                  className="rounded-lg px-2 py-1.5 w-max text-sm border border-gray-300 shadow-sm text-[13px] hover:bg-purple-50"
+                  className={`${PrimaryLight} w-max`}
                 >
                   {card.btntitle}
                 </Link>
@@ -154,7 +168,10 @@ export default function QuickSetupGuide({
         <div className="w-full">
           <div className="rounded-full border border-neutral-200 bg-neutral-100">
             <span
-              className="relative flex h-2 rounded-full bg-black transition-all duration-1000 ease-out after:absolute after:right-0 after:-top-1 after:w-4 after:h-4 after:rounded-full after:bg-black after:shadow"
+              className="relative flex h-2 rounded-full bg-purple-600 
+                transition-all duration-1000 ease-out after:absolute 
+                after:right-0 after:-top-1 after:w-4 after:h-4 
+                after:rounded-full after:bg-purple-600 after:shadow"
               style={{ width: animatedWidth }}
             />
           </div>

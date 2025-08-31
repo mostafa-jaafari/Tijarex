@@ -1,12 +1,12 @@
 "use client";
-import { ArrowRightLeft, Bell, ChevronDown, ChevronsUpDown, CreditCard, DollarSign, FileClock, LogOut, Warehouse } from "lucide-react";
+import { ArrowRightLeft, Bell, ChevronDown, ChevronsUpDown, CreditCard, DollarSign, FileClock, LogOut, Wallet, Warehouse } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LayoutDashboard, Package, ShoppingCart, RotateCcw } from "lucide-react";
 import { useUserInfos } from "@/context/UserInfosContext";
-import { PrimaryPurple } from "@/app/[locale]/page";
+import { PrimaryLight } from "@/app/[locale]/page";
 
 
 export function PrivateHeader(){
@@ -79,7 +79,7 @@ export function PrivateHeader(){
         <section
             className="sticky top-0 w-full flex items-center 
                 justify-between bg-[#1A1A1A] shadow
-                z-50 py-2.5 px-6 borderb border-gray-200"
+                z-50 py-1 px-6 borderb border-gray-200"
         >
             {/* --- Logo --- */}
             <Link href={userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"} className="flex items-center gap-2">
@@ -103,16 +103,21 @@ export function PrivateHeader(){
             >
                 <button
                     onClick={() => setIsBalanceOpen(!isBalanceOpen)}
-                    className={`p-2 font-semibold
+                    className={`px-2 py-1.5 font-semibold
                         flex items-center gap-3 rounded-lg
                         border border-neutral-700 bg-neutral-800
                         hover:bg-neutral-900 text-white
                         cursor-pointer transition-colors
                         `}
                 >
-                    <DollarSign 
-                        size={18} 
-                        className="text-purple-600"/> {isLoadingUserInfos ? (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>) : userInfos?.totalbalance} Dh <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
+                    <Wallet 
+                        size={20} 
+                        className="text-green-600"
+                    /> 
+                    {isLoadingUserInfos ? 
+                        (<span className="w-14 h-4 rounded-full flex bg-green-700/50 animate-pulse"/>)
+                        :
+                        <b className="text-md">{userInfos?.totalbalance || 0} Dh</b>} <ChevronDown size={16} className={`text-gray-400 ${isBalanceOpen && "rotate-180 transition-all duration-200 ease-in"}`} />
                 </button>
                 <div 
                     className={`absolute overflow-hidden right-0 
@@ -157,7 +162,7 @@ export function PrivateHeader(){
                             </span>
                             <span
                                 className={`text-white h-max flex rounded-lg 
-                                    shadow p-2 ${PrimaryPurple}`}
+                                    shadow p-2 ${PrimaryLight}`}
                             >
                                 <CreditCard size={24} />
                             </span>
@@ -216,16 +221,17 @@ export function PrivateHeader(){
                 {/* Bell Icon with Badge */}
                 <button
                     onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                    className="relative p-3 rounded-lg 
-                        hover:border-neutral-600 hover:bg-neutral-900 
-                        cursor-pointer border border-neutral-700"
+                    className="relative px-2 py-1.5
+                        rounded-lg
+                        border border-neutral-700 bg-neutral-800
+                        hover:bg-neutral-900 text-white
+                        cursor-pointer transition-colors"
                 >
                     <Bell 
                         size={20} 
-                        className="text-white"
                     />
                     <span 
-                        className="absolute top-1 right-1.5 text-neutral-800 
+                        className="absolute -top-0.5 right-0.5 text-neutral-800 
                             bg-white font-semibold text-xs rounded-full 
                             px-1"
                     >
@@ -287,7 +293,7 @@ export function PrivateHeader(){
                 </div>
             </div>
             <span 
-                className="border-r border-gray-200 h-6 flex"
+                className="border-r border-neutral-600 h-6 flex"
             />
             <div
                 ref={DropDownProfileRef}
@@ -295,23 +301,26 @@ export function PrivateHeader(){
             >
                 <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className="flex items-center gap-2 cursor-pointer 
-                        rounded-lg border hover:border-neutral-700 p-1.5
-                        border-transparent transition-colors"
+                    className="p-1.5 font-semibold
+                        flex items-center gap-3 rounded-lg
+                        border border-neutral-700 bg-neutral-800
+                        hover:bg-neutral-900 text-white
+                        cursor-pointer transition-colors"
                 >
                     <div
-                    className='relative w-8 h-8'
+                    className='relative w-7 h-7'
                     >
                         {(userInfos?.profileimage || session?.data?.user?.image) && (
                             <Image
                                 src={userInfos?.profileimage || session?.data?.user?.image as string}
                                 alt={userInfos?.fullname || "User avatar"}
                                 fill
-                                className="object-cover overflow-hidden rounded-lg ring-2 border border-neutral-800 ring-green-500"
+                                className="object-cover overflow-hidden rounded-full 
+                                    ring-2 border-2 border-neutral-900 ring-purple-600"
                             />
                             )}
                         <span
-                            className="absolute w-3 h-3 rounded-full bg-green-500 right-0 bottom-0 border-2 border-white"
+                            className="absolute w-2 h-2 rounded-full bg-green-500 right-0 bottom-0 border-1 border-white"
                         />
                     </div>
                     <span className="text-sm font-medium text-white">
@@ -347,7 +356,8 @@ export function PrivateHeader(){
                                     src={userInfos?.profileimage || session?.data?.user?.image || ""}
                                     alt={userInfos?.fullname || ""}
                                     fill
-                                    className="object-cover overflow-hidden rounded-full ring-2 border border-neutral-800 ring-green-500"
+                                    className="object-cover overflow-hidden rounded-full 
+                                        ring-2 border-2 border-2-800 ring-purple-600"
                                 />
                                 <span
                                     className="absolute w-3 h-3 rounded-full bg-green-500 right-0 bottom-0 border-2 border-white"

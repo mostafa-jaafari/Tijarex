@@ -60,8 +60,8 @@ export const ControlsPanel = ({
                     {/* Filters Button */}
                     <button
                         onClick={onFilterToggle}
-                        className={`flex items-center gap-2 px-4 cursor-pointer 
-                            py-2 rounded-lg ring ring-neutral-300 border-b 
+                        className={`flex items-center gap-2 py-1.5 px-4 cursor-pointer 
+                            rounded-lg ring ring-neutral-300 border-b 
                             text-neutral-700 border-neutral-500 text-sm
                             ${showFilters 
                                 ? "bg-white hover:bg-neutral-50 border-gray-300" 
@@ -81,30 +81,28 @@ export const ControlsPanel = ({
                     </button>
 
                     {/* View Mode Switcher */}
-                    <div className="flex items-center bg-gray-100 rounded-lg p-1">
-                        <button 
-                            onClick={() => onViewModeChange('grid')}
-                            className={`flex items-center gap-2 px-4 cursor-pointer 
-                                py-2 rounded-lg ring ring-neutral-300 border-b 
-                                text-neutral-700 border-neutral-500 text-sm 
-                                ${viewMode === 'grid' 
-                                    ? 'bg-black text-white' 
-                                    : 'text-gray-500 hover:text-black'
-                            }`}
-                            aria-label="Grid view"
-                        >
-                            <Grid3X3 size={20} />
-                        </button>
+                    <div className="flex items-center">
                         <button 
                             onClick={() => onViewModeChange('table')} 
-                            className={`p-2 rounded-md transition-colors ${
+                            className={`p-1.5 rounded-lg transition-colors ${
                                 viewMode === 'table' 
-                                    ? 'bg-black text-white' 
-                                    : 'text-gray-500 hover:text-black'
+                                    ? 'bg-black text-neutral-200 cursor-normal' 
+                                    : 'text-gray-500 hover:text-black cursor-pointer'
                             }`}
                             aria-label="List view"
                         >
                             <List size={20} />
+                        </button>
+                        <button 
+                            onClick={() => onViewModeChange('grid')}
+                            className={`p-1.5 rounded-lg
+                                ${viewMode === 'grid' 
+                                    ? 'bg-black text-neutral-200 cursor-normal' 
+                                    : 'text-gray-500 hover:text-black cursor-pointer'
+                            }`}
+                            aria-label="Grid view"
+                        >
+                            <Grid3X3 size={20} />
                         </button>
                     </div>
                 </div>

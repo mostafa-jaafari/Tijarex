@@ -48,7 +48,7 @@ export const ResultsBar = ({ resultCount, totalCount, sortBy, onSortChange }: Re
     };
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between my-3 px-6 gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between my-3 gap-4">
             {/* Results count text */}
             <p className="text-sm text-gray-600">
                 Showing <span className="font-semibold text-neutral-800">{resultCount}</span> of <span className="font-semibold text-neutral-800">{totalCount}</span> results
@@ -66,11 +66,13 @@ export const ResultsBar = ({ resultCount, totalCount, sortBy, onSortChange }: Re
                     <button
                         type="button"
                         onClick={() => setIsOpen(!isOpen)}
-                        className="flex items-center justify-between w-full min-w-[200px] 
-                            px-3 py-2 bg-neutral-100
-                            rounded-lg text-sm text-neutral-800 focus:outline-none 
-                            ring ring-gray-300 focus:ring-neutral-400 focus:border-teal-500 
-                            transition-colors hover:bg-neutral-200 cursor-pointer"
+                        className={`flex items-center gap-2 py-1.5 px-6.5 cursor-pointer 
+                            rounded-lg ring ring-neutral-300 border-b 
+                            text-neutral-700 border-neutral-500 text-sm
+                            ${isOpen
+                                ? "bg-white hover:bg-neutral-50 border-gray-300" 
+                                : "bg-neutral-50 hover:bg-white border-gray-300"
+                            }`}
                         aria-haspopup="listbox"
                         aria-expanded={isOpen}
                     >
