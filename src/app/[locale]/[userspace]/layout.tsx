@@ -2,7 +2,7 @@ import { PrivateHeader } from '@/components/PrivateHeader';
 import { Sidebar } from '@/components/Sidebar';
 import React from 'react';
 
-export default function layout({ children, params }: { children: React.ReactNode; params: { locale: string; userspace: string } }) {
+export default function layout({ children }: { children: React.ReactNode; params: { locale: string; userspace: string } }) {
   return (
     <main
       // 1. Make the main container a vertical flexbox
