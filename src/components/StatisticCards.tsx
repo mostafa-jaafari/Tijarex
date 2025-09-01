@@ -1,5 +1,4 @@
 "use client";
-
 import { TrendingUp, TrendingDown } from "lucide-react";
 import CountUp from "./Animations/CountUp";
 import { useUserInfos } from "@/context/UserInfosContext";
@@ -82,7 +81,7 @@ export function StatisticCards() {
                             {card.title}
                         </h1>
                         {isLoadingUserInfos ? (
-                            <div className="w-24 h-8 bg-gray-300 rounded-lg shadow-sm animate-pulse mt-2" />
+                            <div className="w-24 h-6 bg-gray-200 rounded-lg shadow-sm animate-pulse mt-2" />
                         ) : (
                             <h1
                                 className="text-2xl font-bold text-gray-900 mt-1 flex items-center justify-between gap-2"

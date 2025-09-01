@@ -3,7 +3,7 @@ import React from 'react'
 import { AnimatedTrafficLine } from './Functions/AnimatedPercentageLine';
 import { ChevronDown } from 'lucide-react';
 
-export function TraficSourcesWidget() {
+export function TraficSourcesWidget({ isFinishSetup }: { isFinishSetup: boolean; }) {
   const trafficData = [
     {
       label: 'Instagram',
@@ -26,8 +26,17 @@ export function TraficSourcesWidget() {
       percentage: 25,
     },
   ];
+  // const totalPercentage = trafficData.reduce((sum, source) => sum + source.percentage, 0);
+  // // Normalize percentages to ensure they sum to 100%
+  // const normalizedTrafficData = trafficData.map(source => ({
+  //   ...source,
+  //   percentage: (source.percentage / totalPercentage) * 100,
+  // }));
   return (
-    <section className="grow p-4 rounded-xl bg-white ring ring-gray-200">
+    <section 
+      className={`p-4 rounded-xl bg-white ring ring-gray-200
+        ${isFinishSetup ? "h-87 min-w-1/2" : "grow"}`}
+    >
       
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">

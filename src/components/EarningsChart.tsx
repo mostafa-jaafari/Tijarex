@@ -7,6 +7,7 @@ import {
 import { TrendingUp, BarChart3, AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { format, subDays, subMonths } from 'date-fns';
+import { useUserInfos } from '@/context/UserInfosContext';
 
 // ============================================================================
 // Types & Configuration (Modernized with Purple Theme)
@@ -107,7 +108,7 @@ const generateChartData = (period: PeriodType): ChartDataItem[] => {
 // Main Chart Component (UI/UX Enhanced)
 // ============================================================================
 
-export const EarningsChart: React.FC = () => {
+export const EarningsChart = ({ isFinishSetup }: { isFinishSetup: boolean; }) => {
   // const t = useTranslations(); // Assuming 't' is your translation function
   const [period, setPeriod] = useState<PeriodType>('12M');
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
@@ -143,7 +144,10 @@ export const EarningsChart: React.FC = () => {
   }
 
   return (
-    <div className="w-full max-w-[650px] p-4 rounded-xl bg-white ring ring-gray-200">
+    <div 
+      className={`${isFinishSetup ? "w-full" : "max-w-[650px]"} p-4 rounded-xl 
+        bg-white ring ring-gray-200`}
+    >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5 border-b border-gray-100">
         <div className="flex items-center gap-3">

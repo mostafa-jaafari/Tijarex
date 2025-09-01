@@ -88,13 +88,14 @@ export default function QuickSetupGuide() {
 
   const [animatedWidth, setAnimatedWidth] = useState("2%");
 
+  const IsCompletedAllSteps = completedSteps === totalSteps;
   // trigger animation
   useEffect(() => {
     setAnimatedWidth(`${progressPercent}%`);
-    setIsFinishSetup(completedSteps === totalSteps);
-  }, [progressPercent, completedSteps, totalSteps, setIsFinishSetup]);
+    setIsFinishSetup(IsCompletedAllSteps);
+  }, [IsCompletedAllSteps, progressPercent, setIsFinishSetup]);
 
-  if (completedSteps === totalSteps) {
+  if (IsCompletedAllSteps) {
     return null;
   }
 
