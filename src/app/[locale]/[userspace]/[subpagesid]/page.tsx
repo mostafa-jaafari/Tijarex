@@ -1,26 +1,27 @@
-import OrdersPage from "./Pages/OrdersPage";
-import ProductsPage from "./Pages/ProductsPage";
-import { SingleProductPage } from "./Pages/SingleProductPage";
-import ProfilePage from "./Pages/ProfilePage";
-import AddBalance from "./Pages/AddBalance";
-import MyWithdraw from "./Pages/MyWithdraw";
-import MyStore from "./Pages/MyStore";
-import UploadProducts from "./Pages/UploadProducts";
-import FavoritesProductsPage from "./Pages/FavoritesProductsPage";
+import AddBalance from "@/components/Pages/AddBalance";
+import FavoritesProductsPage from "@/components/Pages/FavoritesProductsPage";
+import MyStore from "@/components/Pages/MyStore";
+import MyWithdraw from "@/components/Pages/MyWithdraw";
+import OrdersPage from "@/components/Pages/OrdersPage";
+import ProductsPage from "@/components/Pages/ProductsPage";
+import ProfilePage from "@/components/Pages/ProfilePage";
+import { SingleProductPage } from "@/components/Pages/SingleProductPage";
+import UploadProductPage from "@/components/Pages/UploadProducts";
+
 
 interface PageProps {
   params: Promise<{
-    sellerpageid: string;
+    subpagesid: string;
   }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function Page({ params, searchParams }: PageProps) {
+export default async function page({ params, searchParams }: PageProps) {
   // Await the params and searchParams as they are now Promises in Next.js 15
-  const { sellerpageid } = await params;
+  const { subpagesid } = await params;
   const resolvedSearchParams = await searchParams;
   
-  const PAGE_ID = sellerpageid;
+  const PAGE_ID = subpagesid;
 
   let TabRender;
 
@@ -41,7 +42,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       TabRender = <MyStore />;
       break;
     case "upload-products":
-      TabRender = <UploadProducts />;
+      TabRender = <UploadProductPage />;
       break;
     case "favorites":
       TabRender = <FavoritesProductsPage />;
@@ -63,7 +64,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <div
-      className="w-full min-h-screen bg-gray-100"
+      className="w-full min-h-screen bg-gray-100 pt-6 px-12"
     >
       {TabRender}
     </div>

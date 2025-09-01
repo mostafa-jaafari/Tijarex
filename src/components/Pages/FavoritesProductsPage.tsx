@@ -7,7 +7,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Heart, Home, ArrowLeft, ArrowRight, Box, BarChart2, Eye, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { BlackButtonStyles } from '@/components/PublicHeader';
+import { PrimaryDark } from '@/app/[locale]/page';
+
 
 // --- DATA TYPE (Ensure this matches your global ProductType) ---
 interface ProductType {
@@ -248,7 +249,7 @@ const EmptyState = () => (
                 className={`mt-6 inline-flex items-center gap-2 
                     px-6 py-2.5 rounded-lg 
                     font-semibold hover:from-black hover:to-black
-                    ${BlackButtonStyles}`}>
+                    ${PrimaryDark}`}>
                 <Home size={18} /> Discover Products
             </a>
         </Link>

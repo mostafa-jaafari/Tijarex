@@ -92,10 +92,8 @@ export function Sidebar() {
             href: "help",
         },
     ];
-// affiliatepageid
-    const AffiliagePageId = useParams().affiliatepageid || "affiliate";
-    const SellerPageId = useParams().sellerpageid || "seller";
-    const params = userInfos?.UserRole === "affiliate" ? AffiliagePageId || "affiliate" : SellerPageId || "seller";
+
+    const params = useParams().subpagesid || userInfos?.UserRole === "affiliate" ? "affiliate" : "seller";
     return (
         <aside className={`group
             ${isCollapsed ? 'w-16' : 'w-74'} 

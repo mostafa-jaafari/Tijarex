@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, Store } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, Store, User } from 'lucide-react';
 import { ProductType } from '@/types/product';
+import { PrimaryDark, PrimaryLight } from '@/app/[locale]/page';
 
 // --- Props for the UI Component ---
 interface ProductCardUIProps {
@@ -47,7 +48,7 @@ export const ProductCardUI = ({
             {/* --- Image Section --- */}
             <div 
                 className="relative w-full aspect-[4/3] rounded-lg 
-                    overflow-hidden bg-teal-100 border border-gray-100">
+                    overflow-hidden bg-purple-100 border border-gray-100">
                 <Link 
                     href={`/seller/products?p_id=${product.id}`} 
                     className="block w-full h-full">
@@ -72,19 +73,22 @@ export const ProductCardUI = ({
                 </Link>
 
                 {product.sales > 500 && (
-                    <p className='py-1 px-2 text-orange-400 rounded-full flex items-center gap-1 text-xs font-semibold bg-orange-900 shadow-sm absolute top-3 left-3'>
-                        <Flame size={16} className='fill-current' /> Hot Seller
+                    <p 
+                        className='py-0.5 px-2 text-orange-400 rounded-full 
+                            flex items-center gap-1 text-[12px] font-semibold
+                            bg-orange-900 shadow-sm absolute top-2 left-2'>
+                        <Flame size={14} className='fill-current' /> Hot Seller
                     </p>
                 )}
                 
                 <motion.button
                     onClick={onToggleFavorite} // Use prop
                     whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    className={`absolute top-3 right-3 w-9 h-9 flex 
+                    className={`absolute top-2 right-2 w-9 h-9 flex 
                         items-center justify-center rounded-full 
                         cursor-pointer backdrop-blur-sm
                         transition-colors duration-300 
-                        ${isFavorite ? 'bg-teal-600/80' : 'bg-black/20'}`}
+                        ${isFavorite ? 'bg-purple-600/80' : 'bg-black/20'}`}
                 >
                     <Heart className={`w-5 h-5 transition-all 
                             ${isFavorite ? 'fill-white text-white' : ' text-white'}`} />
@@ -96,16 +100,16 @@ export const ProductCardUI = ({
                         <AnimatePresence>
                            {isHovered && (
                                 <>
-                                    <motion.button onClick={(e) => handleImageNavigation(e, -1)} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white"> <ArrowLeft size={16} /> </motion.button>
-                                    <motion.button onClick={(e) => handleImageNavigation(e, 1)} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white"> <ArrowRight size={16} /> </motion.button>
+                                    <motion.button onClick={(e) => handleImageNavigation(e, -1)} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white cursor-pointer"> <ArrowLeft size={16} /> </motion.button>
+                                    <motion.button onClick={(e) => handleImageNavigation(e, 1)} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white cursor-pointer"> <ArrowRight size={16} /> </motion.button>
                                 </>
                             )}
                         </AnimatePresence>
                         {/* Image Dots */}
                         <div 
                             className={`absolute bottom-1 left-1/2 -translate-x-1/2 
-                                backdrop-blur-sm bg-teal-600/80 rounded-full 
-                                py-0.5 px-3 flex gap-1
+                                backdrop-blur-sm bg-transparent rounded-full 
+                                p-0.5 flex gap-1
                                 `}>
                             {product.product_images.map((_, i) => (
                                 <div 
@@ -114,9 +118,9 @@ export const ProductCardUI = ({
                                     className={`h-2 cursor-pointer rounded-full 
                                         transition-all duration-300 
                                         ${i === currentImage ?
-                                            'w-5 bg-white'
+                                            'w-5 bg-purple-600'
                                             :
-                                            'w-2 bg-white/40'}`} />
+                                            'w-2 bg-purple-600/40'}`} />
                             ))}
                         </div>
                     </>
@@ -125,15 +129,16 @@ export const ProductCardUI = ({
 
             {/* --- Content Section --- */}
             <div className="pt-3 px-1">
-                <h3 className="font-semibold text-neutral-800 truncate">
+                <h3 className="font-semibold text-neutral-700 truncate">
                     <Link href={`/seller/products?p_id=${product.id}`}>{product.title}</Link>
                 </h3>
                 <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-lg font-bold text-teal-600">{product.original_sale_price.toFixed(2)} {product.currency}</span>
+                    <span className="text-lg font-bold text-neutral-700">{product.original_sale_price.toFixed(2)} {product.currency}</span>
                     {product.original_regular_price > product.original_sale_price && <span className="text-sm text-gray-400 line-through">{product.original_regular_price.toFixed(2)} {product.currency}</span>}
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-x-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2"><BarChart2 size={16} className="text-gray-400" /><div><div className="font-semibold">{product.sales.toLocaleString()}</div><div className="text-xs text-gray-400">Sales</div></div></div>
+                    <div className="flex items-center gap-2"><User size={16} className="text-gray-400" /><div><div className="font-semibold">15</div><div className="text-xs text-gray-400">Affiliate</div></div></div>
                     <div className="flex items-center gap-2"><Box size={16} className="text-gray-400" /><div><div className="font-semibold">{product.stock.toLocaleString()}</div><div className="text-xs text-gray-400">Stock</div></div></div>
                 </div>
 
@@ -146,11 +151,15 @@ export const ProductCardUI = ({
                         className="flex items-center gap-2"
                     >
                         {isAffiliate && ( // Use prop
-                            <button onClick={onAddToStore} className={`cursor-pointer w-full py-2.5 text-white rounded-lg flex justify-center items-center gap-2 text-sm font-semibold transition-colors`}>
+                            <button 
+                                onClick={onAddToStore} 
+                                className={`${PrimaryDark} w-full flex justify-center gap-3 py-2 cursor-pointer`}>
                                 Drop to <Store size={16} />
                             </button>
                         )}
-                        <button onClick={onQuickView} className="border border-gray-200 cursor-pointer shadow-sm grow flex justify-center p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
+                        <button 
+                            onClick={onQuickView} 
+                            className={`${PrimaryLight} px-2.5 py-2.5`}>
                             <Eye size={16} />
                         </button>
                     </motion.div>

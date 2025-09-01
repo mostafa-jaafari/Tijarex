@@ -5,7 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface CustomDropdownProps {
-    label: string;
+    label?: string;
     options: string[];
     selectedValue: string;
     onSelect: (value: string) => void;
@@ -36,28 +36,36 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
     };
 
     return (
-        <div className="relative w-full" ref={dropdownRef}>
-            <label className="block text-sm font-medium text-gray-400 mb-1.5">
+        <div 
+            ref={dropdownRef}
+            className="relative"
+        >
+            <label className="block text-sm font-medium text-gray-400">
                 {label}
             </label>
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full px-3 
-                    py-2.5 bg-neutral-800 border border-neutral-700 
-                    rounded-lg text-sm text-neutral-200 
-                    focus:outline-none focus:ring focus:ring-neutral-100 
-                    focus:border-neutral-500 transition-colors 
-                    hover:bg-neutral-700
-                    cursor-pointer"
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
+                className="border-b border-neutral-400/80 shadow-sm ring 
+                    ring-neutral-200 rounded text-sm text-neutral-700 
+                    cursor-pointer hover:bg-neutral-50 flex items-center 
+                    gap-3 px-3 bg-white"
             >
-                <span>{selectedValue}</span>
-                <ChevronDown
-                    size={16}
-                    className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-                />
+                <span className='text-nowrap'>{selectedValue}</span>
+                <span className='border-r border-neutral-300 flex w-1 h-8' />
+                <span
+                    className=''
+                >
+                    <ChevronDown
+                        size={16}
+                        className={`text-gray-400 transition-transform 
+                            duration-200 
+                            ${isOpen ? 'rotate-180' : ''}
+                        `}
+                    />
+                </span>
             </button>
 
             <AnimatePresence>
@@ -67,7 +75,10 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute top-full left-0 w-full mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-xl z-10 overflow-hidden"
+                        className="absolute top-full left-0 w-max mt-1
+                            bg-neutral-50 border-b border-neutral-400 
+                            ring ring-neutral-200 shadow-sm 
+                            rounded z-10 overflow-hidden"
                     >
                         <ul className="max-h-60 overflow-y-auto" role="listbox">
                             {options.map((option) => (
@@ -75,10 +86,11 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
                                     <button
                                         type="button"
                                         onClick={() => handleSelect(option)}
-                                        className={`w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors 
+                                        className={`w-full cursor-pointer text-left px-6 py-2 
+                                            text-sm transition-colors 
                                             ${selectedValue === option
-                                                ? 'bg-neutral-600 text-white'
-                                                : 'text-neutral-200 hover:bg-neutral-600 hover:text-white'
+                                                ? 'bg-neutral-900 text-white'
+                                                : 'text-neutral-500 hover:text-neutral-900'
                                         }`}
                                         role="option"
                                         aria-selected={selectedValue === option}
