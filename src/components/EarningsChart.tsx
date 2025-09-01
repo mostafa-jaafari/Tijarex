@@ -140,7 +140,7 @@ export const EarningsChart = ({ isFinishSetup }: { isFinishSetup: boolean; }) =>
   }, [chartData]);
   
   if (loading) {
-    return <ChartSkeleton />;
+    return <ChartSkeleton isFinishSetup />;
   }
 
   return (
@@ -285,8 +285,11 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label })
   return null;
 };
 
-const ChartSkeleton: React.FC = () => (
-    <div className="w-full max-w-[650px] p-4 rounded-xl bg-white ring ring-gray-200 animate-pulse">
+const ChartSkeleton = ({ isFinishSetup }: { isFinishSetup: boolean; }) => (
+    <div 
+      className={`${isFinishSetup ? "w-full" : "max-w-[650px]"} 
+        p-4 rounded-xl bg-white ring ring-gray-200 
+        animate-pulse`}>
     <div className="flex items-center justify-between p-5 border-b border-gray-100">
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 bg-gray-200 rounded-lg" />

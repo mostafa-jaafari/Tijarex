@@ -13,12 +13,18 @@ export type UserInfosType = {
     favoriteProductIds: string[];
     storeTemplateId?: string;
     // --- Affiliate Statistics Cards ---
-    totalcommissions?: number;
-    totalclicks?: number;
-    conversionrate?: number;
-    totalrevenue?: number;
-    // --- Seller Statistics Cards ---
     totalsales?: number;
+    NumberOfClicks?: number;
+    conversionrate?: number;
+    TotalCommissionEarned?: number;
+    TrafficSources?: { source: string; value: number }[];
+    earnings?: {
+        date?: Date;
+        primary?: number;
+        secondary?: number;
+    }[],
+    // --- Seller Statistics Cards ---
+    // totalsales?: number;
     netearnings?: number;
     activeproducts?: number;
 };

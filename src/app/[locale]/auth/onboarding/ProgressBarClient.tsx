@@ -9,8 +9,8 @@ import Head from 'next/head';
 import React, { ChangeEvent, useState, FC, ReactNode } from 'react';
 import { toast } from 'sonner';
 import { AnimatePresence, motion } from 'framer-motion';
-import { WhiteButtonStyles } from '@/components/PublicHeader';
 import { useRouter } from 'next/navigation';
+import { PrimaryLight } from '../../page';
 
 // --- TYPE DEFINITIONS for enhanced type safety ---
 interface IStep {
@@ -89,10 +89,16 @@ export function ProgressBarClient() {
                 }
               : selectedRole === "affiliate"
               ? {
-                  totalcommissions: 0,
-                  totalclicks: 0,
-                  conversionrate: 0,
-                  totalrevenue: 0,
+                  totalsales: 0,
+                  NumberOfClicks: 0,
+                  ConversionRate: 0,
+                  TotalCommissionEarned: 0,
+                  TrafficSources: [] as { source: string; value: number }[],
+                  earnings: [] as {
+                    date: Date;        // التاريخ (Firestore Timestamp أو JS Date)
+                    primary: number;   // أرباح Q3-Q4
+                    secondary: number; // أرباح Q1-Q2
+                  }[],
                 }
               : {}),
         });
@@ -232,7 +238,7 @@ export function ProgressBarClient() {
                 onClick={handleNext} 
                 className={`px-6 py-1 font-semibold ring ring-gray-200
                   focus:ring-2 rounded-lg
-                  ${WhiteButtonStyles}`}>
+                  ${PrimaryLight}`}>
                 {currentStep === 3 ? "Finish" : "Next"}
               </button>
             </div>

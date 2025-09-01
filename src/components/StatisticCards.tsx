@@ -1,19 +1,18 @@
 "use client";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import CountUp from "./Animations/CountUp";
-import { useUserInfos } from "@/context/UserInfosContext";
+import { type UserInfosType } from "@/types/userinfos";
 
-export function StatisticCards() {
-    const { isLoadingUserInfos, userInfos } = useUserInfos();
+export function StatisticCards({ isLoadingUserInfos, userInfos }: { isLoadingUserInfos: boolean; userInfos: UserInfosType | null;}) {
     const Affiliate_Cards = [
         {
-            count: userInfos?.totalcommissions || 0,
+            count: userInfos?.totalsales || 0,
             percent: 15,
             isPositive: true,
             title: "Total Sales",
         },
         {
-            count: userInfos?.totalclicks || 0,
+            count: userInfos?.NumberOfClicks || 0,
             percent: null,
             isPositive: null,
             title: "Number of Clicks",
@@ -25,7 +24,7 @@ export function StatisticCards() {
             title: "Conversion Rate",
         },
         {
-            count: userInfos?.totalrevenue || 0,
+            count: userInfos?.TotalCommissionEarned || 0,
             percent: 8,
             isPositive: false,
             title: "Total Commission Earned",
@@ -98,7 +97,7 @@ export function StatisticCards() {
                             <h1
                                 className="text-2xl font-bold text-gray-900 mt-1 flex items-center justify-between gap-2"
                             >
-                                <CountUp from={0} to={100} duration={1.5} />
+                                <CountUp from={0} to={card.count} duration={1.5} />
                                 {card.percent !== null && (
                                     <span
                                         className={`text-xs font-semibold flex items-center gap-1 

@@ -8,7 +8,7 @@ import { useUserInfos } from '@/context/UserInfosContext';
 import React from 'react'
 
 export default function ClientUserSpacePage({ UserSpaceParamsId }: { UserSpaceParamsId: string; }) {
-  const { isFinishSetup } = useUserInfos();
+  const { isFinishSetup, isLoadingUserInfos, userInfos } = useUserInfos();
   let UserSpaceRendered;
   switch (UserSpaceParamsId) {
     case "seller":
@@ -22,7 +22,10 @@ export default function ClientUserSpacePage({ UserSpaceParamsId }: { UserSpacePa
         >
           {/* --- Quick Setup Guide & Trends Products */}
           {isFinishSetup && (
-            <StatisticCards />
+            <StatisticCards
+                isLoadingUserInfos={isLoadingUserInfos}
+                userInfos={userInfos}
+            />
           )}
           <div
             className='w-full flex items-start gap-4'
@@ -31,19 +34,30 @@ export default function ClientUserSpacePage({ UserSpaceParamsId }: { UserSpacePa
                 <QuickSetupGuide />
             )}
             {isFinishSetup && (
-                <TraficSourcesWidget isFinishSetup={isFinishSetup} />
+                <TraficSourcesWidget 
+                    isFinishSetup={isFinishSetup}
+                    isLoadingUserInfos={isLoadingUserInfos}
+                    userInfos={userInfos}
+                />
             )}
             <PopularProductsWidget />
           </div>
           {!isFinishSetup && (
-            <StatisticCards />
+            <StatisticCards
+                isLoadingUserInfos={isLoadingUserInfos}
+                userInfos={userInfos}
+            />
           )}
           <div
             className='w-full flex items-start gap-4'
           >
             <EarningsChart isFinishSetup={isFinishSetup} />
             {!isFinishSetup && (
-                <TraficSourcesWidget isFinishSetup={isFinishSetup} />
+                <TraficSourcesWidget 
+                    isFinishSetup={isFinishSetup}
+                    isLoadingUserInfos={isLoadingUserInfos}
+                    userInfos={userInfos}
+                />
             )}
           </div>
         </section>

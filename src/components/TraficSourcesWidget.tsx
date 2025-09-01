@@ -2,36 +2,17 @@
 import React from 'react'
 import { AnimatedTrafficLine } from './Functions/AnimatedPercentageLine';
 import { ChevronDown } from 'lucide-react';
+import { type UserInfosType } from '@/types/userinfos';
 
-export function TraficSourcesWidget({ isFinishSetup }: { isFinishSetup: boolean; }) {
-  const trafficData = [
-    {
-      label: 'Instagram',
-      percentage: 50,
-    },
-    {
-      label: 'Facebook',
-      percentage: 25,
-    },
-    {
-      label: 'Instagram',
-      percentage: 50,
-    },
-    {
-      label: 'Facebook',
-      percentage: 25,
-    },
-    {
-      label: 'Others',
-      percentage: 25,
-    },
-  ];
-  // const totalPercentage = trafficData.reduce((sum, source) => sum + source.percentage, 0);
-  // // Normalize percentages to ensure they sum to 100%
-  // const normalizedTrafficData = trafficData.map(source => ({
-  //   ...source,
-  //   percentage: (source.percentage / totalPercentage) * 100,
-  // }));
+type TraficSourcesWidgetProps = { 
+  isFinishSetup: boolean; 
+  isLoadingUserInfos: boolean; 
+  userInfos: UserInfosType | null;
+}
+export function TraficSourcesWidget({ isFinishSetup, isLoadingUserInfos, userInfos }: TraficSourcesWidgetProps) {
+  
+  if(!userInfos) return null;
+  const trafficData = userInfos.TrafficSources && userInfos.TrafficSources.length > 0 ? userInfos.TrafficSources : [];
   return (
     <section 
       className={`p-4 rounded-xl bg-white ring ring-gray-200
@@ -48,13 +29,39 @@ export function TraficSourcesWidget({ isFinishSetup }: { isFinishSetup: boolean;
       
       {/* Animated Lines Container */}
       <div className="space-y-5">
-        {trafficData.map((source, index) => (
+        {trafficData.length > 0 ? trafficData.map((source, index) => (
           <AnimatedTrafficLine
             key={index}
-            label={source.label}
-            percentage={source.percentage}
+            label={source.source}
+            percentage={source.value}
           />
-        ))}
+        )) : (
+          isLoadingUserInfos ? (
+            <div className="space-y-4">
+              {Array(3).fill(0).map((_, idx) => (
+                <div key={idx} className="w-full">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="flex w-20 h-4 rounded-lg bg-neutral-200 animate-pulse"/>
+                    <span className="flex w-10 h-4 rounded-lg bg-neutral-200 animate-pulse"/>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                    <div className="bg-purple-600 h-1.5 rounded-full transition-all duration-1000 ease-out" style={{ width: '0%' }}>
+                      <span className='absolute -right-1 -top-1 bg-purple-600 rounded-full w-3 h-3'/>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              className='w-full flex justify-center py-12'
+            >
+              <p className="text-sm text-gray-500">
+                No traffic source data available yet.
+              </p>
+            </div>
+          )
+        )}
       </div>
     </section>
   )
