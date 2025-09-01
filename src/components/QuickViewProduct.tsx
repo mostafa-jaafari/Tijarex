@@ -1,308 +1,271 @@
 "use client";
 
+import { PrimaryDark, PrimaryLight } from "@/app/[locale]/page";
 import { useQuickViewProduct } from "@/context/QuickViewProductContext";
 import { ProductType } from "@/types/product";
-import { BadgeCheck, Heart, ShoppingCart, Star } from "lucide-react";
+import { BadgeCheck, Heart, ShoppingCart, Star, X, Check, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { CalculateDiscount } from "./Functions/CalculateDiscount";
 
+// Helper function (assuming it exists elsewhere)
+const CalculateDiscount = (salePrice?: number, regularPrice?: number) => {
+    if (!salePrice || !regularPrice || regularPrice <= salePrice) return 0;
+    return Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+};
+
+// ============================================================================
+// Skeleton Loader Component for a Better UX
+// ============================================================================
+const QuickViewSkeleton = () => (
+    <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-pulse">
+        {/* Image Skeleton */}
+        <div className="space-y-3">
+            <div className="w-full aspect-square bg-gray-200 rounded-lg"></div>
+            <div className="grid grid-cols-5 gap-3">
+                <div className="w-full aspect-square bg-gray-200 rounded-md"></div>
+                <div className="w-full aspect-square bg-gray-200 rounded-md"></div>
+                <div className="w-full aspect-square bg-gray-200 rounded-md"></div>
+                <div className="w-full aspect-square bg-gray-200 rounded-md"></div>
+            </div>
+        </div>
+        {/* Details Skeleton */}
+        <div className="space-y-6">
+            <div className="space-y-3">
+                <div className="h-8 w-3/4 bg-gray-200 rounded-md"></div>
+                <div className="h-5 w-1/2 bg-gray-200 rounded-md"></div>
+            </div>
+            <div className="h-6 w-1/3 bg-gray-200 rounded-md"></div>
+            <div className="h-16 w-full bg-gray-200 rounded-md"></div>
+            <div className="flex gap-3">
+                <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+            </div>
+            <div className="h-12 w-full bg-gray-200 rounded-lg mt-4"></div>
+            <div className="h-12 w-full bg-gray-200 rounded-lg"></div>
+        </div>
+    </div>
+);
+
+
+// ============================================================================
+// Main QuickView Component
+// ============================================================================
 export function QuickViewProduct() {
     const { isShowQuickViewProduct, setIsShowQuickViewProduct, productID } = useQuickViewProduct();
-    const QVPRef = useRef<HTMLDivElement | null>(null);
-    const [isVisible, setIsVisible] = useState(false);
+    const modalRef = useRef<HTMLDivElement | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-
     const [selectedProductDetails, setSelectedProductDetails] = useState<ProductType | null>(null);
+    
+    // States for UI interaction
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [quantity, setQuantity] = useState(1);
+
+    // Fetch product details when the modal is opened
     useEffect(() => {
         const handleFetchProductDetails = async () => {
+            if (!productID) return;
             setIsLoading(true);
+            setSelectedProductDetails(null); // Clear previous product
             try {
-                const Res = await fetch("/api/products");
-                const { products } = await Res.json(); // نفك المفتاح الصحيح
-
-                // نتأكد إنها مصفوفة قبل البحث
+                const res = await fetch("/api/products"); // Replace with a specific product fetch if possible: `/api/products/${productID}`
+                const { products } = await res.json();
                 if (Array.isArray(products)) {
-                    const SelectedProduct = products.find(
-                        (product: ProductType) => product.id === productID
-                    );
-                    setSelectedProductDetails(SelectedProduct as ProductType);
-                } else {
-                    setSelectedProductDetails(null);
+                    const product = products.find((p: ProductType) => p.id === productID);
+                    setSelectedProductDetails(product || null);
+                    // Pre-select the first color
+                    if (product && product.colors.length > 0) {
+                        setSelectedColor(product.colors[0]);
+                    }
                 }
-            }catch (err) {
-                console.log(err)
-            }finally {
+            } catch (err) {
+                console.error("Failed to fetch product details:", err);
+            } finally {
                 setIsLoading(false);
             }
         };
 
-        if (productID) {
-            handleFetchProductDetails();
-        }
+        handleFetchProductDetails();
     }, [productID]);
 
-    // Sync context state with local animation state
+    // Handle closing modal on outside click
     useEffect(() => {
-        if (isShowQuickViewProduct) {
-            setIsVisible(true); // Show and start animation
-        } else {
-            // Delay unmount until animation ends
-            const timeout = setTimeout(() => setIsVisible(false), 300);
-            return () => clearTimeout(timeout);
-        }
-    }, [isShowQuickViewProduct]);
-
-    // Close when clicking outside
-    useEffect(() => {
-        const handleHideQVP = (e: MouseEvent) => {
-            if (QVPRef.current && !QVPRef.current.contains(e.target as Node)) {
+        const handleOutsideClick = (e: MouseEvent) => {
+            if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
                 setIsShowQuickViewProduct(false);
             }
         };
-        document.addEventListener("mousedown", handleHideQVP);
-        return () => document.removeEventListener("mousedown", handleHideQVP);
-    }, [setIsShowQuickViewProduct]);
-    
-    const [currentImage, setCurrentImage] = useState(0);
-    const [selectedColor, setSelectedColor] = useState("");
+        if (isShowQuickViewProduct) {
+            document.addEventListener("mousedown", handleOutsideClick);
+        }
+        return () => document.removeEventListener("mousedown", handleOutsideClick);
+    }, [isShowQuickViewProduct, setIsShowQuickViewProduct]);
 
-    if (!isVisible) return null;
+    // Reset state when modal closes
+    useEffect(() => {
+        if (!isShowQuickViewProduct) {
+            setCurrentImageIndex(0);
+            setQuantity(1);
+            setSelectedColor(null);
+        }
+    }, [isShowQuickViewProduct]);
+
+    if (!isShowQuickViewProduct) return null;
+
+    const productImages = selectedProductDetails?.product_images || [];
+    const productColors = selectedProductDetails?.colors || [];
 
     return (
-        <section
-            className={`fixed z-50 top-0 left-0 w-full h-screen 
-                bg-black/60 flex justify-center items-end 
-                transition-opacity duration-300
-                ${isShowQuickViewProduct ? 
-                    "opacity-100"
-                    :
-                    "opacity-0 pointer-events-none"}
-                `}
-        >
+        <section className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-center items-center p-4 transition-opacity duration-300">
             <div
-                ref={QVPRef}
-                className={`min-w-1/2 max-h-140 mb-12 overflow-auto 
-                    bg-gradient-to-bl from-white from-50% to-teal-50
-                    rounded-xl border border-gray-200 p-6 
-                    transition-all duration-300 transform
-                    ${isShowQuickViewProduct ?
-                        "scale-100 opacity-100"
-                        :
-                        "scale-95 opacity-0"}
-                    `}
+                ref={modalRef}
+                className={`relative w-full max-w-4xl max-h-[90vh] bg-white rounded-xl shadow-2xl p-6 md:p-8 overflow-y-auto transition-all duration-300 ${
+                    isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"
+                }`}
             >
-                {isShowQuickViewProduct && isLoading ? (
-                    <div className="h-[70vh] w-full flex justify-center items-center">
-                        <div 
-                            className="w-20 h-20 border-2 
-                                border-transparent border-t-current 
-                                rounded-full animate-spin"
-                        />
-                    </div>
-                )
-                :
-                (
-                <div className="w-full flex flex-shrink-0 items-start justify-between gap-2">
-                    <div className="w-[500px] space-y-3">
-                        <div 
-                            className="relative w-full h-[500px] rounded-xl 
-                                overflow-hidden border border-gray-200 bg-gray-50">
-                            <Image
-                                src={selectedProductDetails?.product_images[currentImage] || ""}
-                                alt=""
-                                fill
-                                className="object-cover"
-                                loading="lazy"
-                                quality={100}
-                            />
-                        </div>
-                        <div className="w-full grid grid-cols-6 gap-2">
-                            {selectedProductDetails?.product_images.map((pic, idx) => (
-                                <button
-                                    key={idx}
-                                    disabled={currentImage === idx}
-                                    onClick={() => setCurrentImage(idx)}
-                                    className={`relative w-full h-18 rounded-xl 
-                                        flex-shrink-0 overflow-hidden bg-gray-200
-                                        transition-all duration-300 border border-gray-200
-                                        ${currentImage === idx ? "ring-2 ring-black" : "hover:ring-2 ring-gray-400 cursor-pointer"}`}
-                                >
-                                    <Image
-                                        src={pic || ""}
-                                        alt=""
-                                        fill
-                                        className="object-cover"
-                                        loading="lazy"
-                                    />
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <div 
-                        className="w-[400px] min-h-40 border border-gray-200 
-                            p-3 rounded-xl space-y-4">
-                        <div className="flex items-center gap-2">
-                            <div 
-                                className="relative border border-gray-200 
-                                    w-10 h-10 rounded-full flex-shrink-0 bg-gray-50
-                                    overflow-hidden ring-2 ring-teal-600">
+                {/* Close Button */}
+                <button
+                    onClick={() => setIsShowQuickViewProduct(false)}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors z-10"
+                >
+                    <X size={24} />
+                </button>
+
+                {isLoading || !selectedProductDetails ? (
+                    <QuickViewSkeleton />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Left Side: Image Gallery */}
+                        <div className="flex flex-col gap-3">
+                            <div className="relative w-full aspect-square bg-gray-100 rounded-lg overflow-hidden">
                                 <Image
-                                    src={selectedProductDetails?.owner?.image || ""}
-                                    alt={selectedProductDetails?.owner?.name || ""}
+                                    src={productImages[currentImageIndex] || "/placeholder.png"}
+                                    alt={selectedProductDetails.title}
                                     fill
                                     className="object-cover"
-                                    quality={100}
-                                    loading="lazy"
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    priority
                                 />
                             </div>
-                            <span>
-                                <h1 className="flex items-center gap-1">
-                                    {selectedProductDetails?.owner?.name} <BadgeCheck className="text-teal-600" size={14} />
-                                </h1>
-                                <p className="text-gray-400 flex items-center gap-1 text-sm">
-                                    <Star size={12} className="fill-yellow-500 text-yellow-500" />
-                                    4.8 ● 234 reviews
-                                </p>
-                            </span>
+                            <div className="grid grid-cols-5 gap-3">
+                                {productImages.map((pic, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setCurrentImageIndex(idx)}
+                                        className={`relative w-full aspect-square rounded-md overflow-hidden transition-all duration-200 ${
+                                            currentImageIndex === idx ? "ring-2 ring-purple-600" : "hover:opacity-80"
+                                        }`}
+                                    >
+                                        <Image src={pic || "/placeholder.png"} alt={`Thumbnail ${idx + 1}`} fill className="object-cover" />
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                        <h1
-                            className="text-2xl font-semibold"
-                        >
-                            {selectedProductDetails?.title}
-                        </h1>
-                        <div
-                            className="flex items-center justify-between"
-                        >
-                            <span
-                                className="flex items-end gap-3"
-                            >
-                                <ins
-                                    className="no-underline text-xl text-gray-600"
-                                >
-                                    {selectedProductDetails?.original_sale_price} Dh
-                                </ins>
-                                <del
-                                    className="text-gray-400 text-sm"
-                                >
-                                    {selectedProductDetails?.original_regular_price} Dh
-                                </del>
-                            </span>
-                            <p
-                                className="text-sm uppercase text-teal-600 px-3"
-                            >
-                                {CalculateDiscount(selectedProductDetails?.original_sale_price, selectedProductDetails?.original_regular_price)}% off
-                            </p>
-                        </div>
-                        <div
-                            className="flex items-center gap-6"
-                        >
-                            <span
-                                className="flex items-center"
-                            >
-                                {Array(5).fill(0).map((_, idx) => {
-                                    if(!selectedProductDetails?.rating) return;
-                                    return (
-                                        <Star
-                                            key={idx}
+
+                        {/* Right Side: Product Details */}
+                        <div className="flex flex-col gap-4">
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">{selectedProductDetails.title}</h1>
+                                <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                                    <span>Sold by:</span>
+                                    <span className="font-semibold text-purple-600 flex items-center gap-1">
+                                        {selectedProductDetails.owner?.name} <BadgeCheck size={16} className="text-purple-600" />
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                <div className="flex items-baseline gap-2">
+                                    <ins className="text-2xl font-bold text-gray-800 no-underline">
+                                        {selectedProductDetails.original_sale_price} Dh
+                                    </ins>
+                                    <del className="text-gray-400">{selectedProductDetails.original_regular_price} Dh</del>
+                                </div>
+                                <div className="text-sm font-semibold text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                                    {CalculateDiscount(selectedProductDetails.original_sale_price, selectedProductDetails.original_regular_price)}% OFF
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 text-sm border-b pb-4">
+                                <div className="flex items-center text-yellow-500">
+                                    {Array(5).fill(0).map((_, idx) => (
+                                        <Star key={idx} size={16} className={idx < (selectedProductDetails.rating || 0) ? "fill-current" : "fill-gray-300"} />
+                                    ))}
+                                </div>
+                                <span className="text-gray-500">
+                                    {selectedProductDetails.rating?.toFixed(1)} ({selectedProductDetails.reviews?.length || 0} reviews)
+                                </span>
+                            </div>
+                            
+                            <p className="text-sm text-gray-600 leading-relaxed">{selectedProductDetails.description}</p>
+                            
+                            {productColors.length > 0 && (
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-semibold text-gray-800">Color: <span className="font-normal text-gray-600">{selectedColor}</span></h3>
+                                    <div className="flex items-center gap-3">
+                                        {productColors.map((col) => (
+                                            <button
+                                                key={col}
+                                                onClick={() => setSelectedColor(col)}
+                                                style={{ backgroundColor: col }}
+                                                className={`w-8 h-8 rounded-full border border-neutral-300 transition-all 
+                                                    duration-200 flex items-center justify-center
+                                                    ${selectedColor === col ? "ring-2 ring-offset-2 ring-purple-600 border-white" : "hover:border-gray-300"
+                                                }`}
+                                            >
+                                                {selectedColor === col && <Check size={16} className="text-white" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="flex items-center gap-4 mt-auto pt-4">
+                                <div 
+                                    className="flex items-center border-b border-gray-400 
+                                        ring ring-neutral-200 rounded-lg overflow-hidden">
+                                    <button 
+                                        onClick={() => setQuantity(q => Math.max(1, q - 1))} 
+                                        className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
+                                    >
+                                        <Minus 
                                             size={16}
-                                            className={`
-                                                ${idx < selectedProductDetails?.rating ? "fill-yellow-500 text-yellow-500" : "text-yellow-500"}
-                                            `}
                                         />
-                                    )
-                                })}
-                            </span>
-                            <span
-                                className="text-gray-400"
-                            >
-                                {selectedProductDetails?.rating} ({Array.isArray(selectedProductDetails?.reviews) 
-                                    ? selectedProductDetails?.reviews.length 
-                                    : (selectedProductDetails?.reviews || 0)} reviews)
-                            </span>
-                        </div>
-                        <div
-                            className="space-y-1"
-                        >
-                            <h1
-                                className="text-lg"
-                            >
-                                Description
-                            </h1>
-                            <p
-                                className="text-sm text-gray-500"
-                            >
-                                {selectedProductDetails?.description}
-                            </p>
-                        </div>
-                        <div>
-                            <h1
-                                className="text-lg"
-                            >
-                                Tags
-                            </h1>
-                            <div
-                                className="flex items-center gap-3 py-3"
-                            >
-                                {selectedProductDetails?.colors.map((col, idx) => {
-                                    const selectedcol = selectedColor === "" ? selectedProductDetails?.colors[0] : selectedColor;
-                                    return (
-                                        <span 
-                                            key={idx}
-                                            onClick={() => setSelectedColor(col)}
-                                            style={{ backgroundColor: col }}
-                                            className={`flex transition-all duration-200 
-                                                w-6 h-6 rounded-full
-                                                ${selectedcol === col ? "ring-2 border border-gray-200 ring-teal-600" : "cursor-pointer"}`}
+                                    </button>
+                                    <span className="px-4 font-semibold">{quantity}</span>
+                                    <button 
+                                        onClick={() => setQuantity(q => q + 1)} 
+                                        className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
+                                    >
+                                        <Plus 
+                                            size={16}
                                         />
-                                    )
-                                })}
+                                    </button>
+                                </div>
+                                <button 
+                                    className={`flex-1 flex items-center justify-center 
+                                        gap-2 cursor-pointer text-purple-100
+                                        hover:border-purple-500 text-sm
+                                        border-b border-purple-900 ring ring-purple-600
+                                        py-2 rounded-lg bg-gradient-to-r 
+                                        from-purple-600 via-purple-500 to-purple-600
+                                        transition-all duration-200`}
+                                >
+                                    <ShoppingCart size={18} /> Add to Cart
+                                </button>
                             </div>
-                        </div>
-                        <div>
-                            <h1
-                                className="text-lg"
+                            
+                            <button 
+                                className={`w-full flex items-center justify-center 
+                                    gap-2 ${PrimaryLight} py-2 hover:bg-neutral-50
+                                    transition-colors`}
                             >
-                                Quantity
-                            </h1>
-                            <div
-                                className="flex gap-3 items-center text-lg py-3"
-                            >
-                                <button
-                                    className="px-6 bg-gray-50 border 
-                                        border-transparent cursor-pointer 
-                                        hover:border-gray-200 rounded-lg 
-                                        transition-all duration-200 text-xl"
-                                >-</button>
-                                <span>1</span>
-                                <button
-                                    className="px-6 bg-gray-50 border 
-                                        border-transparent cursor-pointer 
-                                        hover:border-gray-200 rounded-lg 
-                                        transition-all duration-200 text-xl"
-                                >+</button>
-                            </div>
-                        </div>
-                        <div
-                            className="w-full flex flex-col items-center gap-2"
-                        >
-                            <button
-                                className={`w-full flex justify-center items-center 
-                                    gap-1 py-2 rounded-lg font-semibold`}
-                            >
-                                <ShoppingCart size={16} /> Add to Cart
-                            </button>
-                            <button
-                                className={`w-full flex justify-center 
-                                    items-center gap-1 py-2 rounded-lg
-                                    ring ring-gray-300 font-semibold`}
-                            >
-                                <Heart size={16} /> Add to Wishlist
+                                <Heart size={18} /> Add to Wishlist
                             </button>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
             </div>
         </section>
     );

@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, Store, User } from 'lucide-react';
 import { ProductType } from '@/types/product';
 import { PrimaryDark, PrimaryLight } from '@/app/[locale]/page';
+import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 
 // --- Props for the UI Component ---
 interface ProductCardUIProps {
@@ -14,7 +15,6 @@ interface ProductCardUIProps {
     isFavorite: boolean;
     isAffiliate: boolean;
     onToggleFavorite: (e: React.MouseEvent) => void;
-    onQuickView: () => void;
     onAddToStore: () => void;
 }
 
@@ -23,7 +23,6 @@ export const ProductCardUI = ({
     isFavorite,
     isAffiliate,
     onToggleFavorite,
-    onQuickView,
     onAddToStore,
 }: ProductCardUIProps) => {
     // State that is purely for the UI can remain here
@@ -36,13 +35,19 @@ export const ProductCardUI = ({
         setCurrentImage((prev) => (prev + direction + product.product_images.length) % product.product_images.length);
     };
 
+    const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
+    const HandleShowQuickView = () => {
+        setProductID(product.id as string || "");
+        setIsShowQuickViewProduct(true);
+    }
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="font-sans bg-white border border-gray-200 
-                rounded-lg overflow-hidden group p-3 transition-all 
-                duration-300 ease-in-out hover:shadow-xl 
+            className="font-sans bg-white border-b border-gray-400
+                ring ring-neutral-200 
+                rounded-lg overflow-hidden group p-1.5 transition-all 
+                duration-300 ease-in-out
                 hover:-translate-y-0.5"
         >
             {/* --- Image Section --- */}
@@ -158,7 +163,7 @@ export const ProductCardUI = ({
                             </button>
                         )}
                         <button 
-                            onClick={onQuickView} 
+                            onClick={HandleShowQuickView} 
                             className={`${PrimaryLight} px-2.5 py-2.5`}>
                             <Eye size={16} />
                         </button>

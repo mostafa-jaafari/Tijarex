@@ -48,8 +48,8 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
                 onClick={() => setIsOpen(!isOpen)}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
-                className="border-b border-neutral-400/80 shadow-sm ring 
-                    ring-neutral-200 rounded text-sm text-neutral-700 
+                className="border-b border-neutral-400/60 ring ring-neutral-200
+                    rounded text-sm text-neutral-700 
                     cursor-pointer hover:bg-neutral-50 flex items-center 
                     gap-3 px-3 bg-white"
             >
@@ -76,7 +76,7 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.15 }}
                         className="absolute top-full left-0 w-max mt-1
-                            bg-neutral-50 border-b border-neutral-400 
+                            bg-neutral-50 border-b border-neutral-400/80
                             ring ring-neutral-200 shadow-sm 
                             rounded z-10 overflow-hidden"
                     >
