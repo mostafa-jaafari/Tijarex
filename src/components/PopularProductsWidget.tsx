@@ -124,7 +124,7 @@ export function PopularProductsWidget() {
                             </div>
                         </div>
                     ))
-                ) : globalProductsData.length > 0 ? globalProductsData.map((product, idx) => (
+                ) : globalProductsData.map((product, idx) => (
                     Array(2).fill(0).map((_, index) => (
                         <WidgetCard 
                             key={index + idx}
@@ -136,13 +136,7 @@ export function PopularProductsWidget() {
                             productimage={product.product_images[0]}
                         />
                     ))
-                ))
-                :
-                <div
-                    className='w-full flex justify-center my-6 text-sm text-neutral-500'
-                >
-                    No Products founded !
-                </div>}
+                ))}
             </div>
         </section>
     )

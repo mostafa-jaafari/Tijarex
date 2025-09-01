@@ -66,8 +66,23 @@ export function StatisticCards() {
     // };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-            {Statistics_Cards.map((card, idx) => {
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+            {isLoadingUserInfos ? 
+                Array(4).fill(0).map((_, idx) => {
+                    return (
+                        <div
+                            key={idx}
+                            className="bg-white border border-gray-200
+                                space-y-4 rounded-xl px-6 py-4 
+                                transition-all duration-200"
+                        >
+                            <span className="flex w-30 h-4 rounded-lg bg-neutral-200 animate-pulse"/>
+                            <span className="flex w-18 h-6 rounded-lg bg-neutral-200 animate-pulse"/>
+                        </div>
+                    );
+                })
+            :
+            Statistics_Cards.map((card, idx) => {
                 return (
                     <div
                         key={idx}
@@ -80,9 +95,6 @@ export function StatisticCards() {
                         >
                             {card.title}
                         </h1>
-                        {isLoadingUserInfos ? (
-                            <div className="w-24 h-6 bg-gray-200 rounded-lg shadow-sm animate-pulse mt-2" />
-                        ) : (
                             <h1
                                 className="text-2xl font-bold text-gray-900 mt-1 flex items-center justify-between gap-2"
                             >
@@ -97,10 +109,9 @@ export function StatisticCards() {
                                     </span>
                                 )}
                             </h1>
-                        )}
                     </div>
                 );
             })}
-        </div>
+        </section>
     );
 }

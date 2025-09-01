@@ -31,7 +31,7 @@ export default function QuickSetupGuide() {
       image: "/create-account-avatar.png",
       imagestyles:
         "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
-      iscompleted: false,
+      iscompleted: true,
       link: {
         label: "Start your journey with us !",
         href: userInfos?.UserRole === "seller" ? "/seller" : "/affiliate",
@@ -74,7 +74,7 @@ export default function QuickSetupGuide() {
           iscompleted:
             // userInfos?.UserRole === "affiliate" ? affiliateProducts.length > 0 : false,
             true,
-          link: {
+            link: {
             label: "Start promoting products.",
             href: "products",
           },
