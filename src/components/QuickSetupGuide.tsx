@@ -101,7 +101,9 @@ export default function QuickSetupGuide() {
 
   return (
     <section
-      className="relative w-full max-w-[650px] p-4 rounded-xl bg-white ring ring-gray-200"
+      className="relative w-full max-w-[650px] 
+        border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
+        rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-6"
     >
       <h1 className="text-lg font-semibold text-gray-900 mb-3">Quick setup guide</h1>
       <Image
@@ -116,10 +118,10 @@ export default function QuickSetupGuide() {
         {ConfigSteps.map((card, idx) => (
           <div
             key={idx}
-            className="group relative bg-purple-100 
-              flex-shrink-0 w-full
-              h-[240px] rounded-xl overflow-hidden ring
-              ring-gray-300 shadow"
+            className="group relative flex-shrink-0 w-full h-[240px] 
+              border-b border-neutral-400/50 ring ring-neutral-200
+              rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
+              overflow-hidden bg-purple-100"
           >
             <Image
               src="/Grid-Pattern.jpg"
@@ -147,7 +149,8 @@ export default function QuickSetupGuide() {
               ) : card.iscompleted ? (
                 <button
                   disabled
-                  className={`flex items-center gap-1 cursor-not-allowed w-max ${PrimaryDark}`}
+                  className={`flex items-center gap-1 cursor-not-allowed 
+                      w-max ${PrimaryDark}`}
                 >
                   Completed <CircleCheckBig size={16} />
                 </button>

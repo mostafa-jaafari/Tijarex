@@ -15,7 +15,8 @@ export function TraficSourcesWidget({ isFinishSetup, isLoadingUserInfos, userInf
   const trafficData = userInfos.TrafficSources && userInfos.TrafficSources.length > 0 ? userInfos.TrafficSources : [];
   return (
     <section 
-      className={`p-4 rounded-xl bg-white ring ring-gray-200
+      className={`border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
+        rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-4
         ${isFinishSetup ? "h-87 min-w-1/2" : "grow"}`}
     >
       

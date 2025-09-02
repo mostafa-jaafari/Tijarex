@@ -73,8 +73,9 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage 
                     <Copy size={14} /> Get Affiliate Link
                 </button>
                 <button
-                    className='ring ring-neutral-300 border-b border-neutral-400 rounded-lg shadow 
-                        text-neutral-500 hover:ring-neutral-400 
+                    className='border-b border-neutral-400/50 ring 
+                        ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
+                        rounded-lg text-neutral-500 hover:ring-neutral-300 
                         cursor-pointer hover:text-neutral-700 px-2 py-2
                         transition-all duration-200'
                 >
@@ -90,7 +91,8 @@ export function PopularProductsWidget() {
     // const TrendingProducts = globalProductsData?.sort((a, b) => b.sales - a.sales).slice(0, 4) as ProductType[] || [];
     return (
         <section
-            className="grow p-4 rounded-xl bg-white ring ring-gray-200"
+            className="grow border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
+        rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-6"
         >
             <div
                 className='w-full flex items-start justify-between'
