@@ -4,10 +4,14 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, Store, User } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, User, Copy } from 'lucide-react';
 import { ProductType } from '@/types/product';
-import { PrimaryDark, PrimaryLight } from '@/app/[locale]/page';
+import { PrimaryLight } from '@/app/[locale]/page';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
+import { generateReferralLink } from '../Functions/GenerateUniqueRefLink';
+import { useUserInfos } from '@/context/UserInfosContext';
+import { toast } from 'sonner';
+
 
 // --- Props for the UI Component ---
 interface ProductCardUIProps {
@@ -23,8 +27,8 @@ export const ProductCardUI = ({
     isFavorite,
     isAffiliate,
     onToggleFavorite,
-    onAddToStore,
 }: ProductCardUIProps) => {
+    const { userInfos } = useUserInfos();
     // State that is purely for the UI can remain here
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
@@ -40,6 +44,35 @@ export const ProductCardUI = ({
         setProductID(product.id as string || "");
         setIsShowQuickViewProduct(true);
     }
+    const HandleGetRefLink = () => {
+        // 1. Directly get the unique ID from the userInfos context.
+        const affiliateId = userInfos?.uniqueuserid;
+        const productId = product?.id;
+
+        // 2. Add specific checks for both the affiliate and the product.
+        // This prevents generating a link for "unknown-affiliate".
+        if (!affiliateId) {
+            toast.error("Could not find affiliate ID. Please log in again.");
+            return;
+        }
+        
+        if (!productId) {
+            toast.error("Product information is missing.");
+            return;
+        }
+
+        // 3. Generate the short referral link.
+        const finalUrl = generateReferralLink(affiliateId, productId);
+
+        if (!finalUrl) {
+            toast.error("Could not generate the referral link.");
+            return;
+        }
+
+        // 4. Copy to clipboard and confirm.
+        navigator.clipboard.writeText(finalUrl);
+        toast.success("Short referral link copied!");
+    };
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
@@ -146,8 +179,6 @@ export const ProductCardUI = ({
                     <div className="flex items-center gap-2"><User size={16} className="text-gray-400" /><div><div className="font-semibold">15</div><div className="text-xs text-gray-400">Affiliate</div></div></div>
                     <div className="flex items-center gap-2"><Box size={16} className="text-gray-400" /><div><div className="font-semibold">{product.stock.toLocaleString()}</div><div className="text-xs text-gray-400">Stock</div></div></div>
                 </div>
-
-                {/* --- Action Area --- */}
                 <div className="group-hover:mt-3 h-0 group-hover:h-[44px] transition-all duration-200">
                     <motion.div
                         animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 5 }}
@@ -157,9 +188,11 @@ export const ProductCardUI = ({
                     >
                         {isAffiliate && ( // Use prop
                             <button 
-                                onClick={onAddToStore} 
-                                className={`${PrimaryDark} w-full flex justify-center gap-3 py-2 cursor-pointer`}>
-                                Drop to <Store size={16} />
+                                onClick={HandleGetRefLink} 
+                                className={`bg-neutral-900 hover:bg-neutral-900/90 
+                                    rounded-lg text-sm text-neutral-100
+                                    w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                                Get Link <Copy size={16} />
                             </button>
                         )}
                         <button 

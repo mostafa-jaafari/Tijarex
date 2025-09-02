@@ -7,7 +7,7 @@ import Link from 'next/link';
 import React from 'react'
 
 
-export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORIE, OWNER, STOCK }: ProductCardProps) {
+export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORY, OWNER, STOCK }: ProductCardProps) {
     const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
     const HandleQuickView = () => {
         setProductID(PRODUCTID as string || "");
@@ -66,25 +66,19 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
             <div
                 className='pt-2'
             >
-                <div>
-                    {PRODUCTCATEGORIE.slice(0, 1).map((cat, idx) => {
-                        return (
-                            <Link
-                                href={`/shop?cat=${cat.toLowerCase().replace(" ","")}`}
-                                key={idx}
-                                className='w-max text-gray-400 text-sm hover:text-black/80
-                                    cursor-pointer flex items-center gap-1'
-                            >
-                                <Tag size={14} />
-                                <p
-                                    className='lowercase'
-                                >
-                                    {PRODUCTCATEGORIE}
-                                </p>
-                            </Link>
-                        )
-                    })}
-                </div>
+                <Link
+                    href={`/shop?cat=${PRODUCTCATEGORY}`}
+                    className='w-max text-gray-400 text-sm hover:text-black/80
+                        cursor-pointer flex items-center gap-1'
+                >
+                    <Tag size={14} />
+                    <p
+                        className='lowercase'
+                    >
+                        {PRODUCTCATEGORY}
+                    </p>
+                </Link>
+            </div>
                 <h1
                     className='text-sm'
                 >
@@ -154,7 +148,6 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                         </h1>
                     </div>
                 )}
-            </div>
         </section>
     )
 }

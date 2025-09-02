@@ -3,6 +3,7 @@ import { type Timestamp } from "firebase/firestore";
 export type UserInfosType = {
     createdAt: Timestamp;
     email: string;
+    uniqueuserid: string;
     fullname: string;
     howyouheartaboutus?: string;
     isNewUser: boolean;

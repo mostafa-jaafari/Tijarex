@@ -72,6 +72,7 @@ export function ProgressBarClient() {
         await sendEmailVerification(userCredential.user);
         await setDoc(doc(db, "users", formInputs.emailadress), {
             fullname: formInputs.fullname,
+            uniqueuserid: userCredential.user.uid,
             phonenumber: formInputs.phonenumber,
             email: formInputs.emailadress,
             HowDidYouHearAboutUs: selectedHowDidYouHearAboutUs || 'skipped',

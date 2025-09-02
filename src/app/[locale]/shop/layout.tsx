@@ -1,6 +1,5 @@
 import Footer from '@/components/Footer'
-import { Header } from '@/components/PublicHeader'
-import { ShopFilter } from '@/components/ShopFilter'
+import { PublicHeader } from '@/components/PublicHeader'
 import React from 'react'
 
 export default function layout({ children }: { children: React.ReactNode }) {
@@ -8,17 +7,8 @@ export default function layout({ children }: { children: React.ReactNode }) {
     <main 
         className="w-full min-h-[200vh]
             bg-[#F1F1F1] flex flex-col">
-      <Header />
-
-      <section className="w-full flex flex-1 items-start">
-        <aside className="sticky top-14 p-2 h-full">
-          <ShopFilter />
-        </aside>
-
-        <div className="flex-1 py-2 pr-2">
-            {children}
-        </div>
-      </section>
+      <PublicHeader />
+      {children}
       <Footer />
     </main>
   )

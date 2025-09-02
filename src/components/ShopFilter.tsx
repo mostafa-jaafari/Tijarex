@@ -4,7 +4,6 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useState } from "react";
-import { DropDownSortBy } from "./DropDownSortBy";
 
 
 export function ShopFilter() {
@@ -122,7 +121,6 @@ export function ShopFilter() {
       </div>
 
       {/* --- Sorts --- */}
-        <DropDownSortBy onSelect={setSelectedSort} />
       {/* --- Apply Button --- */}
       <button 
         onClick={() => HandleApplyFilters()}

@@ -6,7 +6,7 @@ export type ReviewTypes = {
 }
 export type ProductType = {
   id: string;
-  category: string[];
+  category: string;
   product_images: string[];
   original_sale_price: number;
   original_regular_price: number;
@@ -42,12 +42,12 @@ export type AffiliateProduct = ProductType & {
 };
 
 export interface ProductCardProps{
-    PRODUCTIMAGES: string[];
+    PRODUCTIMAGES: string;
     PRODUCTID: string | number;
     PRODUCTTITLE: string;
     PRODUCTSALEPRICE: number;
     PRODUCTREGULARPRICE: number;
-    PRODUCTCATEGORIE: string[];
+    PRODUCTCATEGORY: string;
     OWNER?: {
         name: string;
         image: string;
@@ -62,7 +62,7 @@ export interface ProductType2 {
     name: string;
     isTrend?: boolean;
     product_images: string[];
-    category: string[];
+    category: string;
     sale_price: number;
     regular_price: number;
     commission?: number;

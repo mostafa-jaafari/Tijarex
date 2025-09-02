@@ -1,13 +1,13 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Search, PackageSearch } from "lucide-react";
 import { CustomDropdown } from "../UI/CustomDropdown";
 import { toast } from "sonner";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useGlobaleProducts } from "@/context/GlobalProductsContext";
-import { PackageSearch } from 'lucide-react'; // A nice icon for the empty state
+import { ProductType } from "@/types/product";
 
 // Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
@@ -22,24 +22,113 @@ const ProductCardSkeleton = () => (
 export default function ProductsPage() {
     const { userInfos } = useUserInfos();
     const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
-    
-    // --- FIX START ---
-    // State to track if this is the component's very first load cycle.
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+    // State for the currently displayed products
+    const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+    
+    // States for filter controls
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('All Categories');
+    const [selectedColor, setSelectedColor] = useState('All Colors');
+    const [selectedSize, setSelectedSize] = useState('All Sizes');
+    const [selectedPrice, setSelectedPrice] = useState('All Prices');
+    const [sortBy, setSortBy] = useState('Relevance');
+    
+    // --- Initial Load Handling ---
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
     useEffect(() => {
-        // When the global loading state from your hook becomes false,
-        // it means the initial data fetch has completed. We can now
-        // turn off our local initial load flag.
         if (!isLoadingGlobalProducts) {
             setIsInitialLoad(false);
         }
     }, [isLoadingGlobalProducts]);
-    
-    // Determine if we should show the loading state. This is true if it's the
-    // initial mount OR if a subsequent fetch (e.g., filtering) is in progress.
     const shouldShowLoading = isInitialLoad || isLoadingGlobalProducts;
-    // --- FIX END ---
+
+    // --- Generate Dynamic Filter Options ---
+    // Using useMemo to prevent recalculating these on every render
+    const categories = useMemo(() => {
+        if (!globalProductsData) return ['All Categories'];
+        const uniqueCategories = new Set(globalProductsData.map(p => p.category));
+        return ['All Categories', ...Array.from(uniqueCategories)];
+    }, [globalProductsData]);
+
+    const colors = useMemo(() => {
+        if (!globalProductsData) return ['All Colors'];
+        const allColors = globalProductsData.flatMap(p => p.colors || []);
+        const uniqueColors = new Set(allColors);
+        return ['All Colors', ...Array.from(uniqueColors)];
+    }, [globalProductsData]);
+
+    const sizes = useMemo(() => {
+        if (!globalProductsData) return ['All Sizes'];
+        const allSizes = globalProductsData.flatMap(p => p.sizes || []);
+        const uniqueSizes = new Set(allSizes);
+        return ['All Sizes', ...Array.from(uniqueSizes)];
+    }, [globalProductsData]);
+
+    const priceOptions = ['All Prices', 'Dh0 - Dh50', 'Dh50 - Dh100', 'Dh100 - Dh200', 'Dh200+'];
+    const sortOptions = ['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest'];
+
+
+    // --- Main Filtering and Sorting Logic ---
+    useEffect(() => {
+        let products = [...globalProductsData];
+
+        // 1. Search Filter (by title or category)
+        if (searchTerm) {
+            products = products.filter(p =>
+                p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                p.category.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        // 2. Category Filter
+        if (selectedCategory !== 'All Categories') {
+            products = products.filter(p => p.category === selectedCategory);
+        }
+
+        // 3. Color Filter
+        if (selectedColor !== 'All Colors') {
+            products = products.filter(p => p.colors && p.colors.includes(selectedColor));
+        }
+
+        // 4. Size Filter
+        if (selectedSize !== 'All Sizes') {
+            products = products.filter(p => p.sizes && p.sizes.includes(selectedSize));
+        }
+        
+        // 5. Price Filter
+        if (selectedPrice !== 'All Prices') {
+            products = products.filter(p => {
+                const price = p.original_sale_price;
+                if (selectedPrice === 'Dh0 - Dh50') return price >= 0 && price <= 50;
+                if (selectedPrice === 'Dh50 - Dh100') return price > 50 && price <= 100;
+                if (selectedPrice === 'Dh100 - Dh200') return price > 100 && price <= 200;
+                if (selectedPrice === 'Dh200+') return price > 200;
+                return true;
+            });
+        }
+
+        // 6. Sorting Logic
+        switch (sortBy) {
+            case 'Price: Low to High':
+                products.sort((a, b) => a.original_sale_price - b.original_sale_price);
+                break;
+            case 'Price: High to Low':
+                products.sort((a, b) => b.original_sale_price - a.original_sale_price);
+                break;
+            case 'Newest':
+                 products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                 break;
+            case 'Relevance':
+            default:
+                // Example: sort by number of sales. You can change this logic.
+                products.sort((a, b) => (b.sales || 0) - (a.sales || 0));
+                break;
+        }
+
+        setFilteredProducts(products);
+
+    }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, globalProductsData]);
     
     return (
         <section>
@@ -47,14 +136,19 @@ export default function ProductsPage() {
             <div className="w-full flex justify-center">
                 <div 
                     className="group bg-white flex gap-3 items-center px-3 
-                        grow max-w-[600px] min-w-[400px] border-b 
-                        border-gray-400/80 ring ring-neutral-200 
-                        rounded-lg shadow-sm">
+                        grow max-w-[600px] min-w-[400px]
+                        border-b border-neutral-400 ring ring-neutral-200 
+                        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
+                        rounded-lg 
+                        focus-within:ring-neutral-300">
                     <Search size={20} className="text-gray-400" />
                     <input 
                         type="text" 
                         placeholder="Search products by name, category..."
-                        className="grow rounded-lg outline-none py-2 text-sm"
+                        className="grow rounded-lg outline-none focus:py-3 
+                            transition-all duration-300 py-2 text-sm"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
             </div>
@@ -63,32 +157,32 @@ export default function ProductsPage() {
             <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-3">
                     <CustomDropdown
-                        options={["All Categories", "Electronics", "Apparel", "Books"]}
-                        selectedValue="All Categories"
-                        onSelect={(value) => toast.info(value)}
+                        options={categories}
+                        selectedValue={selectedCategory}
+                        onSelect={setSelectedCategory}
                     />
                     <CustomDropdown
-                        options={["All Categories", "Electronics", "Apparel", "Books"]}
-                        selectedValue="All Categories"
-                        onSelect={(value) => toast.info(value)}
+                        options={colors}
+                        selectedValue={selectedColor}
+                        onSelect={setSelectedColor}
                     />
                     <CustomDropdown
-                        options={["All Categories", "Electronics", "Apparel", "Books"]}
-                        selectedValue="All Categories"
-                        onSelect={(value) => toast.info(value)}
+                        options={sizes}
+                        selectedValue={selectedSize}
+                        onSelect={setSelectedSize}
                     />
-                    <CustomDropdown
-                        options={["All Categories", "Electronics", "Apparel", "Books"]}
-                        selectedValue="All Categories"
-                        onSelect={(value) => toast.info(value)}
+                     <CustomDropdown
+                        options={priceOptions}
+                        selectedValue={selectedPrice}
+                        onSelect={setSelectedPrice}
                     />
                 </div>
                 <div className="flex items-center gap-2">
                     <p className="text-nowrap text-sm text-gray-500">Sort by:</p>
                     <CustomDropdown
-                        options={["Relevance", "Price: Low to High", "Price: High to Low"]}
-                        selectedValue="Relevance"
-                        onSelect={(value) => toast.info(value)}
+                        options={sortOptions}
+                        selectedValue={sortBy}
+                        onSelect={setSortBy}
                     />
                 </div>
             </div>
@@ -102,15 +196,11 @@ export default function ProductsPage() {
                     md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
                 {shouldShowLoading ? (
-                    // Loading State: Show skeletons
-                    Array(8).fill(0).map((_, idx) => (
-                        <ProductCardSkeleton 
-                            key={idx}
-                        />
-                    ))
-                ) : globalProductsData.length > 0 ? (
-                    // Data Loaded and Available: Show products
-                    globalProductsData.map((product) => (
+                    // Loading State
+                    Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
+                ) : filteredProducts.length > 0 ? (
+                    // Data Loaded and Available
+                    filteredProducts.map((product) => (
                         <ProductCardUI
                             key={product.id}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
@@ -121,7 +211,7 @@ export default function ProductsPage() {
                         />
                     ))
                 ) : (
-                    // Data Loaded but Empty: Show empty state
+                    // Data Loaded but Empty
                     <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
                         <PackageSearch size={48} className="text-gray-400 mb-4" />
                         <h2 className="text-xl font-semibold text-gray-800">No Products Found</h2>
