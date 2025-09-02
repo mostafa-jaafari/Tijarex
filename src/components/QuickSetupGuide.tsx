@@ -8,21 +8,19 @@ import { useUserInfos } from '@/context/UserInfosContext';
 
 export default function QuickSetupGuide() {
   const { userInfos, isLoadingUserInfos, setIsFinishSetup } = useUserInfos();
-  // const [affiliateProducts, setAffiliateProducts] = useState<ProductType[]>([]);
-  // useEffect(() => {
-  //   async function fetchAffiliateProducts() {
-  //     if (userInfos?.UserRole === "affiliate") {
-  //       try {
-  //         const response = await fetch('/api/affiliate/affiliateproducts');
-  //         const data = await response.json();
-  //         setAffiliateProducts(data);
-  //       } catch (error) {
-  //         console.error("Error fetching affiliate products:", error);
-  //       }
-  //     }
-  //   }
-  //   fetchAffiliateProducts();
-  // }, [userInfos?.UserRole]);
+  const [isGetFirstProductAffiliateLink, setIsGetFirstProductAffiliateLink] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("isGetFirstProductAffiliateLink") === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const value = localStorage.getItem("isGetFirstProductAffiliateLink");
+      setIsGetFirstProductAffiliateLink(value === "true");
+    }
+  }, []);
   const ConfigSteps = [
     {
       title: "Create your account.",
@@ -65,15 +63,15 @@ export default function QuickSetupGuide() {
           },
         }
       : {
-          title: "Drop your First Product.",
-          description: "Find and promote products to start earning commissions.",
-          btntitle: "Find products",
+          title: "Claim Affiliate Link.",
+          description: "Begin affiliate journey with link.",
+          btntitle: "Claim products",
           image: "/First-Order.png",
           imagestyles:
             "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
           iscompleted:
             // userInfos?.UserRole === "affiliate" ? affiliateProducts.length > 0 : false,
-            true,
+            false,
             link: {
             label: "Start promoting products.",
             href: "products",
@@ -105,6 +103,7 @@ export default function QuickSetupGuide() {
         border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
         rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-6"
     >
+      {isGetFirstProductAffiliateLink ? "true" : "false"}
       <h1 className="text-lg font-semibold text-gray-900 mb-3">Quick setup guide</h1>
       <Image
         src="/Pattern-1.jpg"

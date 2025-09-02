@@ -6,6 +6,7 @@ import { BadgeCheck, Heart, ShoppingCart, Star, X, Check, Minus, Plus, Copy } fr
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { HandleGetRefLink } from "./Functions/GetAffiliateLink";
+import { useFirstAffiliateLink } from "@/context/FirstAffiliateLinkContext";
 
 // Helper function (assuming it exists elsewhere)
 const CalculateDiscount = (salePrice?: number, regularPrice?: number) => {
@@ -53,6 +54,7 @@ const QuickViewSkeleton = () => (
 // ============================================================================
 export function QuickViewProduct() {
     const { userInfos } = useUserInfos();
+    const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
     const { isShowQuickViewProduct, setIsShowQuickViewProduct, productID } = useQuickViewProduct();
     const modalRef = useRef<HTMLDivElement | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -318,7 +320,7 @@ export function QuickViewProduct() {
                             :
                             (
                                 <button
-                                    onClick={() => HandleGetRefLink(selectedProductDetails.id, userInfos.uniqueuserid)}
+                                    onClick={() => HandleGetRefLink(selectedProductDetails.id, userInfos.uniqueuserid, hasGottenFirstLink, markAsGotten)}
                                     className="w-full py-2.5 rounded-lg bg-neutral-800
                                         hover:bg-neutral-900 cursor-pointer
                                         text-neutral-200 border-b border-neutral-400 purple-400 

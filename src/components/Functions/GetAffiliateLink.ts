@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { generateReferralLink } from "./GenerateUniqueRefLink";
 
-export const HandleGetRefLink = (productid: string, uniqueuserid: string) => {
+export const HandleGetRefLink = (productid: string, uniqueuserid: string, hasGottenFirstLink: boolean, markAsGotten: () => void ) => {
         // 1. Directly get the unique ID from the userInfos context.
         const affiliateId = uniqueuserid;
 
@@ -27,5 +27,18 @@ export const HandleGetRefLink = (productid: string, uniqueuserid: string) => {
 
         // 4. Copy to clipboard and confirm.
         navigator.clipboard.writeText(finalUrl);
-        toast.success("Short referral link copied!");
+        // --- THIS IS THE NEW LOGIC ---
+    // Check if this is the user's first time getting a link
+    if (!hasGottenFirstLink) {
+      // If it is, call the central function to mark it as done
+      markAsGotten();
+      
+      // Optionally, show a special message for the first time!
+      toast.success("Congrats on getting your first affiliate link!", {
+        description: "It has been copied to your clipboard.",
+      });
+    } else {
+      // For all subsequent clicks, show a standard message
+      toast.success("Affiliate link copied to clipboard!");
+    }
 };

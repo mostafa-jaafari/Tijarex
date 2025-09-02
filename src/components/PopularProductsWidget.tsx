@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { HandleGetRefLink } from './Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
+import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
 
 interface WidgetCardProps {
     title?: string;
@@ -18,6 +19,7 @@ interface WidgetCardProps {
 }
 const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage, productid, UniqueUserId }: WidgetCardProps) => {
     const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
+    const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
     const HandleShowQuickView = (productid: string) => {
         setProductID(productid as string || "");
         setIsShowQuickViewProduct(true);
@@ -78,7 +80,7 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
                 className='flex items-center gap-1 p-2'
             >
                 <button 
-                    onClick={() => HandleGetRefLink(productid as string, UniqueUserId)}
+                    onClick={() => HandleGetRefLink(productid as string, UniqueUserId, hasGottenFirstLink, markAsGotten)}
                     className={`bg-neutral-900 hover:bg-neutral-900/90 
                         rounded-lg text-sm text-neutral-100
                         w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>

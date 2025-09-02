@@ -12,6 +12,7 @@ import { Metadata } from "next";
 import { QuickViewProductContextProvider } from "@/context/QuickViewProductContext";
 import { QuickViewProduct } from "@/components/QuickViewProduct";
 import { GlobalProductsProvider } from "@/context/GlobalProductsContext";
+import { FirstAffiliateLinkTrackerProvider } from "@/context/FirstAffiliateLinkContext";
 
 
 export const metadata: Metadata = {
@@ -55,18 +56,20 @@ export default async function RootLayout({
           ${inter.className} antialiased`}
           >
           <NextAuthSessionProvider>
-            <GlobalProductsProvider>
-              <QuickViewProductContextProvider>
-                  <UserInfosContextProvider>
-                    <Toaster position="top-center" />
-                    <NextIntlClientProvider locale={locale} messages={messages}>
-                      <QuickViewProduct />
-                        {children}
-                    </NextIntlClientProvider>
-                    <ScrollToTop />
-                  </UserInfosContextProvider>
-              </QuickViewProductContextProvider>
-            </GlobalProductsProvider>
+            <FirstAffiliateLinkTrackerProvider>
+              <GlobalProductsProvider>
+                <QuickViewProductContextProvider>
+                    <UserInfosContextProvider>
+                      <Toaster position="top-center" />
+                      <NextIntlClientProvider locale={locale} messages={messages}>
+                        <QuickViewProduct />
+                          {children}
+                      </NextIntlClientProvider>
+                      <ScrollToTop />
+                    </UserInfosContextProvider>
+                </QuickViewProductContextProvider>
+              </GlobalProductsProvider>
+            </FirstAffiliateLinkTrackerProvider>
           </NextAuthSessionProvider>
       </body>
     </html>

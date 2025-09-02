@@ -8,6 +8,7 @@ import { ProductType } from '@/types/product';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
+import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
 
 
 // --- Props for the UI Component ---
@@ -28,6 +29,7 @@ export const ProductCardUI = ({
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const { userInfos } = useUserInfos();
+    const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
 
     const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
         e.preventDefault();
@@ -155,7 +157,7 @@ export const ProductCardUI = ({
                     >
                         {isAffiliate && ( // Use prop
                             <button 
-                                onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string)} 
+                                onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
                                 className={`bg-neutral-900 hover:bg-neutral-900/90 
                                     rounded-lg text-sm text-neutral-100
                                     w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
