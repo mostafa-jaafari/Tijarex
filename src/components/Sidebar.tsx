@@ -14,11 +14,9 @@ import {
     Heart,
     Layout
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { SwitchLanguage } from "./SwitchLanguage";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { PrimaryDark } from "@/app/[locale]/page";
 
@@ -95,8 +93,8 @@ export function Sidebar() {
 
     const params = useParams().subpagesid || userInfos?.UserRole === "affiliate" ? "affiliate" : "seller";
     return (
-        <aside className={`group
-            ${isCollapsed ? 'w-16' : 'w-74'} 
+        <aside className={`group bg-neutral-50 border-r border-gray-200
+            ${isCollapsed ? 'w-16' : 'w-60 flex-shrink-0'} 
             h-screen pb-14 transition-all duration-300 
             flex flex-col sticky top-0 overflow-auto
         `}>
@@ -118,8 +116,8 @@ export function Sidebar() {
                             <h1 className="font-semibold text-gray-900">
                                 Tijarex
                             </h1>
-                            <p className="text-xs text-gray-500">
-                                Seller Portal
+                            <p className="text-xs text-gray-500 flex items-center gap-1">
+                                {isLoadingUserInfos ? <span className="flex w-11 h-2.5 rounded bg-neutral-200 animate-pulse"/> : userInfos && userInfos?.UserRole.charAt(0).toUpperCase() + userInfos?.UserRole.slice(1)} Portal
                             </p>
                         </div>
                     </div>
@@ -180,7 +178,7 @@ export function Sidebar() {
                                     href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${nav.href !== "seller" && nav.href !== "affiliate" ? nav.href : ""}`}
                                     key={idx}
                                     className={`
-                                        group flex items-center capitalize px-3 py-2 text-sm 
+                                        group text-sm flex items-center capitalize px-3 py-2 
                                             font-medium rounded-lg transition-colors
                                         ${isActive
                                             ? `bg-neutral-50 shadow shadow-neutral-600/20 text-neutral-700 font-semibold border-neutral-600 border-l-3` 
@@ -248,7 +246,7 @@ export function Sidebar() {
                 </div>
             </div>
 
-            {/* User Profile & Sign Out */}
+            {/* User Profile & Sign Out
             <div className="px-4">
                 {!isCollapsed && (
                     <div className="flex space-y-2 flex-col items-center">
@@ -262,34 +260,9 @@ export function Sidebar() {
                                     text-neutral-600 cursor-pointer"
                             />
                         </div>
-                        <div
-                            className="flex items-center gap-2 bg-gray-50 space-x-3 mb-3 p-2 rounded-lg"
-                        >
-                            <div className="relative flex-shrink-0 w-8 h-8 bg-gray-300 overflow-hidden rounded-full flex items-center justify-center">
-                                {userInfos?.profileimage ? (
-                                    <Image
-                                        src={userInfos?.profileimage}
-                                        alt={userInfos?.fullname}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    <span className="text-gray-600 font-medium text-sm">{userInfos?.fullname.slice(0 ,2).toUpperCase()}</span>
-                                )}
-                            </div>
-                            <div className="flex-1">
-                                <span className="text-sm font-medium text-gray-900">
-                                {isLoadingUserInfos ? (<span className="animate-pulse w-25 h-3 bg-gray-100 flex rounded"/>) : userInfos?.fullname}
-                            </span>
-                                <p className="text-xs text-gray-500">
-                                    {userInfos?.email}
-                                </p>
-
-                            </div>
-                        </div>
                     </div>
                 )}
-            </div>
+            </div> */}
         </aside>
     );
 }

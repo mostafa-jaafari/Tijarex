@@ -98,13 +98,15 @@ export default function ProductsPage() {
 
             {/* --- Products Grid --- */}
             <div 
-                className="w-full p-6 bg-white rounded-lg border-b 
-                    border-gray-400/80 ring ring-neutral-200 grid grid-cols-1 
-                    sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                className="w-full grid grid-cols-1 sm:grid-cols-2 
+                    md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
                 {shouldShowLoading ? (
                     // Loading State: Show skeletons
                     Array(8).fill(0).map((_, idx) => (
-                        <ProductCardSkeleton key={idx} />
+                        <ProductCardSkeleton 
+                            key={idx}
+                        />
                     ))
                 ) : globalProductsData.length > 0 ? (
                     // Data Loaded and Available: Show products

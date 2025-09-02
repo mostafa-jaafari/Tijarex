@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRightLeft, Bell, ChevronDown, ChevronsUpDown, CreditCard, DollarSign, FileClock, LogOut, Wallet, Warehouse } from "lucide-react";
+import { ArrowRightLeft, Bell, ChevronDown, ChevronsUpDown, CreditCard, FileClock, LogOut, Wallet, Warehouse } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
