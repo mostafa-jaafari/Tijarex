@@ -205,7 +205,6 @@ export default function ProductsPage() {
                             key={product.id}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
                             isFavorite={true} // Replace with real data
-                            onAddToStore={() => toast.success("Added to store")}
                             onToggleFavorite={() => toast.success("Toggled favorite")}
                             product={product}
                         />

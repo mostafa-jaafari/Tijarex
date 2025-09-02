@@ -18,7 +18,6 @@ interface ProductCardUIProps {
     isFavorite: boolean;
     isAffiliate: boolean;
     onToggleFavorite: (e: React.MouseEvent) => void;
-    onAddToStore: () => void;
 }
 
 export const ProductCardUI = ({
@@ -57,28 +56,25 @@ export const ProductCardUI = ({
             <div 
                 className="relative w-full aspect-[4/3] rounded-lg 
                     overflow-hidden bg-purple-100 border border-gray-100">
-                <Link 
-                    href={`/seller/products?p_id=${product.id}`} 
-                    className="block w-full h-full">
-                    <AnimatePresence initial={false}>
-                        <motion.div
-                            key={currentImage}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="absolute inset-0"
-                        >
-                            <Image
-                                src={product.product_images[currentImage]}
-                                alt={product.title}
-                                fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="object-cover w-full h-full"
-                            />
-                        </motion.div>
-                    </AnimatePresence>
-                </Link>
+                <AnimatePresence initial={false}>
+                    <motion.div
+                        key={currentImage}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="absolute inset-0"
+                    >
+                        <Image
+                            onClick={HandleShowQuickView}
+                            src={product.product_images[currentImage]}
+                            alt={product.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover w-full h-full cursor-pointer"
+                        />
+                    </motion.div>
+                </AnimatePresence>
 
                 {product.sales > 500 && (
                     <p 
@@ -137,8 +133,11 @@ export const ProductCardUI = ({
 
             {/* --- Content Section --- */}
             <div className="pt-3 px-1">
-                <h3 className="font-semibold text-neutral-700 truncate">
-                    <Link href={`/seller/products?p_id=${product.id}`}>{product.title}</Link>
+                <h3 
+                    onClick={HandleShowQuickView}
+                    className="font-semibold cursor-pointer w-max text-neutral-700 truncate"
+                >
+                    {product.title}
                 </h3>
                 <div className="flex items-baseline gap-2 mt-2">
                     <span className="text-lg font-bold text-neutral-700">{product.original_sale_price.toFixed(2)} {product.currency}</span>
@@ -165,11 +164,6 @@ export const ProductCardUI = ({
                                 Get Link <Copy size={16} />
                             </button>
                         )}
-                        <button 
-                            onClick={HandleShowQuickView} 
-                            className={`${PrimaryLight} px-2.5 py-2.5`}>
-                            <Eye size={16} />
-                        </button>
                     </motion.div>
                 </div>
             </div>
