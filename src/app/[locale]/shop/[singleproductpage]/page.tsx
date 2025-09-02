@@ -1,66 +1,53 @@
 import { Check, Star, Info } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers'; // <-- IMPORT a server-side function to read cookies
 import ProductImageGallery from '@/components/SingleProductPage/ProductImageGallery';
 import AddToCartButtons from '@/components/SingleProductPage/AddToCartButtons';
-import { ProductType } from '@/types/product';
-import { parseReferralUrl } from '@/components/Functions/GenerateUniqueRefLink';
+import { fetchProductById } from '@/components/SingleProductPage/fetchProductById';
 
-// The props for this page now include searchParams to read the URL query string
+// --- Helper function to decode referral links ---
+function parseReferralCode(referralCode: string) {
+  try {
+    const decodedAffiliateId = Buffer.from(referralCode, 'base64').toString('utf8');
+    if (!decodedAffiliateId) return null;
+    return { affiliateId: decodedAffiliateId };
+  } catch (error) {
+    console.error("Failed to parse referral code:", error);
+    return null;
+  }
+}
+// ---
+
 type ProductPageProps = {
   searchParams: {
-    ref?: string; // The 'ref' parameter is optional
+    ref?: string; // Affiliate ID from referral link
+    pid?: string; // Product ID from referral link (not used here)
   };
 };
 
-// The component is now async to handle props
 export default async function ProductPage({ searchParams }: ProductPageProps) {
 
-  // --- REFERRAL LINK LOGIC ---
-  const referralCode = searchParams.ref;
-  const affiliateInfo = referralCode ? parseReferralUrl(referralCode) : null;
+  // --- NEW REFERRAL LOGIC: READ FROM COOKIE ---
+  const cookieStore = cookies();
+  const referralCookie = (await cookieStore).get('referral_id');
+  const affiliateInfo = referralCookie ? parseReferralCode(referralCookie.value) : null;
   // ---
 
-  // --- FAKE PRODUCT DATA ---
-  // The page continues to use this hardcoded product object for display.
-  const selectedProduct: ProductType = {
-    id: 'prod-fake-12345',
-    title: 'Artisan Handcrafted Leather Wallet',
-    description: 'A timeless accessory, this wallet is handcrafted from premium full-grain leather that patinas beautifully over time. Its slim profile is designed for the modern minimalist, offering ample space without the bulk. Perfect for daily use or as a thoughtful gift.',
-    product_images: [
-      '/images/wallet-1.jpg',
-      '/images/wallet-2.jpg',
-      '/images/wallet-3.jpg',
-      '/images/wallet-4.jpg',
-    ],
-    original_regular_price: 75.00,
-    original_sale_price: 59.99,
-    stock: 150,
-    rating: 4.8,
-    reviews: new Array(128),
-    category: 'Accessories',
-    currency: 'USD',
-    sales: 432,
-    lastUpdated: new Date().toISOString(),
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString(),
-    sizes: ['One Size'],
-    colors: ['Cognac Brown', 'Matte Black'],
-    productrevenu: 25915.68,
-  };
-  // --- END OF FAKE PRODUCT DATA ---
+  // We get the product ID from the dynamic path, not a query param
+  if(!searchParams.pid) return;
+  const product = await fetchProductById(searchParams.pid);
 
-  const product = selectedProduct;
+  if (!product) {
+    notFound();
+  }
+
+  // The rest of your component remains the same
   const isOnSale = product.original_sale_price && product.original_regular_price > product.original_sale_price;
   const displayPrice = isOnSale ? product.original_sale_price : product.original_regular_price;
-  const highlights = [
-      "Made from 100% full-grain leather",
-      "Slim bifold design",
-      "Holds up to 8 cards and cash",
-      "Hand-stitched for durability"
-    ];
+  const highlights = [ "Made from 100% full-grain leather", "Slim bifold design", "Holds up to 8 cards and cash", "Hand-stitched for durability" ];
 
   return (
     <div className="bg-white">
-        hiiii
-        {referralCode}
       <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
           
@@ -68,8 +55,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
 
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
 
-            {/* --- REFERRAL BANNER --- */}
-            {/* This banner will ONLY show if a valid 'ref' is in the URL */}
+            {/* --- REFERRAL BANNER (now powered by the cookie) --- */}
             {affiliateInfo && (
                 <div className="mb-6 flex items-center gap-3 rounded-lg bg-blue-50 p-4 text-sm text-blue-700 border border-blue-200">
                     <Info className="h-5 w-5 flex-shrink-0" />
@@ -81,6 +67,8 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
             {/* --- END REFERRAL BANNER --- */}
 
             <h1 className="text-3xl font-bold tracking-tight text-neutral-700">{product.title}</h1>
+            
+            {/* ... rest of your JSX ... */}
 
             <div className="mt-3">
               <p className="text-3xl tracking-tight text-neutral-700">

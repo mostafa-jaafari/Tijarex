@@ -1,45 +1,24 @@
-/**
- * Generates a referral link with the affiliate and product IDs as clean query parameters.
- *
- * @param {string} affiliateId - The unique ID of the affiliate user (uniqueuserid).
- * @param {string} productId - The unique ID of the product.
- * @returns {string} The final, shareable referral URL.
-*/
-export function generateReferralLink(affiliateId: string, productId: string): string {
-  try {
-    if (!affiliateId || !productId) {
-      throw new Error("Affiliate ID and Product ID must be provided.");
-    }
+// In: @/components/Functions/GenerateUniqueRefLink.ts (or wherever you keep this function)
 
-    // 1. Define a base URL for a generic product landing page.
-    // This page will be responsible for reading the params and showing the correct product.
-    const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/product`;
-
-    // 2. Construct the final URL with unencoded query parameters.
-    // We use `ref` for the affiliate and `pid` (product ID) for the product.
-    const finalUrl = `${baseUrl}?ref=${affiliateId}&pid=${productId}`;
-
-    return finalUrl;
-
-  } catch (error) {
-    console.error("Error generating referral link:", error);
-    return ""; // Return an empty string on failure
-  }
+// Define the type for the searchParams object that Next.js provides
+type NextSearchParams = {
+  ref?: string;
+  pid?: string;
 }
 
 /**
- * Parses the URL's query parameters to get the affiliate and product IDs.
- * This is used on the landing page that receives the referral link.
+ * Parses the searchParams object from a Next.js page to get affiliate and product IDs.
  *
- * @param {URLSearchParams} searchParams - The searchParams object from Next.js page props.
+ * @param {NextSearchParams} searchParams - The plain searchParams object from page props.
  * @returns {{ affiliateId: string, productId: string } | null}
  */
-export function parseReferralUrl(searchParams: URLSearchParams) {
+export function parseReferralUrl(searchParams: NextSearchParams) {
   try {
-    const affiliateId = searchParams.get('ref');
-    const productId = searchParams.get('pid');
+    // Access properties directly from the object
+    const affiliateId = searchParams.ref;
+    const productId = searchParams.pid;
 
-    // If either the affiliate ID or product ID is missing, the link is invalid.
+    // If either ID is missing, the link is invalid.
     if (!affiliateId || !productId) {
       return null;
     }

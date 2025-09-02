@@ -1,12 +1,11 @@
-import { parseReferralUrl } from '@/components/Functions/GenerateUniqueRefLink';
 import { ShopFilter } from '@/components/ShopFilter';
 import { ShopInputSearch } from '@/components/ShopInputSearch';
 import { BestSellingProductUI } from '@/components/UI/BestSellingProductUI';
 import { ProductType } from '@/types/product';
-import { Tag, Info } from 'lucide-react';
+import { Tag } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import React from 'react';
+import React from 'react'
 
 interface ShopPageProps{
     searchParams: Promise<{
@@ -14,27 +13,29 @@ interface ShopPageProps{
         pf?: string;
         pt?: string;
         sortby?: string;
-        ref?: string; // <-- ADDED: To catch the referral code
     }>;
 }
 
 export async function generateMetadata({ searchParams }: ShopPageProps): Promise<Metadata>{
     const resolvedSearchParams = await searchParams;
-    const category = resolvedSearchParams.cat || "All Products";
+    const category = resolvedSearchParams.cat || "categorie";
     return {
         title: `Shop | ${category.charAt(0).toUpperCase() + category.slice(1)}`,
-        description: `Browse products in the ${category} category.`,
+        description: `Browse products in ${category} category.`,
     };
 }
 
 async function getShopProducts(): Promise<ProductType[]>{
     try {
-        // Ensure you are using the correct internal URL for your API route
-        const Res = await fetch("/api/products");
-        if (!Res.ok) throw new Error('Failed to fetch products');
-        
+        const Res = await fetch(`http://localhost:3000/api/products`);
+        if (!Res.ok) {
+            throw new Error('Failed to fetch products');
+        }
         const { products } = await Res.json();
-        return Array.isArray(products) ? products : [];
+        if(!Array.isArray(products)){
+            return [];
+        }
+        return products;
     } catch (error) {
         console.error('Error fetching products:', error);
         return [];
@@ -49,18 +50,13 @@ function filterProducts(products: ProductType[], searchParams: {
 }): ProductType[] {
     
     let filteredProducts = [...products];
-    const hasFilters = searchParams.cat || searchParams.pf || searchParams.pt || searchParams.sortby;
-
-    // If no filters are applied, return the original full list
-    if (!hasFilters) {
-        return products;
+    if(!searchParams.pf && !searchParams.pt && !searchParams.cat && !searchParams.sortby){
+        return [];
     }
-
     // Filter by category
     if (searchParams.cat) {
-        // This logic assumes `product.category` is a string. Adjust if it's an array.
-        filteredProducts = filteredProducts.filter((p) => 
-            p.category.toLowerCase() === searchParams.cat?.toLowerCase()
+        filteredProducts = filteredProducts.filter((p) =>
+            Array.isArray(p.category) && p.category.some((c) => c.toLowerCase() === searchParams.cat?.toLowerCase())
         );
     }
 
@@ -78,14 +74,17 @@ function filterProducts(products: ProductType[], searchParams: {
     // Sort products
     if (searchParams.sortby) {
         filteredProducts.sort((a, b) => {
-            const priceA = a.original_sale_price || a.original_regular_price;
-            const priceB = b.original_sale_price || b.original_regular_price;
             switch (searchParams.sortby) {
-                case 'price-low': return priceA - priceB;
-                case 'price-high': return priceB - priceA;
-                case 'name': return a.title.localeCompare(b.title);
-                case 'rating': return (b.rating || 0) - (a.rating || 0);
-                default: return 0;
+                case 'price-low':
+                    return (a.original_sale_price || a.original_regular_price) - (b.original_sale_price || b.original_regular_price);
+                case 'price-high':
+                    return (b.original_sale_price || b.original_regular_price) - (a.original_sale_price || a.original_regular_price);
+                case 'name':
+                    return (a.title || a.title).localeCompare(b.title || b.title);
+                case 'rating':
+                    return (b.rating || 0) - (a.rating || 0);
+                default:
+                    return 0;
             }
         });
     }
@@ -95,80 +94,89 @@ function filterProducts(products: ProductType[], searchParams: {
 
 export default async function page({ searchParams }: ShopPageProps) {
     const resolvedSearchParams = await searchParams;
-    
-    // --- REFERRAL LOGIC ---
-    const { ref: referralCode, ...filterParams } = resolvedSearchParams;
-    const affiliateInfo = referralCode ? parseReferralUrl(referralCode) : null;
-    // --- END REFERRAL LOGIC ---
-
-    const allProducts: ProductType[] = await getShopProducts();
-    const filteredProducts = filterProducts(allProducts, filterParams);
-    
-    const hasActiveFilters = Object.keys(filterParams).length > 0;
+    const Products: ProductType[] = await getShopProducts();
+    const FiltredProducts = filterProducts(Products, resolvedSearchParams);
+    const ReadedProducts = FiltredProducts.length === 0 ? Products : FiltredProducts;
     
     return (
-        <section className="w-full flex flex-1 items-start gap-4">
-            <aside className="sticky top-14 p-2 h-full hidden md:block">
+        <section className="w-full flex flex-1 items-start">
+            <aside className="sticky top-14 p-2 h-full">
                 <ShopFilter />
             </aside>
             <div
                 className='flex-1 w-full shrink-0 bg-white p-4 shadow-md 
                     rounded-xl overflow-y-auto ring ring-gray-200'
             >
-                {/* --- REFERRAL BANNER --- */}
-                {affiliateInfo && (
-                    <div className="mb-4 flex items-center gap-3 rounded-lg bg-blue-50 p-4 text-sm text-blue-700 border border-blue-200">
-                        <Info className="h-5 w-5 flex-shrink-0" />
-                        <span>
-                            Welcome! You&apos;ve been referred by: <strong className="font-semibold">{affiliateInfo.affiliateId}</strong>
+                    <ShopInputSearch />
+                    <div
+                        className='flex items-center gap-3 justify-center py-3'
+                    >
+                        {["sports", "books", "fashion", "electronics"].map((sug, idx) => {
+                            return (
+                                <Link
+                                    key={idx}
+                                    href={`/shop?cat=${sug.toLowerCase().replace(" ", "")}`}
+                                >
+                                    <span
+                                        className='text-sm bg-gray-100 ring ring-gray-200 
+                                            rounded-full px-2 flex items-center gap-1
+                                            hover:bg-gray-200'
+                                    >
+                                        <Tag size={12} /> {sug}
+                                    </span>
+                                </Link>
+                            )
+                        })}
+                    </div>
+
+                    <div
+                        className='w-full flex justify-between'
+                    >
+                        <span
+                            className='text-sm text-gray-500'
+                        >
+                            Showing ({ReadedProducts.length}) Products
                         </span>
+                        {(resolvedSearchParams.pf || resolvedSearchParams.pt || resolvedSearchParams.cat || resolvedSearchParams.sortby) && (
+                            <Link 
+                                href="/shop"
+                                className='text-red-500 text-sm font-semibold'
+                                >
+                                Clear Filters
+                            </Link>
+                        )}
                     </div>
-                )}
-                {/* --- END REFERRAL BANNER --- */}
-
-                <ShopInputSearch />
-                <div className='flex items-center gap-3 justify-center py-3'>
-                    {["sports", "books", "fashion", "electronics"].map((sug, idx) => (
-                        <Link key={idx} href={`/shop?cat=${sug.toLowerCase().replace(" ", "")}`}>
-                            <span className='text-sm bg-gray-100 ring ring-gray-200 rounded-full px-2 flex items-center gap-1 hover:bg-gray-200'>
-                                <Tag size={12} /> {sug}
-                            </span>
-                        </Link>
-                    ))}
-                </div>
-
-                <div className='w-full flex justify-between items-center'>
-                    <span className='text-sm text-gray-500'>
-                        Showing {filteredProducts.length} of {allProducts.length} Products
-                    </span>
-                    {hasActiveFilters && (
-                        <Link href="/shop" className='text-red-500 text-sm font-semibold hover:underline'>
-                            Clear Filters
-                        </Link>
-                    )}
-                </div>
-
-                {filteredProducts.length > 0 ? (
-                    <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-6 py-6'>
-                        {filteredProducts.map((product: ProductType) => (
-                            <BestSellingProductUI
-                                key={product.id}
-                                PRODUCTCATEGORIE={product.category}
-                                PRODUCTID={product.id}
-                                PRODUCTIMAGES={product.product_images}
-                                PRODUCTSALEPRICE={product.original_sale_price}
-                                PRODUCTREGULARPRICE={product.original_regular_price}
-                                PRODUCTTITLE={product.title}
-                                STOCK={product.stock}
-                                OWNER={product.owner}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className='w-full min-h-40 flex items-center justify-center text-gray-500'>
-                        No products found matching your criteria.
-                    </div>
-                )}
+                    {ReadedProducts.length > 0 ? 
+                        (
+                            <div
+                                className='w-full grid grid-cols-4 gap-x-2 gap-y-6 py-6'
+                            >
+                                {ReadedProducts.map((product: ProductType) => {
+                                    return (
+                                        <BestSellingProductUI
+                                            key={product.id}
+                                            PRODUCTCATEGORIE={product.category}
+                                            PRODUCTID={product.id}
+                                            PRODUCTIMAGES={product.product_images}
+                                            PRODUCTSALEPRICE={product.original_sale_price}
+                                            PRODUCTREGULARPRICE={product.original_regular_price}
+                                            PRODUCTTITLE={product.title || product.title}
+                                            STOCK={product.stock}
+                                            OWNER={product.owner}
+                                        />
+                                    )
+                                })}
+                            </div>
+                        )
+                        :
+                        (
+                            <div
+                                className='w-full min-h-40 flex items-center justify-center text-gray-500'
+                            >
+                                Not Founded
+                            </div>
+                        )
+                    }
             </div>
         </section>
     )
