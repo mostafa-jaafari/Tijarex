@@ -1,47 +1,38 @@
 import { Check, Star, Info } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { cookies } from 'next/headers'; // <-- IMPORT a server-side function to read cookies
+import { cookies } from 'next/headers';
 import ProductImageGallery from '@/components/SingleProductPage/ProductImageGallery';
 import AddToCartButtons from '@/components/SingleProductPage/AddToCartButtons';
 import { fetchProductById } from '@/components/SingleProductPage/fetchProductById';
+import { getAffiliateInfoFromCookie } from '@/components/Functions/GenerateUniqueRefLink';
 
-// --- Helper function to decode referral links ---
-function parseReferralCode(referralCode: string) {
-  try {
-    const decodedAffiliateId = Buffer.from(referralCode, 'base64').toString('utf8');
-    if (!decodedAffiliateId) return null;
-    return { affiliateId: decodedAffiliateId };
-  } catch (error) {
-    console.error("Failed to parse referral code:", error);
-    return null;
-  }
-}
-// ---
-
+// The props are now based on the dynamic path `[productId]`
 type ProductPageProps = {
   searchParams: {
-    ref?: string; // Affiliate ID from referral link
-    pid?: string; // Product ID from referral link (not used here)
+    ref?: string;
+    pid?: string;
   };
 };
 
 export default async function ProductPage({ searchParams }: ProductPageProps) {
 
-  // --- NEW REFERRAL LOGIC: READ FROM COOKIE ---
+  // --- CORRECTED REFERRAL LOGIC ---
   const cookieStore = cookies();
   const referralCookie = (await cookieStore).get('referral_id');
-  const affiliateInfo = referralCookie ? parseReferralCode(referralCookie.value) : null;
+  // Use the new function that does NOT try to decode
+  const affiliateInfo = referralCookie ? getAffiliateInfoFromCookie(referralCookie.value) : null;
   // ---
 
-  // We get the product ID from the dynamic path, not a query param
-  if(!searchParams.pid) return;
+  // --- CORRECTED DATA FETCHING ---
+  // Get the product ID from the dynamic path `params`, not searchParams.
+  if (!searchParams.pid) return;
   const product = await fetchProductById(searchParams.pid);
 
+  // If no product is found for the given ID, render a 404 page.
   if (!product) {
     notFound();
   }
 
-  // The rest of your component remains the same
   const isOnSale = product.original_sale_price && product.original_regular_price > product.original_sale_price;
   const displayPrice = isOnSale ? product.original_sale_price : product.original_regular_price;
   const highlights = [ "Made from 100% full-grain leather", "Slim bifold design", "Holds up to 8 cards and cash", "Hand-stitched for durability" ];
@@ -55,7 +46,6 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
 
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
 
-            {/* --- REFERRAL BANNER (now powered by the cookie) --- */}
             {affiliateInfo && (
                 <div className="mb-6 flex items-center gap-3 rounded-lg bg-blue-50 p-4 text-sm text-blue-700 border border-blue-200">
                     <Info className="h-5 w-5 flex-shrink-0" />
@@ -64,12 +54,9 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
                     </span>
                 </div>
             )}
-            {/* --- END REFERRAL BANNER --- */}
 
             <h1 className="text-3xl font-bold tracking-tight text-neutral-700">{product.title}</h1>
             
-            {/* ... rest of your JSX ... */}
-
             <div className="mt-3">
               <p className="text-3xl tracking-tight text-neutral-700">
                 ${displayPrice.toFixed(2)}
@@ -90,7 +77,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
                   ))}
                 </div>
                 <a href="#reviews" className="ml-3 text-sm font-medium text-neutral-500 hover:text-neutral-700">
-                  {product.reviews.length} reviews
+                  {product.reviews} reviews
                 </a>
               </div>
             </div>

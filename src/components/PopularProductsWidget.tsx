@@ -1,8 +1,9 @@
 "use client";
-import { PrimaryDark } from '@/app/[locale]/page';
 import { useGlobaleProducts } from '@/context/GlobalProductsContext';
 import { Copy, Eye, Flame, SquareArrowOutUpRight } from 'lucide-react';
 import Image from 'next/image';
+import { HandleGetRefLink } from './Functions/GetAffiliateLink';
+import { useUserInfos } from '@/context/UserInfosContext';
 
 interface WidgetCardProps {
     title?: string;
@@ -11,8 +12,10 @@ interface WidgetCardProps {
     saleprice?: number;
     regularprice?: number;
     productimage?: string;
+    productid: string;
+    UniqueUserId: string;
 }
-const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage }: WidgetCardProps) => {
+const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage, productid, UniqueUserId }: WidgetCardProps) => {
     return (
         <section
             className='w-full rounded-xl 
@@ -64,13 +67,12 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage 
             <div
                 className='flex items-center gap-1 p-2'
             >
-                <button
-                    className={`text-xs flex items-center gap-2
-                        w-full justify-center py-2 
-                        ${PrimaryDark} cursor-pointer hover:bg-gradient-to-r
-                    `}
-                >
-                    <Copy size={14} /> Get Affiliate Link
+                <button 
+                    onClick={() => HandleGetRefLink(productid as string, UniqueUserId)}
+                    className={`bg-neutral-900 hover:bg-neutral-900/90 
+                        rounded-lg text-sm text-neutral-100
+                        w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                    Get Link <Copy size={16} />
                 </button>
                 <button
                     className='border-b border-neutral-400/50 ring 
@@ -87,7 +89,8 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage 
 }
 export function PopularProductsWidget() {
     const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
-
+    const { userInfos } = useUserInfos();
+    if(!userInfos) return;
     // const TrendingProducts = globalProductsData?.sort((a, b) => b.sales - a.sales).slice(0, 4) as ProductType[] || [];
     return (
         <section
@@ -136,6 +139,8 @@ export function PopularProductsWidget() {
                             stock={product.stock}
                             title={product.title}
                             productimage={product.product_images[0]}
+                            productid={product.id}
+                            UniqueUserId={userInfos?.uniqueuserid}
                         />
                     ))
                 ))}

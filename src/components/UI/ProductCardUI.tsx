@@ -8,9 +8,8 @@ import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, User, Copy } 
 import { ProductType } from '@/types/product';
 import { PrimaryLight } from '@/app/[locale]/page';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { generateReferralLink } from '../Functions/GenerateUniqueRefLink';
+import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
-import { toast } from 'sonner';
 
 
 // --- Props for the UI Component ---
@@ -28,10 +27,10 @@ export const ProductCardUI = ({
     isAffiliate,
     onToggleFavorite,
 }: ProductCardUIProps) => {
-    const { userInfos } = useUserInfos();
     // State that is purely for the UI can remain here
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+    const { userInfos } = useUserInfos();
 
     const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
         e.preventDefault();
@@ -44,35 +43,6 @@ export const ProductCardUI = ({
         setProductID(product.id as string || "");
         setIsShowQuickViewProduct(true);
     }
-    const HandleGetRefLink = () => {
-        // 1. Directly get the unique ID from the userInfos context.
-        const affiliateId = userInfos?.uniqueuserid;
-        const productId = product?.id;
-
-        // 2. Add specific checks for both the affiliate and the product.
-        // This prevents generating a link for "unknown-affiliate".
-        if (!affiliateId) {
-            toast.error("Could not find affiliate ID. Please log in again.");
-            return;
-        }
-        
-        if (!productId) {
-            toast.error("Product information is missing.");
-            return;
-        }
-
-        // 3. Generate the short referral link.
-        const finalUrl = generateReferralLink(affiliateId, productId);
-
-        if (!finalUrl) {
-            toast.error("Could not generate the referral link.");
-            return;
-        }
-
-        // 4. Copy to clipboard and confirm.
-        navigator.clipboard.writeText(finalUrl);
-        toast.success("Short referral link copied!");
-    };
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
@@ -188,7 +158,7 @@ export const ProductCardUI = ({
                     >
                         {isAffiliate && ( // Use prop
                             <button 
-                                onClick={HandleGetRefLink} 
+                                onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string)} 
                                 className={`bg-neutral-900 hover:bg-neutral-900/90 
                                     rounded-lg text-sm text-neutral-100
                                     w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
