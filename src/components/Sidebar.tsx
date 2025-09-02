@@ -91,7 +91,8 @@ export function Sidebar() {
         },
     ];
 
-    const params = useParams().subpagesid || userInfos?.UserRole === "affiliate" ? "affiliate" : "seller";
+    const SubPagesId = useParams().subpagesid;
+    const params = SubPagesId ? `${SubPagesId}` : `${userInfos?.UserRole === "seller" ? "seller" : userInfos?.UserRole === "affiliate" ? "affiliate" : ""}`;
     return (
         <aside className={`group bg-neutral-50 border-r border-gray-200
             ${isCollapsed ? 'w-16' : 'w-60 flex-shrink-0'} 
