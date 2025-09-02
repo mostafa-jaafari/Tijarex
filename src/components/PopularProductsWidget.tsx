@@ -1,9 +1,10 @@
 "use client";
 import { useGlobaleProducts } from '@/context/GlobalProductsContext';
-import { Copy, Eye, Flame, SquareArrowOutUpRight } from 'lucide-react';
+import { Copy, Flame, SquareArrowOutUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { HandleGetRefLink } from './Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
+import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 
 interface WidgetCardProps {
     title?: string;
@@ -16,6 +17,11 @@ interface WidgetCardProps {
     UniqueUserId: string;
 }
 const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage, productid, UniqueUserId }: WidgetCardProps) => {
+    const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
+    const HandleShowQuickView = (productid: string) => {
+        setProductID(productid as string || "");
+        setIsShowQuickViewProduct(true);
+    }
     return (
         <section
             className='w-full rounded-xl 
@@ -27,10 +33,11 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
                     overflow-hidden shadow-sm rounded-lg mb-2'
             >
                 <Image
+                    onClick={() => HandleShowQuickView(productid)}
                     src={productimage || "/no-image.png"}
                     fill
                     alt='product image'
-                    className='object-cover'
+                    className='cursor-pointer object-cover'
                     loading='lazy'
                     quality={100}
                 />
@@ -47,7 +54,10 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
             <div
                 className='px-2'
             >
-                <h1 className='font-semibold text-sm text-neutral-800'>
+                <h1 
+                    onClick={() => HandleShowQuickView(productid)}
+                    className='cursor-pointer font-semibold text-sm text-neutral-800'
+                >
                     {title}
                 </h1>
                 <p
@@ -74,15 +84,6 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
                         w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
                     Get Link <Copy size={16} />
                 </button>
-                <button
-                    className='border-b border-neutral-400/50 ring 
-                        ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
-                        rounded-lg text-neutral-500 hover:ring-neutral-300 
-                        cursor-pointer hover:text-neutral-700 px-2 py-2
-                        transition-all duration-200'
-                >
-                    <Eye size={16} />
-                </button>
             </div>
         </section>
     )
@@ -91,7 +92,9 @@ export function PopularProductsWidget() {
     const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
     const { userInfos } = useUserInfos();
     if(!userInfos) return;
-    // const TrendingProducts = globalProductsData?.sort((a, b) => b.sales - a.sales).slice(0, 4) as ProductType[] || [];
+
+    
+
     return (
         <section
             className="grow border-b border-neutral-400/50 ring ring-neutral-200 bg-white 

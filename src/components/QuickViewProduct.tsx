@@ -1,11 +1,11 @@
 "use client";
-
-import { PrimaryDark, PrimaryLight } from "@/app/[locale]/page";
 import { useQuickViewProduct } from "@/context/QuickViewProductContext";
+import { useUserInfos } from "@/context/UserInfosContext";
 import { ProductType } from "@/types/product";
-import { BadgeCheck, Heart, ShoppingCart, Star, X, Check, Minus, Plus } from "lucide-react";
+import { BadgeCheck, Heart, ShoppingCart, Star, X, Check, Minus, Plus, Copy } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { HandleGetRefLink } from "./Functions/GetAffiliateLink";
 
 // Helper function (assuming it exists elsewhere)
 const CalculateDiscount = (salePrice?: number, regularPrice?: number) => {
@@ -52,6 +52,7 @@ const QuickViewSkeleton = () => (
 // Main QuickView Component
 // ============================================================================
 export function QuickViewProduct() {
+    const { userInfos } = useUserInfos();
     const { isShowQuickViewProduct, setIsShowQuickViewProduct, productID } = useQuickViewProduct();
     const modalRef = useRef<HTMLDivElement | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +61,7 @@ export function QuickViewProduct() {
     // States for UI interaction
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
 
     // Fetch product details when the modal is opened
@@ -75,8 +77,12 @@ export function QuickViewProduct() {
                     const product = products.find((p: ProductType) => p.id === productID);
                     setSelectedProductDetails(product || null);
                     // Pre-select the first color
-                    if (product && product.colors.length > 0) {
-                        setSelectedColor(product.colors[0]);
+                    if (product) {
+                        if(product.colors.length > 0){
+                            setSelectedColor(product.colors[0]);
+                        }else if(product.sizes.length > 0){
+                            setSelectedSize(product.sizes[0]);
+                        }
                     }
                 }
             } catch (err) {
@@ -108,6 +114,7 @@ export function QuickViewProduct() {
             setCurrentImageIndex(0);
             setQuantity(1);
             setSelectedColor(null);
+            setSelectedSize(null)
         }
     }, [isShowQuickViewProduct]);
 
@@ -115,19 +122,25 @@ export function QuickViewProduct() {
 
     const productImages = selectedProductDetails?.product_images || [];
     const productColors = selectedProductDetails?.colors || [];
+    const productSizes = selectedProductDetails?.sizes || [];
 
     return (
-        <section className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-center items-center p-4 transition-opacity duration-300">
+        <section 
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm 
+                flex justify-center items-center p-4 transition-opacity 
+                duration-300">
             <div
                 ref={modalRef}
-                className={`relative w-full max-w-4xl max-h-[90vh] bg-white rounded-xl shadow-2xl p-6 md:p-8 overflow-y-auto transition-all duration-300 ${
+                className={`relative w-full max-w-4xl max-h-[80vh] bg-white rounded-xl shadow-2xl p-6 md:p-8 overflow-y-auto transition-all duration-300 ${
                     isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"
                 }`}
             >
                 {/* Close Button */}
                 <button
                     onClick={() => setIsShowQuickViewProduct(false)}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors z-10"
+                    className="absolute top-4 right-4 cursor-pointer 
+                        text-gray-400 hover:text-gray-800 
+                        transition-colors z-10"
                 >
                     <X size={24} />
                 </button>
@@ -138,7 +151,9 @@ export function QuickViewProduct() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Left Side: Image Gallery */}
                         <div className="flex flex-col gap-3">
-                            <div className="relative w-full aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                            <div 
+                                className="relative w-full aspect-square bg-gray-100 
+                                    rounded-lg overflow-hidden">
                                 <Image
                                     src={productImages[currentImageIndex] || "/placeholder.png"}
                                     alt={selectedProductDetails.title}
@@ -154,10 +169,18 @@ export function QuickViewProduct() {
                                         key={idx}
                                         onClick={() => setCurrentImageIndex(idx)}
                                         className={`relative w-full aspect-square rounded-md overflow-hidden transition-all duration-200 ${
-                                            currentImageIndex === idx ? "ring-2 ring-purple-600" : "hover:opacity-80"
+                                            currentImageIndex === idx ? 
+                                                "border-b-2 cursor-pointer shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4)] border-purple-700 ring-2 ring-purple-500"
+                                                :
+                                                "border-b-2 cursor-pointer shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4)] border-neutral-600 ring-2 ring-neutral-300"
                                         }`}
                                     >
-                                        <Image src={pic || "/placeholder.png"} alt={`Thumbnail ${idx + 1}`} fill className="object-cover" />
+                                        <Image 
+                                            src={pic || "/placeholder.png"} 
+                                            alt={`Thumbnail ${idx + 1}`} 
+                                            fill 
+                                            className="object-cover"
+                                        />
                                     </button>
                                 ))}
                             </div>
@@ -167,12 +190,14 @@ export function QuickViewProduct() {
                         <div className="flex flex-col gap-4">
                             <div>
                                 <h1 className="text-3xl font-bold text-gray-900">{selectedProductDetails.title}</h1>
-                                <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
-                                    <span>Sold by:</span>
-                                    <span className="font-semibold text-purple-600 flex items-center gap-1">
-                                        {selectedProductDetails.owner?.name} <BadgeCheck size={16} className="text-purple-600" />
-                                    </span>
-                                </div>
+                                {userInfos?.UserRole === "seller" || userInfos?.UserRole === "affiliate" ? (
+                                    <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                                        <span>Sold by:</span>
+                                        <span className="font-semibold text-purple-600 flex items-center gap-1">
+                                            {selectedProductDetails.owner?.name} <BadgeCheck size={16} className="text-purple-600" />
+                                        </span>
+                                    </div>
+                                ) : ""}
                             </div>
                             
                             <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
@@ -187,10 +212,16 @@ export function QuickViewProduct() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 text-sm border-b pb-4">
+                            <div className="flex items-center gap-3 text-sm border-b border-neutral-200 pb-4">
                                 <div className="flex items-center text-yellow-500">
                                     {Array(5).fill(0).map((_, idx) => (
-                                        <Star key={idx} size={16} className={idx < (selectedProductDetails.rating || 0) ? "fill-current" : "fill-gray-300"} />
+                                        <Star 
+                                            key={idx} 
+                                            size={16} 
+                                            className={idx < (selectedProductDetails.rating || 0) ? 
+                                                "fill-current"
+                                                :
+                                                "text-yellow-500"} />
                                     ))}
                                 </div>
                                 <span className="text-gray-500">
@@ -211,7 +242,7 @@ export function QuickViewProduct() {
                                                 style={{ backgroundColor: col }}
                                                 className={`w-8 h-8 rounded-full border border-neutral-300 transition-all 
                                                     duration-200 flex items-center justify-center
-                                                    ${selectedColor === col ? "ring-2 ring-offset-2 ring-purple-600 border-white" : "hover:border-gray-300"
+                                                    ${selectedColor === col ? "ring-2 ring-offset-2 ring-purple-600 border-white" : "hover:border-gray-300 cursor-pointer"
                                                 }`}
                                             >
                                                 {selectedColor === col && <Check size={16} className="text-white" />}
@@ -220,49 +251,98 @@ export function QuickViewProduct() {
                                     </div>
                                 </div>
                             )}
-
-                            <div className="flex items-center gap-4 mt-auto pt-4">
-                                <div 
-                                    className="flex items-center border-b border-gray-400 
-                                        ring ring-neutral-200 rounded-lg overflow-hidden">
+                            {/* --- Sizes --- */}
+                            {productSizes.length > 0 && (
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-semibold text-gray-800">Sizes: <span className="font-normal text-gray-600">{selectedSize}</span></h3>
+                                    <div className="flex items-center gap-3">
+                                        {productSizes.map((size) => (
+                                            <button
+                                                key={size}
+                                                onClick={() => setSelectedSize(size)}
+                                                style={{ backgroundColor: size }}
+                                                className={`rounded-lg border 
+                                                    w-10 h-10 border-neutral-300 transition-all 
+                                                    duration-200 flex items-center justify-center
+                                                    ${selectedSize?.toLowerCase() === size.toLowerCase() ? 
+                                                        "bg-purple-700 text-neutral-200"
+                                                        :
+                                                        "bg-neutral-50 cursor-pointer"
+                                                }`}
+                                            >
+                                                {size}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            <div
+                                className="space-y-2 pt-4"
+                            >
+                            {/* --- Add To Card Button --- */}
+                            {userInfos?.UserRole !== "affiliate" ? (
+                                <div className="flex items-center gap-4 mt-auto">
+                                    <div 
+                                        className="flex items-center border-b border-gray-400 
+                                            ring ring-neutral-200 rounded-lg overflow-hidden">
+                                        <button 
+                                            onClick={() => setQuantity(q => Math.max(1, q - 1))} 
+                                            className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
+                                        >
+                                            <Minus 
+                                                size={16}
+                                            />
+                                        </button>
+                                        <span className="px-4 font-semibold">{quantity}</span>
+                                        <button 
+                                            onClick={() => setQuantity(q => q + 1)} 
+                                            className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
+                                        >
+                                            <Plus 
+                                                size={16}
+                                            />
+                                        </button>
+                                    </div>
                                     <button 
-                                        onClick={() => setQuantity(q => Math.max(1, q - 1))} 
-                                        className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
+                                        className={`flex-1 flex items-center justify-center 
+                                            gap-2 cursor-pointer text-purple-100
+                                            text-sm
+                                            border-b border-neutral-600 ring ring-neutral-600
+                                            py-2 rounded-lg bg-neutral-800 hover:bg-neutral-900
+                                            transition-all duration-200`}
                                     >
-                                        <Minus 
-                                            size={16}
-                                        />
-                                    </button>
-                                    <span className="px-4 font-semibold">{quantity}</span>
-                                    <button 
-                                        onClick={() => setQuantity(q => q + 1)} 
-                                        className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
-                                    >
-                                        <Plus 
-                                            size={16}
-                                        />
+                                        <ShoppingCart size={18} /> Add to Cart
                                     </button>
                                 </div>
-                                <button 
-                                    className={`flex-1 flex items-center justify-center 
-                                        gap-2 cursor-pointer text-purple-100
-                                        hover:border-purple-500 text-sm
-                                        border-b border-purple-900 ring ring-purple-600
-                                        py-2 rounded-lg bg-gradient-to-r 
-                                        from-purple-600 via-purple-500 to-purple-600
-                                        transition-all duration-200`}
+                            )
+                            :
+                            (
+                                <button
+                                    onClick={() => HandleGetRefLink(selectedProductDetails.id, userInfos.uniqueuserid)}
+                                    className="w-full py-2.5 rounded-lg bg-neutral-800
+                                        hover:bg-neutral-900 cursor-pointer
+                                        text-neutral-200 border-b border-neutral-400 purple-400 
+                                        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2)]
+                                        ring ring-neutral-400 text-sm
+                                        flex items-center gap-2 justify-center"
                                 >
-                                    <ShoppingCart size={18} /> Add to Cart
+                                    Get Link <Copy size={18}/>
                                 </button>
-                            </div>
+                            )}
                             
                             <button 
                                 className={`w-full flex items-center justify-center 
-                                    gap-2 ${PrimaryLight} py-2 hover:bg-neutral-50
-                                    transition-colors`}
+                                    gap-2 cursor-pointer text-purple-100
+                                    hover:border-purple-500 text-sm
+                                    border-b border-purple-900 ring ring-purple-600
+                                    py-2 rounded-lg bg-purple-700 hover:bg-purple-800
+                                    transition-all duration-200
+                                    shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2)]
+                                    `}
                             >
                                 <Heart size={18} /> Add to Wishlist
                             </button>
+                            </div>
                         </div>
                     </div>
                 )}

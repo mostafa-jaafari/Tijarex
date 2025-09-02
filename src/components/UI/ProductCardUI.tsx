@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Eye, Flame, User, Copy } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Copy } from 'lucide-react';
 import { ProductType } from '@/types/product';
-import { PrimaryLight } from '@/app/[locale]/page';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
