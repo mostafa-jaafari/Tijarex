@@ -10,6 +10,7 @@ import { SizeInput } from "@/components/Upload-Products/SizeInput";
 import { CategoryInput } from "@/components/Upload-Products/CategoryInput";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { InputStyles } from "@/app/[locale]/page";
 // --- Type Definitions ---
 interface UploadProgress { [fileName: string]: number; }
 interface ProductFile {
@@ -268,7 +269,7 @@ export default function UploadProductPage() {
                             </h2>
                             
                             <div
-                                className="py-2.5 px-6 space-y-3"
+                                className="py-2.5 px-6 space-y-2.5"
                             >
                                 <div>
                                     <label 
@@ -283,11 +284,7 @@ export default function UploadProductPage() {
                                         value={title} 
                                         onChange={e => setTitle(e.target.value)} 
                                         placeholder="e.g., Premium Cotton Hoodie" 
-                                        className="w-full px-4 py-2.5 bg-white border 
-                                            border-neutral-300 text-neutral-800 rounded-lg 
-                                            placeholder:text-neutral-400 focus:outline-none 
-                                            focus:ring-2 focus:ring-teal-400 focus:border-teal-500 
-                                            transition-all"
+                                        className={`${InputStyles}`}
                                     />
                                 </div>
                                 <div>
@@ -295,7 +292,19 @@ export default function UploadProductPage() {
                                     <label htmlFor="description" className="block text-sm font-semibold text-neutral-700 mb-1.5">Description</label>
                                     <span className="text-xs text-neutral-400">{description.length}/1000</span>
                                     </div>
-                                    <textarea id="description" value={description} onChange={e => setDescription(e.target.value)} rows={5} maxLength={1000} placeholder="Describe the key features of your product..." className="w-full px-4 py-2.5 bg-white border border-neutral-300 text-neutral-800 rounded-lg placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all"></textarea>
+                                    <textarea 
+                                        id="description" 
+                                        value={description} 
+                                        onChange={e => setDescription(e.target.value)} 
+                                        rows={5}
+                                        maxLength={1000}
+                                        placeholder="Describe the key features of your product..." 
+                                        className="w-full px-4 py-2.5 bg-white border 
+                                            border-neutral-300 text-neutral-800 rounded-lg 
+                                            placeholder:text-neutral-400 focus:outline-none 
+                                            focus:ring-2 focus:ring-teal-400 
+                                            focus:border-teal-500 transition-all">
+                                    </textarea>
                                 </div>
                             </div>
                         </div>
@@ -321,16 +330,84 @@ export default function UploadProductPage() {
 
                             <div className="py-2.5 px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 <div>
-                                <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (DH)</label>
-                                <input id="regularPrice" type="number" value={regularPrice} onChange={e => setRegularPrice(e.target.value)} placeholder="299.99" className="w-full px-4 py-2.5 bg-white border border-neutral-300 text-neutral-800 rounded-lg placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all" />
+                                    <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (DH)</label>
+                                    <div
+                                        className="flex items-center border-b border-neutral-400
+                                            ring ring-neutral-200 rounded-lg bg-white 
+                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 overflow-hidden gap-3"
+                                    >
+                                        <span
+                                            className="bg-neutral-800 text-neutral-200 
+                                                font-semibold h-full flex justify-center 
+                                                items-center px-4"
+                                        >
+                                            Dh
+                                        </span>
+                                        <input 
+                                            id="regularPrice" 
+                                            type="number" 
+                                            value={regularPrice} 
+                                            onChange={e => setRegularPrice(e.target.value)} 
+                                            placeholder="299.99" 
+                                            className="w-full py-2.5 text-neutral-800 
+                                                placeholder:text-neutral-400 
+                                                focus:outline-none 
+                                                transition-all"
+                                        />
+                                    </div>
                                 </div>
                                 <div>
-                                <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price (Optional)</label>
-                                <input id="salePrice" type="number" value={salePrice} onChange={e => setSalePrice(e.target.value)} placeholder="249.99" className="w-full px-4 py-2.5 bg-white border border-neutral-300 text-neutral-800 rounded-lg placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all" />
+                                    <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price (Optional)</label>
+                                    <div
+                                        className="flex items-center border-b border-neutral-400
+                                            ring ring-neutral-200 rounded-lg bg-white 
+                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 overflow-hidden gap-3"
+                                    >
+                                        <span
+                                            className="bg-neutral-800 text-neutral-200 
+                                                font-semibold h-full flex justify-center 
+                                                items-center px-4"
+                                        >
+                                            Dh
+                                        </span>
+                                        <input 
+                                            id="salePrice" 
+                                            type="number" 
+                                            value={salePrice} 
+                                            onChange={e => setSalePrice(e.target.value)} 
+                                            placeholder="249.99" 
+                                            className="w-full py-2.5 text-neutral-800 
+                                                placeholder:text-neutral-400 
+                                                focus:outline-none 
+                                                transition-all"
+                                        />
+                                    </div>
                                 </div>
                                 <div>
-                                <label htmlFor="stock" className="block text-sm font-semibold text-neutral-700 mb-1.5">Stock Quantity</label>
-                                <input id="stock" type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="99" className="w-full px-4 py-2.5 bg-white border border-neutral-300 text-neutral-800 rounded-lg placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 transition-all" />
+                                    <label htmlFor="stock" className="block text-sm font-semibold text-neutral-700 mb-1.5">Stock Quantity</label>
+                                    <div
+                                        className="flex items-center border-b border-neutral-400
+                                            ring ring-neutral-200 rounded-lg bg-white 
+                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 overflow-hidden gap-3"
+                                    >
+                                        <span
+                                            className="bg-neutral-800 text-neutral-200 
+                                                font-semibold h-full flex justify-center 
+                                                items-center px-4"
+                                        >
+                                            U
+                                        </span>
+                                        <input 
+                                            id="stock" 
+                                            type="number" 
+                                            value={stock} 
+                                            onChange={e => setStock(e.target.value)} 
+                                            placeholder="99" 
+                                            className="w-full py-2.5 text-neutral-800 
+                                                placeholder:text-neutral-400 
+                                                focus:outline-none 
+                                                transition-all" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -338,20 +415,45 @@ export default function UploadProductPage() {
                     </div>
 
                     {/* --- RIGHT COLUMN --- */}
-                    <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-neutral-300 space-y-6">
-                    <div>
-                        <label className="block text-sm font-semibold text-neutral-700">Product Photos (Max 5)</label>
+                    <div className="lg:col-span-2 space-y-3">
+                    <div
+                        className="bg-white rounded-lg 
+                            border-b border-neutral-400 ring ring-neutral-200 
+                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]"
+                    >
+                        <h3 
+                            className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800">
+                                Colors & Sizes
+                        </h3>
                         <div
-                        onClick={() => fileInputRef.current?.click()}
-                        onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
-                        className={`relative mt-1.5 w-full flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg transition-colors ${isDragging ? 'border-teal-500 bg-teal-50' : 'border-neutral-300'} ${isSubmitting || isProcessingImages ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:border-teal-400'}`}
+                            className="py-2.5 px-6"
                         >
-                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" disabled={isSubmitting || isProcessingImages} />
-                        <div className="text-center text-neutral-500">
-                            <Upload size={24} className="mx-auto mb-2 text-neutral-400" />
-                            <p className="text-sm font-semibold text-neutral-600">Click to upload or drag and drop</p>
-                            <p className="text-xs mt-1">Max 10MB per file. Up to 5 images.</p>
-                        </div>
+                            <label className="block text-sm font-semibold text-neutral-700">Product Photos (Max 5)</label>
+                            <div
+                                onClick={() => fileInputRef.current?.click()}
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                className={`relative mt-1.5 w-full flex flex-col 
+                                    items-center justify-center p-6 border-2 
+                                    border-dashed rounded-lg transition-colors 
+                                    ${isDragging ? 
+                                        'border-teal-500 bg-teal-50'
+                                        :
+                                        'border-neutral-300'} 
+                                        ${isSubmitting || isProcessingImages ? 
+                                            'cursor-not-allowed opacity-60'
+                                            :
+                                            'cursor-pointer hover:border-teal-400'}
+                                            `}
+                            >
+                            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" disabled={isSubmitting || isProcessingImages} />
+                            <div className="text-center text-neutral-500">
+                                <Upload size={24} className="mx-auto mb-2 text-neutral-400" />
+                                <p className="text-sm font-semibold text-neutral-600">Click to upload or drag and drop</p>
+                                <p className="text-xs mt-1">Max 10MB per file. Up to 5 images.</p>
+                            </div>
+                            </div>
                         </div>
                     </div>
 
@@ -379,44 +481,53 @@ export default function UploadProductPage() {
                         )}
                     </AnimatePresence>
                     
-                    <div className="space-y-4 pt-2">
-                        <h3 className="text-base font-semibold text-neutral-800">Variant</h3>
-                        <div>
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Size</label>
-                        <SizeInput sizes={sizes} setSizes={setSizes} />
+                    <div
+                        className="bg-white border-b 
+                            border-neutral-400 ring ring-neutral-200
+                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
+                    >
+                        <h3 
+                            className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800">
+                                Colors & Sizes
+                        </h3>
+                        <div className="px-6 py-2.5 space-y-2.5">
+                            <div>
+                                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Size</label>
+                                <SizeInput sizes={sizes} setSizes={setSizes} />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Color</label>
+                                <ColorInput colors={colors} setColors={setColors} />
+                            </div>
                         </div>
-                        <div>
-                        <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Color</label>
-                        <ColorInput colors={colors} setColors={setColors} />
-                        </div>
-                        </div>
-                        <div className="w-full flex items-center 
-                            justify-end gap-3">
-                            <button
-                                type="submit"
-                                disabled={
-                                    isSubmitting ||
-                                    isProcessingImages ||
-                                    !title ||
-                                    !regularPrice ||
-                                    !stock ||
-                                    !category ||
-                                    sizes.length === 0 ||
-                                    colors.length === 0 ||
-                                    productFiles.length === 0
-                                }
-                                className="px-6 py-3 text-sm font-semibold text-white 
-                                    cursor-pointer bg-teal-600 rounded-lg hover:bg-teal-700 
-                                    disabled:bg-neutral-300 
-                                    disabled:text-neutral-500 
-                                    disabled:cursor-not-allowed 
-                                    transition-colors flex items-center gap-2"
-                            >
-                                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-                                <span>{isSubmitting ? 'Uploading...' : 'Upload Product'}</span>
-                            </button>
-                        </div>
-                        </div>
+                    </div>
+                    <div className="w-full flex items-center 
+                        justify-end gap-3">
+                        <button
+                            type="submit"
+                            disabled={
+                                isSubmitting ||
+                                isProcessingImages ||
+                                !title ||
+                                !regularPrice ||
+                                !stock ||
+                                !category ||
+                                sizes.length === 0 ||
+                                colors.length === 0 ||
+                                productFiles.length === 0
+                            }
+                            className="px-6 py-3 text-sm font-semibold text-white 
+                                cursor-pointer bg-teal-600 rounded-lg hover:bg-teal-700 
+                                disabled:bg-neutral-300 
+                                disabled:text-neutral-500 
+                                disabled:cursor-not-allowed 
+                                transition-colors flex items-center gap-2"
+                        >
+                            {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                            <span>{isSubmitting ? 'Uploading...' : 'Upload Product'}</span>
+                        </button>
+                    </div>
+                    </div>
                 </fieldset>
             </form>
         </motion.section>
