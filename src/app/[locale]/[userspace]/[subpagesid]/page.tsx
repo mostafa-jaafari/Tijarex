@@ -1,6 +1,6 @@
 import AddBalance from "@/components/Pages/AddBalance";
 import FavoritesProductsPage from "@/components/Pages/FavoritesProductsPage";
-import MyStore from "@/components/Pages/MyStore";
+import MyCollection from "@/components/Pages/MyCollection";
 import MyWithdraw from "@/components/Pages/MyWithdraw";
 import OrdersPage from "@/components/Pages/OrdersPage";
 import ProductsPage from "@/components/Pages/ProductsPage";
@@ -38,8 +38,8 @@ export default async function page({ params, searchParams }: PageProps) {
     case "my-withdraw":
       TabRender = <MyWithdraw />
       break;
-    case "my-store":
-      TabRender = <MyStore />;
+    case "my-collection":
+      TabRender = <MyCollection />;
       break;
     case "upload-products":
       TabRender = <UploadProductPage />;

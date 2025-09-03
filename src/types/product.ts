@@ -29,18 +29,6 @@ export type ProductType = {
   productrevenu: number;
 };
 
-export type AffiliateProduct = ProductType & {
-    affiliateId: string;
-    commissionRate: number;
-    isActive: boolean;
-    AffiliateOriginalProductId: string;
-    AffiliateOwnerEmail: string;
-    AffiliateCommission: number;
-    Affiliate_sale_price: number;
-    AffiliateCreatedAt: string;
-    Affiliatesales: 0;
-};
-
 export interface ProductCardProps{
     PRODUCTIMAGES: string[];
     PRODUCTID: string | number;
@@ -55,20 +43,33 @@ export interface ProductCardProps{
     STOCK: number;
 }
 
-export interface ProductType2 {
-    id: string;
-    sellerEmail: string;
-    sellerFullName: string;
+// You likely already have this in your types file
+export type ProductOwner = {
     name: string;
-    isTrend?: boolean;
+    image: string;
+    email: string;
+};
+
+
+export type AffiliateProductType = {
+    id: string;
+
+    // --- Data Copied from the Original Product ---
+    originalProductId: string;
+    owner: { name: string; image: string; email: string; } | null;
     product_images: string[];
     category: string;
-    sale_price: number;
-    regular_price: number;
-    commission?: number;
-    sales: number;
-    revenue: number;
-    status: "In Stock" | "Low Stock" | "Limited Edition" | "Pre-Order" | "Out of Stock";
-    stock: number;
-    lastUpdated: string; // ISO 8601 date string
-}
+    sizes: string[];
+    colors: string[];
+    stock: number; // ADDED
+    sales: number; // ADDED
+    currency: string;
+
+    // --- Data Specific to the Affiliate's Version ---
+    AffiliateOwnerEmail: string;
+    AffiliateTitle: string;
+    AffiliateDescription: string;
+    AffiliateSalePrice: number;
+    AffiliateRegularPrice: number;
+    AffiliateCreatedAt: string;
+};

@@ -47,16 +47,18 @@ export async function POST(request: Request) {
         const batch = adminDb.batch();
         const affiliateProductsRef = adminDb.collection('AffiliateProducts').doc();
 
-        // --- NEW DATA STRUCTURE AS PER YOUR REQUIREMENTS ---
-        // We are building the object from scratch to include only the specified fields.
+        // --- FINAL DATA STRUCTURE ---
+        // Manually constructing the object with all requested fields.
         const newAffiliateProduct = {
             // --- Fields from the Original Product (as-is) ---
             originalProductId: originalProductDoc.id,
-            owner: originalProductData.owner || null, // The original product's owner
+            owner: originalProductData.owner || null,
             product_images: originalProductData.product_images || [],
+            category: originalProductData.category || 'Uncategorized', // Including category
             sizes: originalProductData.sizes || [],
             colors: originalProductData.colors || [],
-            stock: originalProductData.stock || 0,
+            stock: originalProductData.stock || 0, // Including stock
+            sales: originalProductData.sales || 0, // Including sales
             currency: originalProductData.currency || 'USD',
 
             // --- Fields from the Affiliate (prefixed) ---
@@ -65,12 +67,9 @@ export async function POST(request: Request) {
             AffiliateDescription: affiliateDescription,
             AffiliateSalePrice: affiliateSalePrice,
             AffiliateRegularPrice: affiliateRegularPrice,
-            
-            // Add a timestamp for when this affiliate version was created
             AffiliateCreatedAt: new Date().toISOString(),
         };
 
-        // This .set() command will create a new document with the exact structure defined above.
         batch.set(affiliateProductsRef, newAffiliateProduct);
 
         const userRef = adminDb.collection('users').doc(userEmail);

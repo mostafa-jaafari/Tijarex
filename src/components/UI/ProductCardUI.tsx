@@ -144,7 +144,7 @@ export const ProductCardUI = ({
                     <div className="flex items-center gap-2"><User size={16} className="text-gray-400" /><div><div className="font-semibold">15</div><div className="text-xs text-gray-400">Affiliate</div></div></div>
                     <div className="flex items-center gap-2"><Box size={16} className="text-gray-400" /><div><div className="font-semibold">{product.stock.toLocaleString()}</div><div className="text-xs text-gray-400">Stock</div></div></div>
                 </div>
-                <div className="group-hover:mt-3 h-0 group-hover:h-[440px] transition-all duration-200">
+                <div className="group-hover:mt-3 h-0 group-hover:h-[44px] transition-all duration-200">
                     <motion.div
                         animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 5 }}
                         initial={{ opacity: 0, y: 5 }}
@@ -157,7 +157,7 @@ export const ProductCardUI = ({
                                 className={`bg-purple-600 hover:bg-purple-700 
                                     rounded-lg text-sm text-white
                                     w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
-                                Customize & Claim <Store size={16} />
+                                Drop To Collection <Store size={16} />
                             </button>
                         )
                         :

@@ -12,7 +12,8 @@ import {
     Store,
     UploadCloud,
     Heart,
-    Layout
+    Layout,
+    FolderOpen
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -43,10 +44,10 @@ export function Sidebar() {
             badge: "3",
         },
         ...(userInfos?.UserRole === "affiliate" ? [{
-            label: "my store",
-            icon: Store,
-            href: "my-store",
-            badge: null,
+            label: "my collection",
+            icon: FolderOpen,
+            href: "my-collection",
+            badge: 0,
         }] : []),
         {
             label: "returns",
