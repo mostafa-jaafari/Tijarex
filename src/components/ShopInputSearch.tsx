@@ -1,6 +1,6 @@
 "use client";
 
-import { useGlobaleProducts } from "@/context/GlobalProductsContext";
+import { useGlobalProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
 import { PackageSearch } from "lucide-react";
 import Link from "next/link";
@@ -29,7 +29,7 @@ export function ShopInputSearch() {
         document.addEventListener("mousedown", handleHideMenu);
         return () => document.removeEventListener("mousedown", handleHideMenu);
     }, []);
-    const { globalProductsData } = useGlobaleProducts();
+    const { globalProductsData } = useGlobalProducts();
     const [isLoadingSearch, setIsLoadingSearch] = useState(false);
     const [searchResult, setSearchResult] = useState<ProductType[] | []>([]);
     

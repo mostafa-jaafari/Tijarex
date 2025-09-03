@@ -1,7 +1,6 @@
 "use client";
 
 import { ProductType } from "@/types/product";
-import { useSession } from "next-auth/react";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
 interface GlobalProductsContextTypes {
@@ -15,14 +14,8 @@ const GlobalProductsContext = createContext<GlobalProductsContextTypes | undefin
 export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) => {
     const [globalProductsData, setGlobalProductsData] = useState<ProductType[]>([]);
     const [isLoadingGlobalProducts, setIsLoadingGlobalProducts] = useState(true); // Start as true
-    const { data: session, status } = useSession();
 
     const fetchGlobalProducts = useCallback(async () => {
-        // This check is good, but we also handle it in the useEffect
-        if (status !== "authenticated") {
-            return;
-        }
-
         setIsLoadingGlobalProducts(true);
         try {
             const res = await fetch('/api/products');
@@ -37,18 +30,11 @@ export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) =
         } finally {
             setIsLoadingGlobalProducts(false);
         }
-    }, [status]); // Dependency is correct
+    }, []); // Dependency is correct
 
     useEffect(() => {
-        if (status === "authenticated") {
-            fetchGlobalProducts();
-        } else if (status === "unauthenticated") {
-            // If user is logged out, clear data and stop loading
-            setGlobalProductsData([]);
-            setIsLoadingGlobalProducts(false);
-        }
-        // When status is "loading", isLoadingGlobalProducts remains true
-    }, [status, fetchGlobalProducts]);
+        fetchGlobalProducts();
+    }, [fetchGlobalProducts]);
 
     const contextValue = {
         globalProductsData,

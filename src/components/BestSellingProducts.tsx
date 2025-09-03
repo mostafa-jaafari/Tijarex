@@ -7,10 +7,7 @@ import { useGlobalProducts } from '@/context/GlobalProductsContext';
 export function BestSellingProducts() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
-    console.log("BestSellingProducts State:", { 
-        isLoading: isLoadingGlobalProducts, 
-        productCount: globalProductsData.length 
-    });
+    
     const trendProducts = globalProductsData.sort((a, b) => b.sales - a.sales).slice(0, 10); // Top 10 best selling products
     return (
         <section

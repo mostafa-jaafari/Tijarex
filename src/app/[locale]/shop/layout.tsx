@@ -2,7 +2,7 @@ import Footer from '@/components/Footer'
 import { PublicHeader } from '@/components/PublicHeader'
 import React from 'react'
 
-export default function layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <main 
         className="w-full min-h-[200vh]
