@@ -13,7 +13,11 @@ export default function QuickSetupGuide() {
   const { userInfos, isLoadingUserInfos, setIsFinishSetup } = useUserInfos();
   const { isLoadingCheckingFirstAffiliateLink, hasGottenFirstLink } = useFirstAffiliateLink();
   const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
-  const IsUploadOneProductAtLeast = globalProductsData.find((p: ProductType) => p.owner?.email.toLowerCase() === userInfos?.email );
+
+  const IsUploadOneProductAtLeast = globalProductsData.find(
+    (p: ProductType) => p.owner?.email.toLowerCase() === userInfos?.email
+  );
+
   const ConfigSteps = [
     {
       title: "Create your account.",
@@ -52,7 +56,7 @@ export default function QuickSetupGuide() {
           image: "/First-Order.png",
           imagestyles:
             "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
-          iscompleted: IsUploadOneProductAtLeast,
+          iscompleted: !!IsUploadOneProductAtLeast, // Use !! to ensure a boolean value
           link: {
             label: "Start adding your products.",
             href: "upload-products",
@@ -66,29 +70,37 @@ export default function QuickSetupGuide() {
           image: "/First-Order.png",
           imagestyles:
             "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
-          iscompleted:
-            hasGottenFirstLink,
-            link: {
+          iscompleted: hasGottenFirstLink,
+          link: {
             label: "Start promoting products.",
             href: "products",
           },
         },
   ];
 
-  // progress calculation
   const completedSteps = ConfigSteps.filter((step) => step.iscompleted).length;
   const totalSteps = ConfigSteps.length;
   const progressPercent = Math.round((completedSteps / totalSteps) * 100);
-
   const [animatedWidth, setAnimatedWidth] = useState("2%");
 
   const IsCompletedAllSteps = completedSteps === totalSteps;
-  // trigger animation
+
   useEffect(() => {
     setAnimatedWidth(`${progressPercent}%`);
-    setIsFinishSetup(IsCompletedAllSteps);
-  }, [IsCompletedAllSteps, progressPercent, setIsFinishSetup]);
+    if (!isLoadingUserInfos && !isLoadingGlobalProducts && !isLoadingCheckingFirstAffiliateLink) {
+        setIsFinishSetup(IsCompletedAllSteps);
+    }
+  }, [IsCompletedAllSteps, progressPercent, setIsFinishSetup, isLoadingUserInfos, isLoadingGlobalProducts, isLoadingCheckingFirstAffiliateLink]);
 
+  // ✅ Solution: Check loading states before deciding to render anything
+  const isLoading = isLoadingUserInfos || isLoadingGlobalProducts || isLoadingCheckingFirstAffiliateLink;
+
+  if (isLoading) {
+    // You can return a loading spinner here for better UX, or null to show nothing
+    return null; 
+  }
+
+  // Now, this check will only run after all data is loaded
   if (IsCompletedAllSteps) {
     return null;
   }

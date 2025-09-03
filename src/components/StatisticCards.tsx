@@ -40,34 +40,37 @@ export function StatisticCards({ isLoadingUserInfos, userInfos }: { isLoadingUse
             title: "Total Sales",
         },
         {
+            count: 0,
+            percent: 8,
+            isPositive: false,
+            title: "Total Products",
+        },
+        {
+            count: 0,
+            percent: 23,
+            isPositive: true,
+            title: "Pending",
+        },
+        {
+            count: 0,
+            percent: 23,
+            isPositive: true,
+            title: "Shipped",
+        },
+        {
             count: userInfos?.netearnings || 0,
             percent: 23,
             isPositive: true,
             title: "Net Earnings",
         },
-        {
-            count: userInfos?.activeproducts || 0,
-            percent: 8,
-            isPositive: false,
-            title: "Active Products",
-        },
     ];
 
     const Statistics_Cards = userInfos?.UserRole === "seller" ? Seller_Cards : userInfos?.UserRole === "affiliate" ? Affiliate_Cards : [];
 
-    // const getIconColor = (color: string) => {
-    //     switch (color) {
-    //         case 'blue': return 'text-blue-600 bg-blue-50';
-    //         case 'green': return 'text-green-600 bg-green-50';
-    //         case 'red': return 'text-red-600 bg-red-50';
-    //         default: return 'text-gray-600 bg-gray-50';
-    //     }
-    // };
-
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+        <section className={`${userInfos?.UserRole === "affiliate" ? "lg:grid-cols-4" : "lg:grid-cols-5"} grid grid-cols-1 md:grid-cols-2 gap-2`}>
             {isLoadingUserInfos ? 
-                Array(4).fill(0).map((_, idx) => {
+                Array(5).fill(0).map((_, idx) => {
                     return (
                         <div
                             key={idx}
@@ -85,8 +88,8 @@ export function StatisticCards({ isLoadingUserInfos, userInfos }: { isLoadingUse
                 return (
                     <div
                         key={idx}
-                        className="space-y-4 border-b border-neutral-400/50 
-                            ring ring-neutral-200 bg-white rounded-xl 
+                        className="space-y-4 border-b border-neutral-400/80 
+                            ring ring-neutral-200 bg-white rounded-xl
                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-4"
                     >
                         <h1

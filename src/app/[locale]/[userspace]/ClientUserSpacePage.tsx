@@ -112,6 +112,14 @@ export default function ClientUserSpacePage({ UserSpaceParamsId }: { UserSpacePa
       UserSpaceRendered = (<div>Unknown Space</div>);
       break;
   }
+  if(isLoadingUserInfos){
+    return (
+      <section 
+        className="w-full h-[90vh] flex justify-center items-center">
+        <div className="w-20 h-20 border-2 border-transparent border-t-current rounded-full animate-spin" />
+      </section>
+    )
+  }
   return (
     <div
       className='w-full pt-6 px-12'

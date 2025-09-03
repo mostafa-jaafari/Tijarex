@@ -18,13 +18,16 @@ interface WidgetCardProps {
     UniqueUserId: string;
     userRole: string;
 }
+
 const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage, productid, UniqueUserId, userRole }: WidgetCardProps) => {
     const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
     const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
+    
     const HandleShowQuickView = (productid: string) => {
         setProductID(productid as string || "");
         setIsShowQuickViewProduct(true);
     }
+
     return (
         <section
             className='w-full rounded-xl 
@@ -32,7 +35,7 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
                 justify-end'
         >
             <div
-                className='relative w-full h-35 bg-gray-100 
+                className='relative w-full h-36 bg-gray-100 
                     overflow-hidden shadow-sm rounded-lg mb-2'
             >
                 <Image
@@ -103,16 +106,53 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
         </section>
     )
 }
+
+// Skeleton component for the WidgetCard
+const WidgetCardSkeleton = () => {
+    return (
+        <div
+            className='w-full rounded-xl 
+                bg-white border border-gray-200 p-1 flex flex-col 
+                justify-end animate-pulse'
+        >
+            {/* Image Skeleton */}
+            <div
+                className='w-full h-36 bg-gray-200 
+                    rounded-lg mb-2'
+            ></div>
+            <div
+                className='px-2 space-y-2'
+            >
+                {/* Title Skeleton */}
+                <div className='h-4 bg-gray-200 rounded-md w-3/4'></div>
+                {/* Stock/Sold Skeleton */}
+                <div className='h-3 bg-gray-200 rounded-md w-1/2'></div>
+                {/* Price Skeleton */}
+                <div className='h-5 bg-gray-200 rounded-md w-1/3'></div>
+            </div>
+            <div
+                className='p-2'
+            >
+                {/* Button Skeleton */}
+                <div className='h-10 bg-gray-300 rounded-lg w-full'></div>
+            </div>
+        </div>
+    )
+}
+
+
 export function PopularProductsWidget() {
     const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
     const { userInfos } = useUserInfos();
-    if(!userInfos) return;
-
+    
+    // Early return if userInfos is not available yet to prevent potential errors
+    if (!userInfos) return null;
 
     const TrendingProducts = globalProductsData.slice(0, 2);
+    
     return (
         <section
-            className="grow border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
+            className="w-full max-w-[500px] border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
         rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-6"
         >
             <div
@@ -128,26 +168,16 @@ export function PopularProductsWidget() {
                 </span>
             </div>
             <div
-                className='w-full grid grid-cols-2 gap-3'
+                className='grow grid grid-cols-2 gap-3'
             >
                 {isLoadingGlobalProducts ? (
-                    Array(2).fill(0).map((_, idx) => (
-                        <div
-                            key={idx}
-                            className='w-full min-h-30 rounded-xl 
-                                space-y-2 p-2 border border-gray-200 overflow-hidden flex flex-col justify-end'
-                        >
-                            <div className='w-full h-30 bg-gray-300 animate-pulse rounded-lg mb-2'/>
-                            <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
-                            <span className='flex w-full h-4 rounded-full bg-gray-200 animate-pulse' />
-                            <div
-                                className='flex items-center gap-2'
-                            >
-                                <span className='flex w-20 h-4 rounded-full bg-gray-200 animate-pulse' />
-                            </div>
-                        </div>
-                    ))
-                ) : TrendingProducts.map((product, idx) => (
+                    // Use the new skeleton component
+                    <>
+                        <WidgetCardSkeleton />
+                        <WidgetCardSkeleton />
+                    </>
+                ) : (
+                    TrendingProducts.map((product, idx) => (
                         <WidgetCard 
                             key={idx}
                             regularprice={product.original_regular_price}
@@ -160,7 +190,8 @@ export function PopularProductsWidget() {
                             UniqueUserId={userInfos?.uniqueuserid}
                             userRole={userInfos?.UserRole}
                         />
-                    ))}
+                    ))
+                )}
             </div>
         </section>
     )

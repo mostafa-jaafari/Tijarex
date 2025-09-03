@@ -299,11 +299,7 @@ export default function UploadProductPage() {
                                         rows={5}
                                         maxLength={1000}
                                         placeholder="Describe the key features of your product..." 
-                                        className="w-full px-4 py-2.5 bg-white border 
-                                            border-neutral-300 text-neutral-800 rounded-lg 
-                                            placeholder:text-neutral-400 focus:outline-none 
-                                            focus:ring-2 focus:ring-teal-400 
-                                            focus:border-teal-500 transition-all">
+                                        className={InputStyles}>
                                     </textarea>
                                 </div>
                             </div>

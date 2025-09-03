@@ -17,7 +17,7 @@ export function TraficSourcesWidget({ isFinishSetup, isLoadingUserInfos, userInf
     <section 
       className={`border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
         rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-4
-        ${isFinishSetup ? "h-87 min-w-1/2" : "grow"}`}
+        ${isFinishSetup ? "h-91 min-w-1/2 grow" : "grow"}`}
     >
       
       {/* Header Section */}
