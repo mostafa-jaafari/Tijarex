@@ -3,24 +3,20 @@
 import { UserInfosType } from "@/types/userinfos";
 import { useSession } from "next-auth/react";
 import { createContext, ReactNode, useContext, useEffect, useState, useCallback } from "react";
-import { toast } from "sonner";
 
-// --- FIX 1: Add a 'refetch' function to the context type ---
-// This allows other components to ask the context to update its data.
 type UserInfosContextType = {
     userInfos: UserInfosType | null;
     isLoadingUserInfos: boolean;
-    refetch: () => void; // The function to trigger a data refresh
+    refetch: () => void;
     isFinishSetup: boolean;
     setIsFinishSetup: (value: boolean) => void;
 };
 
-// The context is created with 'undefined' to ensure the provider is always used.
 const UserInfosContext = createContext<UserInfosContextType | undefined>(undefined);
 
 export function UserInfosContextProvider({ children }: { children: ReactNode; }){
     const [userInfos, setUserInfos] = useState<UserInfosType | null>(null);
-    const [isLoadingUserInfos, setIsLoadingUserInfos] = useState(true);
+    const [isLoadingUserInfos, setIsLoadingUserInfos] = useState(true); // Start as true
     const [isFinishSetup, setIsFinishSetup] = useState(false);
     
     const { data: session, status } = useSession();
@@ -33,44 +29,34 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
         setIsLoadingUserInfos(true);
         try{
             const res = await fetch('/api/userinfos');
-            let data = null;
-            try {
-                data = await res.json();
-            } catch (err) {
-                toast.error("Response is not JSON:" + err);
-            }
+            const data = await res.json();
 
            if (!res.ok || !data?.userinfos) {
-           setUserInfos(null);
-           return;
+             setUserInfos(null);
+             return;
            }
 
            setUserInfos(data.userinfos);
 
         } catch(error){
             console.error("Error in fetchUserInfos:", error);
-            // In case of error, ensure userInfos is null.
             setUserInfos(null); 
         } finally {
             setIsLoadingUserInfos(false);
         }
     }, [status]);
     
-    // --- FIX 4: The main useEffect now depends on 'status' and the memoized function ---
     useEffect(() => {
         if (status === "authenticated") {
-            // If the user is logged in, fetch their data.
             fetchUserInfos();
-        } else {
-            // If the session is loading or the user is logged out, clear any existing data.
+        } else if (status === "unauthenticated") {
+            // If user is logged out, clear data and stop loading
             setUserInfos(null);
-            // Set loading to true only when the session is actively loading.
-            setIsLoadingUserInfos(status === "loading");
+            setIsLoadingUserInfos(false);
         }
+        // When status is "loading", isLoadingUserInfos remains true
     }, [status, fetchUserInfos]);
 
-
-    // The value provided by the context now includes the 'refetch' function.
     const contextValue = { 
         userInfos, 
         isLoadingUserInfos, 
@@ -79,9 +65,9 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
         setIsFinishSetup
     };
 
-    if (!session && status !== "loading") {
-        return <>{children}</>;
-    }
+    // THE FIX:
+    // ALWAYS return the Provider. The `contextValue` will be updated
+    // based on the auth status, providing a safe default for logged-out users.
     return (
         <UserInfosContext.Provider value={contextValue}>
             {children}
@@ -89,7 +75,6 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
     );
 }
 
-// The custom hook to consume the context.
 export const useUserInfos = () => {
     const context = useContext(UserInfosContext);
     if (context === undefined){

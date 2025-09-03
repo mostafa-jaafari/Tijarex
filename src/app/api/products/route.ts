@@ -24,8 +24,10 @@ export async function GET() {
 
     // 3. Check if the collection is empty
     if (productsSnapshot.empty) {
-      // If there are no products, return a 404 error
-      return NextResponse.json({ error: 'No products found' }, { status: 404 });
+      // If there are no products, it's still a successful request.
+      // Return a 200 OK status with an empty array.
+      cache.set(cacheKey, []); // Also cache the empty response for 5 minutes
+      return NextResponse.json({ products: [], source: 'firestore' });
     }
 
     // 4. Map the documents to an array of product objects

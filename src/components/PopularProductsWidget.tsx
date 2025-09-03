@@ -1,5 +1,5 @@
 "use client";
-import { useGlobaleProducts } from '@/context/GlobalProductsContext';
+import { useGlobalProducts } from '@/context/GlobalProductsContext';
 import { Copy, Flame, SquareArrowOutUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { HandleGetRefLink } from './Functions/GetAffiliateLink';
@@ -91,7 +91,7 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
     )
 }
 export function PopularProductsWidget() {
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
     const { userInfos } = useUserInfos();
     if(!userInfos) return;
 

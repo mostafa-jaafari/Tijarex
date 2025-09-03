@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
-import { useGlobaleProducts } from "@/context/GlobalProductsContext";
+import { useGlobalProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
 
 // Skeleton Component for cleaner code
@@ -21,7 +21,7 @@ const ProductCardSkeleton = () => (
 
 export default function ProductsPage() {
     const { userInfos } = useUserInfos();
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
 
     // State for the currently displayed products
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);

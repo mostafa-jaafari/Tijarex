@@ -42,7 +42,7 @@ export type AffiliateProduct = ProductType & {
 };
 
 export interface ProductCardProps{
-    PRODUCTIMAGES: string;
+    PRODUCTIMAGES: string[];
     PRODUCTID: string | number;
     PRODUCTTITLE: string;
     PRODUCTSALEPRICE: number;

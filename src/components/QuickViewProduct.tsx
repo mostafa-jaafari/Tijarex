@@ -192,7 +192,7 @@ export function QuickViewProduct() {
                         <div className="flex flex-col gap-4">
                             <div>
                                 <h1 className="text-3xl font-bold text-gray-900">{selectedProductDetails.title}</h1>
-                                {userInfos?.UserRole === "seller" || userInfos?.UserRole === "affiliate" ? (
+                                {userInfos && userInfos?.UserRole === "seller" || userInfos?.UserRole === "affiliate" ? (
                                     <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
                                         <span>Sold by:</span>
                                         <span className="font-semibold text-purple-600 flex items-center gap-1">

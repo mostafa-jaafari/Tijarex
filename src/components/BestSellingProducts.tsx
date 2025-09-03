@@ -2,11 +2,15 @@
 import React, { useRef } from 'react'
 import { HeadlineSection } from './HeadlineSection';
 import { BestSellingProductUI } from './UI/BestSellingProductUI';
-import { useGlobaleProducts } from '@/context/GlobalProductsContext';
+import { useGlobalProducts } from '@/context/GlobalProductsContext';
 
 export function BestSellingProducts() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+    console.log("BestSellingProducts State:", { 
+        isLoading: isLoadingGlobalProducts, 
+        productCount: globalProductsData.length 
+    });
     const trendProducts = globalProductsData.sort((a, b) => b.sales - a.sales).slice(0, 10); // Top 10 best selling products
     return (
         <section
@@ -57,7 +61,7 @@ export function BestSellingProducts() {
                     {trendProducts.map((product) => (
                         <BestSellingProductUI
                             key={product.id}
-                            PRODUCTCATEGORIE={product.category}
+                            PRODUCTCATEGORY={product.category}
                             PRODUCTID={product.id}
                             PRODUCTIMAGES={product.product_images}
                             PRODUCTSALEPRICE={product.original_sale_price}

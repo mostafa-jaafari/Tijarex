@@ -56,20 +56,20 @@ export default async function RootLayout({
           ${inter.className} antialiased`}
           >
           <NextAuthSessionProvider>
-            <FirstAffiliateLinkTrackerProvider>
-              <GlobalProductsProvider>
-                <QuickViewProductContextProvider>
-                    <UserInfosContextProvider>
-                      <Toaster position="top-center" />
-                      <NextIntlClientProvider locale={locale} messages={messages}>
-                        <QuickViewProduct />
-                          {children}
-                      </NextIntlClientProvider>
-                      <ScrollToTop />
-                    </UserInfosContextProvider>
-                </QuickViewProductContextProvider>
-              </GlobalProductsProvider>
-            </FirstAffiliateLinkTrackerProvider>
+            <GlobalProductsProvider>
+              <UserInfosContextProvider>
+                <FirstAffiliateLinkTrackerProvider>
+                  <QuickViewProductContextProvider>
+                        <Toaster position="top-center" />
+                        <NextIntlClientProvider locale={locale} messages={messages}>
+                            {children}
+                          <QuickViewProduct />
+                        </NextIntlClientProvider>
+                        <ScrollToTop />
+                  </QuickViewProductContextProvider>
+                </FirstAffiliateLinkTrackerProvider>
+              </UserInfosContextProvider>
+            </GlobalProductsProvider>
           </NextAuthSessionProvider>
       </body>
     </html>

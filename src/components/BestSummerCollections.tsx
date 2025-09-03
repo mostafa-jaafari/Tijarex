@@ -2,12 +2,12 @@
 import React, { useRef } from 'react'
 import { HeadlineSection } from './HeadlineSection'
 import { BestSellingProductUI } from './UI/BestSellingProductUI'
-import { useGlobaleProducts } from '@/context/GlobalProductsContext';
+import { useGlobalProducts } from '@/context/GlobalProductsContext';
 
 
 export function BestSummerCollections() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobaleProducts();
+    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
     const summerProducts = globalProductsData.slice(0, 6);
     return (
         <section
@@ -56,7 +56,7 @@ export function BestSummerCollections() {
                     {summerProducts.map((product) => (
                         <BestSellingProductUI
                             key={product.id}
-                            PRODUCTCATEGORIE={product.category}
+                            PRODUCTCATEGORY={product.category}
                             PRODUCTID={product.id}
                             PRODUCTIMAGES={product.product_images}
                             PRODUCTSALEPRICE={product.original_sale_price}
