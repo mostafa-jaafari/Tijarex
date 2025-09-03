@@ -28,7 +28,7 @@ export default function UploadProductPage() {
     // --- State Management ---
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [categories, setCategories] = useState<string[]>([]);
+    const [category, setCategory] = useState<string>("");
     const [regularPrice, setRegularPrice] = useState("");
     const [salePrice, setSalePrice] = useState("");
     const [stock, setStock] = useState("");
@@ -54,7 +54,7 @@ export default function UploadProductPage() {
     const resetForm = () => {
         setTitle("");
         setDescription("");
-        setCategories([]);
+        setCategory("");
         setRegularPrice("");
         setSalePrice("");
         setStock("");
@@ -125,8 +125,13 @@ export default function UploadProductPage() {
         e.preventDefault();
         if (isSubmitting || isProcessingImages) return;
 
-        if (!title || !regularPrice || !stock || productFiles.length === 0) {
-            toast.error("Please fill required fields: Title, Price, Stock, and Images.");
+        const requiredFields = { title, regularPrice, stock, category };
+        const missingFields = Object.entries(requiredFields)
+            .filter(([value]) => !value)
+            .map(([key]) => key);
+
+        if (missingFields.length > 0 || productFiles.length === 0 || sizes.length === 0 || colors.length === 0) {
+            toast.error(`Please fill all required fields. Missing: ${missingFields.join(', ')}`);
             return;
         }
         
@@ -189,17 +194,15 @@ export default function UploadProductPage() {
             toast.success("Images uploaded! Saving product details...");
 
             const productData = {
-                title, 
-                name: title, 
-                description, 
-                category: categories,
-                regular_price: parseFloat(regularPrice),
-                sale_price: salePrice ? parseFloat(salePrice) : null,
+                title,
+                description,
+                category,
+                original_regular_price: parseFloat(regularPrice),
+                original_sale_price: salePrice ? parseFloat(salePrice) : null,
                 stock: parseInt(stock, 10),
-                colors, 
-                sizes, 
+                colors,
+                sizes,
                 product_images: uploadedImageUrls,
-                status: 'active', 
                 currency: 'DH',
             };
 
@@ -258,7 +261,10 @@ export default function UploadProductPage() {
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1.5">Category</label>
-                        <CategoryInput categories={categories} setCategories={setCategories} />
+                        <CategoryInput 
+                            category={category} 
+                            setCategory={setCategory} 
+                        />
                     </div>
                     
                     <div>
@@ -348,7 +354,7 @@ export default function UploadProductPage() {
                                     !title ||
                                     !regularPrice ||
                                     !stock ||
-                                    categories.length === 0 ||
+                                    !category ||
                                     sizes.length === 0 ||
                                     colors.length === 0 ||
                                     productFiles.length === 0

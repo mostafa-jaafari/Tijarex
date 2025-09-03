@@ -1,58 +1,45 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
-interface CategoryInputProps {
-  categories: string[];
-  setCategories: React.Dispatch<React.SetStateAction<string[]>>;
+// --- PROPS ARE NOW FOR A SINGLE STRING ---
+interface SingleCategoryInputProps {
+  category: string;
+  setCategory: (value: string) => void;
 }
 
-export const CategoryInput: React.FC<CategoryInputProps> = ({ categories, setCategories }) => {
-    const [currentValue, setCurrentValue] = useState('');
+export const CategoryInput: React.FC<SingleCategoryInputProps> = ({ category, setCategory }) => {
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' || e.key === ',') {
-            e.preventDefault();
-            const newCategory = currentValue.trim();
-            if (newCategory && !categories.some(c => c.toLowerCase() === newCategory.toLowerCase())) {
-                setCategories([...categories, newCategory]);
-            }
-            setCurrentValue('');
-        }
-    };
-    
-    const removeCategory = (indexToRemove: number) => {
-        setCategories(categories.filter((_, index) => index !== indexToRemove));
+    // The handler to clear the input field
+    const handleClear = () => {
+        setCategory('');
     };
 
     return (
-        <div className="w-full p-2 bg-white border border-gray-300 rounded-lg flex flex-wrap items-center gap-2 focus-within:ring-2 focus-within:ring-teal-400 focus-within:border-teal-500 transition-all">
-            <AnimatePresence>
-                {categories.map((category, index) => (
-                    <motion.div
-                        key={category}
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-md"
-                    >
-                        <span>{category}</span>
-                        <button type="button" onClick={() => removeCategory(index)} className="text-gray-500 hover:text-gray-800">
-                            <X size={14} />
-                        </button>
-                    </motion.div>
-                ))}
-            </AnimatePresence>
+        // The main container is now 'relative' to position the clear button
+        <div className="relative w-full">
             <input
                 type="text"
-                value={currentValue}
-                onChange={(e) => setCurrentValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={categories.length === 0 ? "e.g., Apparel, Tops..." : "+ Add"}
-                className="flex-grow bg-transparent text-sm p-1.5 focus:outline-none placeholder:text-gray-400"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="e.g., Apparel"
+                // The styling is adjusted for a single input with an icon inside
+                className="w-full p-3 pr-10 bg-white border border-gray-300 rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-500 placeholder:text-gray-400"
             />
+            
+            {/* --- CLEAR BUTTON --- */}
+            {/* This button only appears when there is text in the input */}
+            {category && (
+                <button
+                    type="button"
+                    onClick={handleClear}
+                    aria-label="Clear input"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-800 transition-colors"
+                >
+                    <X size={18} />
+                </button>
+            )}
         </div>
     );
 };

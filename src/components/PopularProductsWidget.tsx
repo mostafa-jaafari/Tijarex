@@ -1,6 +1,6 @@
 "use client";
 import { useGlobalProducts } from '@/context/GlobalProductsContext';
-import { Copy, Flame, SquareArrowOutUpRight } from 'lucide-react';
+import { Copy, Eye, Flame, SquareArrowOutUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { HandleGetRefLink } from './Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
@@ -16,8 +16,9 @@ interface WidgetCardProps {
     productimage?: string;
     productid: string;
     UniqueUserId: string;
+    userRole: string;
 }
-const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage, productid, UniqueUserId }: WidgetCardProps) => {
+const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage, productid, UniqueUserId, userRole }: WidgetCardProps) => {
     const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
     const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
     const HandleShowQuickView = (productid: string) => {
@@ -77,8 +78,9 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
                 </span>
             </div>
             <div
-                className='flex items-center gap-1 p-2'
+                className='p-2'
             >
+                {userRole === "affiliate" ? (
                 <button 
                     onClick={() => HandleGetRefLink(productid as string, UniqueUserId, hasGottenFirstLink, markAsGotten)}
                     className={`bg-neutral-900 hover:bg-neutral-900/90 
@@ -86,6 +88,17 @@ const WidgetCard = ({ title, stock, sold, saleprice, regularprice, productimage,
                         w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
                     Get Link <Copy size={16} />
                 </button>
+                )
+            :
+            (
+                <button 
+                    onClick={() => HandleShowQuickView(productid)}
+                    className={`bg-neutral-900 hover:bg-neutral-900/90 
+                        rounded-lg text-sm text-neutral-100
+                        w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                    Quick View <Eye size={16} />
+                </button>
+            )}
             </div>
         </section>
     )
@@ -146,6 +159,7 @@ export function PopularProductsWidget() {
                             productimage={product.product_images[0]}
                             productid={product.id}
                             UniqueUserId={userInfos?.uniqueuserid}
+                            userRole={userInfos?.UserRole}
                         />
                     ))
                 ))}

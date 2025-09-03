@@ -282,7 +282,7 @@ export function QuickViewProduct() {
                                 className="space-y-2 pt-4"
                             >
                             {/* --- Add To Card Button --- */}
-                            {userInfos?.UserRole !== "affiliate" ? (
+                            {(userInfos?.UserRole !== "affiliate" && userInfos?.UserRole !== "seller")  ? (
                                 <div className="flex items-center gap-4 mt-auto">
                                     <div 
                                         className="flex items-center border-b border-gray-400 
@@ -318,6 +318,7 @@ export function QuickViewProduct() {
                                 </div>
                             )
                             :
+                            (userInfos?.UserRole !== "affiliate" && userInfos?.UserRole !== "seller") &&
                             (
                                 <button
                                     onClick={() => HandleGetRefLink(selectedProductDetails.id, userInfos.uniqueuserid, hasGottenFirstLink, markAsGotten)}

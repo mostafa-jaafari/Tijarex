@@ -86,7 +86,6 @@ export function ProgressBarClient() {
               ? {
                   totalsales: 0,
                   netearnings: 0,
-                  activeproducts: 0,
                 }
               : selectedRole === "affiliate"
               ? {

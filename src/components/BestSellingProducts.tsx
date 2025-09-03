@@ -1,5 +1,5 @@
-"use client";
-import React, { useRef } from 'react'
+"use client"
+import React, { useRef } from 'react';
 import { HeadlineSection } from './HeadlineSection';
 import { BestSellingProductUI } from './UI/BestSellingProductUI';
 import { useGlobalProducts } from '@/context/GlobalProductsContext';

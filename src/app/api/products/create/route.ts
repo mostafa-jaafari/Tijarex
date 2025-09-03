@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { adminDb, adminAuth } from '@/lib/FirebaseAdmin'; // IMPORTANT: Use ADMIN SDK
 import { v4 as uuidv4 } from 'uuid';
 import { UserInfosType } from '@/types/userinfos';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: Request) {
     const authHeader = request.headers.get('Authorization');
@@ -9,15 +11,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
     }
     const idToken = authHeader.split('Bearer ')[1];
-
+    const session = await getServerSession(authOptions);
+    if(!session) return;
     try {
         // 1. Authenticate user with Admin SDK
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         
-        // 2. Get user details from Firebase Auth with Admin SDK
-        const userDoc = await adminDb.collection("users").doc(decodedToken.uid).get();
+        // 2. Get user details from your Firestore 'users' collection
+        const userDoc = await adminDb.collection("users").doc(session?.user?.email).get();
 
-        let userData = null;
+        let userData: UserInfosType | null = null;
         if (userDoc.exists) {
             userData = userDoc.data() as UserInfosType;
         }
@@ -42,30 +45,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
         }
 
-        // 5. Construct the final product object
+        // 5. Construct the final product object with the FIX
         const newProduct = {
-            // id: string;
-            //   category: string[];
-            //   product_images: string[];
-            //   original_sale_price: number;
-            //   original_regular_price: number;
-            //   stock: number;
-            //   title: string;
-            //   sales: number;
-            //   lastUpdated: string;
-            //   createdAt: string;
-            //   rating: number;
-            //   currency: string;
-            //   reviews: ReviewTypes[];
-            //   description: string;
-            //   sizes: string[];
-            //   colors: string[];
-            //   owner?: {
-            //     name: string;
-            //     image: string;
-            //     email: string;
-            //   };
-
             id: `prod-${uuidv4()}`,
             createdAt: new Date().toISOString(),
             lastUpdated: new Date().toISOString(),
@@ -81,11 +62,15 @@ export async function POST(request: Request) {
             product_images,
             owner: {
                 email: decodedToken.email,
-                name: userData?.fullname || "Seller", // Use Firebase Auth display name
-                image: userData?.profileimage || `https://avatar.vercel.sh/${userData?.email}`, // Use Firebase Auth photo URL
+                // --- THE FIX IS HERE ---
+                // Create a fallback chain: Firestore Doc -> Auth Token -> Generic String
+                name: userData?.fullname || decodedToken.name || "Seller",
+                
+                // --- Also apply the same logic for the image for consistency ---
+                image: userData?.profileimage || decodedToken.picture || `https://avatar.vercel.sh/${decodedToken.email}`,
             },
             rating: 0,
-            reviews: 0,
+            reviews: 0, // This should likely be an empty array []
             sales: 0,
             productrevenu: 0,
         };
@@ -101,7 +86,6 @@ export async function POST(request: Request) {
 
     } catch (error) {
         console.error('Error creating product:', error);
-        // Provide more detailed error response in development
         return NextResponse.json({ 
             error: 'Failed to create product on the server.', 
             details: (error as {message: string;}).message 

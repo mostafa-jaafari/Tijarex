@@ -6,11 +6,14 @@ import React, { useEffect, useState } from 'react';
 import { PrimaryDark, PrimaryLight } from '@/app/[locale]/page';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
+import { useGlobalProducts } from '@/context/GlobalProductsContext';
+import { ProductType } from '@/types/product';
 
 export default function QuickSetupGuide() {
   const { userInfos, isLoadingUserInfos, setIsFinishSetup } = useUserInfos();
   const { isLoadingCheckingFirstAffiliateLink, hasGottenFirstLink } = useFirstAffiliateLink();
-
+  const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+  const IsUploadOneProductAtLeast = globalProductsData.find((p: ProductType) => p.owner?.email.toLowerCase() === userInfos?.email );
   const ConfigSteps = [
     {
       title: "Create your account.",
@@ -49,7 +52,7 @@ export default function QuickSetupGuide() {
           image: "/First-Order.png",
           imagestyles:
             "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
-          iscompleted: !!(userInfos?.activeproducts && userInfos.activeproducts > 0),
+          iscompleted: IsUploadOneProductAtLeast,
           link: {
             label: "Start adding your products.",
             href: "upload-products",

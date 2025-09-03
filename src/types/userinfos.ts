@@ -27,5 +27,4 @@ export type UserInfosType = {
     // --- Seller Statistics Cards ---
     // totalsales?: number;
     netearnings?: number;
-    activeproducts?: number;
 };

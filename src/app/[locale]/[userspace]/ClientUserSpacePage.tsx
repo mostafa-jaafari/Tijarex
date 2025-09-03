@@ -12,7 +12,52 @@ export default function ClientUserSpacePage({ UserSpaceParamsId }: { UserSpacePa
   let UserSpaceRendered;
   switch (UserSpaceParamsId) {
     case "seller":
-      UserSpaceRendered = (<div>Seller Space</div>);
+      UserSpaceRendered = (
+        <section
+          className='w-full space-y-4'
+        >
+          {/* --- Quick Setup Guide & Trends Products */}
+          {isFinishSetup && (
+            <StatisticCards
+                isLoadingUserInfos={isLoadingUserInfos}
+                userInfos={userInfos}
+            />
+          )}
+          <div
+            className='w-full flex items-start gap-4'
+          >
+            {!isFinishSetup && (
+                <QuickSetupGuide />
+            )}
+            {isFinishSetup && (
+                <TraficSourcesWidget 
+                    isFinishSetup={isFinishSetup}
+                    isLoadingUserInfos={isLoadingUserInfos}
+                    userInfos={userInfos}
+                />
+            )}
+            <PopularProductsWidget />
+          </div>
+          {!isFinishSetup && (
+            <StatisticCards
+                isLoadingUserInfos={isLoadingUserInfos}
+                userInfos={userInfos}
+            />
+          )}
+          <div
+            className='w-full flex items-start gap-4'
+          >
+            <EarningsChart isFinishSetup={isFinishSetup} />
+            {!isFinishSetup && (
+                <TraficSourcesWidget 
+                    isFinishSetup={isFinishSetup}
+                    isLoadingUserInfos={isLoadingUserInfos}
+                    userInfos={userInfos}
+                />
+            )}
+          </div>
+        </section>
+      );
       break;
   
     case "affiliate":
