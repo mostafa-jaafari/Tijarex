@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Copy } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Copy, Eye } from 'lucide-react';
 import { ProductType } from '@/types/product';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
@@ -155,13 +155,23 @@ export const ProductCardUI = ({
                         transition={{ duration: 0.25, ease: 'easeInOut' }}
                         className="flex items-center gap-2"
                     >
-                        {isAffiliate && ( // Use prop
+                        {isAffiliate ? ( // Use prop
                             <button 
                                 onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
                                 className={`bg-neutral-900 hover:bg-neutral-900/90 
                                     rounded-lg text-sm text-neutral-100
                                     w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
                                 Get Link <Copy size={16} />
+                            </button>
+                        )
+                        :
+                        (
+                            <button 
+                                onClick={HandleShowQuickView}
+                                className={`bg-neutral-900 hover:bg-neutral-900/90 
+                                    rounded-lg text-sm text-neutral-100
+                                    w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                                Quick View <Eye size={16} />
                             </button>
                         )}
                     </motion.div>

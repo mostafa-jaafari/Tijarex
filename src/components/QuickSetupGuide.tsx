@@ -48,7 +48,7 @@ export default function QuickSetupGuide() {
           title: "Add your First Product",
           description: "List your products to reach a wider audience and boost your sales",
           btntitle: "Add products",
-          isLoadingButton: isLoadingUserInfos,
+          isLoadingButton: isLoadingGlobalProducts,
           image: "/First-Order.png",
           imagestyles:
             "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",

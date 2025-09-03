@@ -108,8 +108,8 @@ export function PopularProductsWidget() {
     const { userInfos } = useUserInfos();
     if(!userInfos) return;
 
-    
 
+    const TrendingProducts = globalProductsData.slice(0, 2);
     return (
         <section
             className="grow border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
@@ -147,10 +147,9 @@ export function PopularProductsWidget() {
                             </div>
                         </div>
                     ))
-                ) : globalProductsData.map((product, idx) => (
-                    Array(2).fill(0).map((_, index) => (
+                ) : TrendingProducts.map((product, idx) => (
                         <WidgetCard 
-                            key={index + idx}
+                            key={idx}
                             regularprice={product.original_regular_price}
                             saleprice={product.original_sale_price}
                             sold={product.sales}
@@ -161,8 +160,7 @@ export function PopularProductsWidget() {
                             UniqueUserId={userInfos?.uniqueuserid}
                             userRole={userInfos?.UserRole}
                         />
-                    ))
-                ))}
+                    ))}
             </div>
         </section>
     )
