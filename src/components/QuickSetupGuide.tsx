@@ -1,6 +1,5 @@
 "use client";
-import { CircleCheckBig } from 'lucide-react';
-import Image from 'next/image';
+import { CircleCheck, Check, CircleDashed, ChevronUp, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { PrimaryDark, PrimaryLight } from '@/app/[locale]/page';
@@ -9,10 +8,43 @@ import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
 import { useGlobalProducts } from '@/context/GlobalProductsContext';
 import { ProductType } from '@/types/product';
 
+// --- Skeleton Component (no changes needed) ---
+const QuickSetupGuideSkeleton = () => {
+    return (
+        <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm p-6 animate-pulse">
+            <div className="flex justify-between items-center mb-6">
+                <div className="h-6 bg-gray-200 rounded-md w-1/3"></div>
+                <div className="flex items-center gap-3 w-1/4">
+                    <div className="h-4 bg-gray-200 rounded-md w-full"></div>
+                    <div className="h-2 bg-gray-200 rounded-full w-full"></div>
+                </div>
+            </div>
+            <div className="space-y-1">
+                {Array(3).fill(0).map((_, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-4 border-t border-gray-100">
+                        <div className="flex items-center gap-4">
+                            <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+                            <div className="space-y-2">
+                                <div className="h-4 bg-gray-200 rounded-md w-48"></div>
+                                <div className="h-3 bg-gray-200 rounded-md w-64"></div>
+                            </div>
+                        </div>
+                        <div className="h-9 w-28 bg-gray-200 rounded-lg"></div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+
 export default function QuickSetupGuide() {
+  // --- All your existing logic and hooks remain unchanged ---
   const { userInfos, isLoadingUserInfos, setIsFinishSetup } = useUserInfos();
   const { isLoadingCheckingFirstAffiliateLink, hasGottenFirstLink } = useFirstAffiliateLink();
   const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+  
+  const [isMinimized, setIsMinimized] = useState(false);
 
   const IsUploadOneProductAtLeast = globalProductsData.find(
     (p: ProductType) => p.owner?.email.toLowerCase() === userInfos?.email
@@ -20,175 +52,144 @@ export default function QuickSetupGuide() {
 
   const ConfigSteps = [
     {
-      title: "Create your account.",
-      description: "Create your account to get started with Tijarex.",
-      btntitle: "Create account",
+      title: "Create your account",
+      description: "You are already here! This step is complete.",
+      btntitle: "Completed",
       isLoadingButton: false,
-      image: "/create-account-avatar.png",
-      imagestyles:
-        "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
       iscompleted: true,
-      link: {
-        label: "Start your journey with us !",
-        href: userInfos?.UserRole === "seller" ? "/seller" : "/affiliate",
-      },
+      link: { href: "/products" },
     },
     {
-      title: "Add balance",
-      description: "Top up your balance to start earn commissions.",
+      title: "Add balance to your account",
+      description: "Top up to activate your account and start earning.",
       btntitle: "Add balance",
       isLoadingButton: isLoadingUserInfos,
-      image: "/CIH-MASTERCARD.png",
-      imagestyles:
-        "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
       iscompleted: !!(userInfos?.totalbalance && userInfos.totalbalance > 0),
-      link: {
-        label: "Activate your account with credit.",
-        href: "add-balance",
-      },
+      link: { href: "/add-balance" },
     },
     userInfos?.UserRole === "seller"
       ? {
-          title: "Add your First Product",
-          description: "List your products to reach a wider audience and boost your sales",
-          btntitle: "Add products",
+          title: "Add your first product",
+          description: "List your first item to start selling to a wider audience.",
+          btntitle: "Add product",
           isLoadingButton: isLoadingGlobalProducts,
-          image: "/First-Order.png",
-          imagestyles:
-            "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
-          iscompleted: !!IsUploadOneProductAtLeast, // Use !! to ensure a boolean value
-          link: {
-            label: "Start adding your products.",
-            href: "upload-products",
-          },
+          iscompleted: !!IsUploadOneProductAtLeast,
+          link: { href: "/upload-products" },
         }
       : {
-          title: "Claim Affiliate Link.",
-          description: "Begin affiliate journey with link.",
-          btntitle: "Claim products",
+          title: "Claim your first affiliate link",
+          description: "Promote products by generating your first affiliate link.",
+          btntitle: "Claim link",
           isLoadingButton: isLoadingCheckingFirstAffiliateLink,
-          image: "/First-Order.png",
-          imagestyles:
-            "absolute z-30 group-hover:scale-110 group-hover:translate-y-2 transition-transform duration-300 ease-out w-full flex justify-center items-center",
           iscompleted: hasGottenFirstLink,
-          link: {
-            label: "Start promoting products.",
-            href: "products",
-          },
+          link: { href: "products" },
         },
   ];
 
   const completedSteps = ConfigSteps.filter((step) => step.iscompleted).length;
   const totalSteps = ConfigSteps.length;
   const progressPercent = Math.round((completedSteps / totalSteps) * 100);
-  const [animatedWidth, setAnimatedWidth] = useState("2%");
-
+  const [animatedWidth, setAnimatedWidth] = useState("0%");
   const IsCompletedAllSteps = completedSteps === totalSteps;
 
   useEffect(() => {
-    setAnimatedWidth(`${progressPercent}%`);
+    const timer = setTimeout(() => setAnimatedWidth(`${progressPercent}%`), 100);
     if (!isLoadingUserInfos && !isLoadingGlobalProducts && !isLoadingCheckingFirstAffiliateLink) {
         setIsFinishSetup(IsCompletedAllSteps);
     }
+    return () => clearTimeout(timer);
   }, [IsCompletedAllSteps, progressPercent, setIsFinishSetup, isLoadingUserInfos, isLoadingGlobalProducts, isLoadingCheckingFirstAffiliateLink]);
 
-  // ✅ Solution: Check loading states before deciding to render anything
   const isLoading = isLoadingUserInfos || isLoadingGlobalProducts || isLoadingCheckingFirstAffiliateLink;
 
   if (isLoading) {
-    // You can return a loading spinner here for better UX, or null to show nothing
-    return null; 
+    return <QuickSetupGuideSkeleton />;
   }
 
-  // Now, this check will only run after all data is loaded
   if (IsCompletedAllSteps) {
     return null;
   }
 
   return (
-    <section
-      className="relative w-full max-w-[650px] 
-        border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
-        rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-6"
+    <section 
+      className="w-full bg-white border-b border-neutral-400/50
+        ring ring-neutral-200 rounded-xl 
+        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]"
     >
-      <h1 className="text-lg font-semibold text-gray-900 mb-3">Quick setup guide</h1>
-      <Image
-        src="/Pattern-1.jpg"
-        alt=""
-        fill
-        className="object-cover scale-x-[-1] opacity-10 group-hover:scale-110 transition-all duration-300"
-        loading="lazy"
-      />
-
-      <div className="w-full grid grid-cols-3 gap-2">
-        {ConfigSteps.map((card, idx) => (
-          <div
-            key={idx}
-            className="group relative flex-shrink-0 w-full h-[240px] 
-              border-b border-neutral-400/50 ring ring-neutral-200
-              rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
-              overflow-hidden bg-purple-100"
-          >
-            <Image
-              src="/Grid-Pattern.jpg"
-              alt=""
-              fill
-              className="object-cover opacity-10 group-hover:scale-110 transition-all duration-300"
-              loading="lazy"
-            />
-            <div className={card.imagestyles}>
-              <Image 
-                src={card.image} 
-                alt="" 
-                width={120} 
-                height={120} 
-                quality={100} 
-                priority
-              />
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+            <div>
+                <h1 className="text-lg font-semibold text-gray-900">Setup guide</h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  Follow these steps to get your account ready.
+                </p>
             </div>
-            <div className="absolute bottom-0 left-0 z-40 p-4 min-h-[120px] w-full flex flex-col justify-end space-y-2 bg-gradient-to-t from-white via-white">
-              <h1 className="font-semibold text-neutral-700 text-sm">{card.title}</h1>
-              <p className="text-xs text-gray-500">{card.description}</p>
-
-              {card.isLoadingButton ? (
-                <div className="w-24 h-6 bg-gray-300 rounded-lg shadow-sm animate-pulse" />
-              ) : card.iscompleted ? (
-                <button
-                  disabled
-                  className={`flex items-center gap-1 cursor-not-allowed 
-                      w-max ${PrimaryDark}`}
+            <div className="flex items-center gap-4 mt-4 sm:mt-0">
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">{completedSteps} / {totalSteps} completed</span>
+                    <div className="w-24 h-2 bg-gray-200 rounded-full">
+                        <div 
+                            className="h-2 bg-green-500 rounded-full transition-all duration-700 ease-out" 
+                            style={{ width: animatedWidth }}>
+                        </div>
+                    </div>
+                </div>
+                <button 
+                  onClick={() => setIsMinimized(!isMinimized)} 
+                  className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
+                  aria-label={isMinimized ? 'Expand guide' : 'Collapse guide'}
                 >
-                  Completed <CircleCheckBig size={16} />
+                    {isMinimized ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
                 </button>
-              ) : (
-                <Link
-                  href={`/${userInfos ? (userInfos.UserRole === "seller" ? "seller" : "affiliate") : ""}/${card.link.href}`}
-                  className={`${PrimaryLight} w-max`}
-                >
-                  {card.btntitle}
-                </Link>
-              )}
             </div>
-          </div>
-        ))}
+        </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full flex items-center gap-2 pt-3">
-        <div className="w-full">
-          <div className="rounded-full border border-neutral-200 bg-neutral-100">
-            <span
-              className="relative flex h-2 rounded-full bg-purple-600 
-                transition-all duration-1000 ease-out after:absolute 
-                after:right-0 after:-top-1 after:w-4 after:h-4 
-                after:rounded-full after:bg-purple-600 after:shadow"
-              style={{ width: animatedWidth }}
-            />
-          </div>
+      {/* Collapsible Steps List */}
+      <div 
+        className={`transition-all duration-500 ease-in-out overflow-hidden ${isMinimized ? 'max-h-0' : 'max-h-[500px]'}`}
+      >
+        <div className="border-t border-gray-200">
+          {ConfigSteps.map((step) => {
+              return (
+                  <div key={step.title} className="flex items-center justify-between p-4 even:bg-gray-50/50">
+                      <div className="flex items-center gap-4">
+                          {/* --- UPDATED: Simplified Status Icon --- */}
+                          <div className="w-6 h-6 flex items-center justify-center">
+                              {step.iscompleted ? (
+                                  <CircleCheck className="text-green-500" size={24} />
+                              ) : (
+                                  <CircleDashed className="text-gray-400" size={24} />
+                              )}
+                          </div>
+                          {/* Text Content */}
+                          <div>
+                              <h2 className="font-medium text-gray-800 text-sm">{step.title}</h2>
+                              <p className="text-xs text-gray-500">{step.description}</p>
+                          </div>
+                      </div>
+                      {/* --- UPDATED: Simplified Action Button --- */}
+                      <div className="w-36 text-right">
+                          {step.isLoadingButton ? (
+                              <div className="h-9 w-28 bg-gray-200 rounded-lg animate-pulse ml-auto"></div>
+                          ) : step.iscompleted ? (
+                              <button disabled className="inline-flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium text-green-700 bg-green-100 rounded-md cursor-not-allowed">
+                                  <Check size={16}/> Completed
+                              </button>
+                          ) : (
+                              <Link
+                                  href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}${step.link.href}`}
+                                  className={`${PrimaryDark} px-6 py-2`} // Button is always active if not complete
+                              >
+                                  {step.btntitle}
+                              </Link>
+                          )}
+                      </div>
+                  </div>
+              );
+          })}
         </div>
-        <p className="text-gray-500">
-          {completedSteps}/{ConfigSteps.length}
-        </p>
       </div>
     </section>
   );

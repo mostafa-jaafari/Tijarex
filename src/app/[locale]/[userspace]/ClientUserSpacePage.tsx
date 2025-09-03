@@ -7,111 +7,9 @@ import { TraficSourcesWidget } from '@/components/TraficSourcesWidget';
 import { useUserInfos } from '@/context/UserInfosContext';
 import React from 'react'
 
-export default function ClientUserSpacePage({ UserSpaceParamsId }: { UserSpaceParamsId: string; }) {
-  const { isFinishSetup, isLoadingUserInfos, userInfos } = useUserInfos();
-  let UserSpaceRendered;
-  switch (UserSpaceParamsId) {
-    case "seller":
-      UserSpaceRendered = (
-        <section
-          className='w-full space-y-4'
-        >
-          {/* --- Quick Setup Guide & Trends Products */}
-          {isFinishSetup && (
-            <StatisticCards
-                isLoadingUserInfos={isLoadingUserInfos}
-                userInfos={userInfos}
-            />
-          )}
-          <div
-            className='w-full flex items-start gap-4'
-          >
-            {!isFinishSetup && (
-                <QuickSetupGuide />
-            )}
-            {isFinishSetup && (
-                <TraficSourcesWidget 
-                    isFinishSetup={isFinishSetup}
-                    isLoadingUserInfos={isLoadingUserInfos}
-                    userInfos={userInfos}
-                />
-            )}
-            <PopularProductsWidget />
-          </div>
-          {!isFinishSetup && (
-            <StatisticCards
-                isLoadingUserInfos={isLoadingUserInfos}
-                userInfos={userInfos}
-            />
-          )}
-          <div
-            className='w-full flex items-start gap-4'
-          >
-            <EarningsChart isFinishSetup={isFinishSetup} />
-            {!isFinishSetup && (
-                <TraficSourcesWidget 
-                    isFinishSetup={isFinishSetup}
-                    isLoadingUserInfos={isLoadingUserInfos}
-                    userInfos={userInfos}
-                />
-            )}
-          </div>
-        </section>
-      );
-      break;
+export default function ClientUserSpacePage() {
+  const { isLoadingUserInfos, userInfos } = useUserInfos();
   
-    case "affiliate":
-      UserSpaceRendered = (
-        <section
-          className='w-full space-y-4'
-        >
-          {/* --- Quick Setup Guide & Trends Products */}
-          {isFinishSetup && (
-            <StatisticCards
-                isLoadingUserInfos={isLoadingUserInfos}
-                userInfos={userInfos}
-            />
-          )}
-          <div
-            className='w-full flex items-start gap-4'
-          >
-            {!isFinishSetup && (
-                <QuickSetupGuide />
-            )}
-            {isFinishSetup && (
-                <TraficSourcesWidget 
-                    isFinishSetup={isFinishSetup}
-                    isLoadingUserInfos={isLoadingUserInfos}
-                    userInfos={userInfos}
-                />
-            )}
-            <PopularProductsWidget />
-          </div>
-          {!isFinishSetup && (
-            <StatisticCards
-                isLoadingUserInfos={isLoadingUserInfos}
-                userInfos={userInfos}
-            />
-          )}
-          <div
-            className='w-full flex items-start gap-4'
-          >
-            <EarningsChart isFinishSetup={isFinishSetup} />
-            {!isFinishSetup && (
-                <TraficSourcesWidget 
-                    isFinishSetup={isFinishSetup}
-                    isLoadingUserInfos={isLoadingUserInfos}
-                    userInfos={userInfos}
-                />
-            )}
-          </div>
-        </section>
-      );
-      break;
-    default:
-      UserSpaceRendered = (<div>Unknown Space</div>);
-      break;
-  }
   if(isLoadingUserInfos){
     return (
       <section 
@@ -129,7 +27,31 @@ export default function ClientUserSpacePage({ UserSpaceParamsId }: { UserSpacePa
       >
         Welcome to Tijarex.
       </h1>
-      {UserSpaceRendered}
+
+      <section
+        className='w-full space-y-4'
+      >
+        {/* --- Quick Setup Guide & Trends Products */}
+        <QuickSetupGuide />
+        <StatisticCards
+            isLoadingUserInfos={isLoadingUserInfos}
+            userInfos={userInfos}
+        />
+        <div
+          className='w-full h-[52vh] flex items-start gap-4'
+        >
+          <PopularProductsWidget />
+          <TraficSourcesWidget 
+              userInfos={userInfos}
+          />
+        </div>
+        <div
+          className='w-full flex items-start gap-4'
+        >
+          <EarningsChart />
+        </div>
+      </section>
+
       <footer
         className='w-full flex justify-center py-3 text-sm text-neutral-500'
       >

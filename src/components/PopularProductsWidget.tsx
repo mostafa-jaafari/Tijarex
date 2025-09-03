@@ -152,8 +152,9 @@ export function PopularProductsWidget() {
     
     return (
         <section
-            className="w-full max-w-[500px] border-b border-neutral-400/50 ring ring-neutral-200 bg-white 
-        rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] p-6"
+            className="w-full max-w-[500px] border-b h-full
+                border-neutral-400/50 ring ring-neutral-200 bg-white
+                rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] px-6 py-3"
         >
             <div
                 className='w-full flex items-start justify-between'
