@@ -46,10 +46,10 @@ export const ProductCardUI = ({
         <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="font-sans bg-white border-b border-gray-400
-                ring ring-neutral-200 
+            className="bg-white border-b border-neutral-400/50 
+                ring shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
                 rounded-lg overflow-hidden group p-1.5 transition-all 
-                duration-300 ease-in-out
+                ring-neutral-200 duration-300 ease-in-out
                 hover:-translate-y-0.5"
         >
             {/* --- Image Section --- */}

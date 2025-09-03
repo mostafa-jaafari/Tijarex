@@ -108,7 +108,7 @@ const generateChartData = (period: PeriodType): ChartDataItem[] => {
 // Main Chart Component (UI/UX Enhanced)
 // ============================================================================
 
-export const EarningsChart = ({ isFinishSetup }: { isFinishSetup: boolean; }) => {
+export const EarningsChart = ({ isFinishSetup }: { isFinishSetup?: boolean; }) => {
   // const t = useTranslations(); // Assuming 't' is your translation function
   const [period, setPeriod] = useState<PeriodType>('12M');
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);

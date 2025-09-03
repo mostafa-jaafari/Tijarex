@@ -146,7 +146,7 @@ export default function ProductsPage() {
                         type="text" 
                         placeholder="Search products by name, category..."
                         className="grow rounded-lg outline-none focus:py-3 
-                            transition-all duration-300 py-2 text-sm"
+                            transition-all duration-300 py-2.5 text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
