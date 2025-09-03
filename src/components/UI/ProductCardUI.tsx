@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Copy, Eye } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Eye, Store } from 'lucide-react';
 import { ProductType } from '@/types/product';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
@@ -157,11 +157,11 @@ export const ProductCardUI = ({
                     >
                         {isAffiliate ? ( // Use prop
                             <button 
-                                onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
+                                // onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
                                 className={`bg-neutral-900 hover:bg-neutral-900/90 
                                     rounded-lg text-sm text-neutral-100
                                     w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
-                                Get Link <Copy size={16} />
+                                Drop to Collection <Store size={16} />
                             </button>
                         )
                         :
