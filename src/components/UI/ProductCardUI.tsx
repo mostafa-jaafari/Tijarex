@@ -6,10 +6,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Eye, Store } from 'lucide-react';
 import { ProductType } from '@/types/product';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
-import { useUserInfos } from '@/context/UserInfosContext';
-import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
-
 
 // --- Props for the UI Component ---
 interface ProductCardUIProps {
@@ -28,8 +24,6 @@ export const ProductCardUI = ({
     // State that is purely for the UI can remain here
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
-    const { userInfos } = useUserInfos();
-    const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
 
     const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
         e.preventDefault();
