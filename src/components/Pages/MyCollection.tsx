@@ -6,11 +6,11 @@ import { toast } from "sonner";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
-import { useGlobalProducts } from "@/context/GlobalProductsContext";
-import { ProductType } from "@/types/product";
 import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
+// --- CORRECT HOOKS AND TYPES ---
 import { useAffiliateProducts } from "@/context/AffiliateProductsContext";
+import { ProductType, AffiliateProductType } from "@/types/product";
 
 // Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
@@ -22,13 +22,17 @@ const ProductCardSkeleton = () => (
     </div>
 );
 
-export default function ProductsPage() {
+export default function MyCollectionPage() {
     const { userInfos } = useUserInfos();
+    // --- USE THE CORRECT HOOK for this page ---
     const { affiliateProducts, isAffiliateProductsLoading } = useAffiliateProducts();
 
-    // State for the currently displayed products
-    const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
-    const [productToClaim, setProductToClaim] = useState<ProductType | null>(null);
+    // The state for filtered products must match the data source
+    const [filteredProducts, setFilteredProducts] = useState<AffiliateProductType[]>([]);
+    
+    // The state for the modal MUST be ProductType because that's what ClaimProductFlow expects
+    const [productToEdit, setProductToEdit] = useState<ProductType | null>(null);
+    
     // States for filter controls
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
@@ -37,7 +41,7 @@ export default function ProductsPage() {
     const [selectedPrice, setSelectedPrice] = useState('All Prices');
     const [sortBy, setSortBy] = useState('Relevance');
     
-    // --- Initial Load Handling ---
+    // Initial Load Handling using the correct loading state
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     useEffect(() => {
         if (!isAffiliateProductsLoading) {
@@ -46,8 +50,7 @@ export default function ProductsPage() {
     }, [isAffiliateProductsLoading]);
     const shouldShowLoading = isInitialLoad || isAffiliateProductsLoading;
 
-    // --- Generate Dynamic Filter Options ---
-    // Using useMemo to prevent recalculating these on every render
+    // Generate Dynamic Filter Options from affiliate products data
     const categories = useMemo(() => {
         if (!affiliateProducts) return ['All Categories'];
         const uniqueCategories = new Set(affiliateProducts.map(p => p.category));
@@ -71,12 +74,12 @@ export default function ProductsPage() {
     const priceOptions = ['All Prices', 'Dh0 - Dh50', 'Dh50 - Dh100', 'Dh100 - Dh200', 'Dh200+'];
     const sortOptions = ['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest'];
 
-
-    // --- Main Filtering and Sorting Logic ---
+    // Main Filtering and Sorting Logic for AffiliateProductType
     useEffect(() => {
+        // Start with the source data from the context
         let products = [...affiliateProducts];
 
-        // 1. Search Filter (by title or category)
+        // 1. Search Filter (using AffiliateTitle)
         if (searchTerm) {
             products = products.filter(p =>
                 p.AffiliateTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,7 +102,7 @@ export default function ProductsPage() {
             products = products.filter(p => p.sizes && p.sizes.includes(selectedSize));
         }
         
-        // 5. Price Filter
+        // 5. Price Filter (using AffiliateSalePrice)
         if (selectedPrice !== 'All Prices') {
             products = products.filter(p => {
                 const price = p.AffiliateSalePrice;
@@ -111,7 +114,7 @@ export default function ProductsPage() {
             });
         }
 
-        // 6. Sorting Logic
+        // 6. Sorting Logic (using Affiliate fields)
         switch (sortBy) {
             case 'Price: Low to High':
                 products.sort((a, b) => a.AffiliateSalePrice - b.AffiliateSalePrice);
@@ -124,7 +127,7 @@ export default function ProductsPage() {
                  break;
             case 'Relevance':
             default:
-                // Example: sort by number of sales. You can change this logic.
+                // Sort by the original sales data, which is still useful
                 products.sort((a, b) => (b.sales || 0) - (a.sales || 0));
                 break;
         }
@@ -135,7 +138,6 @@ export default function ProductsPage() {
     
     return (
         <section>
-          Hi : {affiliateProducts.length}
             {/* --- Top Header Products Page --- */}
             <div className="w-full flex justify-center">
                 <div 
@@ -148,7 +150,7 @@ export default function ProductsPage() {
                     <Search size={20} className="text-gray-400" />
                     <input 
                         type="text" 
-                        placeholder="Search products by name, category..."
+                        placeholder="Search your collection by name, category..."
                         className="grow rounded-lg outline-none focus:py-3 
                             transition-all duration-300 py-2.5 text-sm"
                         value={searchTerm}
@@ -200,43 +202,45 @@ export default function ProductsPage() {
                     md:grid-cols-3 lg:grid-cols-4 gap-3"
             >
                 {shouldShowLoading ? (
-                    // Loading State
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
-                    // Data Loaded and Available
                     filteredProducts.map((product) => (
                         <ProductCardUI
                             key={product.id}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={true} // Replace with real data
+                            isFavorite={true}
                             onToggleFavorite={() => toast.success("Toggled favorite")}
+                            // The card is universal and handles AffiliateProductType directly
                             product={product}
-                            onClaimClick={setProductToClaim}
+                            // The card's onClaimClick handler will automatically provide a standard ProductType
+                            onClaimClick={setProductToEdit}
                         />
                     ))
                 ) : (
-                    // Data Loaded but Empty
                     <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
                         <PackageSearch size={48} className="text-gray-400 mb-4" />
-                        <h2 className="text-xl font-semibold text-gray-800">No Products Found</h2>
-                        <p className="text-gray-500 mt-2">Try adjusting your filters or search criteria.</p>
+                        <h2 className="text-xl font-semibold text-gray-800">Your Collection is Empty</h2>
+                        <p className="text-gray-500 mt-2">Claim products from the marketplace to see them here.</p>
                     </div>
                 )}
             </div>
-            {/* This section will render our claim flow in an overlay when a product is selected */}
+            
+            {/* Modal for Editing a Claimed Product */}
             <AnimatePresence>
-                {productToClaim && (
+                {productToEdit && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
-                        onClick={() => setProductToClaim(null)} // Close on backdrop click
+                        onClick={() => setProductToEdit(null)}
                     >
-                        <div onClick={(e) => e.stopPropagation()}> {/* Prevent modal from closing when clicking inside it */}
+                        <div onClick={(e) => e.stopPropagation()}>
+                            {/* Note: ClaimProductFlow can be reused for editing too,
+                                but you might want a different component/API call later */}
                             <ClaimProductFlow 
-                                sourceProduct={productToClaim}
-                                onClose={() => setProductToClaim(null)} // Pass the close function
+                                sourceProduct={productToEdit}
+                                onClose={() => setProductToEdit(null)}
                             />
                         </div>
                     </motion.div>

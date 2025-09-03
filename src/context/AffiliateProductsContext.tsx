@@ -1,70 +1,89 @@
 "use client";
 
 import { type AffiliateProductType } from "@/types/product";
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState, useMemo } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+// --- STEP 1: Import the useSession hook ---
+import { useSession } from "next-auth/react";
 
-// 1. DEFINE THE CONTEXT SHAPE
-// We can also add a function to allow manual refetching from child components.
-type AffiliateProductsContextType = {
+// 1. Define the context's shape (no changes needed here)
+interface AffiliateProductsContextType {
     affiliateProducts: AffiliateProductType[];
     isAffiliateProductsLoading: boolean;
     refetchAffiliateProducts: () => void;
 };
 
-// 2. CREATE THE CONTEXT
-// Creating it with `undefined` is a standard pattern to ensure it's used within a provider.
+// 2. Create the context (no changes needed here)
 const AffiliateProductsContext = createContext<AffiliateProductsContextType | undefined>(undefined);
 
-
-// 3. CREATE THE PROVIDER COMPONENT
+// 3. Create the Provider Component
 export const AffiliateProductsContextProvider = ({ children }: { children: ReactNode; }) => {
     const [affiliateProducts, setAffiliateProducts] = useState<AffiliateProductType[]>([]);
-    const [isAffiliateProductsLoading, setIsAffiliateProductsLoading] = useState<boolean>(true);
+    const [isAffiliateProductsLoading, setIsAffiliateProductsLoading] = useState(true);
 
-    // useCallback memoizes the fetch function. It will only be recreated if `status` changes.
+    // --- STEP 2: Get the user's session status ---
+    // `status` will be 'loading', 'authenticated', or 'unauthenticated'.
+    const { status } = useSession();
+
+    // `useCallback` memoizes the function
     const fetchAffiliateProducts = useCallback(async () => {
-        // Set loading to true at the very start of an authenticated fetch attempt.
         setIsAffiliateProductsLoading(true);
-
         try {
             const response = await fetch('/api/affiliate/collection-affiliate-products');
+            
             if (!response.ok) {
+                // If the response is 401 Unauthorized, we can log it but we won't show an error toast
+                // because it's an expected state for a logged-out user.
+                if (response.status === 401) {
+                    console.log("User not authenticated. Skipping affiliate product fetch.");
+                    setAffiliateProducts([]); // Ensure data is cleared
+                    return; // Exit the function early
+                }
                 throw new Error(`Failed to fetch products. Status: ${response.status}`);
             }
+            
             const data: AffiliateProductType[] = await response.json();
-            setAffiliateProducts(data);
-        } catch (err) {
-            console.error("Error fetching affiliate products:", err);
-            // In case of an error, clear products to avoid showing stale/incorrect data.
+            setAffiliateProducts(data || []);
+        } catch (error) {
+            console.error("Error in fetchAffiliateProducts:", error);
             setAffiliateProducts([]);
         } finally {
-            // This ALWAYS runs, ensuring the loading state is turned off after the attempt.
             setIsAffiliateProductsLoading(false);
         }
-    }, []); // The dependency array ensures this function is updated when auth status changes.
+    }, []);
 
-    // useEffect to decide WHEN to call the fetch function.
+    // --- STEP 3: Make the useEffect hook smarter ---
+    // This hook now decides WHEN to call the fetch function.
     useEffect(() => {
+        // We only want to fetch data if the user is definitively logged in.
+        if (status === 'authenticated') {
             fetchAffiliateProducts();
-    }, [fetchAffiliateProducts]);
+        }
+        
+        // If the user is definitively logged out, we don't fetch.
+        // We just clear the data and stop the loading spinner.
+        if (status === 'unauthenticated') {
+            setAffiliateProducts([]);
+            setIsAffiliateProductsLoading(false);
+        }
+        
+        // If the status is 'loading', we do nothing and wait for the status to resolve.
+    }, [status, fetchAffiliateProducts]); // This effect now runs whenever the auth status changes
 
-    // useMemo ensures the context value object is not recreated on every render,
-    // preventing unnecessary re-renders in consumer components.
-    const value = useMemo(() => ({
+    // Create the value object to pass to the provider (no changes needed here)
+    const contextValue = {
         affiliateProducts,
         isAffiliateProductsLoading,
         refetchAffiliateProducts: fetchAffiliateProducts,
-    }), [affiliateProducts, isAffiliateProductsLoading, fetchAffiliateProducts]);
+    };
 
     return (
-        <AffiliateProductsContext.Provider value={value}>
+        <AffiliateProductsContext.Provider value={contextValue}>
             {children}
         </AffiliateProductsContext.Provider>
     );
 };
 
-// 4. CREATE A CUSTOM HOOK (BEST PRACTICE)
-// This makes using the context much cleaner and safer in other components.
+// 4. Create the custom hook (no changes needed here)
 export const useAffiliateProducts = () => {
     const context = useContext(AffiliateProductsContext);
     if (context === undefined) {
