@@ -8,6 +8,8 @@ import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
+import { AnimatePresence, motion } from "framer-motion";
+import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 
 // Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
@@ -25,7 +27,7 @@ export default function ProductsPage() {
 
     // State for the currently displayed products
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
-    
+    const [productToClaim, setProductToClaim] = useState<ProductType | null>(null);
     // States for filter controls
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
@@ -207,6 +209,7 @@ export default function ProductsPage() {
                             isFavorite={true} // Replace with real data
                             onToggleFavorite={() => toast.success("Toggled favorite")}
                             product={product}
+                            onClaimClick={setProductToClaim}
                         />
                     ))
                 ) : (
@@ -218,6 +221,25 @@ export default function ProductsPage() {
                     </div>
                 )}
             </div>
+            {/* This section will render our claim flow in an overlay when a product is selected */}
+            <AnimatePresence>
+                {productToClaim && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+                        onClick={() => setProductToClaim(null)} // Close on backdrop click
+                    >
+                        <div onClick={(e) => e.stopPropagation()}> {/* Prevent modal from closing when clicking inside it */}
+                            <ClaimProductFlow 
+                                sourceProduct={productToClaim}
+                                onClose={() => setProductToClaim(null)} // Pass the close function
+                            />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 }
