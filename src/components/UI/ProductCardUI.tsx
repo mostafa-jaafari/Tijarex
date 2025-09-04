@@ -4,21 +4,28 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Eye, Store, Copy } from 'lucide-react';
-import { ProductType } from '@/types/product';
+import { AffiliateProductType, ProductType } from '@/types/product';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { useParams } from 'next/navigation';
 import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
 
-// Props for the Universal UI Component
-interface ProductCardUIProps {
-    product: ProductType;
-    isFavorite: boolean;
-    isAffiliate: boolean;
-    onToggleFavorite: (e: React.MouseEvent) => void;
-    onClaimClick: (product: ProductType) => void;
+// --- TYPE GUARD ---
+// Helper to determine if a product is an AffiliateProductType
+function isAffiliateProduct(product: ProductType | AffiliateProductType): product is AffiliateProductType {
+    return 'AffiliateTitle' in product;
 }
+
+// Props for the Universal UI Component
+type ProductCardUIProps = {
+  product: ProductType | AffiliateProductType;
+  isAffiliate: boolean;
+  isFavorite: boolean;
+  // FIX: Correctly type the event handler to accept a MouseEvent
+  onToggleFavorite: (e: React.MouseEvent) => void;
+  onClaimClick: (p: ProductType | AffiliateProductType) => void;
+};
 
 export const ProductCardUI = ({
     product,
@@ -32,8 +39,8 @@ export const ProductCardUI = ({
     const [isHovered, setIsHovered] = useState(false);
     const { userInfos } = useUserInfos();
     const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
-    // --- FIX: Provide default fallbacks for optional numeric data ---
-    // This prevents the 'toLocaleString of undefined' error.
+    
+    // Provide default fallbacks for optional numeric data
     const sales = product.sales ?? 0;
     const stock = product.stock ?? 0;
     
@@ -49,14 +56,24 @@ export const ProductCardUI = ({
 
     const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
     const HandleShowQuickView = () => {
-        setProductID(id || "");
+        // Use original product ID if it's an affiliate product
+        const viewId = isAffiliateProduct(product) ? product.originalProductId : (id || "");
+        setProductID(viewId);
         setIsShowQuickViewProduct(true);
     }
 
     const handleClaimClick = () => {
-            onClaimClick(product);
+        onClaimClick(product);
     };
+    
     const SubPage = useParams().subpagesid;
+
+    // --- DYNAMIC DATA ---
+    // Use the type guard to select the correct properties
+    const title = isAffiliateProduct(product) ? product.AffiliateTitle : product.title;
+    const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
+    const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;
+
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
@@ -67,14 +84,9 @@ export const ProductCardUI = ({
                 ring-neutral-200 duration-300 ease-in-out
                 hover:-translate-y-0.5"
         >
-            <div
-                className='text-xs'
-            >
-            </div>
+            <div className='text-xs'></div>
             {/* --- Image Section --- */}
-            <div 
-                className="relative w-full aspect-[4/3] rounded-lg 
-                    overflow-hidden bg-purple-100 border border-gray-100">
+            <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-purple-100 border border-gray-100">
                 <AnimatePresence initial={false}>
                     <motion.div
                         key={currentImage}
@@ -87,7 +99,7 @@ export const ProductCardUI = ({
                         <Image
                             onClick={HandleShowQuickView}
                             src={product_images?.[currentImage] || '/placeholder-image.png'}
-                            alt={product.title}
+                            alt={title}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover w-full h-full cursor-pointer"
@@ -96,10 +108,7 @@ export const ProductCardUI = ({
                 </AnimatePresence>
 
                 {sales > 500 && (
-                    <p 
-                        className='py-0.5 px-2 text-orange-400 rounded-full 
-                            flex items-center gap-1 text-[12px] font-semibold
-                            bg-orange-900 shadow-sm absolute top-2 left-2'>
+                    <p className='py-0.5 px-2 text-orange-400 rounded-full flex items-center gap-1 text-[12px] font-semibold bg-orange-900 shadow-sm absolute top-2 left-2'>
                         <Flame size={14} className='fill-current' /> Hot Seller
                     </p>
                 )}
@@ -107,14 +116,9 @@ export const ProductCardUI = ({
                 <motion.button
                     onClick={onToggleFavorite}
                     whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    className={`absolute top-2 right-2 w-9 h-9 flex 
-                        items-center justify-center rounded-full 
-                        cursor-pointer backdrop-blur-sm
-                        transition-colors duration-300 
-                        ${isFavorite ? 'bg-purple-600/80' : 'bg-black/20'}`}
+                    className={`absolute top-2 right-2 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-sm transition-colors duration-300 ${isFavorite ? 'bg-purple-600/80' : 'bg-black/20'}`}
                 >
-                    <Heart className={`w-5 h-5 transition-all 
-                            ${isFavorite ? 'fill-white text-white' : ' text-white'}`} />
+                    <Heart className={`w-5 h-5 transition-all ${isFavorite ? 'fill-white text-white' : ' text-white'}`} />
                 </motion.button>
 
                 {(product_images?.length || 0) > 1 && (
@@ -127,17 +131,9 @@ export const ProductCardUI = ({
                                 </>
                             )}
                         </AnimatePresence>
-                        <div 
-                            className={`absolute bottom-1 left-1/2 -translate-x-1/2 
-                                backdrop-blur-sm bg-transparent rounded-full 
-                                p-0.5 flex gap-1`}>
+                        <div className={`absolute bottom-1 left-1/2 -translate-x-1/2 backdrop-blur-sm bg-transparent rounded-full p-0.5 flex gap-1`}>
                             {product_images.map((_, i) => (
-                                <div 
-                                    key={i} 
-                                    onClick={() => setCurrentImage(i)} 
-                                    className={`h-2 cursor-pointer rounded-full 
-                                        transition-all duration-300 
-                                        ${i === currentImage ? 'w-5 bg-purple-600' : 'w-2 bg-purple-600/40'}`} />
+                                <div key={i} onClick={() => setCurrentImage(i)} className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${i === currentImage ? 'w-5 bg-purple-600' : 'w-2 bg-purple-600/40'}`} />
                             ))}
                         </div>
                     </>
@@ -146,15 +142,12 @@ export const ProductCardUI = ({
 
             {/* --- Content Section --- */}
             <div className="pt-3 px-1">
-                <h3 
-                    onClick={HandleShowQuickView}
-                    className="font-semibold cursor-pointer w-max text-neutral-700 truncate"
-                >
-                    {product.title}
+                <h3 onClick={HandleShowQuickView} className="font-semibold cursor-pointer w-max text-neutral-700 truncate">
+                    {title}
                 </h3>
                 <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-lg font-bold text-neutral-700">{(product.original_regular_price || 0).toFixed(2)} {currency}</span>
-                    {(product.original_sale_price || 0) > (product.original_regular_price || 0) && <span className="text-sm text-gray-400 line-through">{(product.original_sale_price || 0).toFixed(2)} {currency}</span>}
+                    <span className="text-lg font-bold text-neutral-700">{(salePrice || 0).toFixed(2)} {currency}</span>
+                    {(regularPrice || 0) > (salePrice || 0) && <span className="text-sm text-gray-400 line-through">{(regularPrice || 0).toFixed(2)} {currency}</span>}
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-x-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2"><BarChart2 size={16} className="text-gray-400" /><div><div className="font-semibold">{sales.toLocaleString()}</div><div className="text-xs text-gray-400">Sales</div></div></div>
@@ -172,31 +165,23 @@ export const ProductCardUI = ({
                         (
                             <button 
                                 onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
-                                className={`bg-neutral-900 hover:bg-neutral-900/90 
-                                    rounded-lg text-sm text-neutral-100
-                                    w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                                className={`bg-neutral-900 hover:bg-neutral-900/90 rounded-lg text-sm text-neutral-100 w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
                                 Get Link <Copy size={16} />
                             </button>
                         )
-                        :
-                        isAffiliate && SubPage === "products" ?
+                        : isAffiliate && SubPage === "products" ?
                         (
                             <button 
                                 onClick={handleClaimClick}
-                                className={`bg-purple-600 hover:bg-purple-700 
-                                    rounded-lg text-sm text-white
-                                    w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                                className={`bg-purple-600 hover:bg-purple-700 rounded-lg text-sm text-white w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
                                 Drop To Collection <Store size={16} />
                             </button>
                         )
-                        :
-                        !isAffiliate &&
+                        : !isAffiliate &&
                         (
                             <button 
                                 onClick={HandleShowQuickView}
-                                className={`bg-neutral-900 hover:bg-neutral-900/90 
-                                    rounded-lg text-sm text-neutral-100
-                                    w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                                className={`bg-neutral-900 hover:bg-neutral-900/90 rounded-lg text-sm text-neutral-100 w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
                                 Quick View <Eye size={16} />
                             </button>
                         )}

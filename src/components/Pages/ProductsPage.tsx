@@ -7,7 +7,8 @@ import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
-import { ProductType } from "@/types/product";
+// FIX: Import AffiliateProductType to be used in the handler signature
+import { ProductType, AffiliateProductType } from "@/types/product";
 import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 
@@ -46,7 +47,6 @@ export default function ProductsPage() {
     const shouldShowLoading = isInitialLoad || isLoadingGlobalProducts;
 
     // --- Generate Dynamic Filter Options ---
-    // Using useMemo to prevent recalculating these on every render
     const categories = useMemo(() => {
         if (!globalProductsData) return ['All Categories'];
         const uniqueCategories = new Set(globalProductsData.map(p => p.category));
@@ -70,35 +70,26 @@ export default function ProductsPage() {
     const priceOptions = ['All Prices', 'Dh0 - Dh50', 'Dh50 - Dh100', 'Dh100 - Dh200', 'Dh200+'];
     const sortOptions = ['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest'];
 
-
     // --- Main Filtering and Sorting Logic ---
     useEffect(() => {
+        if (!globalProductsData) return;
         let products = [...globalProductsData];
 
-        // 1. Search Filter (by title or category)
         if (searchTerm) {
             products = products.filter(p =>
                 p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 p.category.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
-
-        // 2. Category Filter
         if (selectedCategory !== 'All Categories') {
             products = products.filter(p => p.category === selectedCategory);
         }
-
-        // 3. Color Filter
         if (selectedColor !== 'All Colors') {
-            products = products.filter(p => p.colors && p.colors.includes(selectedColor));
+            products = products.filter(p => p.colors?.includes(selectedColor));
         }
-
-        // 4. Size Filter
         if (selectedSize !== 'All Sizes') {
-            products = products.filter(p => p.sizes && p.sizes.includes(selectedSize));
+            products = products.filter(p => p.sizes?.includes(selectedSize));
         }
-        
-        // 5. Price Filter
         if (selectedPrice !== 'All Prices') {
             products = products.filter(p => {
                 const price = p.original_sale_price;
@@ -109,8 +100,6 @@ export default function ProductsPage() {
                 return true;
             });
         }
-
-        // 6. Sorting Logic
         switch (sortBy) {
             case 'Price: Low to High':
                 products.sort((a, b) => a.original_sale_price - b.original_sale_price);
@@ -123,7 +112,6 @@ export default function ProductsPage() {
                  break;
             case 'Relevance':
             default:
-                // Example: sort by number of sales. You can change this logic.
                 products.sort((a, b) => (b.sales || 0) - (a.sales || 0));
                 break;
         }
@@ -132,91 +120,60 @@ export default function ProductsPage() {
 
     }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, globalProductsData]);
     
+    // --- FIX: Create a handler function to satisfy the prop's type requirement ---
+    const handleClaimClick = (product: ProductType | AffiliateProductType) => {
+        setProductToClaim(product as ProductType);
+    }
+    
     return (
         <section>
-            {/* --- Top Header Products Page --- */}
+            {/* --- Header & Filters --- */}
             <div className="w-full flex justify-center">
-                <div 
-                    className="group bg-white flex gap-3 items-center px-3 
-                        grow max-w-[600px] min-w-[400px]
-                        border-b border-neutral-400 ring ring-neutral-200 
-                        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
-                        rounded-lg 
-                        focus-within:ring-neutral-300">
+                <div className="group bg-white flex gap-3 items-center px-3 grow max-w-[600px] min-w-[400px] border-b border-neutral-400 ring ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg focus-within:ring-neutral-300">
                     <Search size={20} className="text-gray-400" />
                     <input 
                         type="text" 
                         placeholder="Search products by name, category..."
-                        className="grow rounded-lg outline-none focus:py-3 
-                            transition-all duration-300 py-2.5 text-sm"
+                        className="grow rounded-lg outline-none focus:py-3 transition-all duration-300 py-2.5 text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
             </div>
-
-            {/* --- Top Filter DropDowns --- */}
             <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-3">
-                    <CustomDropdown
-                        options={categories}
-                        selectedValue={selectedCategory}
-                        onSelect={setSelectedCategory}
-                    />
-                    <CustomDropdown
-                        options={colors}
-                        selectedValue={selectedColor}
-                        onSelect={setSelectedColor}
-                    />
-                    <CustomDropdown
-                        options={sizes}
-                        selectedValue={selectedSize}
-                        onSelect={setSelectedSize}
-                    />
-                     <CustomDropdown
-                        options={priceOptions}
-                        selectedValue={selectedPrice}
-                        onSelect={setSelectedPrice}
-                    />
+                    <CustomDropdown options={categories} selectedValue={selectedCategory} onSelect={setSelectedCategory} />
+                    <CustomDropdown options={colors} selectedValue={selectedColor} onSelect={setSelectedColor} />
+                    <CustomDropdown options={sizes} selectedValue={selectedSize} onSelect={setSelectedSize} />
+                    <CustomDropdown options={priceOptions} selectedValue={selectedPrice} onSelect={setSelectedPrice} />
                 </div>
                 <div className="flex items-center gap-2">
                     <p className="text-nowrap text-sm text-gray-500">Sort by:</p>
-                    <CustomDropdown
-                        options={sortOptions}
-                        selectedValue={sortBy}
-                        onSelect={setSortBy}
-                    />
+                    <CustomDropdown options={sortOptions} selectedValue={sortBy} onSelect={setSortBy} />
                 </div>
             </div>
-
-            {/* --- Divider --- */}
             <hr className="w-full border-gray-200 my-4"/>
 
             {/* --- Products Grid --- */}
-            <div 
-                className="w-full grid grid-cols-1 sm:grid-cols-2 
-                    md:grid-cols-3 lg:grid-cols-4 gap-3"
-            >
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {shouldShowLoading ? (
-                    // Loading State
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
-                    // Data Loaded and Available
                     filteredProducts.map((product) => (
                         <ProductCardUI
                             key={product.id}
                             product={product}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={true}
+                            isFavorite={false} // Replace with actual favorite logic
                             onToggleFavorite={(e) => {
                                 e.stopPropagation();
                                 toast.success("Toggled favorite");
                             }}
-                            onClaimClick={setProductToClaim}
+                            // FIX: Use the new handler function instead of the raw state setter
+                            onClaimClick={handleClaimClick}
                         />
                     ))
                 ) : (
-                    // Data Loaded but Empty
                     <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
                         <PackageSearch size={48} className="text-gray-400 mb-4" />
                         <h2 className="text-xl font-semibold text-gray-800">No Products Found</h2>
@@ -224,7 +181,8 @@ export default function ProductsPage() {
                     </div>
                 )}
             </div>
-            {/* This section will render our claim flow in an overlay when a product is selected */}
+            
+            {/* --- Claim Flow Modal --- */}
             <AnimatePresence>
                 {productToClaim && (
                     <motion.div
@@ -232,12 +190,12 @@ export default function ProductsPage() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
-                        onClick={() => setProductToClaim(null)} // Close on backdrop click
+                        onClick={() => setProductToClaim(null)}
                     >
-                        <div onClick={(e) => e.stopPropagation()}> {/* Prevent modal from closing when clicking inside it */}
+                        <div onClick={(e) => e.stopPropagation()}>
                             <ClaimProductFlow 
                                 sourceProduct={productToClaim}
-                                onClose={() => setProductToClaim(null)} // Pass the close function
+                                onClose={() => setProductToClaim(null)}
                             />
                         </div>
                     </motion.div>

@@ -8,11 +8,9 @@ import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
-// --- CORRECT HOOKS AND TYPES ---
 import { useAffiliateProducts } from "@/context/AffiliateProductsContext";
 import { ProductType, AffiliateProductType } from "@/types/product";
 
-// Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
     <div>
         <div className="w-full h-48 bg-gray-200 rounded-lg animate-pulse" />
@@ -24,16 +22,12 @@ const ProductCardSkeleton = () => (
 
 export default function MyCollectionPage() {
     const { userInfos } = useUserInfos();
-    // --- USE THE CORRECT HOOK for this page ---
     const { affiliateProducts, isAffiliateProductsLoading } = useAffiliateProducts();
 
-    // The state for filtered products must match the data source
     const [filteredProducts, setFilteredProducts] = useState<AffiliateProductType[]>([]);
-    
-    // The state for the modal MUST be ProductType because that's what ClaimProductFlow expects
+    // FIX: State for the modal, must be ProductType as expected by ClaimProductFlow
     const [productToEdit, setProductToEdit] = useState<ProductType | null>(null);
     
-    // States for filter controls
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
     const [selectedColor, setSelectedColor] = useState('All Colors');
@@ -41,16 +35,13 @@ export default function MyCollectionPage() {
     const [selectedPrice, setSelectedPrice] = useState('All Prices');
     const [sortBy, setSortBy] = useState('Relevance');
     
-    // Initial Load Handling using the correct loading state
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     useEffect(() => {
-        if (!isAffiliateProductsLoading) {
-            setIsInitialLoad(false);
-        }
+        if (!isAffiliateProductsLoading) setIsInitialLoad(false);
     }, [isAffiliateProductsLoading]);
     const shouldShowLoading = isInitialLoad || isAffiliateProductsLoading;
 
-    // Generate Dynamic Filter Options from affiliate products data
+    // --- Generate Filter Options from Affiliate Data ---
     const categories = useMemo(() => {
         if (!affiliateProducts) return ['All Categories'];
         const uniqueCategories = new Set(affiliateProducts.map(p => p.category));
@@ -74,35 +65,26 @@ export default function MyCollectionPage() {
     const priceOptions = ['All Prices', 'Dh0 - Dh50', 'Dh50 - Dh100', 'Dh100 - Dh200', 'Dh200+'];
     const sortOptions = ['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest'];
 
-    // Main Filtering and Sorting Logic for AffiliateProductType
+    // --- Filtering and Sorting Logic for AffiliateProductType ---
     useEffect(() => {
-        // Start with the source data from the context
+        if (!affiliateProducts) return;
         let products = [...affiliateProducts];
 
-        // 1. Search Filter (using AffiliateTitle)
         if (searchTerm) {
             products = products.filter(p =>
                 p.AffiliateTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 p.category.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
-
-        // 2. Category Filter
         if (selectedCategory !== 'All Categories') {
             products = products.filter(p => p.category === selectedCategory);
         }
-
-        // 3. Color Filter
         if (selectedColor !== 'All Colors') {
-            products = products.filter(p => p.colors && p.colors.includes(selectedColor));
+            products = products.filter(p => p.colors?.includes(selectedColor));
         }
-
-        // 4. Size Filter
         if (selectedSize !== 'All Sizes') {
-            products = products.filter(p => p.sizes && p.sizes.includes(selectedSize));
+            products = products.filter(p => p.sizes?.includes(selectedSize));
         }
-        
-        // 5. Price Filter (using AffiliateSalePrice)
         if (selectedPrice !== 'All Prices') {
             products = products.filter(p => {
                 const price = p.AffiliateSalePrice;
@@ -113,8 +95,6 @@ export default function MyCollectionPage() {
                 return true;
             });
         }
-
-        // 6. Sorting Logic (using Affiliate fields)
         switch (sortBy) {
             case 'Price: Low to High':
                 products.sort((a, b) => a.AffiliateSalePrice - b.AffiliateSalePrice);
@@ -127,95 +107,82 @@ export default function MyCollectionPage() {
                  break;
             case 'Relevance':
             default:
-                // Sort by the original sales data, which is still useful
                 products.sort((a, b) => (b.sales || 0) - (a.sales || 0));
                 break;
         }
-
         setFilteredProducts(products);
-
     }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, affiliateProducts]);
     
+    // --- FIX: Handler to transform AffiliateProductType to ProductType for the modal ---
+    const handleEditClick = (product: ProductType | AffiliateProductType) => {
+        const affiliateProduct = product as AffiliateProductType;
+        
+        // Create a ProductType object that the ClaimProductFlow component expects
+        const productForEditing: ProductType = {
+            id: affiliateProduct.id, // Use original ID for consistency
+            title: affiliateProduct.AffiliateTitle,
+            description: affiliateProduct.AffiliateDescription,
+            original_sale_price: affiliateProduct.AffiliateSalePrice,
+            original_regular_price: affiliateProduct.AffiliateRegularPrice,
+            category: affiliateProduct.category,
+            product_images: affiliateProduct.product_images,
+            stock: affiliateProduct.stock,
+            sales: affiliateProduct.sales,
+            currency: affiliateProduct.currency,
+            createdAt: affiliateProduct.AffiliateCreatedAt,
+            sizes: affiliateProduct.sizes,
+            colors: affiliateProduct.colors,
+            owner: affiliateProduct.owner ?? undefined,
+            // Provide default values for properties not on AffiliateProductType
+            lastUpdated: new Date().toISOString(),
+            rating: 0, 
+            reviews: [],
+            productrevenu: 0,
+        };
+        setProductToEdit(productForEditing);
+    };
+
     return (
         <section>
-            {/* --- Top Header Products Page --- */}
+            {/* --- Header & Filters --- */}
             <div className="w-full flex justify-center">
-                <div 
-                    className="group bg-white flex gap-3 items-center px-3 
-                        grow max-w-[600px] min-w-[400px]
-                        border-b border-neutral-400 ring ring-neutral-200 
-                        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]
-                        rounded-lg 
-                        focus-within:ring-neutral-300">
+                 <div className="group bg-white flex gap-3 items-center px-3 grow max-w-[600px] min-w-[400px] border-b border-neutral-400 ring ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg focus-within:ring-neutral-300">
                     <Search size={20} className="text-gray-400" />
-                    <input 
-                        type="text" 
-                        placeholder="Search your collection by name, category..."
-                        className="grow rounded-lg outline-none focus:py-3 
-                            transition-all duration-300 py-2.5 text-sm"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                    <input type="text" placeholder="Search your collection by name, category..." className="grow rounded-lg outline-none focus:py-3 transition-all duration-300 py-2.5 text-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
             </div>
-
-            {/* --- Top Filter DropDowns --- */}
             <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-3">
-                    <CustomDropdown
-                        options={categories}
-                        selectedValue={selectedCategory}
-                        onSelect={setSelectedCategory}
-                    />
-                    <CustomDropdown
-                        options={colors}
-                        selectedValue={selectedColor}
-                        onSelect={setSelectedColor}
-                    />
-                    <CustomDropdown
-                        options={sizes}
-                        selectedValue={selectedSize}
-                        onSelect={setSelectedSize}
-                    />
-                     <CustomDropdown
-                        options={priceOptions}
-                        selectedValue={selectedPrice}
-                        onSelect={setSelectedPrice}
-                    />
+                    <CustomDropdown options={categories} selectedValue={selectedCategory} onSelect={setSelectedCategory} />
+                    <CustomDropdown options={colors} selectedValue={selectedColor} onSelect={setSelectedColor} />
+                    <CustomDropdown options={sizes} selectedValue={selectedSize} onSelect={setSelectedSize} />
+                    <CustomDropdown options={priceOptions} selectedValue={selectedPrice} onSelect={setSelectedPrice} />
                 </div>
                 <div className="flex items-center gap-2">
                     <p className="text-nowrap text-sm text-gray-500">Sort by:</p>
-                    <CustomDropdown
-                        options={sortOptions}
-                        selectedValue={sortBy}
-                        onSelect={setSortBy}
-                    />
+                    <CustomDropdown options={sortOptions} selectedValue={sortBy} onSelect={setSortBy} />
                 </div>
             </div>
-
-            {/* --- Divider --- */}
             <hr className="w-full border-gray-200 my-4"/>
 
             {/* --- Products Grid --- */}
-            <div 
-                className="w-full grid grid-cols-1 sm:grid-cols-2 
-                    md:grid-cols-3 lg:grid-cols-4 gap-3"
-            >
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {shouldShowLoading ? (
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
                     filteredProducts.map((product) => (
-                        <div key={product.id}/>
-                        // <ProductCardUI
-                        //     key={product.id}
-                        //     isAffiliate={userInfos?.UserRole === "affiliate"}
-                        //     isFavorite={true}
-                        //     onToggleFavorite={() => toast.success("Toggled favorite")}
-                        //     // The card is universal and handles AffiliateProductType directly
-                        //     product={product}
-                        //     // The card's onClaimClick handler will automatically provide a standard ProductType
-                        //     onClaimClick={setProductToEdit}
-                        // />
+                        <ProductCardUI
+                            key={product.id}
+                            product={product}
+                            isAffiliate={userInfos?.UserRole === "affiliate"}
+                            isFavorite={false} // Replace with actual favorite logic
+                            onToggleFavorite={(e) => {
+                                e.stopPropagation();
+                                toast.success("Toggled favorite");
+                            }}
+                            // Use the new handler to transform data before setting state
+                            onClaimClick={handleEditClick}
+                        />
                     ))
                 ) : (
                     <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
@@ -226,7 +193,7 @@ export default function MyCollectionPage() {
                 )}
             </div>
             
-            {/* Modal for Editing a Claimed Product */}
+            {/* --- Edit/Claim Modal --- */}
             <AnimatePresence>
                 {productToEdit && (
                     <motion.div
@@ -237,8 +204,6 @@ export default function MyCollectionPage() {
                         onClick={() => setProductToEdit(null)}
                     >
                         <div onClick={(e) => e.stopPropagation()}>
-                            {/* Note: ClaimProductFlow can be reused for editing too,
-                                but you might want a different component/API call later */}
                             <ClaimProductFlow 
                                 sourceProduct={productToEdit}
                                 onClose={() => setProductToEdit(null)}
