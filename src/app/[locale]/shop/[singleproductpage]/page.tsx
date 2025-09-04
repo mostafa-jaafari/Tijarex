@@ -7,6 +7,7 @@ import ProductImageGallery from '@/components/SingleProductPage/ProductImageGall
 import AddToCartButtons from '@/components/SingleProductPage/AddToCartButtons';
 import { getAffiliateInfoFromCookie } from '@/components/Functions/GenerateUniqueRefLink';
 import { AffiliateProductType, ProductType } from '@/types/product'; // Import both types
+import { fetchProductById } from './fetchProductById';
 
 // --- Helper type guard to safely check the product type ---
 function isAffiliateProduct(product: ProductType | AffiliateProductType): product is AffiliateProductType {
@@ -23,7 +24,7 @@ type ProductPageProps = {
 };
 
 export default async function ProductPage({ searchParams }: ProductPageProps) {
-  const { ref, pid } = searchParams;
+  const { pid } = searchParams;
   if (!pid) {
     notFound(); // If no ID is in the URL, show 404
   }
@@ -32,20 +33,9 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
   const cookieStore = cookies();
   const referralCookie = (await cookieStore).get('referral_id');
   const affiliateInfo = referralCookie ? getAffiliateInfoFromCookie(referralCookie.value) : null;
-  // ---
-
-  // --- Data fetching using the unified API route ---
-  // This is the same robust method used in QuickViewProduct.
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products/${pid}`, {
-    cache: 'no-store', // Ensures fresh data for stock levels, etc.
-  });
   
-  if (!response.ok) {
-    notFound(); // The API will correctly trigger a 404 if the product isn't found
-    return;
-  }
 
-  const { product } = await response.json();
+  const product = await fetchProductById(pid);
   if (!product) {
     notFound();
   }

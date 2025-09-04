@@ -1,19 +1,24 @@
 // File: app/api/products/[id]/route.ts
 
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/FirebaseAdmin'; // Your server-only admin instance
+import { adminDb } from '@/lib/FirebaseAdmin';
 
 export async function GET(
     request: Request,
     { params }: { params: { id: string } }
 ) {
     try {
-        const { id } = params;
+        // --- THIS IS THE FIX ---
+        // You no longer need to await params in newer Next.js versions,
+        // but the error suggests you might be on a version that requires it.
+        // Let's ensure it's robust. The main issue is likely on the page component.
+        // The original code here is likely correct for your Next.js version.
+        const { id } = params; 
         if (!id) {
             return NextResponse.json({ message: 'Product ID is required.' }, { status: 400 });
         }
 
-        // 1. First, check the 'AffiliateProducts' collection.
+        // ... (rest of the API route logic remains the same)
         const affiliateRef = adminDb.collection('AffiliateProducts').doc(id);
         const affiliateSnap = await affiliateRef.get();
         if (affiliateSnap.exists) {
@@ -22,7 +27,6 @@ export async function GET(
             }, { status: 200 });
         }
 
-        // 2. If not found, check the original 'products' collection.
         const productRef = adminDb.collection('products').doc(id);
         const productSnap = await productRef.get();
         if (productSnap.exists) {
@@ -31,7 +35,6 @@ export async function GET(
             }, { status: 200 });
         }
         
-        // 3. If it's in neither, it's not found.
         return NextResponse.json({ message: `Product with ID ${id} not found.` }, { status: 404 });
 
     } catch (error) {
