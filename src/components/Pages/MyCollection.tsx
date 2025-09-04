@@ -175,12 +175,6 @@ export default function MyCollectionPage() {
                             key={product.id}
                             product={product}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={false} // Replace with actual favorite logic
-                            onToggleFavorite={(e) => {
-                                e.stopPropagation();
-                                toast.success("Toggled favorite");
-                            }}
-                            // Use the new handler to transform data before setting state
                             onClaimClick={handleEditClick}
                         />
                     ))
