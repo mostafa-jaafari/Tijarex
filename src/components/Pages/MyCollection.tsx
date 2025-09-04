@@ -205,30 +205,17 @@ export default function MyCollectionPage() {
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
                     filteredProducts.map((product) => (
-                        <ProductCardUI
-                            key={product.id}
-                            ID={product.id}
-                            TITLE={product.AffiliateTitle}
-                            DESCRIPTION={product.AffiliateDescription}
-                            SALE_PRICE={product.AffiliateSalePrice}
-                            REGULAR_PRICE={product.AffiliateRegularPrice}
-                            CURRENCY={product.currency}
-                            PRODUCT_IMAGES={product.product_images || []}
-                            STOCK={product.stock}
-                            SALES={product.sales}
-                            CATEGORY={product.category}
-                            SIZES={product.sizes || []}
-                            COLORS={product.colors || []}
-                            OWNER={product.owner ?? { name: "", image: "", email: "", }} // Safely access the owner's name
-                            CREATED_AT={product.AffiliateCreatedAt}
-                            isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={true} // Replace with real data, e.g., user.favorites.includes(product.id)
-                            onToggleFavorite={(e) => {
-                                e.stopPropagation();
-                                toast.success("Toggled favorite: " + product.AffiliateTitle);
-                            }}
-                            onClaimClick={setProductToEdit}
-                        />
+                        <div key={product.id}/>
+                        // <ProductCardUI
+                        //     key={product.id}
+                        //     isAffiliate={userInfos?.UserRole === "affiliate"}
+                        //     isFavorite={true}
+                        //     onToggleFavorite={() => toast.success("Toggled favorite")}
+                        //     // The card is universal and handles AffiliateProductType directly
+                        //     product={product}
+                        //     // The card's onClaimClick handler will automatically provide a standard ProductType
+                        //     onClaimClick={setProductToEdit}
+                        // />
                     ))
                 ) : (
                     <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
@@ -250,7 +237,8 @@ export default function MyCollectionPage() {
                         onClick={() => setProductToEdit(null)}
                     >
                         <div onClick={(e) => e.stopPropagation()}>
-                            {/* The onClaimClick handler in the card ensures productToEdit is a standard ProductType */}
+                            {/* Note: ClaimProductFlow can be reused for editing too,
+                                but you might want a different component/API call later */}
                             <ClaimProductFlow 
                                 sourceProduct={productToEdit}
                                 onClose={() => setProductToEdit(null)}

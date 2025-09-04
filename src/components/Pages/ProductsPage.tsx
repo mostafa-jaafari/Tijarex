@@ -205,20 +205,7 @@ export default function ProductsPage() {
                     filteredProducts.map((product) => (
                         <ProductCardUI
                             key={product.id}
-                            ID={product.id}
-                            TITLE={product.title}
-                            DESCRIPTION={product.description}
-                            SALE_PRICE={product.original_sale_price}
-                            REGULAR_PRICE={product.original_regular_price}
-                            CURRENCY={product.currency}
-                            PRODUCT_IMAGES={product.product_images || []}
-                            STOCK={product.stock}
-                            SALES={product.sales}
-                            CATEGORY={product.category}
-                            SIZES={product.sizes}
-                            COLORS={product.colors}
-                            OWNER={product?.owner}
-                            CREATED_AT={product.createdAt}
+                            product={product}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
                             isFavorite={true}
                             onToggleFavorite={(e) => {
