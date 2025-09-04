@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { HandleGetRefLink } from "./Functions/GetAffiliateLink";
 import { useFirstAffiliateLink } from "@/context/FirstAffiliateLinkContext";
+import { useParams } from "next/navigation";
 
 // Helper function
 const CalculateDiscount = (salePrice?: number, regularPrice?: number) => {
@@ -59,7 +60,7 @@ export function QuickViewProduct() {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedProductDetails, setSelectedProductDetails] = useState<ProductType | AffiliateProductType | null>(null);
-
+  const SunPagesId = useParams().subpagesid;
   // States for UI interaction
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -140,6 +141,7 @@ export function QuickViewProduct() {
           isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
+        {JSON.stringify(selectedProductDetails?.id)}
         {/* Close Button */}
         <button
           onClick={() => setIsShowQuickViewProduct(false)}
@@ -337,7 +339,10 @@ export function QuickViewProduct() {
                       <ShoppingCart size={18} /> Add to Cart
                     </button>
                   </div>
-                ) : (
+                )
+                :
+                (SunPagesId !== "products" && SunPagesId !== "favorites") &&
+                (
                   <button
                     onClick={() =>
                       HandleGetRefLink(
