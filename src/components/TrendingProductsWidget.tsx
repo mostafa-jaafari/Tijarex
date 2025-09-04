@@ -1,11 +1,11 @@
 "use client";
-import { useGlobalProducts } from '@/context/GlobalProductsContext';
 import { Copy, Eye, Flame, SquareArrowOutUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { HandleGetRefLink } from './Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
+import { useTrendingProducts } from './Functions/useTrendingProducts';
 
 interface WidgetCardProps {
     title?: string;
@@ -141,14 +141,12 @@ const WidgetCardSkeleton = () => {
 }
 
 
-export function PopularProductsWidget() {
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+export function TrendingProductsWidget() {
+    const { trendingProducts, isLoading } = useTrendingProducts(2);
     const { userInfos } = useUserInfos();
     
     // Early return if userInfos is not available yet to prevent potential errors
     if (!userInfos) return null;
-
-    const TrendingProducts = globalProductsData.slice(0, 2);
     
     return (
         <section
@@ -171,14 +169,14 @@ export function PopularProductsWidget() {
             <div
                 className='grow grid grid-cols-2 gap-3'
             >
-                {isLoadingGlobalProducts ? (
+                {isLoading ? (
                     // Use the new skeleton component
                     <>
                         <WidgetCardSkeleton />
                         <WidgetCardSkeleton />
                     </>
                 ) : (
-                    TrendingProducts.map((product, idx) => (
+                    trendingProducts.map((product, idx) => (
                         <WidgetCard 
                             key={idx}
                             regularprice={product.original_regular_price}

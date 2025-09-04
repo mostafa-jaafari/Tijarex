@@ -1,6 +1,6 @@
 "use client";
 import { EarningsChart } from '@/components/EarningsChart';
-import { PopularProductsWidget } from '@/components/PopularProductsWidget';
+import { TrendingProductsWidget } from '@/components/TrendingProductsWidget';
 import QuickSetupGuide from '@/components/QuickSetupGuide';
 import { StatisticCards } from '@/components/StatisticCards';
 import { TraficSourcesWidget } from '@/components/TraficSourcesWidget';
@@ -40,10 +40,10 @@ export default function ClientUserSpacePage() {
         <div
           className='w-full h-[52vh] flex items-start gap-4'
         >
-          <PopularProductsWidget />
           <TraficSourcesWidget 
               userInfos={userInfos}
           />
+          <TrendingProductsWidget />
         </div>
         <div
           className='w-full flex items-start gap-4'
