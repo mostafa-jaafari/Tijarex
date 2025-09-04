@@ -20,14 +20,14 @@ interface ProductEditorProps {
     onCancel?: () => void;
 }
 
-export default function ProductEditor({ 
+export default function ProductEditor({
     onSave, 
     title = "Product Details",
     saveButtonText = "Save Changes",
     startInEditMode = false,
     onCancel
 }: ProductEditorProps) {
-    const { productData, updateProductData } = useProductEditor();
+    const { productData } = useProductEditor();
     const [isEditing, setIsEditing] = useState(startInEditMode);
 
     // State for the draft (editable) values
@@ -43,7 +43,6 @@ export default function ProductEditor({
         setDraftSalePrice(productData.original_sale_price);
         setDraftRegularPrice(productData.original_regular_price);
     }, [productData]);
-
     const handleSave = () => {
         const newSalePrice = Number(draftSalePrice);
         const newRegularPrice = Number(draftRegularPrice);
@@ -71,11 +70,13 @@ export default function ProductEditor({
             original_regular_price: newRegularPrice,
         };
         
-        updateProductData(updatedFields);
-        if (onSave) onSave(updatedFields);
-        if (!startInEditMode) setIsEditing(false);
+        if (onSave) {
+            onSave(updatedFields);
+        }
         
-        toast.success("Changes saved successfully!");
+        if (!startInEditMode) {
+            setIsEditing(false);
+        }
     };
 
     const handleCancel = () => {

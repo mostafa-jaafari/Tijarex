@@ -1,10 +1,12 @@
+// src/components/DropToCollectionsProducts/ClaimProductFlow.tsx
 "use client";
 
-import React from 'react';
-import { toast } from "sonner";
+import { useState } from 'react';
 import { ProductType } from '@/types/product';
-import { ProductEditorProvider } from '@/context/ProductEditorContext';
 import ProductEditor from './ProductEditor';
+import { ProductEditorProvider } from '@/context/ProductEditorContext';
+import { useAffiliateProducts } from '@/context/AffiliateProductsContext'; // Import the hook here
+import { toast } from 'sonner';
 
 interface ClaimProductFlowProps {
     sourceProduct: ProductType;
@@ -12,51 +14,61 @@ interface ClaimProductFlowProps {
 }
 
 export default function ClaimProductFlow({ sourceProduct, onClose }: ClaimProductFlowProps) {
+    const { refetchAffiliateProducts } = useAffiliateProducts(); // Get refetch function
+    const [isSubmitting, setIsSubmitting] = useState(false); // Add a loading state
 
-    const handleClaimProduct = async (modifiedFields: Partial<ProductType>) => {
-        const toastId = toast.loading("Claiming product...");
-
-        // --- UPDATED PAYLOAD ---
-        // We now include all the fields the affiliate can modify.
-        // We use fallbacks (||) to ensure that if a field isn't changed,
-        // the original product's value is used as a default.
-        const payload = {
-            originalProductId: sourceProduct.id,
-            affiliateTitle: modifiedFields.title || sourceProduct.title,
-            affiliateDescription: modifiedFields.description || sourceProduct.description,
-            affiliateSalePrice: modifiedFields.original_sale_price || sourceProduct.original_sale_price,
-            affiliateRegularPrice: modifiedFields.original_regular_price || sourceProduct.original_regular_price,
-        };
+    // This is the function we will pass to the ProductEditor's onSave prop
+    const handleSaveProduct = async (updates: Partial<ProductType>) => {
+        setIsSubmitting(true);
+        const toastId = toast.loading("Adding product to your collection...");
 
         try {
-            // The API endpoint remains the same.
-            const response = await fetch('/api/affiliate/add-to-collection', {
+            // The data for the API call
+            const payload = {
+                originalProductId: sourceProduct.id,
+                affiliateTitle: updates.title,
+                affiliateDescription: updates.description,
+                affiliateSalePrice: updates.original_sale_price,
+                affiliateRegularPrice: updates.original_regular_price,
+            };
+
+            // 1. AWAIT THE API CALL to add the product
+            const response = await fetch('/api/affiliate/add-to-collection', { // Use your correct endpoint
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
 
             const result = await response.json();
-            if (!response.ok) throw new Error(result.message || 'API error');
-            
-            // Use the new title in the success message for better feedback.
-            toast.success(`Product "${payload.affiliateTitle}" claimed!`, { id: toastId });
-            onClose(); // Close the modal on success
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to claim product.");
+            }
+
+            // 2. AWAIT THE REFETCH after the save is successful
+            await refetchAffiliateProducts();
+
+            toast.success("Product added to collection!", { id: toastId });
+
+            // 3. CLOSE THE MODAL after everything is done
+            onClose();
 
         } catch (error) {
-            console.error("Claiming error:", error);
-            toast.error(`Error: ${(error as Error).message}`, { id: toastId });
+            const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
+            toast.error(errorMessage, { id: toastId });
+        } finally {
+            setIsSubmitting(false); // Stop loading state
         }
     };
 
     return (
         <ProductEditorProvider initialProductData={sourceProduct}>
+            {/* The ProductEditor now correctly triggers our async handler */}
             <ProductEditor 
-                onSave={handleClaimProduct}
+                title="Claim Product"
+                saveButtonText={isSubmitting ? "Saving..." : "Drop To Collection"}
+                startInEditMode={true}
+                onSave={handleSaveProduct}
                 onCancel={onClose}
-                title="Customize & Claim Product"
-                saveButtonText="Confirm & Claim"
-                startInEditMode={true} 
             />
         </ProductEditorProvider>
     );

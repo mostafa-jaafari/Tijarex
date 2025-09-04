@@ -102,6 +102,7 @@ type ProductCardUIProps = {
   isAffiliate: boolean;
   isFavorite?: boolean;
   onClaimClick: (p: ProductType | AffiliateProductType) => void;
+  onFavoriteToggled?: (productId: string, isNowFavorite: boolean) => void;
 };
 
 export const ProductCardUI = ({
@@ -109,6 +110,7 @@ export const ProductCardUI = ({
     isFavorite,
     isAffiliate,
     onClaimClick,
+    onFavoriteToggled,
 }: ProductCardUIProps) => {
     // --- State Management ---
     const [currentImage, setCurrentImage] = useState(0);
@@ -121,8 +123,8 @@ export const ProductCardUI = ({
     useEffect(() => {
         setIsFavorited(isFavorite);
     }, [isFavorite]);
-    const handleToggleFavorite = async (e: React.MouseEvent) => {
-        e.stopPropagation(); 
+     const handleToggleFavorite = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         if (isTogglingFavorite) return;
 
         setIsTogglingFavorite(true);
@@ -132,8 +134,6 @@ export const ProductCardUI = ({
         const productIdToToggle = isAffiliateProduct(product) ? product.originalProductId : product.id;
 
         try {
-            // --- THIS IS THE FIX ---
-            // Corrected the API endpoint URL.
             const response = await fetch('/api/products/favorites', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -145,9 +145,16 @@ export const ProductCardUI = ({
             if (!response.ok) {
                 throw new Error(result.error || 'Failed to update favorites.');
             }
-
+            
             setIsFavorited(result.isFavorite);
             toast.success(result.isFavorite ? "Added to favorites!" : "Removed from favorites.");
+
+            // --- ADD THIS BLOCK TO NOTIFY THE PARENT ---
+            // If the callback function exists, call it with the result.
+            if (onFavoriteToggled) {
+                onFavoriteToggled(productIdToToggle, result.isFavorite);
+            }
+            // --- END OF ADDED BLOCK ---
 
         } catch (error) {
             setIsFavorited(originalIsFavorited);
@@ -270,7 +277,7 @@ export const ProductCardUI = ({
                                         <Trash2 size={16} />
                                     </button>
                                 </div>
-                            ) : isAffiliate && SubPage === "products" ? (
+                            ) : (isAffiliate && SubPage === "products" || isAffiliate && SubPage === "favorites") ? (
                                 <button onClick={handleClaimClick} className={`bg-purple-600 hover:bg-purple-700 rounded-lg text-sm text-white w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>Drop To Collection <Store size={16} /></button>
                             ) : !isAffiliate && (
                                 <button onClick={HandleShowQuickView} className={`bg-neutral-900 hover:bg-neutral-900/90 rounded-lg text-sm text-neutral-100 w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>Quick View <Eye size={16} /></button>
