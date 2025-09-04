@@ -71,23 +71,29 @@ export function QuickViewProduct() {
   useEffect(() => {
     const handleFetchProductDetails = async () => {
       if (!productID) return;
-      setIsLoading(true);
-      setSelectedProductDetails(null); // Clear previous product
-      try {
-        const res = await fetch("/api/products"); // Replace with a specific product fetch if possible
-        const { products } = await res.json();
-        if (Array.isArray(products)) {
-          const product = products.find(
-            (p: ProductType | AffiliateProductType) => p.id === productID
-          );
-          setSelectedProductDetails(product || null);
 
-          if (product) {
-            if ("colors" in product && product.colors.length > 0) {
-              setSelectedColor(product.colors[0]);
-            } else if ("sizes" in product && product.sizes.length > 0) {
-              setSelectedSize(product.sizes[0]);
-            }
+      setIsLoading(true);
+      setSelectedProductDetails(null); 
+      
+      try {
+        // --- THIS IS THE FIX ---
+        // Call your new, unified API endpoint.
+        const response = await fetch(`/api/products/${productID}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Product not found.`);
+        }
+
+        const { product } = await response.json();
+        
+        setSelectedProductDetails(product || null);
+
+        if (product) {
+          if ("colors" in product && product.colors && product.colors.length > 0) {
+            setSelectedColor(product.colors[0]);
+          } else if ("sizes" in product && product.sizes && product.sizes.length > 0) {
+            setSelectedSize(product.sizes[0]);
           }
         }
       } catch (err) {
@@ -96,9 +102,11 @@ export function QuickViewProduct() {
         setIsLoading(false);
       }
     };
-
-    handleFetchProductDetails();
-  }, [productID]);
+    
+    if (isShowQuickViewProduct) {
+        handleFetchProductDetails();
+    }
+  }, [productID, isShowQuickViewProduct]);
 
   // Handle closing modal on outside click
   useEffect(() => {

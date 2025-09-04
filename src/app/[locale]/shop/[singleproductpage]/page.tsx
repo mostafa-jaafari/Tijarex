@@ -1,44 +1,68 @@
+// File: app/[locale]/shop/product/[productId]/page.tsx
+
 import { Check, Star, Info } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import ProductImageGallery from '@/components/SingleProductPage/ProductImageGallery';
 import AddToCartButtons from '@/components/SingleProductPage/AddToCartButtons';
-import { fetchProductById } from '@/components/SingleProductPage/fetchProductById';
 import { getAffiliateInfoFromCookie } from '@/components/Functions/GenerateUniqueRefLink';
+import { AffiliateProductType, ProductType } from '@/types/product'; // Import both types
 
-// The props are now based on the dynamic path `[productId]`
+// --- Helper type guard to safely check the product type ---
+function isAffiliateProduct(product: ProductType | AffiliateProductType): product is AffiliateProductType {
+  return (product as AffiliateProductType).AffiliateTitle !== undefined;
+}
+
+// --- Corrected props for a dynamic route ---
+// The page now receives `params` for the ID and `searchParams` for the referral code.
 type ProductPageProps = {
-  searchParams: Promise<{
+  searchParams: {
     ref?: string;
     pid?: string;
-  }>;
+  };
 };
 
 export default async function ProductPage({ searchParams }: ProductPageProps) {
+  const { ref, pid } = searchParams;
+  if (!pid) {
+    notFound(); // If no ID is in the URL, show 404
+  }
 
-// الخطوة 1: انتظر وصول searchParams وحلّها في متغير جديد
-  const resolvedSearchParams = await searchParams;
-
-  // --- CORRECTED REFERRAL LOGIC ---
+  // --- REFERRAL LOGIC (No change needed) ---
   const cookieStore = cookies();
   const referralCookie = (await cookieStore).get('referral_id');
   const affiliateInfo = referralCookie ? getAffiliateInfoFromCookie(referralCookie.value) : null;
   // ---
 
-  // --- CORRECTED DATA FETCHING ---
-  // الخطوة 2: استخدم الكائن الجديد (resolvedSearchParams) بدلاً من الأصلي
-  if (!resolvedSearchParams.pid) {
-    notFound();
+  // --- Data fetching using the unified API route ---
+  // This is the same robust method used in QuickViewProduct.
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products/${pid}`, {
+    cache: 'no-store', // Ensures fresh data for stock levels, etc.
+  });
+  
+  if (!response.ok) {
+    notFound(); // The API will correctly trigger a 404 if the product isn't found
+    return;
   }
-  const product = await fetchProductById(resolvedSearchParams?.pid);
 
-  // If no product is found for the given ID, render a 404 page.
+  const { product } = await response.json();
   if (!product) {
     notFound();
   }
 
-  const isOnSale = product.AffiliateSalePrice && product.AffiliateSalePrice > product.AffiliateSalePrice;
-  const displayPrice = isOnSale ? product.AffiliateSalePrice : product.AffiliateSalePrice;
+  // --- Type-Safe Property Access ---
+  // Use the type guard to safely get the correct properties for either product type.
+  const title = isAffiliateProduct(product) ? product.AffiliateTitle : product.title;
+  const description = isAffiliateProduct(product) ? product.AffiliateDescription : product.description;
+  const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
+  const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;
+  // Provide defaults for properties that only exist on the original ProductType
+  const rating = !isAffiliateProduct(product) ? product.rating : 0;
+  const reviews = !isAffiliateProduct(product) ? product.reviews : [];
+
+  // Corrected logic for checking if the product is on sale.
+  const isOnSale = regularPrice && salePrice < regularPrice;
+  
   const highlights = [ "Made from 100% full-grain leather", "Slim bifold design", "Holds up to 8 cards and cash", "Hand-stitched for durability" ];
 
   return (
@@ -46,7 +70,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
       <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
           
-          <ProductImageGallery images={product.product_images} productName={product.AffiliateTitle} />
+          <ProductImageGallery images={product.product_images} productName={title} />
 
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
 
@@ -59,15 +83,15 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
                 </div>
             )}
 
-            <h1 className="text-3xl font-bold tracking-tight text-neutral-700">{product.AffiliateTitle}</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-neutral-700">{title}</h1>
             
             <div className="mt-3">
               <p className="text-3xl tracking-tight text-neutral-700">
-                ${displayPrice.toFixed(2)}
+                ${salePrice.toFixed(2)}
               </p>
               {isOnSale && (
                   <span className="ml-2 text-xl text-neutral-500 line-through">
-                      ${product.AffiliateSalePrice.toFixed(2)}
+                      ${regularPrice.toFixed(2)}
                   </span>
               )}
             </div>
@@ -77,11 +101,11 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
               <div className="flex items-center">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`h-5 w-5 flex-shrink-0 ${product?.rating || 0 > i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                    <Star key={i} className={`h-5 w-5 flex-shrink-0 ${rating > i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
                   ))}
                 </div>
                 <a href="#reviews" className="ml-3 text-sm font-medium text-neutral-500 hover:text-neutral-700">
-                  {product?.reviews || "not founded"} reviews
+                  {reviews?.length || 0} reviews
                 </a>
               </div>
             </div>
@@ -89,7 +113,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
             <div className="mt-6">
               <h3 className="sr-only">Description</h3>
               <div className="space-y-6 text-base text-neutral-500">
-                <p>{product.AffiliateDescription}</p>
+                <p>{description}</p>
               </div>
             </div>
             

@@ -184,7 +184,7 @@ export const ProductCardUI = ({
         setCurrentImage((prev) => (prev + direction + (product_images?.length || 1)) % (product_images?.length || 1));
     };
     const HandleShowQuickView = () => {
-        const viewId = isAffiliateProduct(product) ? product.originalProductId : (id || "");
+        const viewId = isAffiliateProduct(product) ? product.id : product.id;
         setProductID(viewId);
         setIsShowQuickViewProduct(true);
     };
