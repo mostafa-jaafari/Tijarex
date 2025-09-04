@@ -4,11 +4,10 @@ import { Check, Star } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import ProductImageGallery from '@/components/SingleProductPage/ProductImageGallery';
-import AddToCartButtons from '@/components/SingleProductPage/AddToCartButtons';
 import { getAffiliateInfoFromCookie } from '@/components/Functions/GenerateUniqueRefLink';
 import { AffiliateProductType, ProductType } from '@/types/product'; // Import both types
 import { fetchProductById } from './fetchProductById';
-import { SingleProductColors, SingleProductSizes } from '@/components/SingleProductPage/SingleProductColors';
+import { AddToCartButtons, SingleProductColors, SingleProductQuantity, SingleProductSizes } from '@/components/SingleProductPage/SingleProductColors';
 
 // --- Helper type guard to safely check the product type ---
 function isAffiliateProduct(product: ProductType | AffiliateProductType): product is AffiliateProductType {
@@ -63,7 +62,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
       <main className="mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
           
-          <ProductImageGallery 
+          <ProductImageGallery
             images={product.product_images} 
             productName={title}
           />
@@ -111,7 +110,12 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
                 {product.stock > 0 ? "In Stock" : "Out of Stock"}
             </p>
 
-            <AddToCartButtons />
+            <div
+              className='w-full flex items-center bg-red-500 gap-2'
+            >
+              <SingleProductQuantity />
+              <AddToCartButtons />
+            </div>
 
             <section aria-labelledby="details-heading" className="mt-12">
               <div className="divide-y divide-gray-200 border-t">

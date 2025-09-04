@@ -1,5 +1,5 @@
 "use client";
-import { Check } from 'lucide-react';
+import { Check, Minus, Plus, ShoppingCart } from 'lucide-react';
 import React, { useState } from 'react'
 
 export function SingleProductColors({ ProductColors }: { ProductColors: string[]; }) {
@@ -67,4 +67,53 @@ export function SingleProductSizes({ ProductSizes }: { ProductSizes: string[]; }
               )}
         </div>
     )
+}
+
+
+
+export function SingleProductQuantity() {
+    const [quantity, setQuantity] = useState(1);
+    return (
+        <div
+            className="flex items-center border-b border-gray-400 
+                ring ring-neutral-200 rounded-lg overflow-hidden"
+        >
+            <button
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                className="py-3 px-3 h-full text-gray-600 hover:bg-gray-200 cursor-pointer"
+            >
+                <Minus size={16} />
+            </button>
+            <span className="px-4 py-3 font-semibold">{quantity}</span>
+            <button
+                onClick={() => setQuantity((q) => q + 1)}
+                className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
+            >
+                <Plus size={16} />
+            </button>
+        </div>
+    )
+}
+
+export function AddToCartButtons() {
+    
+  const handleAddToCart = () => {
+    // Replace with your actual cart logic (e.g., using context)
+    alert("Added to cart!");
+  };
+
+  return (
+    <div className="flex">
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        className="flex max-w-xs flex-1 items-center justify-center 
+            rounded-md border border-transparent bg-neutral-700 
+            px-8 py-3 text-base font-medium text-white hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 sm:w-full"
+      >
+        <ShoppingCart className="mr-2 h-5 w-5" />
+        Add to cart
+      </button>
+    </div>
+  );
 }
