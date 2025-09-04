@@ -3,13 +3,15 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Eye, Store, Copy } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Eye, Store, Copy, Trash2 } from 'lucide-react';
 import { AffiliateProductType, ProductType } from '@/types/product';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { useParams } from 'next/navigation';
 import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
+import { toast } from 'sonner';
+import { useAffiliateProducts } from '@/context/AffiliateProductsContext';
 
 // --- TYPE GUARD ---
 // Helper to determine if a product is an AffiliateProductType
@@ -64,6 +66,7 @@ export const ProductCardUI = ({
 
     const handleClaimClick = () => {
         onClaimClick(product);
+        refetchAffiliateProducts();
     };
     
     const SubPage = useParams().subpagesid;
@@ -73,6 +76,39 @@ export const ProductCardUI = ({
     const title = isAffiliateProduct(product) ? product.AffiliateTitle : product.title;
     const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
     const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;
+
+    const { refetchAffiliateProducts } = useAffiliateProducts();
+    const HandleDeleteProductCollection = async (productId: string) => {
+        const toastId = toast.loading("Deleting product from your collection...");
+
+        try {
+            const response = await fetch('/api/affiliate/remove-from-collection', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    affiliateProductId: productId,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // If the server response is not OK, throw an error to be caught below
+                throw new Error(result.message || 'Failed to delete product.');
+            }
+
+            toast.success('Product removed successfully!', { id: toastId });
+            // Here you would typically refresh your state to remove the product from the UI
+            refetchAffiliateProducts();
+
+        } catch (error) {
+            console.error('Failed to delete affiliate product:', error);
+            const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+            toast.error(errorMessage, { id: toastId });
+        }
+    }
 
     return (
         <div
@@ -163,11 +199,20 @@ export const ProductCardUI = ({
                     >
                         {isAffiliate && SubPage === "my-collection" ? 
                         (
-                            <button 
-                                onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
-                                className={`bg-neutral-900 hover:bg-neutral-900/90 rounded-lg text-sm text-neutral-100 w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
-                                Get Link <Copy size={16} />
-                            </button>
+                            <div
+                                className='w-full flex items-center gap-1'
+                            >
+                                <button 
+                                    onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
+                                    className={`bg-neutral-900 hover:bg-neutral-900/90 rounded-lg text-sm text-neutral-100 w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>
+                                    Get Link <Copy size={16} />
+                                </button>
+                                <button 
+                                    onClick={() => HandleDeleteProductCollection(product.id)} 
+                                    className={`bg-red-700 hover:bg-red-800/90 rounded-lg text-sm text-neutral-100 p-2 cursor-pointer`}>
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
                         )
                         : isAffiliate && SubPage === "products" ?
                         (
