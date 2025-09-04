@@ -21,9 +21,6 @@ function isAffiliateProduct(
   return (product as AffiliateProductType).AffiliateTitle !== undefined;
 }
 
-// ============================================================================
-// Skeleton Loader Component
-// ============================================================================
 const QuickViewSkeleton = () => (
   <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-pulse">
     {/* Image Skeleton */}
@@ -267,12 +264,12 @@ export function QuickViewProduct() {
                         onClick={() => setSelectedColor(col)}
                         style={{ backgroundColor: col }}
                         className={`w-8 h-8 rounded-full border border-neutral-300 transition-all 
-                                                    duration-200 flex items-center justify-center
-                                                    ${
-                                                      selectedColor === col
-                                                        ? "ring-2 ring-offset-2 ring-purple-600 border-white"
-                                                        : "hover:border-gray-300 cursor-pointer"
-                                                    }`}
+                          duration-200 flex items-center justify-center
+                          ${
+                            selectedColor === col
+                              ? "ring-2 ring-offset-2 ring-purple-600 border-white"
+                              : "hover:border-gray-300 cursor-pointer"
+                        }`}
                       >
                         {selectedColor === col && <Check size={16} className="text-white" />}
                       </button>
@@ -292,13 +289,13 @@ export function QuickViewProduct() {
                         key={size}
                         onClick={() => setSelectedSize(size)}
                         className={`rounded-lg border 
-                                                    w-10 h-10 border-neutral-300 transition-all 
-                                                    duration-200 flex items-center justify-center
-                                                    ${
-                                                      selectedSize?.toLowerCase() === size.toLowerCase()
-                                                        ? "bg-purple-700 text-neutral-200"
-                                                        : "bg-neutral-50 cursor-pointer"
-                                                    }`}
+                          w-10 h-10 border-neutral-300 transition-all 
+                          duration-200 flex items-center justify-center
+                          ${
+                            selectedSize?.toLowerCase() === size.toLowerCase()
+                              ? "bg-purple-700 text-neutral-200"
+                              : "bg-neutral-50 cursor-pointer"
+                        }`}
                       >
                         {size}
                       </button>
@@ -330,11 +327,12 @@ export function QuickViewProduct() {
                     </div>
                     <button
                       className={`flex-1 flex items-center justify-center 
-                                            gap-2 cursor-pointer text-purple-100
-                                            text-sm
-                                            border-b border-neutral-600 ring ring-neutral-600
-                                            py-2 rounded-lg bg-neutral-800 hover:bg-neutral-900
-                                            transition-all duration-200`}
+                        gap-2 cursor-pointer text-purple-100
+                        text-sm
+                        border-b border-neutral-600 ring ring-neutral-600
+                        py-2 rounded-lg bg-neutral-800 hover:bg-neutral-900
+                        transition-all duration-200
+                      `}
                     >
                       <ShoppingCart size={18} /> Add to Cart
                     </button>
@@ -350,11 +348,11 @@ export function QuickViewProduct() {
                       )
                     }
                     className="w-full py-2.5 rounded-lg bg-neutral-800
-                                        hover:bg-neutral-900 cursor-pointer
-                                        text-neutral-200 border-b border-neutral-400 purple-400 
-                                        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2)]
-                                        ring ring-neutral-400 text-sm
-                                        flex items-center gap-2 justify-center"
+                      hover:bg-neutral-900 cursor-pointer
+                      text-neutral-200 border-b border-neutral-400 purple-400 
+                      shadow-[0_4px_6px_-1px_rgba(0,0,0,0.2)]
+                      ring ring-neutral-400 text-sm
+                      flex items-center gap-2 justify-center"
                   >
                     Get Link <Copy size={18} />
                   </button>

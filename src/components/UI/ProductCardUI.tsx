@@ -92,7 +92,7 @@ const ConfirmationModal = ({ isOpen, isLoading, onClose, onConfirm, title, produ
 
 
 // --- TYPE GUARD ---
-function isAffiliateProduct(product: ProductType | AffiliateProductType): product is AffiliateProductType {
+export function isAffiliateProduct(product: ProductType | AffiliateProductType): product is AffiliateProductType {
     return 'AffiliateTitle' in product;
 }
 
