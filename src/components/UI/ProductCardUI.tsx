@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { 
@@ -101,7 +101,6 @@ type ProductCardUIProps = {
   product: ProductType | AffiliateProductType;
   isAffiliate: boolean;
   isFavorite: boolean;
-  onToggleFavorite: (e: React.MouseEvent) => void;
   onClaimClick: (p: ProductType | AffiliateProductType) => void;
 };
 
@@ -109,7 +108,6 @@ export const ProductCardUI = ({
     product,
     isFavorite,
     isAffiliate,
-    onToggleFavorite,
     onClaimClick,
 }: ProductCardUIProps) => {
     // --- State Management ---
@@ -117,6 +115,48 @@ export const ProductCardUI = ({
     const [isHovered, setIsHovered] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); 
     const [isDeleting, setIsDeleting] = useState(false); // NEW: Loading state for deletion
+
+    const [isFavorited, setIsFavorited] = useState(isFavorite);
+    const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+    useEffect(() => {
+        setIsFavorited(isFavorite);
+    }, [isFavorite]);
+    const handleToggleFavorite = async (e: React.MouseEvent) => {
+        e.stopPropagation(); 
+        if (isTogglingFavorite) return;
+
+        setIsTogglingFavorite(true);
+        const originalIsFavorited = isFavorited;
+        setIsFavorited(!originalIsFavorited);
+
+        const productIdToToggle = isAffiliateProduct(product) ? product.originalProductId : product.id;
+
+        try {
+            // --- THIS IS THE FIX ---
+            // Corrected the API endpoint URL.
+            const response = await fetch('/api/products/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId: productIdToToggle }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to update favorites.');
+            }
+
+            setIsFavorited(result.isFavorite);
+            toast.success(result.isFavorite ? "Added to favorites!" : "Removed from favorites.");
+
+        } catch (error) {
+            setIsFavorited(originalIsFavorited);
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+            toast.error(errorMessage);
+        } finally {
+            setIsTogglingFavorite(false);
+        }
+    };
 
     const { userInfos } = useUserInfos();
     const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
@@ -184,9 +224,16 @@ export const ProductCardUI = ({
                         </motion.div>
                     </AnimatePresence>
                     {sales > 500 && <p className='py-0.5 px-2 text-orange-400 rounded-full flex items-center gap-1 text-[12px] font-semibold bg-orange-900 shadow-sm absolute top-2 left-2'><Flame size={14} className='fill-current' /> Hot Seller</p>}
-                    <motion.button onClick={onToggleFavorite} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`absolute top-2 right-2 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-sm transition-colors duration-300 ${isFavorite ? 'bg-purple-600/80' : 'bg-black/20'}`}>
-                        <Heart className={`w-5 h-5 transition-all ${isFavorite ? 'fill-white text-white' : ' text-white'}`} />
-                    </motion.button>
+                    {SubPage !== "my-collection" && (
+                        <motion.button
+                            onClick={handleToggleFavorite}
+                            disabled={isTogglingFavorite}
+                            whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                            className={`absolute top-2 right-2 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-sm transition-colors duration-300 ${isFavorited ? 'bg-purple-600/80' : 'bg-black/20'} disabled:cursor-not-allowed`}
+                        >
+                            <Heart className={`w-5 h-5 transition-all ${isFavorited ? 'fill-white text-white' : ' text-white'}`} />
+                        </motion.button>
+                    )}
                     {(product_images?.length || 0) > 1 && (
                         <>
                             <AnimatePresence>

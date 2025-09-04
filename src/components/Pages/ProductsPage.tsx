@@ -2,12 +2,10 @@
 
 import { Search, PackageSearch } from "lucide-react";
 import { CustomDropdown } from "../UI/CustomDropdown";
-import { toast } from "sonner";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
-// FIX: Import AffiliateProductType to be used in the handler signature
 import { ProductType, AffiliateProductType } from "@/types/product";
 import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
@@ -26,10 +24,9 @@ export default function ProductsPage() {
     const { userInfos } = useUserInfos();
     const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
 
-    // State for the currently displayed products
+    // --- State Management ---
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
     const [productToClaim, setProductToClaim] = useState<ProductType | null>(null);
-    // States for filter controls
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
     const [selectedColor, setSelectedColor] = useState('All Colors');
@@ -37,14 +34,46 @@ export default function ProductsPage() {
     const [selectedPrice, setSelectedPrice] = useState('All Prices');
     const [sortBy, setSortBy] = useState('Relevance');
     
-    // --- Initial Load Handling ---
+    // --- NEW: State for managing user's favorite products ---
+    const [favoriteProductIds, setFavoriteProductIds] = useState<Set<string>>(new Set());
+    const [isLoadingFavorites, setIsLoadingFavorites] = useState(true);
+
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     useEffect(() => {
         if (!isLoadingGlobalProducts) {
             setIsInitialLoad(false);
         }
     }, [isLoadingGlobalProducts]);
-    const shouldShowLoading = isInitialLoad || isLoadingGlobalProducts;
+
+    // --- NEW: Fetch user's favorite product IDs on component mount ---
+    useEffect(() => {
+        if (userInfos) { // Only fetch if the user is logged in
+            const fetchFavorites = async () => {
+                setIsLoadingFavorites(true);
+                try {
+                    const response = await fetch('/api/products/favorites');
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Store the IDs in a Set for efficient lookups
+                        const ids = new Set<string>(data.products.map((p: ProductType) => p.id));
+                        setFavoriteProductIds(ids);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch favorites:", error);
+                } finally {
+                    setIsLoadingFavorites(false);
+                }
+            };
+            fetchFavorites();
+        } else {
+            // If user is not logged in, clear favorites and stop loading
+            setFavoriteProductIds(new Set());
+            setIsLoadingFavorites(false);
+        }
+    }, [userInfos]); // Rerun this effect if the user logs in or out
+
+
+    const shouldShowLoading = isInitialLoad || isLoadingGlobalProducts || isLoadingFavorites;
 
     // --- Generate Dynamic Filter Options ---
     const categories = useMemo(() => {
@@ -120,7 +149,6 @@ export default function ProductsPage() {
 
     }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, globalProductsData]);
     
-    // --- FIX: Create a handler function to satisfy the prop's type requirement ---
     const handleClaimClick = (product: ProductType | AffiliateProductType) => {
         setProductToClaim(product as ProductType);
     }
@@ -159,20 +187,22 @@ export default function ProductsPage() {
                 {shouldShowLoading ? (
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
-                    filteredProducts.map((product) => (
-                        <ProductCardUI
-                            key={product.id}
-                            product={product}
-                            isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={false} // Replace with actual favorite logic
-                            onToggleFavorite={(e) => {
-                                e.stopPropagation();
-                                toast.success("Toggled favorite");
-                            }}
-                            // FIX: Use the new handler function instead of the raw state setter
-                            onClaimClick={handleClaimClick}
-                        />
-                    ))
+                    filteredProducts.map((product) => {
+                        // --- FIX: Determine if the product is a favorite ---
+                        const isProductFavorite = favoriteProductIds.has(product.id);
+
+                        return (
+                            <ProductCardUI
+                                key={product.id}
+                                product={product}
+                                isAffiliate={userInfos?.UserRole === "affiliate"}
+                                // --- FIX: Pass the correct favorite status ---
+                                isFavorite={isProductFavorite}
+                                // onToggleFavorite is no longer needed as the card handles it
+                                onClaimClick={handleClaimClick}
+                            />
+                        );
+                    })
                 ) : (
                     <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
                         <PackageSearch size={48} className="text-gray-400 mb-4" />
