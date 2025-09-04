@@ -14,12 +14,21 @@ export default function ProductImageGallery({ images, productName }: ProductImag
   return (
     <div className="flex flex-col-reverse">
       {/* Thumbnail Images */}
-      <div className="mx-auto mt-6 w-full max-w-2xl sm:block lg:max-w-none">
-        <div className="grid grid-cols-4 gap-6">
+      <div className="mx-auto mt-3 w-full max-w-2xl sm:block lg:max-w-none">
+        <div className="grid grid-cols-5 gap-3">
           {images.map((image, index) => (
             <button
               key={index}
-              className={`relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-neutral-700 ${selectedImage === image ? 'ring-2 ring-neutral-700' : 'ring-1 ring-gray-200'}`}
+              className={`relative flex h-24 cursor-pointer items-center 
+                justify-center rounded-md bg-white text-sm 
+                font-medium uppercase hover:bg-gray-50 
+                focus:outline-none focus:ring focus:ring-opacity-50 
+                focus:ring-neutral-700 
+                ${selectedImage === image ? 
+                  'ring ring-purple-500 border-b-2 border-purple-700 shadow-sm'
+                  :
+                  'ring-1 ring-gray-200'}
+              `}
               onClick={() => setSelectedImage(image)}
             >
               <span className="absolute inset-0 overflow-hidden rounded-md">
@@ -31,13 +40,13 @@ export default function ProductImageGallery({ images, productName }: ProductImag
       </div>
 
       {/* Main Image */}
-      <div className="aspect-h-1 aspect-w-1 w-full">
+      <div className="aspect-h-1 aspect-w-1 w-full max-w-150">
         <div className="overflow-hidden rounded-lg bg-gray-100">
             <Image
                 src={selectedImage}
                 alt={`Main image of ${productName}`}
-                width={800}
-                height={800}
+                width={700}
+                height={100}
                 className="h-full w-full object-cover object-center"
             />
         </div>
