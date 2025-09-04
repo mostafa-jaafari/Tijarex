@@ -100,7 +100,7 @@ function isAffiliateProduct(product: ProductType | AffiliateProductType): produc
 type ProductCardUIProps = {
   product: ProductType | AffiliateProductType;
   isAffiliate: boolean;
-  isFavorite: boolean;
+  isFavorite?: boolean;
   onClaimClick: (p: ProductType | AffiliateProductType) => void;
 };
 
