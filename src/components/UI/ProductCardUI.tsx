@@ -4,21 +4,33 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Heart, Box, BarChart2, Flame, User, Eye, Store, Copy } from 'lucide-react';
-import { ProductType, AffiliateProductType } from '@/types/product';
+import { ProductType } from '@/types/product';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { useParams } from 'next/navigation';
 import { HandleGetRefLink } from '../Functions/GetAffiliateLink';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
 
-// Type Guard to differentiate between the two product types
-function isAffiliateProduct(product: ProductType | AffiliateProductType): product is AffiliateProductType {
-    return (product as AffiliateProductType).AffiliateTitle !== undefined;
-}
-
 // Props for the Universal UI Component
 interface ProductCardUIProps {
-    product: ProductType | AffiliateProductType;
+    ID: string;
+    TITLE: string;
+    DESCRIPTION?: string;
+    SALE_PRICE: number;
+    REGULAR_PRICE?: number;
+    CURRENCY: string;
+    PRODUCT_IMAGES: string[];
+    STOCK?: number;
+    SALES?: number;
+    CATEGORY?: string;
+    SIZES?: string[];
+    COLORS?: string[];
+    OWNER?: {
+        email?: string;
+        name?: string;
+        image?: string;
+    };
+    CREATED_AT?: string;
     isFavorite: boolean;
     isAffiliate: boolean;
     onToggleFavorite: (e: React.MouseEvent) => void;
@@ -26,7 +38,20 @@ interface ProductCardUIProps {
 }
 
 export const ProductCardUI = ({
-    product,
+    ID,
+    TITLE,
+    DESCRIPTION,
+    SALE_PRICE,
+    REGULAR_PRICE,
+    CURRENCY,
+    PRODUCT_IMAGES,
+    STOCK,
+    SALES,
+    CATEGORY,
+    SIZES,
+    COLORS,
+    OWNER,
+    CREATED_AT,
     isFavorite,
     isAffiliate,
     onToggleFavorite,
@@ -37,61 +62,53 @@ export const ProductCardUI = ({
     const [isHovered, setIsHovered] = useState(false);
     const { userInfos } = useUserInfos();
     const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
-    // --- Data Normalization ---
-    const title = isAffiliateProduct(product) ? product.AffiliateTitle : product.title;
-    const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
-    const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;
 
     // --- FIX: Provide default fallbacks for optional numeric data ---
-    // This prevents the 'toLocaleString of undefined' error.
-    const sales = product.sales ?? 0;
-    const stock = product.stock ?? 0;
+    const sales = SALES ?? 0;
+    const stock = STOCK ?? 0;
     
-    // Destructure common properties
-    const { id, product_images, currency } = product;
-
     // --- Handlers ---
     const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
         e.preventDefault();
         e.stopPropagation();
-        setCurrentImage((prev) => (prev + direction + (product_images?.length || 1)) % (product_images?.length || 1));
+        setCurrentImage((prev) => (prev + direction + (PRODUCT_IMAGES?.length || 1)) % (PRODUCT_IMAGES?.length || 1));
     };
 
     const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
     const HandleShowQuickView = () => {
-        setProductID(id || "");
+        setProductID(ID || "");
         setIsShowQuickViewProduct(true);
     }
 
     const handleClaimClick = () => {
-        // Ensure the data is always in the standard ProductType format for the modal
-        if (isAffiliateProduct(product)) {
-            const mappedProduct: ProductType = {
-                id: product.id,
-                title: product.AffiliateTitle,
-                description: product.AffiliateDescription,
-                original_sale_price: product.AffiliateSalePrice,
-                original_regular_price: product.AffiliateRegularPrice,
-                createdAt: product.AffiliateCreatedAt,
-                category: product.category,
-                product_images: product.product_images,
-                stock: product.stock,
-                sales: product.sales,
-                currency: product.currency,
-                sizes: product.sizes,
-                colors: product.colors,
-                owner: product.owner ?? undefined,
-                lastUpdated: product.AffiliateCreatedAt,
-                rating: 0,
-                reviews: [],
-                productrevenu: 0,
-            };
-            onClaimClick(mappedProduct);
-        } else {
-            onClaimClick(product);
-        }
+        // The data is already in the desired format, just needs to be assembled
+        const mappedProduct: ProductType = {
+            id: ID,
+            title: TITLE,
+            description: DESCRIPTION ?? "",
+            original_sale_price: SALE_PRICE,
+            original_regular_price: REGULAR_PRICE ?? 0,
+            createdAt: CREATED_AT ?? "",
+            category: CATEGORY ?? "",
+            product_images: PRODUCT_IMAGES,
+            stock: STOCK ?? 0,
+            sales: SALES ?? 0,
+            currency: CURRENCY,
+            sizes: SIZES ?? [],
+            colors: COLORS ?? [],
+            owner: OWNER && OWNER.name && OWNER.image && OWNER.email
+                ? { name: OWNER.name, image: OWNER.image, email: OWNER.email }
+                : undefined,
+            lastUpdated: CREATED_AT ?? "",
+            rating: 0,
+            reviews: [],
+            productrevenu: 0,
+        };
+        onClaimClick(mappedProduct);
     };
+    
     const SubPage = useParams().subpagesid;
+
     return (
         <div
             onMouseEnter={() => setIsHovered(true)}
@@ -121,8 +138,8 @@ export const ProductCardUI = ({
                     >
                         <Image
                             onClick={HandleShowQuickView}
-                            src={product_images?.[currentImage] || '/placeholder-image.png'}
-                            alt={title}
+                            src={PRODUCT_IMAGES?.[currentImage] || '/placeholder-image.png'}
+                            alt={TITLE}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover w-full h-full cursor-pointer"
@@ -152,7 +169,7 @@ export const ProductCardUI = ({
                             ${isFavorite ? 'fill-white text-white' : ' text-white'}`} />
                 </motion.button>
 
-                {(product_images?.length || 0) > 1 && (
+                {(PRODUCT_IMAGES?.length || 0) > 1 && (
                     <>
                         <AnimatePresence>
                            {isHovered && (
@@ -166,7 +183,7 @@ export const ProductCardUI = ({
                             className={`absolute bottom-1 left-1/2 -translate-x-1/2 
                                 backdrop-blur-sm bg-transparent rounded-full 
                                 p-0.5 flex gap-1`}>
-                            {product_images.map((_, i) => (
+                            {PRODUCT_IMAGES.map((_, i) => (
                                 <div 
                                     key={i} 
                                     onClick={() => setCurrentImage(i)} 
@@ -185,11 +202,11 @@ export const ProductCardUI = ({
                     onClick={HandleShowQuickView}
                     className="font-semibold cursor-pointer w-max text-neutral-700 truncate"
                 >
-                    {title}
+                    {TITLE}
                 </h3>
                 <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-lg font-bold text-neutral-700">{(salePrice || 0).toFixed(2)} {currency}</span>
-                    {(regularPrice || 0) > (salePrice || 0) && <span className="text-sm text-gray-400 line-through">{(regularPrice || 0).toFixed(2)} {currency}</span>}
+                    <span className="text-lg font-bold text-neutral-700">{(SALE_PRICE || 0).toFixed(2)} {CURRENCY}</span>
+                    {(REGULAR_PRICE || 0) > (SALE_PRICE || 0) && <span className="text-sm text-gray-400 line-through">{(REGULAR_PRICE || 0).toFixed(2)} {CURRENCY}</span>}
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-x-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2"><BarChart2 size={16} className="text-gray-400" /><div><div className="font-semibold">{sales.toLocaleString()}</div><div className="text-xs text-gray-400">Sales</div></div></div>
@@ -206,7 +223,7 @@ export const ProductCardUI = ({
                         {isAffiliate && SubPage === "my-collection" ? 
                         (
                             <button 
-                                onClick={() => HandleGetRefLink(product.id as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
+                                onClick={() => HandleGetRefLink(ID as string, userInfos?.uniqueuserid as string, hasGottenFirstLink, markAsGotten)} 
                                 className={`bg-neutral-900 hover:bg-neutral-900/90 
                                     rounded-lg text-sm text-neutral-100
                                     w-full flex items-center justify-center gap-2 py-2 cursor-pointer`}>

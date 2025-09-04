@@ -1,21 +1,22 @@
 import { adminDb } from '@/lib/FirebaseAdmin';
-import { ProductType } from '@/types/product';
+import { AffiliateProductType } from '@/types/product';
+import { notFound } from 'next/navigation';
 
 /**
  * Fetches a single product document from Firestore by its ID.
  * This is the most efficient way to get one product.
  *
  * @param {string} productId - The ID of the product to fetch.
- * @returns {Promise<ProductType | null>} The product data or null if not found.
+ * @returns {Promise<AffiliateProductType | null>} The product data or null if not found.
  */
-export async function fetchProductById(productId: string): Promise<ProductType | null> {
+export async function fetchProductById(productId: string): Promise<AffiliateProductType | null> {
   // If no ID is provided, don't try to fetch.
   if (!productId) {
-    return null;
+    notFound();
   }
   
   try {
-    const docRef = adminDb.collection('products').doc(productId);
+    const docRef = adminDb.collection('AffiliateProducts').doc(productId);
     const docSnap = await docRef.get();
 
     if (!docSnap.exists) {
@@ -27,7 +28,7 @@ export async function fetchProductById(productId: string): Promise<ProductType |
     const productData = {
       id: docSnap.id,
       ...docSnap.data(),
-    } as ProductType;
+    } as AffiliateProductType;
 
     return productData;
 

@@ -29,27 +29,6 @@ export type ProductType = {
   productrevenu: number;
 };
 
-export interface ProductCardProps{
-    PRODUCTIMAGES: string[];
-    PRODUCTID: string | number;
-    PRODUCTTITLE: string;
-    PRODUCTSALEPRICE: number;
-    PRODUCTREGULARPRICE: number;
-    PRODUCTCATEGORY: string;
-    OWNER?: {
-        name: string;
-        image: string;
-    };
-    STOCK: number;
-}
-
-// You likely already have this in your types file
-export type ProductOwner = {
-    name: string;
-    image: string;
-    email: string;
-};
-
 
 export type AffiliateProductType = {
     id: string;

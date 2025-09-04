@@ -8,33 +8,37 @@ import { getAffiliateInfoFromCookie } from '@/components/Functions/GenerateUniqu
 
 // The props are now based on the dynamic path `[productId]`
 type ProductPageProps = {
-  searchParams: {
+  searchParams: Promise<{
     ref?: string;
     pid?: string;
-  };
+  }>;
 };
 
 export default async function ProductPage({ searchParams }: ProductPageProps) {
 
+// الخطوة 1: انتظر وصول searchParams وحلّها في متغير جديد
+  const resolvedSearchParams = await searchParams;
+
   // --- CORRECTED REFERRAL LOGIC ---
   const cookieStore = cookies();
   const referralCookie = (await cookieStore).get('referral_id');
-  // Use the new function that does NOT try to decode
   const affiliateInfo = referralCookie ? getAffiliateInfoFromCookie(referralCookie.value) : null;
   // ---
 
   // --- CORRECTED DATA FETCHING ---
-  // Get the product ID from the dynamic path `params`, not searchParams.
-  if (!searchParams.pid) return;
-  const product = await fetchProductById(searchParams.pid);
+  // الخطوة 2: استخدم الكائن الجديد (resolvedSearchParams) بدلاً من الأصلي
+  if (!resolvedSearchParams.pid) {
+    notFound();
+  }
+  const product = await fetchProductById(resolvedSearchParams?.pid);
 
   // If no product is found for the given ID, render a 404 page.
   if (!product) {
     notFound();
   }
 
-  const isOnSale = product.original_sale_price && product.original_regular_price > product.original_sale_price;
-  const displayPrice = isOnSale ? product.original_sale_price : product.original_regular_price;
+  const isOnSale = product.AffiliateSalePrice && product.AffiliateSalePrice > product.AffiliateSalePrice;
+  const displayPrice = isOnSale ? product.AffiliateSalePrice : product.AffiliateSalePrice;
   const highlights = [ "Made from 100% full-grain leather", "Slim bifold design", "Holds up to 8 cards and cash", "Hand-stitched for durability" ];
 
   return (
@@ -42,7 +46,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
       <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
           
-          <ProductImageGallery images={product.product_images} productName={product.title} />
+          <ProductImageGallery images={product.product_images} productName={product.AffiliateTitle} />
 
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
 
@@ -55,7 +59,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
                 </div>
             )}
 
-            <h1 className="text-3xl font-bold tracking-tight text-neutral-700">{product.title}</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-neutral-700">{product.AffiliateTitle}</h1>
             
             <div className="mt-3">
               <p className="text-3xl tracking-tight text-neutral-700">
@@ -63,7 +67,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
               </p>
               {isOnSale && (
                   <span className="ml-2 text-xl text-neutral-500 line-through">
-                      ${product.original_regular_price.toFixed(2)}
+                      ${product.AffiliateSalePrice.toFixed(2)}
                   </span>
               )}
             </div>
@@ -73,11 +77,11 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
               <div className="flex items-center">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`h-5 w-5 flex-shrink-0 ${product.rating > i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                    <Star key={i} className={`h-5 w-5 flex-shrink-0 ${product?.rating || 0 > i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
                   ))}
                 </div>
                 <a href="#reviews" className="ml-3 text-sm font-medium text-neutral-500 hover:text-neutral-700">
-                  {product.reviews} reviews
+                  {product?.reviews || "not founded"} reviews
                 </a>
               </div>
             </div>
@@ -85,7 +89,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
             <div className="mt-6">
               <h3 className="sr-only">Description</h3>
               <div className="space-y-6 text-base text-neutral-500">
-                <p>{product.description}</p>
+                <p>{product.AffiliateDescription}</p>
               </div>
             </div>
             

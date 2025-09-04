@@ -205,10 +205,26 @@ export default function ProductsPage() {
                     filteredProducts.map((product) => (
                         <ProductCardUI
                             key={product.id}
+                            ID={product.id}
+                            TITLE={product.title}
+                            DESCRIPTION={product.description}
+                            SALE_PRICE={product.original_sale_price}
+                            REGULAR_PRICE={product.original_regular_price}
+                            CURRENCY={product.currency}
+                            PRODUCT_IMAGES={product.product_images || []}
+                            STOCK={product.stock}
+                            SALES={product.sales}
+                            CATEGORY={product.category}
+                            SIZES={product.sizes}
+                            COLORS={product.colors}
+                            OWNER={product?.owner}
+                            CREATED_AT={product.createdAt}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={true} // Replace with real data
-                            onToggleFavorite={() => toast.success("Toggled favorite")}
-                            product={product}
+                            isFavorite={true}
+                            onToggleFavorite={(e) => {
+                                e.stopPropagation();
+                                toast.success("Toggled favorite");
+                            }}
                             onClaimClick={setProductToClaim}
                         />
                     ))
