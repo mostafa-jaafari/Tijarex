@@ -197,7 +197,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                                 'text-gray-500'}
                                         `} 
                                     />
-                                    {(isCollapsed && nav.badge && nav.badge > 0 && isActive) && (
+                                    {nav.badge && nav.badge > 0 ? (isCollapsed && nav.badge && isActive) && (
                                         <span 
                                             className="absolute -right-2 -top-2 flex 
                                                 bg-red-100 text-red-600 
@@ -206,15 +206,15 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                         >
                                             {nav.badge}
                                         </span>
-                                    )}
+                                    ) : null}
                                     {!isCollapsed && (
                                         <div className="flex-1 flex items-center justify-between">
                                             <span>{nav.label}</span>
-                                            {nav.badge && (
+                                            {(nav.badge && nav.badge > 0) ? (
                                                 <span className="bg-red-100 text-red-600 text-xs px-1.5 py-0.5 rounded-full font-medium">
                                                     {nav.badge}
                                                 </span>
-                                            )}
+                                            ) : null}
                                         </div>
                                     )}
                                 </Link>
