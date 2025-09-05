@@ -1,3 +1,4 @@
+import Loading from "@/app/loading";
 import AddBalance from "@/components/Pages/AddBalance";
 import FavoritesProductsPage from "@/components/Pages/FavoritesProductsPage";
 import MyCollection from "@/components/Pages/MyCollection";
@@ -55,9 +56,7 @@ export default async function page({ params, searchParams }: PageProps) {
       if (productId) {
         TabRender = <SingleProductPage ProductId={productId} />;
       } else {
-        TabRender = <Suspense fallback={<div>Loading...</div>}>
-          <ProductsPage />
-        </Suspense>;
+        TabRender = <ProductsPage />
       }
       break;
     default:
@@ -69,7 +68,9 @@ export default async function page({ params, searchParams }: PageProps) {
     <div
       className="w-full pt-3 pb-12 px-12"
     >
-      {TabRender}
+      <Suspense fallback={<Loading />}>
+        {TabRender}
+      </Suspense>
     </div>
   )
 }

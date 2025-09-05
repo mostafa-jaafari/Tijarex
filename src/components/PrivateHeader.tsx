@@ -82,19 +82,23 @@ export function PrivateHeader(){
                 z-50 py-1 px-6 borderb border-gray-200"
         >
             {/* --- Logo --- */}
-            <Link href={userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"} className="flex items-center gap-2">
-                    <div className="relative w-8 h-8">
-                        <Image 
-                            src="/LOGO1.png"
-                            alt="Tijarex-Logo.png"
-                            fill
-                            className="object-contain"
-                            quality={100}
-                            priority
-                        />
-                    </div>
-                    <span className="text-xl font-semibold text-white">Tijarex</span>
-                </Link>
+            <Link 
+                prefetch 
+                href={userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"} 
+                className="flex items-center gap-2"
+            >
+                <div className="relative w-8 h-8">
+                    <Image
+                        src="/LOGO1.png"
+                        alt="Tijarex-Logo.png"
+                        fill
+                        className="object-contain"
+                        quality={100}
+                        priority
+                    />
+                </div>
+                <span className="text-xl font-semibold text-white">Tijarex</span>
+            </Link>
             <div className="flex items-center gap-4">
                 {/* --- Balance --- */}
             <div
@@ -175,6 +179,7 @@ export function PrivateHeader(){
                             return (
                                 <Link 
                                     key={idx}
+                                    prefetch
                                     onClick={() => setIsBalanceOpen(false)}
                                     href={item.href}
                                     className="group flex items-center gap-3
@@ -200,7 +205,9 @@ export function PrivateHeader(){
                         className="w-full flex justify-center p-2"
                     >
                         <Link
-                            href={`/${userInfos?.UserRole === "affiliate" ? "seller" : "affiliate"}/add-balance`}
+                            prefetch
+                            onClick={() => setIsBalanceOpen(false)}
+                            href={`/${userInfos?.UserRole !== "affiliate" ? "seller" : "affiliate"}/add-balance`}
                             className={`w-full text-center justify-center
                                 bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]
                                 capitalize text-white
@@ -381,6 +388,7 @@ export function PrivateHeader(){
                             return (
                                 <Link
                                     key={idx}
+                                    prefetch
                                     onClick={() => setIsProfileMenuOpen(false)}
                                     href={`/${userInfos?.UserRole === "affiliate" ? "affiliate" : "seller"}/${item.href.toLowerCase().replace(" ", "")}`}
                                     className="group capitalize flex items-center gap-3 px-2 py-2 

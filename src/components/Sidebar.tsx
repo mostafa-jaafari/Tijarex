@@ -9,7 +9,6 @@ import {
     ChevronLeft,
     ChevronRight,
     User,
-    Store,
     UploadCloud,
     Heart,
     Layout,
@@ -179,6 +178,7 @@ export function Sidebar() {
                                 <Link
                                     href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${nav.href !== "seller" && nav.href !== "affiliate" ? nav.href : ""}`}
                                     key={idx}
+                                    prefetch
                                     className={`
                                         group text-sm flex items-center capitalize px-3 py-2 
                                             font-medium rounded-lg transition-colors
@@ -224,6 +224,7 @@ export function Sidebar() {
                                 <Link
                                     href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${tool.href !== "seller" ? tool.href : ""}`}
                                     key={idx}
+                                    prefetch
                                     className={`
                                         group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive 
