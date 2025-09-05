@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion'; // Added AnimatePresence and motion
-import { Heart, Home } from 'lucide-react';
-import { PrimaryDark } from '@/app/[locale]/page';
-import { ProductCardUI } from '../UI/ProductCardUI'; 
+import { Box, HeartOff, LayoutDashboard } from 'lucide-react';import { ProductCardUI } from '../UI/ProductCardUI'; 
 import { AffiliateProductType, ProductType } from '@/types/product';
 import { useUserInfos } from '@/context/UserInfosContext';
 
@@ -71,36 +69,44 @@ export default function FavoritesProductsPage() {
         }
 
         return (
-             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {favoriteProducts.map((product) => (
-                   <motion.div
-                        key={product.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20, transition: { duration: 0.3 } }}
-                        layout
-                   >
-                       <ProductCardUI 
-                            product={product}
-                            isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={true}
-                            onFavoriteToggled={handleFavoriteToggled}
-                            // --- FIX: Pass the new handler ---
-                            onClaimClick={handleClaimClick} 
-                        />
-                   </motion.div>
-                ))}
-            </div>
+            <section>
+                <header>
+                    <h1
+                        className='text-xl font-semibold capitalize mb-6'
+                    >
+                        Favorites Products
+                    </h1>
+                    {/* --- Sub Title --- */}
+                </header>
+                <div 
+                    className="grid grid-cols-1 sm:grid-cols-2 
+                        md:grid-cols-3 lg:grid-cols-4 gap-3"
+                >
+                    {favoriteProducts.map((product) => (
+                    <motion.div
+                            key={product.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20, transition: { duration: 0.3 } }}
+                            layout
+                    >
+                        <ProductCardUI 
+                                product={product}
+                                isAffiliate={userInfos?.UserRole === "affiliate"}
+                                isFavorite={true}
+                                onFavoriteToggled={handleFavoriteToggled}
+                                // --- FIX: Pass the new handler ---
+                                onClaimClick={handleClaimClick} 
+                            />
+                    </motion.div>
+                    ))}
+                </div>
+            </section>
         );
     };
 
     return (
         <div className="p-3 space-y-3">
-            <header className="p-6 rounded-lg border border-gray-200 bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]">
-                <h1 className="text-3xl font-bold tracking-tight text-white">My Favorites</h1>
-                <p className="mt-2 text-gray-400">Your personal collection of must-have products.</p>
-            </header>
-            
             <main>
                 {renderContent()}
             </main>
@@ -144,15 +150,36 @@ const SkeletonLoader = () => (
 );
 
 const EmptyState = () => (
-    <div className="text-center py-20 text-gray-500">
-        <Heart size={48} className="mx-auto text-gray-300 mb-4" />
-        <h2 className="text-2xl font-bold text-black">Your Favorites List is Empty</h2>
-        <p className="mt-2">Click the heart icon on any product to save it here for later.</p>
-        <Link 
-            className={`mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold hover:from-black hover:to-black ${PrimaryDark}`}
-            href="/seller/products" prefetch>
-            <Home size={18} /> Discover Products
-        </Link>
+    <div className="text-center py-20 text-gray-500 
+        bg-white border-b border-neutral-400 ring
+        ring-neutral-200 rounded-xl">
+        <HeartOff 
+            size={48} 
+            className="mx-auto text-gray-400 mb-4" />
+        <h2 className="text-xl font-bold text-black">Your Favorites List is Empty</h2>
+        <p className="mt-2 text-sm">Click the heart icon on any product to save it here for later.</p>
+        <div
+            className='mt-6 flex justify-center gap-2 w-full'
+        >
+            <Link 
+                className={`w-max inline-flex items-center 
+                    gap-2 px-3 py-1.5 rounded-lg font-semibold 
+                    text-xs bg-white border-b border-neutral-400 
+                    text-neutral-700 ring ring-neutral-200
+                    hover:bg-neutral-50`}
+                    href="/seller" prefetch>
+                <LayoutDashboard size={16} /> Back to Dashboard
+            </Link>
+            <Link 
+                className={`w-max inline-flex items-center 
+                    gap-2 px-3 py-1.5 rounded-lg 
+                    text-xs bg-neutral-700 border-b border-neutral-800 
+                    text-neutral-100 ring ring-neutral-700
+                    hover:bg-neutral-700/90`}
+                    href="/seller/products" prefetch>
+                <Box size={16} /> Discover Products
+            </Link>
+        </div>
     </div>
 );
 
