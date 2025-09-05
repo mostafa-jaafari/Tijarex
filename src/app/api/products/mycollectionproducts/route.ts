@@ -20,7 +20,7 @@ export async function GET() {
 
     const cachedCollectionProducts = cache.get<ProductType[]>(cacheKey);
     if (cachedCollectionProducts) {
-      return NextResponse.json({ collection_products: cachedCollectionProducts, source: 'cache' });
+        return NextResponse.json({ products: cachedCollectionProducts, source: 'cache' }); 
     }
 
     // Query for products where the owner's email matches the logged-in user's email

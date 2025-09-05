@@ -153,7 +153,6 @@ export const ProductCardUI = ({
             // If the callback function exists, call it with the result.
             if (onFavoriteToggled) {
                 onFavoriteToggled(productIdToToggle, result.isFavorite);
-                refetch();
             }
             // --- END OF ADDED BLOCK ---
 
@@ -166,7 +165,7 @@ export const ProductCardUI = ({
         }
     };
 
-    const { userInfos, refetch } = useUserInfos();
+    const { userInfos } = useUserInfos();
     const { hasGottenFirstLink, markAsGotten } = useFirstAffiliateLink();
     const { refetchAffiliateProducts } = useAffiliateProducts();
     
@@ -206,8 +205,7 @@ export const ProductCardUI = ({
                 throw new Error(result.message || 'Failed to delete product.');
             }
             toast.success('Product removed successfully!', { id: toastId });
-            await refetchAffiliateProducts();
-            await refetch();
+            await refetchAffiliateProducts(); // Wait for refetch to complete
         } catch (error) {
             console.error('Failed to delete affiliate product:', error);
             const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
