@@ -9,6 +9,7 @@ import { useUserInfos } from '@/context/UserInfosContext';
 
 // --- NEW: Import the modal component for claiming products ---
 import ClaimProductFlow from '../DropToCollectionsProducts/ClaimProductFlow';
+import { UserInfosType } from '@/types/userinfos';
 
 // --- THE MAIN FAVORITES PAGE COMPONENT ---
 export default function FavoritesProductsPage() {
@@ -65,7 +66,7 @@ export default function FavoritesProductsPage() {
             return <ErrorMessage message={error} />;
         }
         if (favoriteProducts.length === 0) {
-            return <EmptyState />;
+            return <EmptyState userInfos={userInfos} />;
         }
 
         return (
@@ -149,14 +150,18 @@ const SkeletonLoader = () => (
     </div>
 );
 
-const EmptyState = () => (
+type EmptyStateProps = {
+    userInfos: UserInfosType | null;
+};
+
+const EmptyState = ({ userInfos }: EmptyStateProps) => (
     <div className="text-center py-20 text-gray-500 
         bg-white border-b border-neutral-400 ring
         ring-neutral-200 rounded-xl">
         <HeartOff 
             size={48} 
             className="mx-auto text-gray-400 mb-4" />
-        <h2 className="text-xl font-bold text-black">Your Favorites List is Empty</h2>
+        <h2 className="text-xl font-bold text-neutral-700">Your Favorites List is Empty</h2>
         <p className="mt-2 text-sm">Click the heart icon on any product to save it here for later.</p>
         <div
             className='mt-6 flex justify-center gap-2 w-full'
@@ -167,7 +172,9 @@ const EmptyState = () => (
                     text-xs bg-white border-b border-neutral-400 
                     text-neutral-700 ring ring-neutral-200
                     hover:bg-neutral-50`}
-                    href="/seller" prefetch>
+                href={`${userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"}`}
+                prefetch
+            >
                 <LayoutDashboard size={16} /> Back to Dashboard
             </Link>
             <Link 
@@ -176,7 +183,9 @@ const EmptyState = () => (
                     text-xs bg-neutral-700 border-b border-neutral-800 
                     text-neutral-100 ring ring-neutral-700
                     hover:bg-neutral-700/90`}
-                    href="/seller/products" prefetch>
+                    href={`${userInfos?.UserRole === "seller" ? "/seller/products" : "/affiliate/products"}`}
+                    prefetch
+            >
                 <Box size={16} /> Discover Products
             </Link>
         </div>
