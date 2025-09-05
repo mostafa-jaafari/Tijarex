@@ -92,7 +92,6 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             h-screen pb-14 transition-all duration-300 
             flex flex-col sticky top-0 overflow-auto
         `}>
-            {UserRole}
             {/* Header */}
             <div 
                 className={`flex items-center justify-between 
