@@ -1,5 +1,5 @@
 "use client";
-import { Eye, Flame, SquareArrowOutUpRight, Store } from 'lucide-react'; // Added Store icon
+import { Eye, Flame, LayoutDashboard, PackageSearch, SquareArrowOutUpRight, Store, UploadCloud } from 'lucide-react'; // Added Store icon
 import Image from 'next/image';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ClaimProductFlow from './DropToCollectionsProducts/ClaimProductFlow';
 import { ProductType } from '@/types/product'; // Import the global type
+import Link from 'next/link';
 
 // --- Refactored WidgetCard to accept the full product object ---
 interface WidgetCardProps {
@@ -140,7 +141,11 @@ export function TrendingProductsWidget() {
     }
     
     return (
-        <section className="w-full max-w-[500px] border-b h-full border-neutral-400/50 ring ring-neutral-200 bg-white rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] px-6 py-3">
+        <section 
+            className="w-full max-w-[500px] border-b h-full 
+                border-neutral-400 ring ring-neutral-200 
+                bg-white rounded-xl px-6 py-3"
+        >
             <div className='w-full flex items-start justify-between'>
                 <h1 className='text-lg font-semibold text-gray-900 mb-3'>
                     Trending Products
@@ -155,8 +160,9 @@ export function TrendingProductsWidget() {
                         <WidgetCardSkeleton />
                         <WidgetCardSkeleton />
                     </>
-                ) : (
-                    trendingProducts.map((product) => (
+                )
+                :
+                trendingProducts.length > 0 ? trendingProducts.map((product) => (
                         <WidgetCard 
                             key={product.id} // Use stable product ID
                             product={product} // Pass the full product object
@@ -165,6 +171,33 @@ export function TrendingProductsWidget() {
                             onClaimClick={handleClaimClick} // Pass the handler
                         />
                     ))
+                :
+                (
+                    <div 
+                        className="col-span-full w-full flex flex-col 
+                            items-center justify-center pt-12">
+                        <PackageSearch
+                            size={48} 
+                            className="mx-auto text-gray-400 mb-4"
+                        />
+                        <h2 className="text-xl font-bold text-neutral-700">No Products Found</h2>
+                        <p className="text-sm text-gray-500 mt-2">Try adjusting your filters or search criteria.</p>
+                        {userInfos?.UserRole !== "affiliate" && (
+                            <Link
+                                className={`w-max inline-flex items-center 
+                                    gap-2 px-3 py-1.5 rounded-lg mt-6
+                                    text-xs bg-neutral-700 border-b border-neutral-800 
+                                    text-neutral-100 ring ring-neutral-700
+                                    hover:bg-neutral-700/90`}
+                                href={`${userInfos?.UserRole === "seller" ? "/seller/upload-products" : "/affiliate"}`}
+                                prefetch
+                            >
+                                <UploadCloud
+                                    size={16}
+                                /> Upload Products
+                            </Link>
+                        )}
+                    </div>
                 )}
             </div>
 

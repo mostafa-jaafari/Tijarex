@@ -145,9 +145,8 @@ export const EarningsChart = () => {
 
   return (
     <div 
-      className="w-full border-b border-neutral-400/50 ring 
-        ring-neutral-200 bg-white rounded-xl 
-        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]"
+      className="w-full border-b border-neutral-400 ring 
+        ring-neutral-200 bg-white rounded-xl"
     >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5 border-b border-gray-100">

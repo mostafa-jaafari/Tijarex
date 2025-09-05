@@ -158,7 +158,12 @@ export default function ProductsPage() {
         <section>
             {/* --- Header & Filters --- */}
             <div className="w-full flex justify-center">
-                <div className="group bg-white flex gap-3 items-center px-3 grow max-w-[600px] min-w-[400px] border-b border-neutral-400 ring ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg focus-within:ring-neutral-300">
+                <div 
+                    className="group bg-white flex gap-3 items-center 
+                        px-3 grow max-w-[600px] min-w-[400px] border-b 
+                        border-neutral-400 ring ring-neutral-200 
+                        rounded-lg focus-within:ring-neutral-300"
+                >
                     <Search size={20} className="text-gray-400" />
                     <input 
                         type="text" 
