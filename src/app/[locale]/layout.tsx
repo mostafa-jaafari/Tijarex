@@ -14,6 +14,7 @@ import { QuickViewProduct } from "@/components/QuickViewProduct";
 import { GlobalProductsProvider } from "@/context/GlobalProductsContext";
 import { FirstAffiliateLinkTrackerProvider } from "@/context/FirstAffiliateLinkContext";
 import { AffiliateProductsContextProvider } from "@/context/AffiliateProductsContext";
+import { MyCollectionProductsContextProvider } from "@/context/MyCollectionProductsContext";
 
 
 export const metadata: Metadata = {
@@ -59,18 +60,20 @@ export default async function RootLayout({
           <NextAuthSessionProvider>
             <GlobalProductsProvider>
               <UserInfosContextProvider>
-                <AffiliateProductsContextProvider>
-                  <FirstAffiliateLinkTrackerProvider>
-                    <QuickViewProductContextProvider>
-                          <Toaster position="top-center" />
-                          <NextIntlClientProvider locale={locale} messages={messages}>
-                              {children}
-                            <QuickViewProduct />
-                          </NextIntlClientProvider>
-                          <ScrollToTop />
-                    </QuickViewProductContextProvider>
-                  </FirstAffiliateLinkTrackerProvider>
-                </AffiliateProductsContextProvider>
+                <MyCollectionProductsContextProvider>
+                  <AffiliateProductsContextProvider>
+                    <FirstAffiliateLinkTrackerProvider>
+                      <QuickViewProductContextProvider>
+                            <Toaster position="top-center" />
+                            <NextIntlClientProvider locale={locale} messages={messages}>
+                                {children}
+                              <QuickViewProduct />
+                            </NextIntlClientProvider>
+                            <ScrollToTop />
+                      </QuickViewProductContextProvider>
+                    </FirstAffiliateLinkTrackerProvider>
+                  </AffiliateProductsContextProvider>
+                </MyCollectionProductsContextProvider>
               </UserInfosContextProvider>
             </GlobalProductsProvider>
           </NextAuthSessionProvider>
