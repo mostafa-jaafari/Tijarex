@@ -11,12 +11,14 @@ import {
   Settings, HelpCircle 
 } from "lucide-react";
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
+import { useMyCollectionProducts } from "@/context/MyCollectionProductsContext";
 interface SideBarClientProps {
     UserRole: string;
 }
 export function SidebarClient({ UserRole }: SideBarClientProps) {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
     const { globalProductsData } = useGlobalProducts();
+    const { myCollectionProducts } = useMyCollectionProducts();
     const [isCollapsed, setIsCollapsed] = useState(true);
     const Navigation_Links = [
         {
@@ -41,7 +43,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             label: "my collection",
             icon: FolderOpen,
             href: "my-collection",
-            badge: UserRole === "affiliate" ? userInfos?.AffiliateProductsIDs.length : 0,
+            badge: UserRole === "affiliate" ? userInfos?.AffiliateProductsIDs.length : myCollectionProducts?.length,
         },
         {
             label: "returns",
