@@ -109,9 +109,17 @@ async function handleAuthAndRouting(request: NextRequest): Promise<NextResponse>
     }
   }
 
+  const AFFILIATE_BLOCKED_ROUTES = [
+    `/${locale}/affiliate/upload-products`,
+  ];
   // السماح لـ Affiliate بالوصول فقط لمسارات Affiliate
-  if (userRole === 'affiliate' && !isAffiliatePath) {
-    return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
+  if (userRole === 'affiliate') {
+    if (AFFILIATE_BLOCKED_ROUTES.includes(pathname)) {
+      return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
+    }
+    if(!isAffiliatePath){
+      return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
+    }
   }
 
   // إذا لم يكن هناك دور معلوم، أعاد توجيه لتسجيل الدخول
