@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 import { useAffiliateProducts } from "@/context/AffiliateProductsContext";
 import { ProductType, AffiliateProductType } from "@/types/product";
+import { notFound } from "next/navigation";
 
 const ProductCardSkeleton = () => (
     <div>
