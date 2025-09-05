@@ -29,7 +29,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             label: "products",
             icon: ShoppingCart,
             href: "products",
-            badge: globalProductsData.length,
+            badge: globalProductsData?.length,
         },
         {
             label: "orders",
