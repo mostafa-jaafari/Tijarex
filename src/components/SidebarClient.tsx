@@ -10,11 +10,13 @@ import {
   RotateCcw, Heart, UploadCloud, User, Layout, 
   Settings, HelpCircle 
 } from "lucide-react";
+import { useGlobalProducts } from "@/context/GlobalProductsContext";
 interface SideBarClientProps {
     UserRole: string;
 }
 export function SidebarClient({ UserRole }: SideBarClientProps) {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
+    const { globalProductsData } = useGlobalProducts();
     const [isCollapsed, setIsCollapsed] = useState(true);
     const Navigation_Links = [
         {
@@ -27,19 +29,19 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             label: "products",
             icon: ShoppingCart,
             href: "products",
-            badge: "12",
+            badge: globalProductsData.length,
         },
         {
             label: "orders",
             icon: ShoppingBag,
             href: "orders",
-            badge: "3",
+            badge: "0",
         },
         ...(UserRole === "affiliate" ? [{
             label: "my collection",
             icon: FolderOpen,
             href: "my-collection",
-            badge: 0,
+            badge: userInfos?.AffiliateProductsIDs.length,
         }] : []),
         {
             label: "returns",
@@ -51,7 +53,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             label: "favorites",
             icon: Heart,
             href: "favorites",
-            badge: null,
+            badge: userInfos?.favoriteProductIds.length,
         },
         ...(UserRole !== "affiliate" ? [{
             label: "upload products",
@@ -230,10 +232,19 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                     `}
                                     title={isCollapsed ? tool.label : undefined}
                                 >
-                                    <tool.icon 
-                                        size={18} 
-                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-neutral-800' : 'text-gray-500'}`} 
-                                    />
+                                    <div>
+                                        <tool.icon 
+                                            size={18} 
+                                            className={`flex-shrink-0 
+                                                ${isCollapsed ? '' : 'mr-3'} 
+                                                ${isActive ? 
+                                                    'text-neutral-800'
+                                                    :
+                                                    'text-gray-500'}
+                                            `} 
+                                        />
+                                        {isCollapsed && (<span>Hi</span>)}
+                                    </div>
                                     {!isCollapsed && (
                                         <span>{tool.label}</span>
                                     )}

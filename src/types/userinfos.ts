@@ -4,6 +4,7 @@ export type UserInfosType = {
     createdAt: Timestamp;
     email: string;
     uniqueuserid: string;
+    AffiliateProductsIDs: string[];
     fullname: string;
     howyouheartaboutus?: string;
     isNewUser: boolean;
