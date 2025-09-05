@@ -1,14 +1,15 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import { AnimatedTrafficLine } from './Functions/AnimatedPercentageLine';
-import { ChevronDown } from 'lucide-react';
 import { type UserInfosType } from '@/types/userinfos';
+import { CustomDropdown } from './UI/CustomDropdown';
 
 type TraficSourcesWidgetProps = { 
   userInfos: UserInfosType | null;
 }
 export function TraficSourcesWidget({ userInfos }: TraficSourcesWidgetProps) {
-  
+  const timesAvailable = ["last 7 days", "last month", "last year"];
+  const [selectedTime, setSelectedTime] = useState(timesAvailable[0]);
   if(!userInfos) return null;
   const trafficData = userInfos.TrafficSources && userInfos.TrafficSources.length > 0 ? userInfos.TrafficSources : [];
   return (
@@ -21,9 +22,11 @@ export function TraficSourcesWidget({ userInfos }: TraficSourcesWidgetProps) {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold text-gray-900">Traffic Sources</h2>
-        <button className="text-xs flex items-center gap-1 text-gray-500 border border-gray-300 rounded-md px-3 py-1 hover:bg-gray-50 transition-colors">
-          Last 7 Days <ChevronDown size={16}/>
-        </button>
+        <CustomDropdown 
+          options={timesAvailable} 
+          selectedValue={selectedTime} 
+          onSelect={setSelectedTime}
+        />
       </div>
       
       {/* Animated Lines Container */}
