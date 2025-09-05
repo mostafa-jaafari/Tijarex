@@ -2,7 +2,6 @@
 
 import { Search, PackageSearch } from "lucide-react";
 import { CustomDropdown } from "../UI/CustomDropdown";
-import { toast } from "sonner";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
