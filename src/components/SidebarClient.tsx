@@ -43,6 +43,13 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             href: "my-collection",
             badge: userInfos?.AffiliateProductsIDs.length,
         }] : []),
+        ...(UserRole === "seller" ? [{
+            label: "my products",
+            icon: FolderOpen,
+            href: "my-products",
+            badge: null,
+            // userInfos?.AffiliateProductsIDs.length,
+        }] : []),
         {
             label: "returns",
             icon: RotateCcw,

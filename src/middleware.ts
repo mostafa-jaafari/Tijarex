@@ -111,6 +111,7 @@ async function handleAuthAndRouting(request: NextRequest): Promise<NextResponse>
 
   const AFFILIATE_BLOCKED_ROUTES = [
     `/${locale}/affiliate/upload-products`,
+    `/${locale}/affiliate/my-products`,
   ];
   // السماح لـ Affiliate بالوصول فقط لمسارات Affiliate
   if (userRole === 'affiliate') {

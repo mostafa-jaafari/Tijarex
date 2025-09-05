@@ -2,6 +2,7 @@ import Loading from "@/app/loading";
 import AddBalance from "@/components/Pages/AddBalance";
 import FavoritesProductsPage from "@/components/Pages/FavoritesProductsPage";
 import MyCollection from "@/components/Pages/MyCollection";
+import MyProducts from "@/components/Pages/MyProducts";
 import MyWithdraw from "@/components/Pages/MyWithdraw";
 import OrdersPage from "@/components/Pages/OrdersPage";
 import ProductsPage from "@/components/Pages/ProductsPage";
@@ -42,6 +43,9 @@ export default async function page({ params, searchParams }: PageProps) {
       break;
     case "my-collection":
       TabRender = <MyCollection />;
+      break;
+    case "my-products":
+      TabRender = <MyProducts />;
       break;
     case "upload-products":
       TabRender = <UploadProductPage />;
