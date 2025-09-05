@@ -35,7 +35,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             label: "orders",
             icon: ShoppingBag,
             href: "orders",
-            badge: "0",
+            badge: null,
         },
         ...(UserRole === "affiliate" ? [{
             label: "my collection",
@@ -176,7 +176,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                     href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${nav.href !== "seller" && nav.href !== "affiliate" ? nav.href : ""}`}
                                     key={idx}
                                     prefetch
-                                    className={`
+                                    className={`relative
                                         group text-sm flex items-center capitalize px-3 py-2 
                                             font-medium rounded-lg transition-colors
                                         ${isActive
@@ -189,8 +189,24 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                 >
                                     <nav.icon 
                                         size={18} 
-                                        className={`flex-shrink-0 ${isCollapsed ? '' : 'mr-3'} ${isActive ? 'text-neutral-800' : 'text-gray-500'}`} 
+                                        className={`flex-shrink-0 
+                                            ${isCollapsed ? '' : 'mr-3'} 
+                                            ${isActive ? 
+                                                'text-neutral-800'
+                                                :
+                                                'text-gray-500'}
+                                        `} 
                                     />
+                                    {(isCollapsed && nav.badge && nav.badge > 0 && isActive) && (
+                                        <span 
+                                            className="absolute -right-2 -top-2 flex 
+                                                bg-red-100 text-red-600 
+                                                text-xs py-0 px-1 h-max rounded-full font-medium
+                                                ring ring-red-200"
+                                        >
+                                            {nav.badge}
+                                        </span>
+                                    )}
                                     {!isCollapsed && (
                                         <div className="flex-1 flex items-center justify-between">
                                             <span>{nav.label}</span>
@@ -232,19 +248,16 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                     `}
                                     title={isCollapsed ? tool.label : undefined}
                                 >
-                                    <div>
-                                        <tool.icon 
-                                            size={18} 
-                                            className={`flex-shrink-0 
-                                                ${isCollapsed ? '' : 'mr-3'} 
-                                                ${isActive ? 
-                                                    'text-neutral-800'
-                                                    :
-                                                    'text-gray-500'}
-                                            `} 
-                                        />
-                                        {isCollapsed && (<span>Hi</span>)}
-                                    </div>
+                                    <tool.icon 
+                                        size={18} 
+                                        className={`flex-shrink-0 
+                                            ${isCollapsed ? '' : 'mr-3'} 
+                                            ${isActive ? 
+                                                'text-neutral-800'
+                                                :
+                                                'text-gray-500'}
+                                        `} 
+                                    />
                                     {!isCollapsed && (
                                         <span>{tool.label}</span>
                                     )}
