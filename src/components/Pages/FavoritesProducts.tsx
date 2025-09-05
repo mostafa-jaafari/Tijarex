@@ -12,7 +12,7 @@ import ClaimProductFlow from '../DropToCollectionsProducts/ClaimProductFlow';
 import { UserInfosType } from '@/types/userinfos';
 
 // --- THE MAIN FAVORITES PAGE COMPONENT ---
-export default function FavoritesProductsPage() {
+export default function FavoritesProducts() {
     const [favoriteProducts, setFavoriteProducts] = useState<ProductType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

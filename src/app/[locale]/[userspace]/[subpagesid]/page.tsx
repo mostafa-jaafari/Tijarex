@@ -1,6 +1,6 @@
 import Loading from "@/app/loading";
 import AddBalance from "@/components/Pages/AddBalance";
-import FavoritesProductsPage from "@/components/Pages/FavoritesProductsPage";
+import FavoritesProducts from "@/components/Pages/FavoritesProducts";
 import MyCollection from "@/components/Pages/MyCollection";
 import MyProducts from "@/components/Pages/MyProducts";
 import MyWithdraw from "@/components/Pages/MyWithdraw";
@@ -8,7 +8,7 @@ import OrdersPage from "@/components/Pages/OrdersPage";
 import ProductsPage from "@/components/Pages/ProductsPage";
 import ProfilePage from "@/components/Pages/ProfilePage";
 import { SingleProductPage } from "@/components/Pages/SingleProductPage";
-import UploadProductPage from "@/components/Pages/UploadProducts";
+import UploadProducts from "@/components/Pages/UploadProducts";
 import { Suspense } from "react";
 
 
@@ -48,10 +48,10 @@ export default async function page({ params, searchParams }: PageProps) {
       TabRender = <MyProducts />;
       break;
     case "upload-products":
-      TabRender = <UploadProductPage />;
+      TabRender = <UploadProducts />;
       break;
     case "favorites":
-      TabRender = <FavoritesProductsPage />;
+      TabRender = <FavoritesProducts />;
       break;
     case "products":
       // Check if a product ID exists in searchParams

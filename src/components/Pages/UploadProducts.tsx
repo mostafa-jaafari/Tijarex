@@ -25,7 +25,7 @@ const ImageProcessingSkeleton = ({ count }: { count: number }) => (
 );
 
 // --- Main Page Component ---
-export default function UploadProductPage() {
+export default function UploadProducts() {
     // --- State Management ---
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
