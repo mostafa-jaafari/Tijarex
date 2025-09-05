@@ -1,5 +1,5 @@
 "use client";
-import { Eye, Flame, LayoutDashboard, PackageSearch, SquareArrowOutUpRight, Store, UploadCloud } from 'lucide-react'; // Added Store icon
+import { Eye, Flame, PackageSearch, SquareArrowOutUpRight, Store, UploadCloud } from 'lucide-react'; // Added Store icon
 import Image from 'next/image';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';

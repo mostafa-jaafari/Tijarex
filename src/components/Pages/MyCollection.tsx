@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, PackageSearch } from "lucide-react";
+import { Search, PackageSearch, LayoutDashboard, Box } from "lucide-react";
 import { CustomDropdown } from "../UI/CustomDropdown";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 import { useAffiliateProducts } from "@/context/AffiliateProductsContext";
 import { ProductType, AffiliateProductType } from "@/types/product";
-import { notFound } from "next/navigation";
+import Link from "next/link";
 
 const ProductCardSkeleton = () => (
     <div>
@@ -179,10 +179,47 @@ export default function MyCollectionPage() {
                         />
                     ))
                 ) : (
-                    <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
-                        <PackageSearch size={48} className="text-gray-400 mb-4" />
-                        <h2 className="text-xl font-semibold text-gray-800">Your Collection is Empty</h2>
+                    <div 
+                        className="col-span-full w-full flex flex-col 
+                            items-center justify-center py-20
+                            bg-white border-b border-neutral-400 ring
+                            ring-neutral-200 rounded-xl">
+                        <PackageSearch 
+                            size={48} 
+                            className="mx-auto text-gray-400 mb-4"
+                        />
+                        <h2 className="text-xl font-bold text-neutral-700">Your Collection is Empty</h2>
                         <p className="text-gray-500 mt-2">Claim products from the marketplace to see them here.</p>
+                        <div
+                            className='mt-6 flex justify-center gap-2 w-full'
+                        >
+                            <Link
+                                className={`w-max inline-flex items-center 
+                                    gap-2 px-3 py-1.5 rounded-lg font-semibold 
+                                    text-xs bg-white border-b border-neutral-400 
+                                    text-neutral-700 ring ring-neutral-200
+                                    hover:bg-neutral-50`}
+                                    href={`${userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"}`}
+                                    prefetch
+                            >
+                                <LayoutDashboard
+                                    size={16}
+                                /> Back to Dashboard
+                            </Link>
+                            <Link 
+                                className={`w-max inline-flex items-center 
+                                    gap-2 px-3 py-1.5 rounded-lg 
+                                    text-xs bg-neutral-700 border-b border-neutral-800 
+                                    text-neutral-100 ring ring-neutral-700
+                                    hover:bg-neutral-700/90`}
+                                    href={`${userInfos?.UserRole === "seller" ? "/seller/products" : "/affiliate/products"}`}
+                                    prefetch
+                            >
+                                <Box 
+                                    size={16}
+                                /> Discover Products
+                            </Link>
+                        </div>
                     </div>
                 )}
             </div>
