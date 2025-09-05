@@ -148,10 +148,10 @@ const EmptyState = () => (
         <Heart size={48} className="mx-auto text-gray-300 mb-4" />
         <h2 className="text-2xl font-bold text-black">Your Favorites List is Empty</h2>
         <p className="mt-2">Click the heart icon on any product to save it here for later.</p>
-        <Link href="/seller/products" legacyBehavior>
-            <a className={`mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold hover:from-black hover:to-black ${PrimaryDark}`}>
-                <Home size={18} /> Discover Products
-            </a>
+        <Link 
+            className={`mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold hover:from-black hover:to-black ${PrimaryDark}`}
+            href="/seller/products" prefetch>
+            <Home size={18} /> Discover Products
         </Link>
     </div>
 );

@@ -149,7 +149,6 @@ export function QuickViewProduct() {
           isShowQuickViewProduct ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
-        {JSON.stringify(selectedProductDetails?.id)}
         {/* Close Button */}
         <button
           onClick={() => setIsShowQuickViewProduct(false)}
@@ -349,7 +348,7 @@ export function QuickViewProduct() {
                   </div>
                 )
                 :
-                (SunPagesId !== "products" && SunPagesId !== "favorites") &&
+                (SunPagesId !== "products" && SunPagesId !== "favorites" && userInfos.UserRole !== "seller") &&
                 (
                   <button
                     onClick={() =>

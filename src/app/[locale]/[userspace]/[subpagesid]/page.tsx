@@ -7,6 +7,7 @@ import ProductsPage from "@/components/Pages/ProductsPage";
 import ProfilePage from "@/components/Pages/ProfilePage";
 import { SingleProductPage } from "@/components/Pages/SingleProductPage";
 import UploadProductPage from "@/components/Pages/UploadProducts";
+import { Suspense } from "react";
 
 
 interface PageProps {
@@ -54,7 +55,9 @@ export default async function page({ params, searchParams }: PageProps) {
       if (productId) {
         TabRender = <SingleProductPage ProductId={productId} />;
       } else {
-        TabRender = <ProductsPage />;
+        TabRender = <Suspense fallback={<div>Loading...</div>}>
+          <ProductsPage />
+        </Suspense>;
       }
       break;
     default:
