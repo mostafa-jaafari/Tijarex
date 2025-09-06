@@ -42,7 +42,7 @@ export default function FavoritesProducts() {
             }
         };
         fetchFavorites();
-    }, []);
+    }, [refetch]);
 
     // --- Callback to remove product from UI after unfavoriting ---
     const handleFavoriteToggled = (productId: string, isNowFavorite: boolean) => {

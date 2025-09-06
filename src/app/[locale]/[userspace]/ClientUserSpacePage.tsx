@@ -29,7 +29,7 @@ export default function ClientUserSpacePage() {
       </h1>
 
       <section
-        className='w-full space-y-4'
+        className='w-full space-y-2'
       >
         {/* --- Quick Setup Guide & Trends Products */}
         <QuickSetupGuide />
@@ -38,7 +38,7 @@ export default function ClientUserSpacePage() {
             userInfos={userInfos}
         />
         <div
-          className='w-full h-[52vh] flex items-start gap-4'
+          className='w-full h-[52vh] flex items-start gap-2'
         >
           <TraficSourcesWidget 
               userInfos={userInfos}
@@ -46,7 +46,7 @@ export default function ClientUserSpacePage() {
           <TrendingProductsWidget />
         </div>
         <div
-          className='w-full flex items-start gap-4'
+          className='w-full flex items-start gap-2'
         >
           <EarningsChart />
         </div>

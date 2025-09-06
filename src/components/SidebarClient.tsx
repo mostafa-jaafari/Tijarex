@@ -204,12 +204,12 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                                 'text-gray-500'}
                                         `} 
                                     />
-                                    {nav.badge && nav.badge > 0 ? (isCollapsed && nav.badge) && (
+                                    {nav.badge && nav.badge > 0 ? (isCollapsed && nav.badge && isActive) && (
                                         <span 
-                                            className={`absolute ${isActive ? "text-red-600 ring-red-300 bg-red-100 -right-2 -top-2 py-0 px-1" : "text-red-600 ring-red-200 bg-red-100 py-0 px-1 right-0 top-0"} flex 
-                                                
-                                                text-xs h-max rounded-full font-medium
-                                                ring `}
+                                            className="absolute -right-2 -top-2 flex 
+                                                bg-red-100 text-red-600 
+                                                text-xs py-0 px-1 h-max rounded-full font-medium
+                                                ring ring-red-200"
                                         >
                                             {nav.badge}
                                         </span>
