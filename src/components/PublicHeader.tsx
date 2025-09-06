@@ -43,7 +43,7 @@ export function PublicHeader() {
                   href={`#${item.toLowerCase()}`}
                   key={idx}
                   className="text-gray-500 capitalize cursor-pointer
-                    hover:text-black"
+                    hover:text-black text-sm"
                 >
                   {item}
                 </Link>

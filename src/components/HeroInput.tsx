@@ -1,5 +1,6 @@
 "use client";
 
+import { InputStyles } from "@/app/[locale]/page";
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
 import { PackageSearch, Search } from "lucide-react";
@@ -64,27 +65,14 @@ export function InputHero() {
         };
     },[searchInput, globalProductsData])
 
-    function highlightMatch(text: string, query: string) {
-        if (!query) return text;
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.split(regex).map((part, idx) =>
-            regex.test(part) ? (
-            <span key={idx} className="text-yellow-500">{part}</span>
-            ) : (
-            part
-            )
-        );
-    }
-
 
     return (
         <section ref={MenuRef} className="relative w-full max-w-[700px]">
             <div 
-                className="w-full bg-white h-14 rounded-full overflow-hidden 
-                    p-0.5 flex items-center">
+                className={`${InputStyles} flex items-center`}>
                 <span
                     onClick={() => setShowSuggestionsMenu(true)}
-                    className="flex px-4"
+                    className="flex pr-2"
                 >
                     <Search size={18} className="text-gray-500" />
                 </span>
@@ -134,7 +122,6 @@ export function InputHero() {
                                 px-3 text-sm hover:bg-gray-50 rounded-xl"
                         >
                             <PackageSearch size={16} className="text-gray-500" />{" "}
-                            {highlightMatch(item.title, searchInput)}
                         </Link>
                     ))
                     :

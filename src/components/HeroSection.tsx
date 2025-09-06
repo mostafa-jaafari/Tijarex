@@ -33,7 +33,7 @@ export function HeroSection(){
                         className="flex flex-col items-center gap-2"
                     >
                         <p
-                            className="text-white bg-teal-600 text-sm px-3 rounded-full"
+                            className="text-white bg-purple-700 text-sm px-3 rounded-full"
                         >
                             Tijarex – Morocco’s Marketplace for Unique Finds
                         </p>
