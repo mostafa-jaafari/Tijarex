@@ -206,10 +206,10 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                                     />
                                     {nav.badge && nav.badge > 0 ? (isCollapsed && nav.badge) && (
                                         <span 
-                                            className={`absolute ${isActive ? "-right-2 -top-2 py-0 px-1" : "py-0 px-0.5 right-0 top-0"} flex 
-                                                bg-red-100 text-red-600 
+                                            className={`absolute ${isActive ? "text-red-600 ring-red-300 bg-red-100 -right-2 -top-2 py-0 px-1" : "text-red-600 ring-red-200 bg-red-100 py-0 px-1 right-0 top-0"} flex 
+                                                
                                                 text-xs h-max rounded-full font-medium
-                                                ring ring-red-200`}
+                                                ring `}
                                         >
                                             {nav.badge}
                                         </span>
