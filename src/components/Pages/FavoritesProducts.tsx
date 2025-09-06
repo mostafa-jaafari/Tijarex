@@ -16,7 +16,7 @@ export default function FavoritesProducts() {
     const [favoriteProducts, setFavoriteProducts] = useState<ProductType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { userInfos } = useUserInfos();
+    const { userInfos, refetch } = useUserInfos();
     
     // --- NEW: State to manage which product is being claimed ---
     const [productToClaim, setProductToClaim] = useState<ProductType | null>(null);
@@ -34,6 +34,7 @@ export default function FavoritesProducts() {
                 }
                 const data = await res.json();
                 setFavoriteProducts(data.products || []);
+                refetch();
             } catch (err) {
                 setError((err as { message: string; }).message);
             } finally {
@@ -49,6 +50,7 @@ export default function FavoritesProducts() {
             setFavoriteProducts(prevProducts =>
                 prevProducts.filter(p => p.id !== productId)
             );
+            refetch();
         }
     };
 

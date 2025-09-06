@@ -30,6 +30,13 @@ export function UserInfosContextProvider({ children }: { children: ReactNode; })
             const res = await fetch('/api/userinfos');
             const data = await res.json();
 
+            // --- DEBUG LOG ---
+        if (data?.userinfos?.favoriteProductIds) {
+            console.log('[UserInfosContext] Fetched new data. Favorites count:', data.userinfos.favoriteProductIds.length);
+        } else {
+            console.log('[UserInfosContext] Fetched data, but favorites array is missing.');
+        }
+
            if (!res.ok || !data?.userinfos) {
              setUserInfos(null);
              return;

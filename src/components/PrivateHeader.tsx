@@ -85,19 +85,19 @@ export function PrivateHeader(){
             <Link 
                 prefetch 
                 href={userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"} 
-                className="flex items-center gap-2"
+                className="flex items-center"
             >
-                <div className="relative w-8 h-8">
+                <div className="relative w-10 h-10">
                     <Image
                         src="/LOGO1.png"
                         alt="Tijarex-Logo.png"
                         fill
-                        className="object-contain"
+                        className="object-cover"
                         quality={100}
                         priority
                     />
                 </div>
-                <span className="text-xl font-semibold text-white">Tijarex</span>
+                {/* <span className="text-xl font-semibold text-white">Shopex</span> */}
             </Link>
             <div className="flex items-center gap-4">
                 {/* --- Balance --- */}
