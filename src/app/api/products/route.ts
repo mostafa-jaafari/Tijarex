@@ -1,50 +1,46 @@
-import { adminDb } from '@/lib/FirebaseAdmin'; // IMPORTANT: Use the Admin SDK on the server
+// in /app/api/products/route.ts
+
+import { adminDb } from '@/lib/FirebaseAdmin';
 import { ProductType } from '@/types/product';
-// Remove Firestore client SDK imports; use Admin SDK methods instead
 import { NextResponse } from 'next/server';
-import NodeCache from 'node-cache';
 
-// Initialize cache with a 5-minute Time-To-Live (TTL)
-// The original code had 30 seconds, which is very short. 300 seconds = 5 minutes.
-const cache = new NodeCache({ stdTTL: 300 });
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const cacheKey = 'all-products';
+    const { searchParams } = new URL(request.url);
+    const limitParam = parseInt(searchParams.get('limit') || '10', 10);
+    const lastVisibleId = searchParams.get('lastVisibleId');
 
-    // 1. Check if the data is already in the cache
-    const cachedProducts = cache.get<ProductType[]>(cacheKey);
-    if (cachedProducts) {
-      // If found, return the cached data immediately
-      return NextResponse.json({ products: cachedProducts, source: 'cache' });
+    // Base query, ordered by sales for the "Best Selling" feature
+    let query = adminDb.collection('products').orderBy('sales', 'desc');
+
+    // If lastVisibleId is provided, fetch the document to start after it
+    if (lastVisibleId) {
+      const lastVisibleDoc = await adminDb.collection('products').doc(lastVisibleId).get();
+      if (lastVisibleDoc.exists) {
+        query = query.startAfter(lastVisibleDoc);
+      }
     }
 
-    // 2. If not in cache, fetch from Firestore using Admin SDK
-    const productsSnapshot = await adminDb.collection('products').get();
+    // Apply the limit to the query
+    const productsSnapshot = await query.limit(limitParam).get();
 
-    // 3. Check if the collection is empty
     if (productsSnapshot.empty) {
-      // If there are no products, it's still a successful request.
-      // Return a 200 OK status with an empty array.
-      cache.set(cacheKey, []); // Also cache the empty response for 5 minutes
-      return NextResponse.json({ products: [], source: 'firestore' });
+      return NextResponse.json({ products: [], nextCursor: null });
     }
 
-    // 4. Map the documents to an array of product objects
-    // This correctly combines the document ID with its data
     const products: ProductType[] = productsSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as ProductType[];
 
-    // 5. Store the freshly fetched data in the cache for subsequent requests
-    cache.set(cacheKey, products);
+    // Determine the next cursor (the ID of the last document in this batch)
+    const lastDoc = productsSnapshot.docs[productsSnapshot.docs.length - 1];
+    const nextCursor = lastDoc ? lastDoc.id : null;
 
-    // 6. Return the fetched data
-    return NextResponse.json({ products, source: 'firestore' });
+    return NextResponse.json({ products, nextCursor });
 
   } catch (error) {
-    console.error("Error fetching products:", error); // Log the actual error on the server
+    console.error("Error fetching paginated products:", error);
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json({ error: 'Internal Server Error', details: errorMessage }, { status: 500 });
   }

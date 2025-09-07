@@ -1,51 +1,82 @@
+// in /context/GlobalProductsContext.tsx
+
 "use client";
 
 import { ProductType } from "@/types/product";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
 interface GlobalProductsContextTypes {
-    globalProductsData: ProductType[]; // Always an array
+    globalProductsData: ProductType[];
     isLoadingGlobalProducts: boolean;
-    refetch: () => void;
+    isLoadingMore: boolean; // For loading next pages
+    hasMore: boolean;       // To know if there are more products to fetch
+    fetchMoreProducts: () => void; // Function to fetch the next page
+    refetch: () => void;      // Function to reset and fetch from the start
 }
 
 const GlobalProductsContext = createContext<GlobalProductsContextTypes | undefined>(undefined);
 
 export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) => {
     const [globalProductsData, setGlobalProductsData] = useState<ProductType[]>([]);
-    const [isLoadingGlobalProducts, setIsLoadingGlobalProducts] = useState(true); // Start as true
+    const [isLoadingGlobalProducts, setIsLoadingGlobalProducts] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [nextCursor, setNextCursor] = useState<string | null>(null);
 
-    const fetchGlobalProducts = useCallback(async () => {
-        setIsLoadingGlobalProducts(true);
+    const fetchProducts = useCallback(async (cursor: string | null = null) => {
+        // Set the appropriate loading state
+        if (cursor) {
+            setIsLoadingMore(true);
+        } else {
+            setIsLoadingGlobalProducts(true);
+        }
+
         try {
-            const res = await fetch('/api/products');
-            if (!res.ok) {
-                throw new Error("Failed to fetch Products data!");
-            }
+            // Build the API URL with query parameters
+            const url = `/api/products?limit=10${cursor ? `&lastVisibleId=${cursor}` : ''}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Failed to fetch products data!");
+            
             const data = await res.json();
-            setGlobalProductsData(data.products as ProductType[] || []);
+            const newProducts = (data.products as ProductType[]) || [];
+
+            // If it's an initial fetch, replace the data. Otherwise, append it.
+            setGlobalProductsData(prev => cursor ? [...prev, ...newProducts] : newProducts);
+            setNextCursor(data.nextCursor);
+
         } catch (error) {
-            console.error("Error in fetchGlobalProducts:", error);
-            setGlobalProductsData([]);
+            console.error("Error in fetchProducts:", error);
         } finally {
             setIsLoadingGlobalProducts(false);
+            setIsLoadingMore(false);
         }
-    }, []); // Dependency is correct
+    }, []);
 
+    // Initial fetch on component mount
     useEffect(() => {
-        fetchGlobalProducts();
-    }, [fetchGlobalProducts]);
+        fetchProducts(null);
+    }, [fetchProducts]);
+
+    const fetchMoreProducts = () => {
+        // Prevent fetching if already loading or no more products
+        if (isLoadingMore || !nextCursor) return;
+        fetchProducts(nextCursor);
+    };
+    
+    const refetch = useCallback(() => {
+        setGlobalProductsData([]);
+        setNextCursor(null);
+        fetchProducts(null);
+    }, [fetchProducts]);
 
     const contextValue = {
         globalProductsData,
         isLoadingGlobalProducts,
-        refetch: fetchGlobalProducts,
+        isLoadingMore,
+        hasMore: nextCursor !== null, // hasMore is true if nextCursor exists
+        fetchMoreProducts,
+        refetch,
     };
 
-    // THE FIX IS HERE:
-    // We ALWAYS return the Provider. The values inside it will change based
-    // on the auth status, but the Provider wrapper will always exist for
-    // any child component that needs it.
     return (
         <GlobalProductsContext.Provider value={contextValue}>
             {children}
