@@ -24,7 +24,7 @@ export function BestSellingProducts() {
             {isLoadingGlobalProducts && (
                 <div
                     className='w-full flex items-center flex-nowrap 
-                        overflow-x-auto scrollbar-hide gap-2'
+                        overflow-x-auto scrollbar-hide gap-2 hide-scrollbar'
                 >
                     {Array(6).fill(0).map((_, idx) => {
                         return(

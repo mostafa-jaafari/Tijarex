@@ -40,7 +40,14 @@ body {
 .font-cinzel {
   font-family: var(--font-cenzel);
 }
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
 ::-webkit-scrollbar {width:5px}
 ::-webkit-scrollbar-track {background:transparent}
 ::-webkit-scrollbar-thumb {background:#1A1A1A;border-radius:10px}

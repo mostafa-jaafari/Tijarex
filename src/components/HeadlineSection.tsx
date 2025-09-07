@@ -59,12 +59,12 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
             {ISTITLELINK ? (
                 <Link
                     href={TITLEHREFLINK || ""}
-                    className='font-semibold text-2xl flex items-center gap-1'
+                    className='font-semibold text-xl text-neutral-700 hover:text-neutral-800 flex items-center gap-1'
                 >
                     {TITLE} <ChevronRight size={20} />
                 </Link>
             ) : (
-                <h1 className='font-semibold text-2xl'>
+                <h1 className='font-semibold text-xl text-neutral-700'>
                     {TITLE}
                 </h1>
             )}
