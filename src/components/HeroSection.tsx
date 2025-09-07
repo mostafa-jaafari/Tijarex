@@ -13,7 +13,7 @@ export function HeroSection() {
           bg-neutral-50 border-b border-neutral-400 ring ring-neutral-200'
       >
         <Image
-          src="/HeroImage1.jpg"
+          src="https://images.pexels.com/photos/17884411/pexels-photo-17884411.jpeg"
           fill
           alt='Hero-Image-1.jpg'
           className='object-cover object-left scale-110'
@@ -25,16 +25,16 @@ export function HeroSection() {
             justify-end items-start text-start pb-12 px-12'
         >
           <h1
-            className='text-xl capitalize font-semibold text-neutral-700'
+            className='text-2xl font-bold capitalize text-neutral-100'
           >
             Active winter with New trending hoodies
           </h1>
-          <p
-            className='mt-1 text-sm text-neutral-500'
+          {/* <p
+            className='mt-1 text-sm text-teal-500'
           >
             Lorem ipsum dolor sit amet consectetur adipisicing elit. 
             Illo 
-          </p>
+          </p> */}
           <button
             className='mt-4 text-sm bg-teal-600/90 hover:bg-teal-600 rounded-lg
               border-b border-teal-800 ring ring-teal-600/90 px-6 py-1.5 
@@ -45,7 +45,7 @@ export function HeroSection() {
         </div>
         <div 
           className='absolute bottom-0 left-0 bg-gradient-to-t 
-            from-white to-transparent z-10 w-full h-[60%]'
+            from-white/80 to-transparent z-10 w-full h-[60%]'
         />
       </div>
       {/* --- Right Section --- */}
@@ -56,7 +56,7 @@ export function HeroSection() {
       >
         {/* --- Left Coontent Text --- */}
         <div
-          className='w-1/2 px-12 py-16 h-90 flex flex-col justify-between flex-shrink-0'
+          className='w-1/2 p-12 h-90 flex flex-col justify-between flex-shrink-0'
         >
           <h1
             className='text-2xl font-bold text-white'
@@ -69,10 +69,13 @@ export function HeroSection() {
             Find unique deals, trending items, and exclusive offers tailored just for you.
           </p>
           <Link
-            href="/shop"
-            className='mt-4 w-max text-sm bg-white hover:bg-white/90 rounded-lg
-              border-b border-white ring ring-white/90 px-6 py-1.5 
-              cursor-pointer text-neutral-600 hover:text-700 font-semibold'
+            href="/c/shop"
+            className={`mt-3 px-6 py-1.5 w-max text-neutral-600 
+              hover:text-700 font-semibold text-sm bg-white
+              hover:bg-teal-500 rounded-lg hover:text-neutral-100
+              border-b border-neutral-400 hover:border-teal-600 
+              ring ring-neutral-200 hover:ring-teal-500
+              duration-300 transition-colors`}
           >
             Shop Now
           </Link>
