@@ -35,7 +35,7 @@ export function HeroSection(){
                         <p
                             className="text-white bg-purple-700 text-sm px-3 rounded-full"
                         >
-                            Tijarex – Morocco’s Marketplace for Unique Finds
+                            Shopex – Morocco’s Marketplace for Unique Finds
                         </p>
                         <h1
                             className="max-w-xl text-center text-3xl font-semibold text-white"

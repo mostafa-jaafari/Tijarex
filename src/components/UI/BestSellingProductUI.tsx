@@ -1,12 +1,20 @@
 "use client";
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { ProductCardProps } from '@/types/product';
 import { BadgeCheck, Eye, Flame, ShoppingCart, Tag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
 
-
+interface ProductCardProps{
+    PRODUCTID: string;
+    PRODUCTTITLE: string;
+    PRODUCTIMAGES: string[];
+    PRODUCTREGULARPRICE: number;
+    PRODUCTSALEPRICE: number;
+    PRODUCTCATEGORY: string;
+    OWNER: {email: string; image: string; name: string;};
+    STOCK: number;
+}
 export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORY, OWNER, STOCK }: ProductCardProps) {
     const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
     const HandleQuickView = () => {
@@ -144,7 +152,7 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                         <h1
                             className='text-sm text-teal-700 flex items-center gap-1'
                         >
-                            Tijarex <BadgeCheck size={14}/>
+                            Shopex <BadgeCheck size={14}/>
                         </h1>
                     </div>
                 )}

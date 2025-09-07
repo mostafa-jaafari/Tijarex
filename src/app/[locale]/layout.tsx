@@ -19,8 +19,8 @@ import { MyCollectionProductsContextProvider } from "@/context/MyCollectionProdu
 
 export const metadata: Metadata = {
   title: {
-    default: "Tijarex - Your Trusted Marketplace for Quality Products in Morocco",
-    template: "Tijarex - %s"
+    default: "Shopex - Your Trusted Marketplace for Quality Products in Morocco",
+    template: "Shopex - %s"
   }
 }
 const inter = Inter({

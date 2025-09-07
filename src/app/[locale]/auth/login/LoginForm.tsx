@@ -93,14 +93,14 @@ export function LoginForm() {
           <div className="relative w-12 h-12">
             <Image
               src="/LOGO1.png"
-              alt="Tijarex-Logo.png"
+              alt="Shopex-Logo.png"
               fill
               className="object-contain"
               quality={100}
               priority
             />
           </div>
-          <span className="text-3xl font-bold text-gray-900">Tijarex</span>
+          <span className="text-3xl font-bold text-gray-900">Shopex</span>
         </Link>
         <h1 className="text-3xl font-semibold text-gray-800">Welcome back!</h1>
         <p className="text-sm text-gray-500 mt-1">

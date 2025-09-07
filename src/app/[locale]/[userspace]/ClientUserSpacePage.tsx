@@ -25,7 +25,7 @@ export default function ClientUserSpacePage() {
       <h1
         className='text-xl font-bold text-neutral-700 mb-6'
       >
-        Welcome to Tijarex.
+        Welcome to Shopex.
       </h1>
 
       <section
@@ -55,7 +55,7 @@ export default function ClientUserSpacePage() {
       <footer
         className='w-full flex justify-center py-3 text-sm text-neutral-500'
       >
-        &copy; 2025 Tijarex. Alll rights reserved.
+        &copy; 2025 Shopex. Alll rights reserved.
       </footer>
     </div>
   )

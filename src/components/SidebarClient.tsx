@@ -117,7 +117,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                         </div>
                         <div>
                             <h1 className="font-semibold text-gray-900">
-                                Tijarex
+                                Shopex
                             </h1>
                             <p className="text-xs text-gray-500 flex items-center gap-1">
                                 {isLoadingUserInfos ? <span className="flex w-11 h-2.5 rounded bg-neutral-200 animate-pulse"/> : userInfos && userInfos?.UserRole.charAt(0).toUpperCase() + userInfos?.UserRole.slice(1)} Portal

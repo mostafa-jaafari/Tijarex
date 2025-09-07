@@ -90,7 +90,7 @@ export function PrivateHeader(){
                 <div className="relative w-10 h-10">
                     <Image
                         src="/LOGO1.png"
-                        alt="Tijarex-Logo.png"
+                        alt="Shopex-Logo.png"
                         fill
                         className="object-cover"
                         quality={100}
