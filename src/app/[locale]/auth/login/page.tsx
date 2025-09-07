@@ -4,26 +4,26 @@ import { Metadata } from 'next'
 
 
 export const metadata: Metadata = {
-    title: 'Login | Jamla.ma',
-    description: 'Sign in to your Jamla.ma account to manage your brand, access exclusive features, and grow your business online.',
+    title: 'Login | Shopex',
+    description: 'Sign in to your Shopex account to manage your brand, access exclusive features, and grow your business online.',
     openGraph: {
-        title: 'Login | Jamla.ma',
-        description: 'Access your Jamla.ma account and unlock powerful tools to build and manage your brand with ease.',
-        url: 'https://jamla.ma/auth/login',
-        siteName: 'Jamla.ma',
+        title: 'Login | Shopex',
+        description: 'Access your Shopex account and unlock powerful tools to build and manage your brand with ease.',
+        url: 'https://Shopex/auth/login',
+        siteName: 'Shopex',
         images: [
             {
                 url: 'https://images.pexels.com/photos/26761029/pexels-photo-26761029.jpeg',
                 width: 1200,
                 height: 630,
-                alt: 'Login to Jamla.ma',
+                alt: 'Login to Shopex',
             },
         ],
         locale: 'en_US',
         type: 'website',
     },
     keywords: [
-        'Jamla.ma',
+        'Shopex',
         'login',
         'sign in',
         'brand management',

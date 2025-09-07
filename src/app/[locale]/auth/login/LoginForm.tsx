@@ -89,7 +89,9 @@ export function LoginForm() {
     <section className="lg:max-w-[500px] lg:min-w-[450px] w-full h-full bg-white p-8 rounded-2xl shadow-xl flex flex-col justify-center">
       {/* --- Logo and Title --- */}
       <div className="flex flex-col items-center mb-10">
-        <Link href="/admin/seller" className="flex items-center gap-2 mb-4">
+        <Link 
+          href="/" 
+          className="flex items-center mb-4">
           <div className="relative w-12 h-12">
             <Image
               src="/PUBLICLOGO.png"
@@ -100,11 +102,10 @@ export function LoginForm() {
               priority
             />
           </div>
-          <span className="text-3xl font-bold text-gray-900">Shopex</span>
+          <span className="text-2xl font-bold text-teal-700">Shopex</span>
         </Link>
-        <h1 className="text-3xl font-semibold text-gray-800">Welcome back!</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Please login to your account
+          Welcome Back again!
         </p>
       </div>
 
