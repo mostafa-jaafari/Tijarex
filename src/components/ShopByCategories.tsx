@@ -65,9 +65,10 @@ export function ShopByCategories() {
                     >
                         <div 
                             className="relative group hover:shadow-lg h-40 w-40 p-2
-                                bg-gradient-to-b from-neutral-700 to-black rounded-lg
-                                hover:from-black
-                                flex flex-col justify-center items-center gap-2">
+                                bg-gradient-to-b from-teal-500 to-teal-900 rounded-lg
+                                hover:from-teal-900 hover:to-teal-500
+                                flex flex-col justify-center items-center gap-2
+                                transition-colors duration-200">
                             <span
                                 className='primary-button-w text-black p-4 
                                     rounded-lg border border-gray-200'
@@ -75,7 +76,7 @@ export function ShopByCategories() {
                                 <cat.icon 
                                     size={25}
                                     className='group-hover:scale-115 
-                                        transition-all duration-300'
+                                        transition-all duration-300 text-teal-700'
                                 />
                             </span>
                             <h1
@@ -86,7 +87,7 @@ export function ShopByCategories() {
                             {cat.isNew &&
                                 <span
                                     className='absolute right-2 top-2 text-white
-                                        text-sm bg-teal-600 rounded px-3 shadow'
+                                        text-xs bg-teal-900 rounded px-1.5 py-0.5 shadow'
                                 >
                                     New
                                 </span>
