@@ -1,13 +1,15 @@
 "use client";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react';
 
 interface HeadlineSectionProps {
     TITLE: string;
     SHOWBUTTONS?: boolean;
     ISTITLELINK?: boolean;
     TITLEHREFLINK?: string;
+    // --- FIX: Allow the ref's current property to be null ---
+    // This makes the component's prop type match the type created by useRef(null)
     SCROLLREF?: React.RefObject<HTMLDivElement | null>;
 }
 
@@ -16,42 +18,36 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
 
-    // دالة لفحص حالة التمرير - مربوطة بـ useCallback
     const checkScrollPosition = useCallback(() => {
-        if (!SCROLLREF?.current) return;
-        const el = SCROLLREF.current;
+        const el = SCROLLREF?.current;
         if (!el) return;
 
-        setCanScrollLeft(el.scrollLeft > 5);
-        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
+        setCanScrollLeft(el.scrollLeft > 1);
+        const isAtEnd = Math.ceil(el.scrollLeft + el.clientWidth) >= el.scrollWidth;
+        setCanScrollRight(!isAtEnd);
     }, [SCROLLREF]);
 
     useEffect(() => {
-        checkScrollPosition();
-        if (!SCROLLREF?.current) return;
-        const el = SCROLLREF.current;
+        const element = SCROLLREF?.current;
+        if (!element) return;
 
-        el.addEventListener("scroll", checkScrollPosition);
+        checkScrollPosition();
+        element.addEventListener("scroll", checkScrollPosition, { passive: true });
+        const resizeObserver = new ResizeObserver(checkScrollPosition);
+        resizeObserver.observe(element);
+
         return () => {
-            el.removeEventListener("scroll", checkScrollPosition);
+            element.removeEventListener("scroll", checkScrollPosition);
+            resizeObserver.unobserve(element);
         };
     }, [SCROLLREF, checkScrollPosition]);
 
     const scrollLeft = () => {
-        if (!SCROLLREF?.current) return;
-        SCROLLREF.current.scrollBy({ left: -400, behavior: "smooth" });
-        // Call checkScrollPosition after a brief delay to allow smooth scroll to complete
-        setTimeout(checkScrollPosition, 100);
+        SCROLLREF?.current?.scrollBy({ left: -400, behavior: "smooth" });
     };
 
     const scrollRight = () => {
-        if (!SCROLLREF?.current) return;
-        SCROLLREF.current.scrollBy({
-            left: 400,
-            behavior: "smooth",
-        });
-        // Add the missing checkScrollPosition call
-        setTimeout(checkScrollPosition, 100);
+        SCROLLREF?.current?.scrollBy({ left: 400, behavior: "smooth" });
     };
 
     return (
@@ -73,20 +69,24 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
                     <button
                         disabled={!canScrollLeft}
                         onClick={scrollLeft}
-                        className={`p-1 rounded-full ${canScrollLeft
-                            ? "bg-teal-700 cursor-pointer text-white hover:bg-teal-700/50"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
+                        aria-label="Scroll left"
+                        className={`p-1 rounded-full transition-colors duration-200 ${
+                            canScrollLeft
+                                ? "bg-teal-700 cursor-pointer text-white hover:bg-teal-600"
+                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        }`}
                     >
                         <ChevronLeft size={16} />
                     </button>
                     <button
                         disabled={!canScrollRight}
                         onClick={scrollRight}
-                        className={`p-1 rounded-full ${canScrollRight
-                            ? "bg-teal-700 cursor-pointer text-white hover:bg-teal-700/50"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
+                        aria-label="Scroll right"
+                        className={`p-1 rounded-full transition-colors duration-200 ${
+                            canScrollRight
+                                ? "bg-teal-700 cursor-pointer text-white hover:bg-teal-600"
+                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        }`}
                     >
                         <ChevronRight size={16} />
                     </button>
