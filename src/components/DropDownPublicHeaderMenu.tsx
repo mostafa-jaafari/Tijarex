@@ -28,7 +28,8 @@ export function DropDownPublicHeaderMenu() {
             <span
                 ref={MenuRef}
                 onClick={() => setIsShowMenu(!isShowMenu)}
-                className="flex hover:text-black/50 p-1 cursor-pointer"
+                className="flex text-teal-700 hover:text-teal-600
+                    p-1 cursor-pointer"
             >
                 <Menu size={20} />
             </span>

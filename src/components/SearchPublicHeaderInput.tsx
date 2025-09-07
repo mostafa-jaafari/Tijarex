@@ -67,15 +67,22 @@ export function SearchPublicHeaderInput() {
     return (
         <section 
             ref={MenuRef} 
-            className="relative w-full max-w-[700px]"
+            className="relative w-full max-w-[600px]"
         >
             <div 
-                className={`border-b border-neutral-400 ring ring-neutral-200 rounded-lg py-2 px-3 flex items-center`}>
+                className={`border-b border-neutral-400 ring 
+                    ring-neutral-200 rounded-lg py-1 pr-1 pl-3 
+                    flex items-center
+                    focus-within:border-teal-600
+                    focus-within:ring-teal-600`}>
                 <span
                     onClick={() => setShowSuggestionsMenu(true)}
                     className="flex pr-2"
                 >
-                    <Search size={18} className="text-gray-500" />
+                    <Search 
+                        size={18} 
+                        className="text-neutral-400"
+                    />
                 </span>
                 <input
                     type="text"
@@ -85,6 +92,13 @@ export function SearchPublicHeaderInput() {
                     placeholder="What are you looking for?"
                     className="w-full h-full outline-none border-none rounded"
                 />
+                <button
+                    className="bg-teal-600/90 text-neutral-200 
+                        hover:text-white hover:bg-teal-600 cursor-pointer 
+                        p-2 rounded-lg"
+                >
+                    <Search size={16}/>
+                </button>
             </div>
 
             {/* Animated menu */}

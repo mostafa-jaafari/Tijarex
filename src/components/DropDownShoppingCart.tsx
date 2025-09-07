@@ -25,7 +25,8 @@ export function DropDownShoppingCart(){
         >
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="hover:text-black/50 p-1 cursor-pointer"
+                className="text-teal-700 hover:text-teal-600
+                    p-1 cursor-pointer"
             >
                 <ShoppingCart 
                     size={20}
@@ -37,7 +38,7 @@ export function DropDownShoppingCart(){
                     shadow-sm rounded-lg overflow-hidden
                     transition-all duration-200
                     ${isOpen
-                        ? "opacity-100 max-h-100 overflow-y-scroll opacity-100"
+                        ? "opacity-100 max-h-100 overflow-y-scroll"
                         : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
                     }`}
             >

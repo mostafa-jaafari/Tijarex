@@ -9,22 +9,21 @@ import { SearchPublicHeaderInput } from "./SearchPublicHeaderInput";
 export function PublicHeader() {
   return (
       <section
-        className="sticky top-0 z-50 bg-white backdrop-blur-sm
+        className="sticky top-0 z-50 bg-white/70 backdrop-blur-sm
           transition-all duration-500 shadow-sm
           ease-in-out"
       >
         <div
-          className="relative w-full py-0.5 px-6 flex justify-between items-center
+          className="relative w-full py-1 px-6 flex justify-between items-center
           gap-12 transition-all duration-500 ease-in-out"
         >
-
           {/* --- Logo --- */}
           <Link
             href="/"
             className="relative flex-shrink-0 w-12 h-12 overflow-hidden"
           >
             <Image 
-              src="/LOGO1.png"
+              src="/PUBLICLOGO.png"
               alt=""
               fill
               className="object-contain"
@@ -51,15 +50,15 @@ export function PublicHeader() {
               
               {/* --- Favorite --- */}
               <span 
-                className="relative hover:text-black/50 
+                className="relative text-teal-700 hover:text-teal-600 
                   cursor-pointer">
                 <Heart 
                   size={20}
                 />
                 <span 
                   className="absolute px-1 left-3 -top-2 flex justify-center 
-                    items-center rounded-full bg-black text-xs
-                    text-white">
+                    items-center rounded-full bg-teal-700 text-xs
+                    text-neutral-200">
                   0
                 </span>
               </span>

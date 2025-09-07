@@ -92,7 +92,7 @@ export function LoginForm() {
         <Link href="/admin/seller" className="flex items-center gap-2 mb-4">
           <div className="relative w-12 h-12">
             <Image
-              src="/LOGO1.png"
+              src="/PUBLICLOGO.png"
               alt="Shopex-Logo.png"
               fill
               className="object-contain"
