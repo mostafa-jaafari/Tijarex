@@ -1,5 +1,5 @@
 "use client";
-import { categories } from "@/app/[locale]/shop/ressources/Categories";
+import { categories } from "@/app/[locale]/c/shop/ressources/Categories";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -70,7 +70,7 @@ export function ShopFilter() {
           {categories.slice(0, showCategoriesLength).map((cat) => (
             <li key={cat}>
               <Link
-                href={`/shop?cat=${cat.toLowerCase().trim().replace(" ","")}`}
+                href={`/c/shop?cat=${cat.toLowerCase().trim().replace(" ","")}`}
                 className={`w-full flex text-left px-3 py-1 rounded-md transition ${
                   SearchCat.toLowerCase() === cat.toLowerCase()
                     ? "bg-white shadow-sm text-black font-semibold py-1"
@@ -134,7 +134,7 @@ export function ShopFilter() {
         Params.get("cat") ||
         Params.get("sortby")) && (
         <Link
-          href="/shop"
+          href="/c/shop"
           className="w-full flex justify-center py-1 mt-2 
           text-sm rounded-lg shadow-sm cursor-pointer
           bg-red-600 hover:bg-red-700 text-white"

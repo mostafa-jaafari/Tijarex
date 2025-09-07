@@ -15,7 +15,7 @@ export function generateReferralLink(affiliateId: string, productId: string): st
 
     // 2. Define the base URL for your product landing page.
     // This should point to a page that can read the `pid` and `ref` parameters.
-    const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/shop/product`;
+    const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/c/shop/product`;
 
     // 3. Construct the final URL with unencoded query parameters.
     // We use `ref` for the affiliate and `pid` for the product ID.

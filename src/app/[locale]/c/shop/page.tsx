@@ -115,7 +115,7 @@ export default async function page({ searchParams }: ShopPageProps) {
                             return (
                                 <Link
                                     key={idx}
-                                    href={`/shop?cat=${sug.toLowerCase().replace(" ", "")}`}
+                                    href={`/c/shop?cat=${sug.toLowerCase().replace(" ", "")}`}
                                 >
                                     <span
                                         className='text-sm bg-gray-100 ring ring-gray-200 
@@ -139,7 +139,7 @@ export default async function page({ searchParams }: ShopPageProps) {
                         </span>
                         {(resolvedSearchParams.pf || resolvedSearchParams.pt || resolvedSearchParams.cat || resolvedSearchParams.sortby) && (
                             <Link 
-                                href="/shop"
+                                href="/c/shop"
                                 className='text-red-500 text-sm font-semibold'
                                 >
                                 Clear Filters

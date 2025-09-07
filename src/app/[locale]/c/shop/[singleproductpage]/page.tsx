@@ -1,4 +1,4 @@
-// File: app/[locale]/shop/product/[productId]/page.tsx
+// File: app/[locale]/c/shop/product/[productId]/page.tsx
 
 import { Check, Star } from 'lucide-react';
 import { notFound } from 'next/navigation';

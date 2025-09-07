@@ -75,7 +75,7 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                 className='pt-2'
             >
                 <Link
-                    href={`/shop?cat=${PRODUCTCATEGORY}`}
+                    href={`/c/shop?cat=${PRODUCTCATEGORY}`}
                     className='w-max text-gray-400 text-sm hover:text-black/80
                         cursor-pointer flex items-center gap-1'
                 >

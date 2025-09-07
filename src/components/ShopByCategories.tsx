@@ -60,7 +60,7 @@ export function ShopByCategories() {
             {categories.map((cat, i) => {
                 return (
                     <Link
-                        href={`/shop?cat=${cat.title.toLowerCase()}`}
+                        href={`/c/shop?cat=${cat.title.toLowerCase()}`}
                         key={i}
                     >
                         <div 
