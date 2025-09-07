@@ -71,11 +71,8 @@ export function HeroSection() {
           <Link
             href="/c/shop"
             className={`mt-3 px-6 py-1.5 w-max text-neutral-600 
-              hover:text-700 font-semibold text-sm bg-white
-              hover:bg-teal-500 rounded-lg hover:text-neutral-100
-              border-b border-neutral-400 hover:border-teal-600 
-              ring ring-neutral-200 hover:ring-teal-500
-              duration-300 transition-colors`}
+              hover:text-neutral-600 font-semibold text-sm bg-white rounded-lg
+              hover:bg-neutral-100`}
           >
             Shop Now
           </Link>
