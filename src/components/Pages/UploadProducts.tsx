@@ -236,8 +236,8 @@ export default function UploadProducts() {
                         justify-between mb-6 rounded-lg`}
                 >
                     <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-neutral-700">Upload Product</h1>
-                    <p className="mt-2 text-neutral-400">Add a new item to your marketplace inventory.</p>
+                    <h1 className="text-xl font-bold tracking-tight text-neutral-700">Upload Product</h1>
+                    <p className="text-sm text-neutral-500">Add a new item to your marketplace inventory.</p>
                     </div>
                 </header>
 
@@ -250,8 +250,8 @@ export default function UploadProducts() {
                     <div className="lg:col-span-3 space-y-3">
                         {/* --- Title & Description --- */}
                         <div
-                            className="w-full bg-white border-b border-neutral-400/80 ring 
-                                    ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
+                            className="w-full bg-white border-b border-purple-400/80 ring 
+                                    ring-purple-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                         >
                             <h2 
                                 className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800"
@@ -299,7 +299,7 @@ export default function UploadProducts() {
                         <div
                             className="bg-white rounded-lg 
                                 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] border-b 
-                                border-neutral-400/80 ring ring-neutral-200"
+                                border-purple-400/80 ring ring-purple-200"
                         >
                             <h2 
                                 className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800"
@@ -312,19 +312,21 @@ export default function UploadProducts() {
                                 <CategoryInput 
                                     category={category} 
                                     setCategory={setCategory} 
-                                    />
+                                />
                             </div>
 
                             <div className="py-2.5 px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 <div>
                                     <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (DH)</label>
                                     <div
-                                        className="flex items-center border-b border-neutral-400
-                                            ring ring-neutral-200 rounded-lg bg-white 
-                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 overflow-hidden gap-3"
+                                        className="flex items-center border-b border-purple-400
+                                            ring ring-purple-200 rounded-lg bg-white 
+                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
+                                            overflow-hidden gap-3 focus-within:ring-purple-400
+                                            focus-within:border-violet-600"
                                     >
                                         <span
-                                            className="bg-neutral-800 text-neutral-200 
+                                            className="bg-purple-600 text-neutral-200 
                                                 font-semibold h-full flex justify-center 
                                                 items-center px-4"
                                         >
@@ -346,12 +348,14 @@ export default function UploadProducts() {
                                 <div>
                                     <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price (Optional)</label>
                                     <div
-                                        className="flex items-center border-b border-neutral-400
-                                            ring ring-neutral-200 rounded-lg bg-white 
-                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 overflow-hidden gap-3"
+                                        className="flex items-center border-b border-purple-400
+                                            ring ring-purple-200 rounded-lg bg-white 
+                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
+                                            overflow-hidden gap-3 focus-within:ring-purple-400
+                                            focus-within:border-violet-600"
                                     >
                                         <span
-                                            className="bg-neutral-800 text-neutral-200 
+                                            className="bg-purple-600 text-neutral-200 
                                                 font-semibold h-full flex justify-center 
                                                 items-center px-4"
                                         >
@@ -373,12 +377,14 @@ export default function UploadProducts() {
                                 <div>
                                     <label htmlFor="stock" className="block text-sm font-semibold text-neutral-700 mb-1.5">Stock Quantity</label>
                                     <div
-                                        className="flex items-center border-b border-neutral-400
-                                            ring ring-neutral-200 rounded-lg bg-white 
-                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 overflow-hidden gap-3"
+                                        className="flex items-center border-b border-purple-400
+                                            ring ring-purple-200 rounded-lg bg-white 
+                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
+                                            overflow-hidden gap-3 focus-within:ring-purple-400
+                                            focus-within:border-violet-600"
                                     >
                                         <span
-                                            className="bg-neutral-800 text-neutral-200 
+                                            className="bg-purple-600 text-neutral-200 
                                                 font-semibold h-full flex justify-center 
                                                 items-center px-4"
                                         >
@@ -405,7 +411,7 @@ export default function UploadProducts() {
                     <div className="lg:col-span-2 space-y-3">
                     <div
                         className="bg-white rounded-lg 
-                            border-b border-neutral-400 ring ring-neutral-200 
+                            border-b border-purple-400 ring ring-purple-200 
                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]"
                     >
                         <h3 
@@ -425,16 +431,24 @@ export default function UploadProducts() {
                                     items-center justify-center p-6 border-2 
                                     border-dashed rounded-lg transition-colors 
                                     ${isDragging ? 
-                                        'border-teal-500 bg-teal-50'
+                                        'border-purple-500 bg-purple-50'
                                         :
                                         'border-neutral-300'} 
                                         ${isSubmitting || isProcessingImages ? 
                                             'cursor-not-allowed opacity-60'
                                             :
-                                            'cursor-pointer hover:border-teal-400'}
+                                            'cursor-pointer hover:border-purple-400'}
                                             `}
                             >
-                            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" disabled={isSubmitting || isProcessingImages} />
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                disabled={isSubmitting || isProcessingImages}
+                            />
                             <div className="text-center text-neutral-500">
                                 <Upload size={24} className="mx-auto mb-2 text-neutral-400" />
                                 <p className="text-sm font-semibold text-neutral-600">Click to upload or drag and drop</p>
@@ -470,7 +484,7 @@ export default function UploadProducts() {
                     
                     <div
                         className="bg-white border-b 
-                            border-neutral-400 ring ring-neutral-200
+                            border-purple-400 ring ring-purple-200
                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                     >
                         <h3 
@@ -504,7 +518,7 @@ export default function UploadProducts() {
                                 productFiles.length === 0
                             }
                             className="px-6 py-3 text-sm font-semibold text-white 
-                                cursor-pointer bg-teal-600 rounded-lg hover:bg-teal-700 
+                                cursor-pointer bg-purple-600 rounded-lg hover:bg-purple-700 
                                 disabled:bg-neutral-300 
                                 disabled:text-neutral-500 
                                 disabled:cursor-not-allowed 

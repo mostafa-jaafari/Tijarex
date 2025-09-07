@@ -35,7 +35,13 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
     };
 
     return (
-        <div className="w-full p-2 bg-white border border-gray-300 rounded-lg flex flex-wrap items-center gap-2 focus-within:ring-2 focus-within:ring-teal-400 focus-within:border-teal-500 transition-all">
+        <div 
+            className="w-full px-2 py-1 bg-white border-b 
+                border-gray-400 ring ring-neutral-200
+                rounded-lg flex flex-wrap items-center gap-2 
+                focus-within:border-b-2 focus-within:ring-purple-400 
+                focus-within:border-purple-600 transition-all"
+        >
             <AnimatePresence>
                 {sizes.map((size) => (
                     <motion.div

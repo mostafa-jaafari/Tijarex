@@ -35,7 +35,12 @@ export const ColorInput: React.FC<ColorInputProps> = ({ colors, setColors }) => 
     };
 
     return (
-        <div className="w-full p-2 bg-white border border-gray-300 rounded-lg flex flex-wrap items-center gap-2 focus-within:ring-2 focus-within:ring-teal-400 focus-within:border-teal-500 transition-all">
+        <div 
+            className="w-full px-2 py-1 bg-white border-b 
+                border-neutral-400 ring ring-neutral-200
+                rounded-lg flex flex-wrap items-center gap-2 
+                focus-within:border-b-2 focus-within:ring-purple-400 
+                focus-within:border-purple-600 transition-all">
             <AnimatePresence>
                 {colors.map((color) => (
                     <motion.div
@@ -43,14 +48,22 @@ export const ColorInput: React.FC<ColorInputProps> = ({ colors, setColors }) => 
                         initial={{ opacity: 0, scale: 0.5 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.5 }}
-                        className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-md"
+                        className="flex items-center gap-1.5 text-neutral-700 text-sm font-medium px-3 py-1.5 rounded-md"
                     >
                         {/* Display the color string directly */}
-                        <span>{color}</span> 
+                        <div 
+                            className='flex items-center gap-1'
+                        >
+                            <span 
+                                className='flex w-3 h-3'
+                                style={{ backgroundColor: color }}
+                            />
+                            {color}
+                        </div> 
                         <button 
                             type="button" 
                             onClick={() => removeColor(color)}
-                            className="text-gray-500 hover:text-gray-800"
+                            className="text-neutral-500 cursor-pointer hover:text-neutral-800"
                         >
                             <X size={14} />
                         </button>
@@ -63,7 +76,7 @@ export const ColorInput: React.FC<ColorInputProps> = ({ colors, setColors }) => 
                 onChange={(e) => setCurrentValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={colors.length === 0 ? "e.g., Black, White..." : "+ Add"}
-                className="flex-grow bg-transparent text-sm p-1.5 focus:outline-none placeholder:text-gray-400"
+                className="flex-grow bg-transparent text-sm p-1.5 focus:outline-none placeholder:text-neutral-400"
             />
         </div>
     );
