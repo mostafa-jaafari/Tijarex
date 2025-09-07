@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { InputHero } from "./HeroInput";
 
 
 export function HeroSection(){
@@ -44,7 +43,6 @@ export function HeroSection(){
                                 and Local Treasures – All in One Place!
                         </h1>
                     </span>
-                    <InputHero />
                 </div>
             </div>
         </section>

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { SwitchLanguage } from "./SwitchLanguage";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { ShowHeaderMenu } from "./ShowHeaderMenu";
 import { DropDownShoppingCart } from "./DropDownShoppingCart";
+import { SearchPublicHeaderInput } from "./SearchPublicHeaderInput";
 
 
 export function PublicHeader() {
@@ -14,7 +14,7 @@ export function PublicHeader() {
           ease-in-out"
       >
         <div
-          className="relative w-full py-1 px-6 flex justify-between 
+          className="relative w-full py-0.5 px-6 flex justify-between items-center
           gap-12 transition-all duration-500 ease-in-out"
         >
 
@@ -34,22 +34,7 @@ export function PublicHeader() {
           </Link>
 
           {/* --- Navigations Links --- */}
-          <div
-            className="flex items-center gap-6"
-          >
-            {["best selling", "shop by categories", "summer 2025", "featured products"].map((item, idx) => {
-              return (
-                <Link
-                  href={`#${item.toLowerCase()}`}
-                  key={idx}
-                  className="text-gray-500 capitalize cursor-pointer
-                    hover:text-black text-sm"
-                >
-                  {item}
-                </Link>
-              )
-            })}
-          </div>
+          <SearchPublicHeaderInput />
 
           {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
           <div className="flex items-center gap-6">
@@ -59,10 +44,10 @@ export function PublicHeader() {
             {/* --- Favorite btn & Shopping-Card btn --- */}
             <div className="flex items-center gap-4">
               {/* --- Switch Languages --- */}
-              <SwitchLanguage
+              {/* <SwitchLanguage
                 CLASSNAME={`flex items-center gap-1 text-xs
                   rounded-lg py-1 px-3 ring ring-gray-200`}
-              />
+              /> */}
               
               {/* --- Favorite --- */}
               <span 
@@ -72,8 +57,8 @@ export function PublicHeader() {
                   size={20}
                 />
                 <span 
-                  className="absolute px-1 left-3 -top-3 flex justify-center 
-                    items-center rounded-full bg-black font-bold text-sm 
+                  className="absolute px-1 left-3 -top-2 flex justify-center 
+                    items-center rounded-full bg-black text-xs
                     text-white">
                   0
                 </span>
@@ -81,23 +66,6 @@ export function PublicHeader() {
               
               {/* --- Shopping Cart --- */}
                 <DropDownShoppingCart />
-              
-                <div
-                  className="flex items-center gap-2"
-                >
-                  <Link
-                    href="/auth/login"
-                    className={`text-sm rounded-lg py-0.5 px-3 ring ring-gray-200`}
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    href="/auth/onboarding"
-                    className={`px-3 py-0.5 font-semibold text-sm rounded-lg`}
-                  >
-                    Get Started
-                  </Link>
-                </div>
               {/* --- Menu --- */}
               <ShowHeaderMenu />
             </div>

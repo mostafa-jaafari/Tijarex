@@ -1,13 +1,11 @@
 "use client";
-
-import { InputStyles } from "@/app/[locale]/page";
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
 import { PackageSearch, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-export function InputHero() {
+export function SearchPublicHeaderInput() {
     const [searchInput, setSearchInput] = useState("");
     const SearchSuggestions = [
         { label: "Moroccan handmade crafts", icon: PackageSearch },
@@ -67,9 +65,12 @@ export function InputHero() {
 
 
     return (
-        <section ref={MenuRef} className="relative w-full max-w-[700px]">
+        <section 
+            ref={MenuRef} 
+            className="relative w-full max-w-[700px]"
+        >
             <div 
-                className={`${InputStyles} flex items-center`}>
+                className={`border-b border-neutral-400 ring ring-neutral-200 rounded-lg py-2 px-3 flex items-center`}>
                 <span
                     onClick={() => setShowSuggestionsMenu(true)}
                     className="flex pr-2"
