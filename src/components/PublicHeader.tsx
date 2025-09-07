@@ -9,9 +9,8 @@ export function PublicHeader() {
   return (
       <section
         className="sticky top-0 z-50 bg-white
-          transition-all duration-500 shadow-sm
-          ease-in-out border-b border-neutral-300
-          ring ring-neutral-200"
+          transition-all duration-500
+          ease-in-out"
       >
         <div
           className="relative w-full py-1 px-6 flex justify-between items-center
