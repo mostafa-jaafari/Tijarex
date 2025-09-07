@@ -351,7 +351,7 @@ export default function UploadProducts() {
 
                             <div className="py-2.5 px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 <div>
-                                    <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (DH)</label>
+                                    <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (Optional)</label>
                                     <div
                                         className="flex items-center border-b border-purple-400
                                             ring ring-purple-200 rounded-lg bg-white 
@@ -380,7 +380,7 @@ export default function UploadProducts() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price (Optional)</label>
+                                    <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price</label>
                                     <div
                                         className="flex items-center border-b border-purple-400
                                             ring ring-purple-200 rounded-lg bg-white 
