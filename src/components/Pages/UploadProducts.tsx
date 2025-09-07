@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ColorInput } from "@/components/Upload-Products/ColorInput";
 import { SizeInput } from "@/components/Upload-Products/SizeInput";
 import { CategoryInput } from "@/components/Upload-Products/CategoryInput";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
 import { PermissionCheckBox, ProductPermissions } from "../Upload-Products/UploadPermission";
@@ -36,8 +36,8 @@ export default function UploadProducts() {
     const [colors, setColors] = useState<string[]>([]);
     const [sizes, setSizes] = useState<string[]>([]);
     const [permissions, setPermissions] = useState<ProductPermissions>({
-        availableForAffiliates: true,
-        sellInMarketplace: true,
+        availableForAffiliates: false,
+        sellInMarketplace: false,
     });
     const [productFiles, setProductFiles] = useState<ProductFile[]>([]); // <-- UPDATED STATE
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -509,9 +509,9 @@ export default function UploadProducts() {
                     </div>
                     {(permissions.availableForAffiliates && permissions.sellInMarketplace) && (
                         <div
-                            className="py-2 px-3 rounded-lg bg-orange-500"
+                            className="py-2 px-3 rounded-lg bg-yellow-500/20 border text-yellow-700 border-yellow-500/30 text-sm flex items-center gap-2"
                         >
-                            you must choose just one choice !
+                            <Info size={16}/> you must choose just one choice !
                         </div>
                     )}
                         <PermissionCheckBox 
