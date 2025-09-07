@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react"; // Import useEffect
+import React, { useState, useRef, useEffect, useMemo } from "react"; // Import useEffect
 import Image from "next/image";
 import { auth } from "@/lib/FirebaseClient";
 import imageCompression from "browser-image-compression";
@@ -129,7 +129,7 @@ export default function UploadProducts() {
         e.preventDefault();
         if (isSubmitting || isProcessingImages) return;
 
-        const requiredFields = { title, regularPrice, stock, category, permissions };
+        const requiredFields = { title, salePrice, stock, category, permissions };
         const missingFields = Object.entries(requiredFields)
             .filter(([value]) => !value)
             .map(([key]) => key);
@@ -194,8 +194,8 @@ export default function UploadProducts() {
                 title,
                 description,
                 category,
-                original_regular_price: parseFloat(regularPrice),
-                original_sale_price: salePrice ? parseFloat(salePrice) : null,
+                original_sale_price: parseFloat(salePrice),
+                original_regular_price: salePrice ? parseFloat(regularPrice) : null,
                 stock: parseInt(stock, 10),
                 colors,
                 sizes,
@@ -227,6 +227,21 @@ export default function UploadProducts() {
         }
     };
 
+    const isPriceInvalid = useMemo(() => {
+        // Convert string state to numbers for correct comparison
+        const regNum = parseFloat(regularPrice);
+        const saleNum = parseFloat(salePrice);
+
+        // The sale price is only invalid if it's a number AND it's
+        // greater than or equal to the regular price.
+        // If salePrice is empty or not a number, the condition is not met.
+        if (!isNaN(saleNum) && !isNaN(regNum)) {
+            return saleNum >= regNum;
+        }
+
+        // If either value isn't a valid number yet (e.g., empty), don't show the error.
+        return false;
+    }, [regularPrice, salePrice]);
     return (
         <motion.section 
             initial={{ opacity: 0 }}
@@ -243,7 +258,7 @@ export default function UploadProducts() {
                 >
                     <div>
                     <h1 className="text-xl font-bold tracking-tight text-neutral-700">Upload Product</h1>
-                    <p className="text-sm text-neutral-500">Add a new item to your marketplace inventory.</p>
+                    <p className="mt-1 text-sm text-neutral-500">Add a new item to your marketplace inventory.</p>
                     </div>
                 </header>
 
@@ -256,7 +271,7 @@ export default function UploadProducts() {
                     <div className="lg:col-span-3 space-y-3">
                         {/* --- Title & Description --- */}
                         <div
-                            className="w-full bg-white border-b border-purple-400/80 ring 
+                            className="w-full bg-white border-b border-neutral-400 ring 
                                     ring-purple-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                         >
                             <h2 
@@ -302,10 +317,23 @@ export default function UploadProducts() {
                             </div>
                         </div>
                         {/* --- Category --- */}
+                        <AnimatePresence>
+                            {isPriceInvalid && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="py-2 px-3 rounded-lg bg-yellow-100 border text-yellow-800 border-yellow-300 text-sm flex items-center gap-2"
+                                >
+                                    <Info size={16}/> 
+                                    <span className="font-semibold">Sale Price</span> must be lower than the <span className="font-semibold">Regular Price.</span>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                         <div
                             className="bg-white rounded-lg 
                                 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] border-b 
-                                border-purple-400/80 ring ring-purple-200"
+                                border-neutral-400 ring ring-purple-200"
                         >
                             <h2 
                                 className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800"
@@ -417,11 +445,12 @@ export default function UploadProducts() {
                     <div className="lg:col-span-2 space-y-3">
                     <div
                         className="bg-white rounded-lg 
-                            border-b border-purple-400 ring ring-purple-200 
+                            border-b border-neutral-400 ring ring-neutral-200 
                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]"
                     >
                         <h3 
-                            className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800">
+                            className="py-2.5 px-6 border-b border-neutral-200 
+                                text-lg font-semibold text-neutral-800">
                                 Colors & Sizes
                         </h3>
                         <div
@@ -489,7 +518,7 @@ export default function UploadProducts() {
                     
                     <div
                         className="bg-white border-b 
-                            border-purple-400 ring ring-purple-200
+                            border-neutral-400 ring ring-neutral-200
                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                     >
                         <h3 
@@ -507,17 +536,23 @@ export default function UploadProducts() {
                             </div>
                         </div>
                     </div>
-                    {(permissions.availableForAffiliates && permissions.sellInMarketplace) && (
-                        <div
-                            className="py-2 px-3 rounded-lg bg-yellow-500/20 border text-yellow-700 border-yellow-500/30 text-sm flex items-center gap-2"
-                        >
-                            <Info size={16}/> you must choose just one choice !
-                        </div>
-                    )}
-                        <PermissionCheckBox 
-                            permissions={permissions}
-                            setPermissions={setPermissions}
-                        />
+                    <AnimatePresence>
+                        {(permissions.availableForAffiliates && permissions.sellInMarketplace) && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className="py-2 px-3 rounded-lg bg-yellow-100 border text-yellow-800 border-yellow-300 text-sm flex items-center gap-2"
+                            >
+                                <Info size={16}/> 
+                                <span className="font-semibold">Sale Price</span> must be lower than the <span className="font-semibold">Regular Price.</span>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    <PermissionCheckBox 
+                        permissions={permissions}
+                        setPermissions={setPermissions}
+                    />
                     <div className="w-full flex items-center 
                         justify-end gap-3">
                         <button
@@ -526,14 +561,15 @@ export default function UploadProducts() {
                                 isSubmitting ||
                                 isProcessingImages ||
                                 !title ||
-                                !regularPrice ||
+                                !salePrice ||
+                                isPriceInvalid ||
                                 !stock ||
                                 !category ||
                                 sizes.length === 0 ||
                                 colors.length === 0 ||
                                 productFiles.length === 0 ||
-                                !permissions.availableForAffiliates && !permissions.sellInMarketplace ||
-                                permissions.availableForAffiliates && permissions.sellInMarketplace
+                                (!permissions.availableForAffiliates && !permissions.sellInMarketplace) ||
+                                (permissions.availableForAffiliates && permissions.sellInMarketplace)
                             }
                             className="px-6 py-3 text-sm font-semibold text-white 
                                 cursor-pointer bg-purple-600 rounded-lg hover:bg-purple-700 
