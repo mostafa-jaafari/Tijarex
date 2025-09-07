@@ -189,7 +189,7 @@ export function TrendingProductsWidget() {
                                     text-xs bg-neutral-700 border-b border-neutral-800 
                                     text-neutral-100 ring ring-neutral-700
                                     hover:bg-neutral-700/90`}
-                                href={`${userInfos?.UserRole === "seller" ? "/seller/upload-products" : "/affiliate"}`}
+                                href={`${userInfos?.UserRole === "seller" ? "/admin/seller/upload-products" : "/admin/affiliate"}`}
                                 prefetch
                             >
                                 <UploadCloud

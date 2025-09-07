@@ -174,7 +174,7 @@ const EmptyState = ({ userInfos }: EmptyStateProps) => (
                     text-xs bg-white border-b border-neutral-400 
                     text-neutral-700 ring ring-neutral-200
                     hover:bg-neutral-50`}
-                href={`${userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"}`}
+                href={`${userInfos?.UserRole === "seller" ? "/admin/seller" : "/admin/affiliate"}`}
                 prefetch
             >
                 <LayoutDashboard size={16} /> Back to Dashboard
@@ -185,7 +185,7 @@ const EmptyState = ({ userInfos }: EmptyStateProps) => (
                     text-xs bg-neutral-700 border-b border-neutral-800 
                     text-neutral-100 ring ring-neutral-700
                     hover:bg-neutral-700/90`}
-                    href={`${userInfos?.UserRole === "seller" ? "/seller/products" : "/affiliate/products"}`}
+                    href={`${userInfos?.UserRole === "seller" ? "/admin/seller/products" : "/admin/affiliate/products"}`}
                     prefetch
             >
                 <Box size={16} /> Discover Products

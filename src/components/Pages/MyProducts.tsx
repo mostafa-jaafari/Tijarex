@@ -222,7 +222,7 @@ export default function MyProducts() {
                                     text-xs bg-white border-b border-neutral-400 
                                     text-neutral-700 ring ring-neutral-200
                                     hover:bg-neutral-50`}
-                                    href={`${userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"}`}
+                                    href={`${userInfos?.UserRole === "seller" ? "/admin/seller" : "/admin/affiliate"}`}
                                     prefetch
                             >
                                 <LayoutDashboard
@@ -236,7 +236,7 @@ export default function MyProducts() {
                                         text-xs bg-neutral-700 border-b border-neutral-800 
                                         text-neutral-100 ring ring-neutral-700
                                         hover:bg-neutral-700/90`}
-                                    href={`${userInfos?.UserRole === "seller" ? "/seller/upload-products" : "/affiliate"}`}
+                                    href={`${userInfos?.UserRole === "seller" ? "/admin/seller/upload-products" : "/admin/affiliate"}`}
                                     prefetch
                                 >
                                     <UploadCloud

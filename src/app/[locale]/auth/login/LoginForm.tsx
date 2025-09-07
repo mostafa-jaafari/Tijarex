@@ -58,7 +58,7 @@ export function LoginForm() {
         setLoading(false);
         setError(null);
         toast.success("Login successful!");
-        router.push("/seller");
+        router.push("/admin/seller");
       } else {
         setError("Please verify your email before logging in.");
         await signOut(auth);
@@ -89,7 +89,7 @@ export function LoginForm() {
     <section className="lg:max-w-[500px] lg:min-w-[450px] w-full h-full bg-white p-8 rounded-2xl shadow-xl flex flex-col justify-center">
       {/* --- Logo and Title --- */}
       <div className="flex flex-col items-center mb-10">
-        <Link href="/seller" className="flex items-center gap-2 mb-4">
+        <Link href="/admin/seller" className="flex items-center gap-2 mb-4">
           <div className="relative w-12 h-12">
             <Image
               src="/LOGO1.png"

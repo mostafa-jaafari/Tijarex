@@ -84,7 +84,7 @@ export function PrivateHeader(){
             {/* --- Logo --- */}
             <Link 
                 prefetch 
-                href={userInfos?.UserRole === "seller" ? "/seller" : "/affiliate"} 
+                href={userInfos?.UserRole === "seller" ? "/admin/seller" : "/admin/affiliate"} 
                 className="flex items-center"
             >
                 <div className="relative w-10 h-10">

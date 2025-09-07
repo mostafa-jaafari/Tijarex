@@ -62,21 +62,22 @@ async function handleAuthAndRouting(request: NextRequest): Promise<NextResponse>
   const isAuthPage = authPages.some((page) => pathname.startsWith(page));
   const isLandingPage = pathname === `/${locale}`;
 
-  const publicPages = [
-    `/${locale}/shop`,
-    `/${locale}/auth/onboarding`,
-  ];
-  const isPublicPage = publicPages.some(page => pathname.startsWith(page));
+  // --- shop pages في مجلد c ---
+  const isShopPage =
+    pathname === `/${locale}/c` || pathname.startsWith(`/${locale}/c/`);
 
-  // --- 4. إعادة التوجيه للصفحات العامة إذا كان المستخدم مسجل دخول ---
-  if (isAuthenticated && (isLandingPage || isAuthPage)) {
+  const isPublicPage =
+    isShopPage || pathname.startsWith(`/${locale}/auth/onboarding`);
+
+  // --- 4. إعادة التوجيه إذا المستخدم مسجل دخول وحاول يدخل صفحات عامة أو shop ---
+  if (isAuthenticated && (isLandingPage || isAuthPage || isShopPage)) {
     if (userRole === 'seller') {
-      return NextResponse.redirect(new URL(`/${locale}/seller`, request.url));
+      return NextResponse.redirect(new URL(`/${locale}/admin/seller`, request.url));
     }
-    return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
+    return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
   }
 
-  // السماح بالوصول للصفحات العامة لجميع المستخدمين
+  // السماح بالوصول للصفحات العامة إذا غير مسجل دخول
   if (isPublicPage || isAuthPage || isLandingPage) {
     return intlMiddleware(request) || NextResponse.next();
   }
@@ -89,37 +90,33 @@ async function handleAuthAndRouting(request: NextRequest): Promise<NextResponse>
   }
 
   // --- 6. تطبيق قواعد Role-Based Routing ---
-  const isAffiliatePath = pathname.startsWith(`/${locale}/affiliate`);
-  const isSellerPath = pathname.startsWith(`/${locale}/seller`);
-
+  const isAffiliatePath = pathname.startsWith(`/${locale}/admin/affiliate`);
+  const isSellerPath = pathname.startsWith(`/${locale}/admin/seller`);
 
   // --- مسار المحظورات الخاصة بالـ Seller ---
   const SELLER_BLOCKED_ROUTES = [
-    `/${locale}/seller/my-collection`,
+    `/${locale}/admin/seller/my-collection`,
   ];
-  // منع Seller من الوصول للصفحات المحظورة
   if (userRole === 'seller') {
     if (SELLER_BLOCKED_ROUTES.includes(pathname)) {
-      return NextResponse.redirect(new URL(`/${locale}/seller`, request.url));
+      return NextResponse.redirect(new URL(`/${locale}/admin/seller`, request.url));
     }
-
-    // السماح لبقية صفحات seller فقط
     if (!isSellerPath) {
-      return NextResponse.redirect(new URL(`/${locale}/seller`, request.url));
+      return NextResponse.redirect(new URL(`/${locale}/admin/seller`, request.url));
     }
   }
 
+  // --- مسار المحظورات الخاصة بالـ Affiliate ---
   const AFFILIATE_BLOCKED_ROUTES = [
-    `/${locale}/affiliate/upload-products`,
-    `/${locale}/affiliate/my-products`,
+    `/${locale}/admin/affiliate/upload-products`,
+    `/${locale}/admin/affiliate/my-products`,
   ];
-  // السماح لـ Affiliate بالوصول فقط لمسارات Affiliate
   if (userRole === 'affiliate') {
     if (AFFILIATE_BLOCKED_ROUTES.includes(pathname)) {
-      return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
+      return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
     }
-    if(!isAffiliatePath){
-      return NextResponse.redirect(new URL(`/${locale}/affiliate`, request.url));
+    if (!isAffiliatePath) {
+      return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
     }
   }
 

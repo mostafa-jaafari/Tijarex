@@ -38,7 +38,7 @@ export const ProductTableRow = ({ product, onAddToStore }: ProductTableRowProps)
             {/* Product Cell */}
             <td className="text-start px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center gap-4">
-                    <Link href={`/seller/products?p_id=${product.id}`} className="flex-shrink-0">
+                    <Link href={`/admin/seller/products?p_id=${product.id}`} className="flex-shrink-0">
                         <div className="relative w-16 h-16 bg-gray-100 rounded-lg overflow-hidden group">
                             <Image
                                 src={product.product_images[0]}
@@ -49,7 +49,7 @@ export const ProductTableRow = ({ product, onAddToStore }: ProductTableRowProps)
                         </div>
                     </Link>
                     <div className="min-w-0 flex-1">
-                        <Link href={`/seller/products?p_id=${product.id}`} className="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 hover:text-teal-600 transition-colors">
+                        <Link href={`/admin/seller/products?p_id=${product.id}`} className="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 hover:text-teal-600 transition-colors">
                             {product.title.length > 30 ? `${product.title.slice(0, 30)}...` : product.title}
                         </Link>
                         <div className="text-xs text-gray-500 mt-1">
