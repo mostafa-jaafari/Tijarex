@@ -60,7 +60,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             label: "favorites",
             icon: Heart,
             href: "favorites",
-            badge: userInfos?.favoriteProductIds.length,
+            badge: userInfos?.favoriteProductIds?.length,
         },
         ...(UserRole !== "affiliate" ? [{
             label: "upload products",
