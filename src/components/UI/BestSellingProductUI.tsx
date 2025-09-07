@@ -1,6 +1,6 @@
 "use client";
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { Flame, Tag } from 'lucide-react';
+import { Flame, ShoppingBag, Tag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
@@ -23,11 +23,11 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
     }
     return (
         <section
-            className='relative w-full max-w-[250px] min-h-40 
+            className='relative w-full max-w-[220px]
                 overflow-hidden flex-shrink-0'
         >
             <div
-                className='relative w-full h-60 overflow-hidden rounded-lg'
+                className='relative w-full h-[220px] overflow-hidden rounded-lg'
             >
                 <Image
                     src={PRODUCTIMAGES[0] || ""}
@@ -41,47 +41,55 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
             </div>
             {/* --- Trend Badge --- */}
             <span
-                className='absolute z-20 top-2 right-2 bg-black
+                className='absolute z-20 top-2 right-2 bg-teal-700
                     rounded-lg p-1 text-white'
             >
-                <Flame size={20}/>
+                <Flame size={22}/>
             </span>
             {/* --- Product Infos --- */}
-            
+            <div className='mt-1'>
             {/* --- Category --- */}
-            <Link
-                href={`/c/shop?cat=${PRODUCTCATEGORY}`}
-                className='mt-2 w-max text-purple-700 font-semibold 
-                    text-xs hover:text-black/80 cursor-pointer 
-                    capitalize flex items-center gap-1'
-            >
-                <Tag size={14} />
-                <p>
-                    {PRODUCTCATEGORY}
-                </p>
-            </Link>
-            <h1
-                onClick={HandleQuickView}
-                className='mb-1 font-semibold text-sm text-neutral-800 
+                <Link
+                    href={`/c/shop?cat=${PRODUCTCATEGORY}`}
+                    className='mt-2 w-max text-teal-700 font-semibold 
+                        text-xs hover:text-black/80 cursor-pointer 
+                        capitalize flex items-center gap-1'
+                >
+                    <Tag size={14} />
+                    <p>
+                        {PRODUCTCATEGORY}
+                    </p>
+                </Link>
+                <h1
+                    onClick={HandleQuickView}
+                    className='font-semibold capitalize text-sm text-neutral-800 
                     cursor-pointer hover:text-neutral-600'
-            >
-                {PRODUCTTITLE}
-            </h1>
+                >
+                    {PRODUCTTITLE}
+                </h1>
 
-            <span
-                className='flex items-end gap-2'
-            >
-                <b
-                    className='text-purple-700'
+                <span
+                    className='flex items-end gap-2'
                 >
-                    {PRODUCTSALEPRICE} Dh
-                </b>
-                <del
-                    className='text-sm text-neutral-500'
+                    <b
+                        className='text-teal-700'
+                    >
+                        {PRODUCTSALEPRICE} Dh
+                    </b>
+                    <del
+                        className='text-sm text-neutral-500'
+                        >
+                        {PRODUCTREGULARPRICE} Dh
+                    </del>
+                </span>
+                <button
+                    className='flex items-center gap-2 cursor-pointer 
+                        justify-center mt-2 bg-teal-700/90 rounded-lg 
+                        w-full py-1.5 text-white text-sm hover:bg-teal-700'
                 >
-                    {PRODUCTREGULARPRICE} Dh
-                </del>
-            </span>
+                    <ShoppingBag size={18}/> Add to Cart
+                </button>
+            </div>
         </section>
     )
 }
