@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp } from "lucide-react";
+import { ArrowUpCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 
@@ -25,14 +25,10 @@ export function ScrollToTop() {
         });
     };
     if (!isOver) return null;
-    return (
-        <button
-            onClick={scrollToTop}
-            className="fixed bottom-4 cursor-pointer 
-                z-50 right-4 primary-button-b p-1 text-white"
-            aria-label="Scroll to top"
-        >
-            <ArrowUp size={24} />
-        </button>
-    );
+    return <ArrowUpCircle 
+        onClick={scrollToTop}
+        className="fixed bottom-4 cursor-pointer 
+            z-50 right-4 text-teal-700"
+        aria-label="Scroll to top"
+        size={30} />
 }

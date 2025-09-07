@@ -70,8 +70,9 @@ export function ShopByCategories() {
                                 flex flex-col justify-center items-center gap-2
                                 transition-colors duration-200">
                             <span
-                                className='primary-button-w text-black p-4 
-                                    rounded-lg border border-gray-200'
+                                className='bg-white text-black p-4 
+                                    rounded-lg border-b border-neutral-300
+                                    ring ring-neutral-300'
                             >
                                 <cat.icon 
                                     size={25}

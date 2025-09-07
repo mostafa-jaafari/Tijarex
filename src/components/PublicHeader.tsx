@@ -36,8 +36,6 @@ export function PublicHeader() {
 
           {/* --- CTA-Buttons & Favorite btn & Shopping-Card btn --- */}
           <div className="flex items-center gap-6">
-            {/* --- CTA-Buttons --- */}
-            {/* <GetStartedBtn /> */}
             
             {/* --- Favorite btn & Shopping-Card btn --- */}
             <div className="flex items-center gap-6">

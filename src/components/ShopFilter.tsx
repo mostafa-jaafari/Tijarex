@@ -124,7 +124,7 @@ export function ShopFilter() {
       {/* --- Apply Button --- */}
       <button 
         onClick={() => HandleApplyFilters()}
-        className="w-full py-1.5 primary-button-b
+        className="w-full py-1.5
           rounded-lg shadow-sm text-gray-300 hover:text-gray-100">
         Apply Filters
       </button>

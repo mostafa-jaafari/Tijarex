@@ -53,23 +53,3 @@ body {
 ::-webkit-scrollbar-thumb {background:#1A1A1A;border-radius:10px}
 ::-webkit-scrollbar-thumb:hover {background:#4b258a}
 * {scrollbar-width:thin;scrollbar-color:#1A1A1A transparent}
-
-.primary-button-b {
-  background: linear-gradient(to bottom, #292929, black, #181818);
-  border-radius: 0.5rem; /* rounded-lg */
-  transition: all 0.2s;
-}
-
-.primary-button-b:hover {
-  background: linear-gradient(to bottom, #000000, #181818);
-}
-.primary-button-w {
-  background: linear-gradient(to bottom, #ffffff, #dbdbdb);
-  cursor: pointer;
-  border-radius: 0.5rem; /* rounded-lg */
-  transition: all 0.2s;
-}
-
-.primary-button-w:hover {
-  background-color: white;
-}
