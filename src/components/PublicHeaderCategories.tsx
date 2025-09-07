@@ -10,8 +10,7 @@ export function PublicHeaderCategories() {
   return (
     <section
         className="flex items-center justify-center gap-12 bg-white
-             border-b border-neutral-300 ring ring-neutral-200
-             shadow-sm"
+             border-b border-neutral-200"
     >
       {Available_Categories.map((cat, idx) => {
         return (
