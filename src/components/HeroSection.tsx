@@ -5,7 +5,7 @@ import React from 'react'
 export function HeroSection() {
   return (
     <section
-      className='min-h-100 px-6 bg-white flex items-center justify-between gap-3'
+      className='min-h-100 px-6 bg-neutral-100 flex items-center justify-between gap-3'
     >
       {/* --- Left Section --- */}
       <div

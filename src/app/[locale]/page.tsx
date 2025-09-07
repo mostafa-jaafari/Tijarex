@@ -13,7 +13,7 @@ export const PrimaryLight = "bg-white hover:bg-neutral-50 border-b border-neutra
 export const InputStyles = "w-full px-4 py-2.5 bg-white border-b border-neutral-400 ring ring-neutral-200 text-neutral-700 rounded-lg placeholder:text-neutral-400 focus:outline-none focus:ring-neutral-400 focus:border-b-2 transition-all";
 export default function Home() {
   return (
-    <main className="w-full">
+    <main className="w-full bg-white">
       <PublicHeader />
       <PublicHeaderCategories />
       <HeroSection />
