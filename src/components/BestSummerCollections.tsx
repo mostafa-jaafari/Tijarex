@@ -19,41 +19,30 @@ export function BestSummerCollections() {
                 SHOWBUTTONS
                 SCROLLREF={scrollRef}
             />
-            {isLoadingGlobalProducts && (
-                <div
-                    className='w-full flex items-center flex-nowrap 
-                        overflow-x-auto scrollbar-hide gap-2'
-                >
-                    {Array(6).fill(0).map((_, idx) => {
-                        return(
+            <div
+                ref={scrollRef}
+                className='w-full flex items-center flex-nowrap 
+                    overflow-x-auto hide-scrollbar gap-2'
+            >
+                {isLoadingGlobalProducts ? Array(6).fill(0).map((_, idx) => {
+                    return(
+                        <div
+                            key={idx}
+                            className='w-full max-w-[250px] min-h-40 rounded-xl 
+                                space-y-2 flex-shrink-0 overflow-hidden'
+                        >
+                            <div className='w-full h-60 bg-gray-300 animate-pulse'/>
+                            <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
+                            <span className='flex w-50 h-4 rounded-full bg-gray-200 animate-pulse' />
                             <div
-                                key={idx}
-                                className='w-full max-w-[250px] min-h-40 rounded-xl 
-                                    space-y-2 flex-shrink-0 overflow-hidden'
+                                className='flex items-center gap-2'
                             >
-                                <div className='w-full h-60 bg-gray-300 animate-pulse'/>
-                                <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
-                                <span className='flex w-50 h-4 rounded-full bg-gray-200 animate-pulse' />
-                                <div
-                                    className='flex items-center gap-2'
-                                >
-                                    <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
-                                    <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
-                                </div>
+                                <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
+                                <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
                             </div>
-                        )
-                    })}
-                </div>
-            )}
-
-            {/* Products list */}
-            {!isLoadingGlobalProducts && (
-                <div
-                    ref={scrollRef}
-                    className='w-full flex items-center flex-nowrap 
-                        overflow-x-auto scrollbar-hide gap-2'
-                >
-                    {summerProducts.map((product) => (
+                        </div>
+                    )
+                }) : (summerProducts.length > 0) && summerProducts.map((product) => (
                         <BestSellingProductUI
                             key={product.id}
                             PRODUCTCATEGORY={product.category}
@@ -66,8 +55,7 @@ export function BestSummerCollections() {
                             OWNER={product.owner}
                         />
                     ))}
-                </div>
-            )}
+            </div>
         </section>
     )
 }
