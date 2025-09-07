@@ -180,7 +180,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
                             const isActive = params === nav.href;
                             return (
                                 <Link
-                                    href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${nav.href !== "seller" && nav.href !== "affiliate" ? nav.href : ""}`}
+                                    href={`/admin/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}/${nav.href !== "seller" && nav.href !== "affiliate" ? nav.href : ""}`}
                                     key={idx}
                                     prefetch
                                     className={`relative

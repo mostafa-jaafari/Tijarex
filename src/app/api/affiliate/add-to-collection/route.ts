@@ -44,24 +44,32 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: 'Original product data is missing.' }, { status: 404 });
         }
 
+        // --- Start Firestore Batch Transaction ---
         const batch = adminDb.batch();
-        const affiliateProductsRef = adminDb.collection('AffiliateProducts').doc();
 
-        // --- FINAL DATA STRUCTURE ---
-        // Manually constructing the object with all requested fields.
-        const newAffiliateProduct = {
-            // --- Fields from the Original Product (as-is) ---
+        // 1. Prepare the new product document for the 'AffiliateProducts' collection
+        const affiliateProductsRef = adminDb.collection('AffiliateProducts').doc();
+        const newAffiliateProductId = affiliateProductsRef.id; // Get the unique ID for the new product
+
+        // 2. (NEW) Prepare the new product document for the 'MarketplaceProducts' collection
+        // We use the same ID as the affiliate product to maintain a clear link between them.
+        const marketplaceProductRef = adminDb.collection('MarketplaceProducts').doc(newAffiliateProductId);
+
+        // --- Construct the final data object ---
+        // This object will be used for both new documents.
+        const newProductData = {
+            // --- Fields from the Original Product ---
             originalProductId: originalProductDoc.id,
             owner: originalProductData.owner || null,
             product_images: originalProductData.product_images || [],
-            category: originalProductData.category || 'Uncategorized', // Including category
+            category: originalProductData.category || 'Uncategorized',
             sizes: originalProductData.sizes || [],
             colors: originalProductData.colors || [],
-            stock: originalProductData.stock || 0, // Including stock
-            sales: originalProductData.sales || 0, // Including sales
+            stock: originalProductData.stock || 0,
+            sales: originalProductData.sales || 0,
             currency: originalProductData.currency || 'USD',
 
-            // --- Fields from the Affiliate (prefixed) ---
+            // --- Fields from the Affiliate ---
             AffiliateOwnerEmail: userEmail,
             AffiliateTitle: affiliateTitle,
             AffiliateDescription: affiliateDescription,
@@ -70,21 +78,23 @@ export async function POST(request: Request) {
             AffiliateCreatedAt: new Date().toISOString(),
         };
 
-        batch.set(affiliateProductsRef, newAffiliateProduct);
+        // Add the creation of both documents to the batch
+        batch.set(affiliateProductsRef, newProductData); // Add to AffiliateProducts
+        batch.set(marketplaceProductRef, newProductData); // (NEW) Add to MarketplaceProducts
 
+        // 3. Prepare the update for the user's document
         const userRef = adminDb.collection('users').doc(userEmail);
-        const newAffiliateProductId = affiliateProductsRef.id;
-
         batch.update(userRef, {
             AffiliateProductsIDs: FieldValue.arrayUnion(newAffiliateProductId)
         });
 
+        // --- Commit all operations atomically ---
         await batch.commit();
 
         return NextResponse.json({ 
-            message: 'Product claimed successfully!',
+            message: 'Product claimed and listed on marketplace successfully!',
             affiliateProductId: newAffiliateProductId,
-            data: newAffiliateProduct,
+            data: newProductData,
         }, { status: 201 });
 
     } catch (error) {

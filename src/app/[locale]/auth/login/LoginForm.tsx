@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { auth } from "@/lib/FirebaseClient";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import Link from "next/link";
@@ -13,6 +13,17 @@ import { Mail, Lock, Loader2 } from "lucide-react"; // Using react-Lucide for a 
 // A modern, enhanced version of the LoginForm component.
 export function LoginForm() {
   const router = useRouter();
+  const pathname = usePathname();
+  const [prevPath, setPrevPath] = useState(pathname);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (prevPath !== pathname) {
+      console.log("Path changed from:", prevPath, "to:", pathname);
+      setPrevPath(pathname);
+      setLoading(false);
+    }
+  }, [pathname, prevPath]);
+
   const [loginCrredential, setLoginCredential] = useState({
     email: "",
     password: "",
@@ -25,7 +36,6 @@ export function LoginForm() {
     }));
   };
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,8 +90,6 @@ export function LoginForm() {
         setError("An unexpected error occurred");
         console.error("Login Error:", err);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
