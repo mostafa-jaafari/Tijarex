@@ -11,6 +11,7 @@ import { CategoryInput } from "@/components/Upload-Products/CategoryInput";
 import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
+import { PermissionCheckBox, ProductPermissions } from "../Upload-Products/UploadPermission";
 // --- Type Definitions ---
 interface ProductFile {
     file: File;
@@ -34,6 +35,10 @@ export default function UploadProducts() {
     const [stock, setStock] = useState("");
     const [colors, setColors] = useState<string[]>([]);
     const [sizes, setSizes] = useState<string[]>([]);
+    const [permissions, setPermissions] = useState<ProductPermissions>({
+        availableForAffiliates: true,
+        sellInMarketplace: true,
+    });
     const [productFiles, setProductFiles] = useState<ProductFile[]>([]); // <-- UPDATED STATE
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -124,7 +129,7 @@ export default function UploadProducts() {
         e.preventDefault();
         if (isSubmitting || isProcessingImages) return;
 
-        const requiredFields = { title, regularPrice, stock, category };
+        const requiredFields = { title, regularPrice, stock, category, permissions };
         const missingFields = Object.entries(requiredFields)
             .filter(([value]) => !value)
             .map(([key]) => key);
@@ -196,6 +201,7 @@ export default function UploadProducts() {
                 sizes,
                 product_images: uploadedImageUrls,
                 currency: 'DH',
+                permissions: permissions,
             };
 
             const idToken = await user.getIdToken(true);
@@ -457,7 +463,6 @@ export default function UploadProducts() {
                             </div>
                         </div>
                     </div>
-
                     <AnimatePresence>
                         {(productFiles.length > 0 || isProcessingImages) && (
                         <motion.div layout className="grid grid-cols-4 gap-4">
@@ -502,6 +507,17 @@ export default function UploadProducts() {
                             </div>
                         </div>
                     </div>
+                    {(permissions.availableForAffiliates && permissions.sellInMarketplace) && (
+                        <div
+                            className="py-2 px-3 rounded-lg bg-orange-500"
+                        >
+                            you must choose just one choice !
+                        </div>
+                    )}
+                        <PermissionCheckBox 
+                            permissions={permissions}
+                            setPermissions={setPermissions}
+                        />
                     <div className="w-full flex items-center 
                         justify-end gap-3">
                         <button
@@ -515,7 +531,9 @@ export default function UploadProducts() {
                                 !category ||
                                 sizes.length === 0 ||
                                 colors.length === 0 ||
-                                productFiles.length === 0
+                                productFiles.length === 0 ||
+                                !permissions.availableForAffiliates && !permissions.sellInMarketplace ||
+                                permissions.availableForAffiliates && permissions.sellInMarketplace
                             }
                             className="px-6 py-3 text-sm font-semibold text-white 
                                 cursor-pointer bg-purple-600 rounded-lg hover:bg-purple-700 
