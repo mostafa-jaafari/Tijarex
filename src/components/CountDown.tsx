@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 interface CountdownProps {
-  targetDate: string;
+  targetDate?: string;
   CONTAINERCLASSNAME?: string;
   DAYTIMECLASSNAME?: string;
   DAYLABELCLASSNAME?: string;
@@ -36,6 +36,7 @@ export function Countdown({
   SECLABEL,
 }: CountdownProps) {
   const calculateTimeLeft = () => {
+    if(!targetDate)return;
     const difference = +new Date(targetDate) - +new Date();
     if (difference > 0) {
       return {
@@ -50,10 +51,7 @@ export function Countdown({
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
-  // إعادة الحساب عند تغير targetDate فورًا
   useEffect(() => {
-    setTimeLeft(calculateTimeLeft());
-
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
@@ -63,21 +61,24 @@ export function Countdown({
 
   return (
     <div className={CONTAINERCLASSNAME}>
-      <div>
+      <div className="text-center">
+        <div className={DAYTIMECLASSNAME}>{timeLeft?.days}</div>
         <div className={DAYLABELCLASSNAME}>{DAYLABEL}</div>
-        <div className={DAYTIMECLASSNAME}>{timeLeft.days}</div>
       </div>
-      <div>
+       <div className="text-2xl font-bold">:</div>
+      <div className="text-center">
+        <div className={HOURTIMECLASSNAME}>{timeLeft?.hours}</div>
         <div className={HOURLABELCLASSNAME}>{HOURLABEL}</div>
-        <div className={HOURTIMECLASSNAME}>{timeLeft.hours}</div>
       </div>
-      <div>
+       <div className="text-2xl font-bold">:</div>
+      <div className="text-center">
+        <div className={MINTIMECLASSNAME}>{timeLeft?.minutes}</div>
         <div className={MINLABELCLASSNAME}>{MINLABEL}</div>
-        <div className={MINTIMECLASSNAME}>{timeLeft.minutes}</div>
       </div>
-      <div>
+       <div className="text-2xl font-bold">:</div>
+      <div className="text-center">
+        <div className={SECTIMECLASSNAME}>{timeLeft?.seconds}</div>
         <div className={SECLABELCLASSNAME}>{SECLABEL}</div>
-        <div className={SECTIMECLASSNAME}>{timeLeft.seconds}</div>
       </div>
     </div>
   );

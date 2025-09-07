@@ -55,7 +55,7 @@ export function HeadlineSection({ TITLE, SHOWBUTTONS, ISTITLELINK, TITLEHREFLINK
     };
 
     return (
-        <section className='w-full flex items-center justify-between mb-4'>
+        <section className='w-full flex items-center justify-between mb-8'>
             {ISTITLELINK ? (
                 <Link
                     href={TITLEHREFLINK || ""}
