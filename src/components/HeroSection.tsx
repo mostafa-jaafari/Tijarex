@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 export function HeroSection() {
@@ -6,6 +7,7 @@ export function HeroSection() {
     <section
       className='min-h-100 px-6 bg-white flex items-center justify-between gap-3'
     >
+      {/* --- Left Section --- */}
       <div
         className='relative grow h-90 overflow-hidden rounded-xl flex-shrink-0 
           bg-neutral-50 border-b border-neutral-400 ring ring-neutral-200'
@@ -46,11 +48,48 @@ export function HeroSection() {
             from-white to-transparent z-10 w-full h-[60%]'
         />
       </div>
+      {/* --- Right Section --- */}
       <div
-        className='w-3/5 h-90 overflow-hidden rounded-xl flex-shrink-0 
-          bg-green-500'
+        className='w-3/5 overflow-hidden rounded-xl flex-shrink-0 
+          bg-teal-600 border-b border-teal-800 ring ring-teal-600/90
+          flex items-start justify-between gap-3'
       >
-        Second
+        {/* --- Left Coontent Text --- */}
+        <div
+          className='w-1/2 px-12 py-16 h-90 flex flex-col justify-between flex-shrink-0'
+        >
+          <h1
+            className='text-2xl font-bold text-white'
+          >
+            Discover Products You’ll Love, At Prices You Can’t Resist
+          </h1>
+          <p
+            className='text-neutral-300 my-3 text-sm'
+          >
+            Find unique deals, trending items, and exclusive offers tailored just for you.
+          </p>
+          <Link
+            href="/shop"
+            className='mt-4 w-max text-sm bg-white hover:bg-white/90 rounded-lg
+              border-b border-white ring ring-white/90 px-6 py-1.5 
+              cursor-pointer text-neutral-600 hover:text-700 font-semibold'
+          >
+            Shop Now
+          </Link>
+        </div>
+        {/* --- Right Image Content --- */}
+        <div
+          className='relative w-1/2 h-90 flex-shrink-0 overflow-hidden'
+        >
+          <Image
+            src="/HeroImage1.jpg"
+            alt='Hero-Image-1.jpg'
+            fill
+            className='object-cover'
+            priority
+            quality={100}
+          />
+        </div>
       </div>
     </section>
   )
