@@ -16,7 +16,7 @@ export default function Home() {
       <PublicHeader />
       <HeroSection />
       <section
-        className="px-6 mt-12 space-y-30"
+        className="px-6 mt-12 space-y-16"
       >
         <BestSellingProducts />
         <ShopByCategories />

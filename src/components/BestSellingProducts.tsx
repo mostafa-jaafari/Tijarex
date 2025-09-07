@@ -65,7 +65,7 @@ export function BestSellingProducts() {
                             PRODUCTREGULARPRICE={product.original_regular_price}
                             PRODUCTTITLE={product.title}
                             STOCK={product.stock}
-                            OWNER={product.owner}
+                            OWNER={product?.owner}
                         />
                     ))}
                 </div>

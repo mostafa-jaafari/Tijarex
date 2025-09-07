@@ -1,6 +1,6 @@
 "use client";
 import { useQuickViewProduct } from '@/context/QuickViewProductContext';
-import { BadgeCheck, Eye, Flame, ShoppingCart, Tag } from 'lucide-react';
+import { Flame, Tag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
@@ -12,10 +12,10 @@ interface ProductCardProps{
     PRODUCTREGULARPRICE: number;
     PRODUCTSALEPRICE: number;
     PRODUCTCATEGORY: string;
-    OWNER: {email: string; image: string; name: string;};
+    OWNER?: {email: string; image: string; name: string;};
     STOCK: number;
 }
-export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORY, OWNER, STOCK }: ProductCardProps) {
+export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORY }: ProductCardProps) {
     const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
     const HandleQuickView = () => {
         setProductID(PRODUCTID as string || "");
@@ -23,44 +23,21 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
     }
     return (
         <section
-            className='group relative w-full max-w-[250px] min-h-40 rounded-xl 
+            className='relative w-full max-w-[250px] min-h-40 
                 overflow-hidden flex-shrink-0'
         >
             <div
-                className='relative w-full h-60 overflow-hidden'
+                className='relative w-full h-60 overflow-hidden rounded-lg'
             >
                 <Image
                     src={PRODUCTIMAGES[0] || ""}
+                    onClick={HandleQuickView}
                     alt=''
                     fill
                     loading='lazy'
-                    className="object-cover hover:scale-115 hover:rotate-5 
+                    className="object-cover hover:scale-105 cursor-pointer
                         transition-all duration-300"
                 />
-                <div
-                    className='translate-y-20 group-hover:translate-y-0 
-                        absolute z-20 bottom-0 left-0 w-full 
-                        bg-gradient-to-t from-black/80 py-3 to-transparent 
-                        flex justify-center gap-1 px-3
-                        transition-transform duration-300'
-                >
-                    <button
-                        onClick={HandleQuickView}
-                        className={`flex items-center gap-1 py-1 px-3 w-full 
-                            rounded-lg text-sm font-semibold text-nowrap
-                            bg-gradient-to-b from-neutral-700 to-black
-                            hover:from-black border-x border-t border-neutral-600
-                            cursor-pointer text-gray-200`}
-                    >
-                        <Eye size={16}/> Quick view
-                    </button>
-                    <button
-                        className={`flex items-center gap-1 py-1 px-3 w-full 
-                            rounded-lg text-sm font-semibold text-nowrap`}
-                    >
-                        <ShoppingCart size={18}/> Add to Cart
-                    </button>
-                </div>
             </div>
             {/* --- Trend Badge --- */}
             <span
@@ -71,91 +48,40 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
             </span>
             {/* --- Product Infos --- */}
             
-            <div
-                className='pt-2'
+            {/* --- Category --- */}
+            <Link
+                href={`/c/shop?cat=${PRODUCTCATEGORY}`}
+                className='mt-2 w-max text-purple-700 font-semibold 
+                    text-xs hover:text-black/80 cursor-pointer 
+                    capitalize flex items-center gap-1'
             >
-                <Link
-                    href={`/c/shop?cat=${PRODUCTCATEGORY}`}
-                    className='w-max text-gray-400 text-sm hover:text-black/80
-                        cursor-pointer flex items-center gap-1'
+                <Tag size={14} />
+                <p>
+                    {PRODUCTCATEGORY}
+                </p>
+            </Link>
+            <h1
+                onClick={HandleQuickView}
+                className='mb-1 font-semibold text-sm text-neutral-800 
+                    cursor-pointer hover:text-neutral-600'
+            >
+                {PRODUCTTITLE}
+            </h1>
+
+            <span
+                className='flex items-end gap-2'
+            >
+                <b
+                    className='text-purple-700'
                 >
-                    <Tag size={14} />
-                    <p
-                        className='lowercase'
-                    >
-                        {PRODUCTCATEGORY}
-                    </p>
-                </Link>
-            </div>
-                <h1
-                    className='text-sm'
+                    {PRODUCTSALEPRICE} Dh
+                </b>
+                <del
+                    className='text-sm text-neutral-500'
                 >
-                    {PRODUCTTITLE}
-                </h1>
-                <div
-                    className='text-sm text-green-600 font-semibold
-                        flex items-center gap-1'
-                >
-                    ●<span>({STOCK})</span> in stock
-                </div>
-                <span
-                    className='flex items-center gap-2'
-                >
-                    <del
-                        className='text-xs text-gray-400'
-                    >
-                        {PRODUCTREGULARPRICE} Dh
-                    </del>
-                    <b
-                        className='text-teal-700'
-                    >
-                        {PRODUCTSALEPRICE} Dh
-                    </b>
-                </span>
-                {/* --- Seller Infos --- */}
-                {OWNER ? (
-                    <div
-                        className='flex items-center gap-2'
-                    >
-                        <div
-                            className='relative flex-shrink-0 w-6 h-6 
-                                rounded-full overflow-hidden'
-                        >
-                            <Image
-                                src={OWNER.image || ""}
-                                alt=''
-                                fill
-                                className='object-cover'
-                            />
-                        </div>
-                        <h1
-                            className='text-sm text-black/50 hover:text-black 
-                                cursor-pointer flex items-center gap-1'
-                        >
-                            {OWNER.name} <BadgeCheck size={14}/>
-                        </h1>
-                    </div>
-                ) : (
-                    <div
-                        className='flex items-center gap-2'
-                    >
-                        <div
-                            className='relative flex-shrink-0 w-6 h-6'
-                        >
-                            <Image
-                                src="/LOGO1.png"
-                                alt=''
-                                fill
-                                className='object-contain'
-                            />
-                        </div>
-                        <h1
-                            className='text-sm text-teal-700 flex items-center gap-1'
-                        >
-                            Shopex <BadgeCheck size={14}/>
-                        </h1>
-                    </div>
-                )}
+                    {PRODUCTREGULARPRICE} Dh
+                </del>
+            </span>
         </section>
     )
 }
