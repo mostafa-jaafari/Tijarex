@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import Image from "next/image";
-import { ShowHeaderMenu } from "./ShowHeaderMenu";
+import { DropDownPublicHeaderMenu } from "./DropDownPublicHeaderMenu";
 import { DropDownShoppingCart } from "./DropDownShoppingCart";
 import { SearchPublicHeaderInput } from "./SearchPublicHeaderInput";
 
@@ -42,7 +42,7 @@ export function PublicHeader() {
             {/* <GetStartedBtn /> */}
             
             {/* --- Favorite btn & Shopping-Card btn --- */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               {/* --- Switch Languages --- */}
               {/* <SwitchLanguage
                 CLASSNAME={`flex items-center gap-1 text-xs
@@ -67,7 +67,7 @@ export function PublicHeader() {
               {/* --- Shopping Cart --- */}
                 <DropDownShoppingCart />
               {/* --- Menu --- */}
-              <ShowHeaderMenu />
+              <DropDownPublicHeaderMenu />
             </div>
           </div>
         </div>

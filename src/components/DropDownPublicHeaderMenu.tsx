@@ -1,14 +1,13 @@
 "use client";
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react'
-import { Home, Menu, User, LayoutDashboard, Settings } from "lucide-react";
+import { Home, Menu, User, JoystickIcon } from "lucide-react";
 
-export function ShowHeaderMenu() {
+export function DropDownPublicHeaderMenu() {
     const MenuDropDown = [
         { label: "home", href: "/", icon: Home },
-        { label: "profile", href: "/", icon: User },
-        { label: "dashboard", href: "/", icon: LayoutDashboard },
-        { label: "settings", href: "/", icon: Settings },
+        { label: "join us", href: "/", icon: JoystickIcon },
+        { label: "login", href: "/", icon: User },
     ];
 
     const MenuRef = useRef<HTMLSpanElement | null>(null);
@@ -36,12 +35,12 @@ export function ShowHeaderMenu() {
 
             <div
                 className={`
-                    absolute right-6 top-full min-w-[220px]
+                    absolute right-6 top-full w-[180px]
                     flex flex-col items-start bg-white rounded-xl
-                    border border-gray-100 shadow p-1
+                    border border-gray-100 shadow p-1 mt-1
                     transform transition-all duration-200 origin-top-right
                     ${isShowMenu 
-                        ? "opacity-100 max-h-64 overflow-hidden opacity-100"
+                        ? "opacity-100 max-h-64 overflow-hidden"
                         : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
                     }
                 `}
@@ -51,10 +50,10 @@ export function ShowHeaderMenu() {
                         key={idx}
                         href={item.href}
                         className="w-full py-1.5 px-2 rounded-lg flex 
-                            items-center gap-2 hover:bg-gray-50
-                            hover:text-gray-700"
+                            items-center gap-2 hover:bg-purple-100
+                            hover:text-neutral-700 capitalize text-sm"
                     >
-                        <item.icon size={20} /> {item.label}
+                        <item.icon size={18} /> {item.label}
                     </Link>
                 ))}
             </div>
