@@ -3,15 +3,15 @@ import { Heart } from "lucide-react";
 import Image from "next/image";
 import { DropDownShoppingCart } from "./DropDownShoppingCart";
 import { SearchPublicHeaderInput } from "./SearchPublicHeaderInput";
-import { PrimaryLight } from "@/app/[locale]/page";
 
 
 export function PublicHeader() {
   return (
       <section
-        className="sticky top-0 z-50 bg-white/70 backdrop-blur-sm
+        className="sticky top-0 z-50 bg-white
           transition-all duration-500 shadow-sm
-          ease-in-out"
+          ease-in-out border-b border-neutral-300
+          ring ring-neutral-200"
       >
         <div
           className="relative w-full py-1 px-6 flex justify-between items-center
