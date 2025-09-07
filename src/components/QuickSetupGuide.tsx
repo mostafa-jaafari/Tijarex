@@ -1,8 +1,7 @@
 "use client";
-import { CircleCheck, Check, CircleDashed, ChevronUp, ChevronDown } from 'lucide-react';
+import { CircleCheck, CircleDashed, ChevronUp, ChevronDown, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { PrimaryDark, PrimaryLight } from '@/app/[locale]/page';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
 import { useGlobalProducts } from '@/context/GlobalProductsContext';
@@ -174,13 +173,22 @@ export default function QuickSetupGuide() {
                           {step.isLoadingButton ? (
                               <div className="h-9 w-28 bg-gray-200 rounded-lg animate-pulse ml-auto"></div>
                           ) : step.iscompleted ? (
-                              <button disabled className="inline-flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium text-green-700 bg-green-100 rounded-md cursor-not-allowed">
-                                  <Check size={16}/> Completed
+                              <button 
+                                disabled 
+                                className="inline-flex items-center justify-center 
+                                  gap-2 px-3 py-1.5 text-sm font-medium text-green-700 
+                                  bg-green-100 rounded-lg cursor-not-allowed
+                                  ring ring-green-200"
+                              >
+                                  <CheckCircle size={16}/> Completed
                               </button>
                           ) : (
                               <Link
                                   href={`/${userInfos?.UserRole === "seller" ? "seller" : "affiliate"}${step.link.href}`}
-                                  className={`${PrimaryDark} px-6 py-2`} // Button is always active if not complete
+                                  className={`bg-white text-sm text-neutral-700 border-b 
+                                      border-neutral-400 ring ring-neutral-200 
+                                      rounded-lg hover:bg-neutral-50 px-3 py-1.5 
+                                      capitalize`}
                               >
                                   {step.btntitle}
                               </Link>
