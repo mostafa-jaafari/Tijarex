@@ -12,7 +12,6 @@ import { Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
 // --- Type Definitions ---
-interface UploadProgress { [fileName: string]: number; }
 interface ProductFile {
     file: File;
     url: string; // Memoized URL to prevent flicker
@@ -40,7 +39,6 @@ export default function UploadProducts() {
     const [isDragging, setIsDragging] = useState(false);
     const [isProcessingImages, setIsProcessingImages] = useState(false);
     const [processingFileCount, setProcessingFileCount] = useState(0);
-    const [uploadProgress, setUploadProgress] = useState<UploadProgress>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // --- CRUCIAL: Cleanup Object URLs to prevent memory leaks ---
@@ -143,7 +141,6 @@ export default function UploadProducts() {
         }
 
         setIsSubmitting(true);
-        setUploadProgress({});
         toast.info("Uploading images, please wait...");
 
         try {
@@ -174,12 +171,6 @@ export default function UploadProducts() {
 
                         const xhr = new XMLHttpRequest();
                         xhr.open("POST", `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`);
-                        xhr.upload.onprogress = (event) => {
-                            if (event.lengthComputable) {
-                                const percent = Math.round((event.loaded * 100) / event.total);
-                                setUploadProgress(prev => ({ ...prev, [file.name]: percent }));
-                            }
-                        };
                         xhr.onload = () => {
                             if (xhr.status >= 200 && xhr.status < 300) {
                                 resolve(JSON.parse(xhr.responseText).secure_url);
