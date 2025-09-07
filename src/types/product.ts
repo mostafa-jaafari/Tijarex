@@ -21,6 +21,10 @@ export type ProductType = {
   description: string;
   sizes: string[];
   colors: string[];
+  permissions: {
+    availableForAffiliates?: boolean;
+    sellInMarketplace?: boolean;
+  };
   owner?: {
     name: string;
     image: string;
