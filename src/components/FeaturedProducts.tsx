@@ -63,7 +63,7 @@ export default function FeaturedProducts() {
                 </button>
             </div>
             <Countdown 
-                targetDate="2025-08-18"
+                targetDate="2025-09-08"
                 CONTAINERCLASSNAME='max-w-60 w-full flex justify-end gap-2 h-max'
                 DAYTIMECLASSNAME='w-8 h-8 flex items-center justify-center font-semibold bg-white rounded-lg shadow-sm'
                 HOURTIMECLASSNAME='w-8 h-8 flex items-center justify-center font-semibold bg-white rounded-lg shadow-sm'
