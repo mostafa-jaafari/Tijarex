@@ -55,7 +55,7 @@ export function BestSellingProducts() {
                     className='w-full flex items-center flex-nowrap 
                         overflow-x-auto scrollbar-hide gap-2'
                 >
-                    {trendProducts.map((product) => (
+                    {trendProducts.length > 0 && trendProducts.map((product) => (
                         <BestSellingProductUI
                             key={product.id}
                             PRODUCTCATEGORY={product.category}
