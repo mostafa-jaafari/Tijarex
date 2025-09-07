@@ -61,7 +61,7 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                     className={`absolute bottom-1 left-1/2 -translate-x-1/2 
                         backdrop-blur-sm bg-neutral-200 rounded-full 
                         p-0.5 flex gap-1`}>
-                    {PRODUCTIMAGES.map((_, i) => (
+                    {PRODUCTIMAGES.length > 1 && PRODUCTIMAGES.map((_, i) => (
                         <div 
                             key={i} 
                             onClick={() => setCurrentImage(i)} 
@@ -74,12 +74,14 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                         />
                     ))}
                 </div>
-                <AnimatePresence>
-                    {isHovered && (<>
-                        <motion.button onClick={(e) => handleImageNavigation(e, -1)} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white cursor-pointer"> <ArrowLeft size={16} /> </motion.button>
-                        <motion.button onClick={(e) => handleImageNavigation(e, 1)} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white cursor-pointer"> <ArrowRight size={16} /> </motion.button>
-                    </>)}
-                </AnimatePresence>
+                {PRODUCTIMAGES.length > 1 && (
+                    <AnimatePresence>
+                        {isHovered && (<>
+                            <motion.button onClick={(e) => handleImageNavigation(e, -1)} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="absolute top-1/2 left-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white cursor-pointer"> <ArrowLeft size={16} /> </motion.button>
+                            <motion.button onClick={(e) => handleImageNavigation(e, 1)} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="absolute top-1/2 right-2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md hover:bg-white cursor-pointer"> <ArrowRight size={16} /> </motion.button>
+                        </>)}
+                    </AnimatePresence>
+                )}
             </div>
             {/* --- Trend Badge --- */}
             <span

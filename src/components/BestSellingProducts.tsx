@@ -21,41 +21,31 @@ export function BestSellingProducts() {
             />
 
             {/* Loading / Error handling */}
-            {isLoadingGlobalProducts && (
-                <div
-                    className='w-full flex items-center flex-nowrap 
-                        overflow-x-auto scrollbar-hide gap-2 hide-scrollbar'
-                >
-                    {Array(6).fill(0).map((_, idx) => {
-                        return(
-                            <div
-                                key={idx}
-                                className='w-full max-w-[250px] min-h-40 rounded-xl 
-                                    space-y-2 flex-shrink-0 overflow-hidden'
-                            >
-                                <div className='w-full h-60 bg-gray-300 animate-pulse'/>
-                                <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
-                                <span className='flex w-50 h-4 rounded-full bg-gray-200 animate-pulse' />
-                                <div
-                                    className='flex items-center gap-2'
-                                >
-                                    <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
-                                    <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
-                                </div>
-                            </div>
-                        )
-                    })}
-                </div>
-            )}
-
-            {/* Products list */}
-            {!isLoadingGlobalProducts && (
-                <div
-                    ref={scrollRef}
-                    className='w-full flex items-center flex-nowrap 
-                        overflow-x-auto scrollbar-hide gap-2'
-                >
-                    {trendProducts.length > 0 && trendProducts.map((product) => (
+            <div
+                ref={scrollRef}
+                className='w-full flex items-center flex-nowrap
+                    overflow-x-auto scrollbar-hide gap-2 hide-scrollbar'
+            >
+            {isLoadingGlobalProducts ? Array(6).fill(0).map((_, idx) => {
+                return(
+                    <div
+                        key={idx}
+                        ref={scrollRef}
+                        className='w-full max-w-[250px] min-h-40 rounded-xl 
+                            space-y-2 flex-shrink-0 overflow-hidden'
+                    >
+                        <div className='w-full h-60 bg-gray-300 animate-pulse'/>
+                        <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
+                        <span className='flex w-50 h-4 rounded-full bg-gray-200 animate-pulse' />
+                        <div
+                            className='flex items-center gap-2'
+                        >
+                            <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
+                            <span className='flex w-20 h-6 rounded-full bg-gray-200 animate-pulse' />
+                        </div>
+                    </div>
+                )
+            }) : trendProducts.length > 0 && trendProducts.map((product) => (
                         <BestSellingProductUI
                             key={product.id}
                             PRODUCTCATEGORY={product.category}
@@ -68,8 +58,7 @@ export function BestSellingProducts() {
                             OWNER={product?.owner}
                         />
                     ))}
-                </div>
-            )}
+            </div>
         </section>
     );
 }
