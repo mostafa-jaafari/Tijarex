@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import Image from "next/image";
-import { DropDownPublicHeaderMenu } from "./DropDownPublicHeaderMenu";
 import { DropDownShoppingCart } from "./DropDownShoppingCart";
 import { SearchPublicHeaderInput } from "./SearchPublicHeaderInput";
+import { PrimaryLight } from "@/app/[locale]/page";
 
 
 export function PublicHeader() {
@@ -65,8 +65,16 @@ export function PublicHeader() {
               
               {/* --- Shopping Cart --- */}
                 <DropDownShoppingCart />
-              {/* --- Menu --- */}
-              <DropDownPublicHeaderMenu />
+              {/* --- Login Button --- */}
+              <Link
+                href="/auth/login"
+                prefetch
+                className={`bg-teal-600/90 hover:bg-teal-600 rounded-lg
+                  text-neutral-100 cursor-pointer text-sm py-1 px-4
+                  border-b border-teal-800 ring ring-teal-600/90`}
+              >
+                Login
+              </Link>
             </div>
           </div>
         </div>
