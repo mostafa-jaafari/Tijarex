@@ -57,11 +57,13 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
     <div className="mt-8 lg:col-span-5 lg:mt-0">
       {/* --- Section 1: Header (Title, Price, Reviews) --- */}
       <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+        <h1 
+            className="text-3xl font-extrabold tracking-tight 
+                text-teal-700 sm:text-4xl">
           {title}
         </h1>
         <div className="flex items-center justify-between">
-          <p className="text-3xl font-bold tracking-tight text-gray-900">
+          <p className="text-3xl font-bold tracking-tight text-teal-700">
             {salePrice.toFixed(2)} dh
             {isOnSale && (
               <span className="ml-3 text-xl font-medium text-gray-400 line-through">
