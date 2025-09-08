@@ -42,7 +42,7 @@ export async function POST(
     const CurrentuserRef = (await adminDb.collection('users').doc(session.user.email).get()).data() as UserInfosType;
     // --- ⭐️ STEP 4: Construct the new review object using session data ---
     const newReview: ReviewTypes = {
-      // Use the name and image from the authenticated session
+      email: CurrentuserRef.email,
       fullname: CurrentuserRef?.fullname || 'Anonymous User',
       image: CurrentuserRef?.profileimage || '', // Fallback to an empty string if no image
       reviewtext: comment.trim(),
@@ -78,6 +78,75 @@ export async function POST(
     if ((error as { message: string; }).message === "Product not found") {
       return NextResponse.json({ message: 'Product not found.' }, { status: 404 });
     }
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+
+// --- ⭐️ NEW: DELETE an existing review ---
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id: id } = params;
+    const session = await getServerSession(authOptions);
+
+    // 1. Authenticate the user
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ message: 'Authentication required.' }, { status: 401 });
+    }
+
+    // 2. Get the specific review object to delete from the request body
+    const { reviewToDelete }: { reviewToDelete: ReviewTypes } = await request.json();
+    if (!reviewToDelete || !reviewToDelete.createdAt) {
+        return NextResponse.json({ message: 'Invalid review data provided.' }, { status: 400 });
+    }
+
+    // 3. Authorize: Ensure the logged-in user is the one who created the review
+    if (session.user.email !== reviewToDelete.email) {
+        return NextResponse.json({ message: 'You are not authorized to delete this review.' }, { status: 403 });
+    }
+
+    const productRef = adminDb.collection('products').doc(id);
+
+    // 4. Use a transaction to safely remove the review and recalculate the rating
+    await adminDb.runTransaction(async (transaction) => {
+        const productDoc = await transaction.get(productRef);
+        if (!productDoc.exists) {
+            throw new Error("Product not found");
+        }
+
+        const productData = productDoc.data();
+        const existingReviews: ReviewTypes[] = productData?.reviews || [];
+
+        // Find the review to remove
+        const reviewToRemove = existingReviews.find(r => r.createdAt === reviewToDelete.createdAt && r.email === session.user.email);
+        if (!reviewToRemove) {
+            throw new Error("Review not found in product list");
+        }
+
+        const remainingReviews = existingReviews.filter(r => r.createdAt !== reviewToRemove.createdAt);
+        
+        // Recalculate the average rating
+        let newAverageRating = 0;
+        if (remainingReviews.length > 0) {
+            const newRatingTotal = remainingReviews.reduce((sum, review) => sum + review.rating, 0);
+            newAverageRating = newRatingTotal / remainingReviews.length;
+        }
+
+        // Atomically remove the review and update the rating
+        transaction.update(productRef, {
+            reviews: FieldValue.arrayRemove(reviewToRemove),
+            rating: parseFloat(newAverageRating.toFixed(2)),
+        });
+    });
+
+    return NextResponse.json({ message: 'Review deleted successfully.' }, { status: 200 });
+
+  } catch (error) {
+    console.error('Failed to delete review:', error);
+    // ... (error handling)
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 export type ReviewTypes = {
+  email: string;
   image: string;
   createdAt: string;
   fullname: string | "unknown";

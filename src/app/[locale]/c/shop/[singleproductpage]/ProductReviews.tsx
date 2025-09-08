@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Star, User } from "lucide-react";
+import { Loader2, Star, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { ReviewTypes } from "@/types/product";
@@ -29,7 +29,7 @@ const StarRatingInput = ({ rating, setRating }: { rating: number; setRating: (r:
           className={`cursor-pointer transition-colors ${
             (hover || rating) >= star
               ? "text-yellow-400 fill-yellow-400"
-              : "text-gray-300"
+              : "text-neutral-300"
           }`}
           onClick={() => setRating(star)}
           onMouseEnter={() => setHover(star)}
@@ -41,7 +41,7 @@ const StarRatingInput = ({ rating, setRating }: { rating: number; setRating: (r:
 };
 
 // --- Main Reviews Component ---
-const REVIEWS_PER_PAGE = 6;
+const REVIEWS_PER_PAGE = 3;
 export function ProductReviews({
   id,
   initialReviews,
@@ -57,6 +57,42 @@ export function ProductReviews({
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
+
+  const handleDeleteReview = async (reviewToDelete: ReviewTypes) => {
+    // Confirm before deleting
+    if (!window.confirm("Are you sure you want to delete your review? This action cannot be undone.")) {
+      return;
+    }
+
+    setDeletingReviewId(reviewToDelete.createdAt); // Use createdAt as a unique ID
+
+    try {
+      const response = await fetch(`/api/products/${id}/reviews`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviewToDelete }), // Send the entire review object
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete review.");
+      }
+
+      // Optimistic UI update: remove the review from the local state
+      setReviews((currentReviews) =>
+        currentReviews.filter((r) => r.createdAt !== reviewToDelete.createdAt)
+      );
+      toast.success("Your review has been deleted.");
+
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
+      toast.error(errorMessage);
+    } finally {
+      setDeletingReviewId(null); // Reset deleting state
+    }
+  };
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,33 +139,33 @@ export function ProductReviews({
   return (
     <section id="reviews" className="scroll-mt-20 bg-white py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-4">
-        <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+        <h2 className="text-2xl font-extrabold tracking-tight text-neutral-900 sm:text-3xl">
           Customer Reviews
         </h2>
 
         {/* --- Review Summary (now correctly references the total number of reviews) --- */}
         <div className="mt-4 flex items-center">
-          <p className="text-sm text-gray-700">{averageRating.toFixed(1)}</p>
+          <p className="text-sm text-neutral-700">{averageRating.toFixed(1)}</p>
           <div className="ml-2 flex items-center">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`h-5 w-5 flex-shrink-0 ${averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
+              <Star key={i} className={`h-5 w-5 flex-shrink-0 ${averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} />
             ))}
           </div>
-          <p className="ml-4 text-sm text-gray-500">Based on {reviews.length} reviews</p>
+          <p className="ml-4 text-sm text-neutral-500">Based on {reviews.length} reviews</p>
         </div>
 
         {/* --- Add Review Form --- */}
         <div className="mt-10">
-          <h3 className="text-lg font-medium text-gray-900">Share your thoughts</h3>
-          <p className="mt-1 text-sm text-gray-600">If you’ve used this product, share your thoughts with other customers.</p>
+          <h3 className="text-lg font-medium text-neutral-900">Share your thoughts</h3>
+          <p className="mt-1 text-sm text-neutral-600">If you’ve used this product, share your thoughts with other customers.</p>
           {userInfos ? (
             <form onSubmit={handleSubmitReview} className="mt-6 space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-800">Your Rating</label>
+                <label className="text-sm font-medium text-neutral-800">Your Rating</label>
                 <StarRatingInput rating={newRating} setRating={setNewRating} />
               </div>
               <div>
-                <label htmlFor="comment" className="text-sm font-medium text-gray-800">Your Review</label>
+                <label htmlFor="comment" className="text-sm font-medium text-neutral-800">Your Review</label>
                 <textarea 
                   id="comment" 
                   name="comment" 
@@ -148,18 +184,18 @@ export function ProductReviews({
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400">
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-neutral-400">
                 {isSubmitting ? "Submitting..." : "Submit Review"}
               </button>
             </form>
           ) : (
-            <div className="mt-6 rounded-md border-2 border-dashed border-gray-300 p-6 text-center">
-              <p className="text-sm text-gray-600">You must be logged in to post a review.</p>
+            <div className="mt-6 rounded-md border-2 border-dashed border-neutral-300 p-6 text-center">
+              <p className="text-sm text-neutral-600">You must be logged in to post a review.</p>
             </div>
           )}
         </div>
 
-        <hr className="my-12 border-gray-200" />
+        <hr className="my-12 border-neutral-200" />
 
         {/* --- List of Existing Reviews --- */}
         <div className="space-y-10">
@@ -168,43 +204,60 @@ export function ProductReviews({
             reviews.slice(0, visibleReviewCount).map((review, index) => (
               <div key={index} className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="relative h-10 w-10 overflow-hidden rounded-full bg-gray-200 flex items-center justify-center">
+                  <div className="relative h-10 w-10 overflow-hidden rounded-full bg-neutral-200 flex items-center justify-center">
                     {review.image ? (
                       <Image src={review.image} alt={review.fullname || 'User avatar'} fill className="object-cover" />
                     ) : (
-                      <User className="h-5 w-5 text-gray-600" />
+                      <User className="h-5 w-5 text-neutral-600" />
                     )}
                   </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">{review.fullname}</p>
+                    <div
+                      className="flex items-center gap-2"
+                    >
+                      <p className="font-medium text-sm text-neutral-900">{review.fullname}</p>
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`h-4 w-4 ${review.rating > i ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
+                          <Star key={i} className={`h-3.5 w-3.5 ${review.rating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} />
                         ))}
                       </div>
                     </div>
-                    <p className="text-xs text-gray-500">
-                      {new Date(review.createdAt).toLocaleDateString("en-US", {
-                        year: 'numeric', month: 'long', day: 'numeric'
-                      })}
-                    </p>
+                    <div className="flex items-center gap-4">
+                        <p className="text-xs text-neutral-500">
+                          {new Date(review.createdAt).toLocaleDateString(/* ... */)}
+                        </p>
+                        {/* ⭐️ NEW: Show Delete button if the user owns the review */}
+                        {userInfos?.email === review.email && (
+                          <button
+                            onClick={() => handleDeleteReview(review)}
+                            disabled={deletingReviewId === review.createdAt}
+                            className="text-neutral-400 hover:text-red-600 disabled:cursor-not-allowed"
+                            aria-label="Delete review"
+                          >
+                            {deletingReviewId === review.createdAt ? (
+                              <Loader2 size={16} className="animate-spin" />
+                            ) : (
+                              <Trash2 size={16} />
+                            )}
+                          </button>
+                        )}
+                    </div>
                   </div>
-                  <p className="mt-2 text-sm text-gray-600 prose">{review.reviewtext}</p>
+                  <p className="mt-1 px-3 text-sm text-neutral-500 prose">{review.reviewtext}</p>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-center text-sm text-gray-500">No reviews yet. Be the first to share your thoughts!</p>
+            <p className="text-center text-sm text-neutral-500">No reviews yet. Be the first to share your thoughts!</p>
           )}
         </div>
         {visibleReviewCount < reviews.length && (
           <div className="mt-12 text-center">
             <button
               onClick={handleLoadMore}
-              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              className="inline-flex items-center justify-center rounded-md border border-neutral-300 bg-white px-6 py-2 text-sm font-medium text-neutral-700 shadow-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
             >
               Load More Reviews
             </button>
