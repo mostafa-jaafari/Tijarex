@@ -71,10 +71,11 @@ export function AddToCartButton({
       onClick={handleAddToCart}
       disabled={isAdding || stock <= 0}
       className={`flex-1 flex items-center justify-center gap-2 
-        text-white text-sm font-semibold py-3 rounded-lg 
+        text-white text-sm font-semibold py-3 rounded-xl 
          transition-all w-full cursor-pointer
+         border-b ring
         duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed
-        ${!isCustomerSide ? "bg-teal-700 hover:bg-teal-800" : "bg-purple-700 hover:bg-purple-800"}`}
+        ${!isCustomerSide ? "border-teal-700 ring-teal-600 bg-teal-600 hover:bg-teal-600/90" : "border-purple-700 ring-purple-600 bg-purple-600 hover:bg-purple-600/90"}`}
     >
       {isAdding ? (
         <>

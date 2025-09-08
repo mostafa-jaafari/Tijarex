@@ -21,11 +21,16 @@ export function QuantitySelector({ quantity, setQuantity, stock }: QuantitySelec
   };
 
   return (
-    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+    <div 
+      className="flex items-center border-b border-gray-400 
+        ring ring-neutral-200 rounded-lg overflow-hidden">
       <button
         onClick={handleDecrement}
         disabled={quantity <= 1}
-        className="p-3 text-gray-600 hover:bg-gray-100 transition-colors disabled:cursor-not-allowed disabled:text-gray-300"
+        className="p-3 text-gray-600 bg-neutral-100 h-full 
+          hover:bg-teal-600/20 cursor-pointer 
+          disabled:hover:bg-transparent
+          transition-colors disabled:cursor-not-allowed disabled:text-gray-300"
         aria-label="Decrease quantity"
       >
         <Minus size={16} />
@@ -36,7 +41,9 @@ export function QuantitySelector({ quantity, setQuantity, stock }: QuantitySelec
       <button
         onClick={handleIncrement}
         disabled={quantity >= stock}
-        className="p-3 text-gray-600 hover:bg-gray-100 transition-colors disabled:cursor-not-allowed disabled:text-gray-300"
+        className="p-3 text-gray-600 bg-neutral-100 h-full 
+          hover:bg-teal-600/20 cursor-pointer 
+          transition-colors disabled:cursor-not-allowed disabled:text-gray-300"
         aria-label="Increase quantity"
       >
         <Plus size={16} />

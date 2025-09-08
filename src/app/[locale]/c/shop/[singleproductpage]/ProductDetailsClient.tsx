@@ -111,8 +111,24 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                 </h3>
                 <div className="flex items-center gap-3">
                   {product.colors.map((col) => (
-                    <button key={col} onClick={() => setSelectedColor(col)} style={{ backgroundColor: col }} className={`w-8 h-8 rounded-full border border-neutral-300 transition-all duration-200 flex items-center justify-center ${selectedColor === col ? "ring-2 ring-offset-2 ring-teal-600 border-white" : "hover:border-gray-400"}`}>
-                      {selectedColor === col && <Check size={16} className="text-white" />}
+                    <button 
+                        key={col} 
+                        onClick={() => setSelectedColor(col)} 
+                        disabled={selectedColor === col}
+                        style={{ backgroundColor: col }} 
+                        className={`w-8 h-8 rounded-full border border-neutral-300 
+                            transition-all duration-200 flex items-center 
+                            justify-center 
+                            ${selectedColor === col ?
+                                "ring-2 border-neutral-200 ring-offset-2 ring-teal-600"
+                                :
+                                "hover:border-gray-400 cursor-pointer"}
+                            `}
+                    >
+                      {selectedColor === col && 
+                        <Check 
+                            size={16} 
+                            className={col.toLowerCase() !== "white" ? "text-neutral-100" : "text-neutral-700"} />}
                     </button>
                   ))}
                 </div>
@@ -122,10 +138,22 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             {/* Size Selector */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-gray-800">Size</h3>
+                <h3 className="text-sm font-semibold text-gray-800">
+                    Size: <span className="font-normal text-gray-600">{selectedSize}</span>
+                </h3>
                 <div className="flex flex-wrap items-center gap-3">
                   {product.sizes.map((size) => (
-                    <button key={size} onClick={() => setSelectedSize(size)} className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors duration-200 ${selectedSize === size ? "bg-teal-600 text-white border-teal-600" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"}`}>
+                    <button 
+                        key={size} 
+                        onClick={() => setSelectedSize(size)} 
+                        className={`rounded-lg border-b border-neutral-400 ring ring-neutral-200
+                            px-4 py-2 text-sm font-medium transition-colors duration-200 
+                            ${selectedSize === size ?
+                                "bg-teal-600 text-white border-teal-700"
+                                :
+                                "bg-white text-neutral-700 cursor-pointer border-gray-300 hover:bg-gray-50"}
+                        `}
+                    >
                       {size}
                     </button>
                   ))}
@@ -135,7 +163,11 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             
             {/* Add to Cart Section */}
             <div className="mt-6 flex w-full items-stretch gap-3 pt-4">
-              <QuantitySelector quantity={quantity} setQuantity={setQuantity} stock={product.stock} />
+                <QuantitySelector
+                    quantity={quantity} 
+                    setQuantity={setQuantity} 
+                    stock={product.stock}
+                />
               <div className="flex-grow">
                 <AddToCartButton
                     isCustomerSide={false}
