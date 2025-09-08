@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { Loader2, Star, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
@@ -14,7 +14,6 @@ import { ReviewTypes } from "@/types/product";
 type ProductReviewsProps = {
   id: string;
   initialReviews: ReviewTypes[]; // This now correctly uses the global type
-  averageRating: number;
 };
 
 // --- Star Rating Input Sub-Component (No changes needed) ---
@@ -45,7 +44,6 @@ const REVIEWS_PER_PAGE = 3;
 export function ProductReviews({
   id,
   initialReviews,
-  averageRating,
 }: ProductReviewsProps) {
   const { userInfos } = useUserInfos();
   const [reviews, setReviews] = useState<ReviewTypes[]>(initialReviews);
@@ -59,6 +57,12 @@ export function ProductReviews({
   const [error, setError] = useState<string | null>(null);
 
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
+
+  const averageRating = useMemo(() => {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    return sum / reviews.length;
+  }, [reviews]);
 
   const handleDeleteReview = async (reviewToDelete: ReviewTypes) => {
     // Confirm before deleting
@@ -148,7 +152,7 @@ export function ProductReviews({
           <p className="text-sm text-neutral-700">{averageRating.toFixed(1)}</p>
           <div className="ml-2 flex items-center">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`h-5 w-5 flex-shrink-0 ${averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} />
+              <Star key={i} className={`h-5 w-5 flex-shrink-0 ${averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} /> 
             ))}
           </div>
           <p className="ml-4 text-sm text-neutral-500">Based on {reviews.length} reviews</p>
