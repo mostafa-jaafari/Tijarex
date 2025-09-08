@@ -3,9 +3,12 @@ import { Heart } from "lucide-react";
 import Image from "next/image";
 import { DropDownShoppingCart } from "./DropDownShoppingCart";
 import { SearchPublicHeaderInput } from "./SearchPublicHeaderInput";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 
-export function PublicHeader() {
+export async function PublicHeader() {
+  const session = await getServerSession(authOptions)
   return (
       <section
         className="sticky top-0 z-50 bg-white
@@ -63,15 +66,24 @@ export function PublicHeader() {
               {/* --- Shopping Cart --- */}
                 <DropDownShoppingCart />
               {/* --- Login Button --- */}
-              <Link
-                href="/auth/login"
-                prefetch
-                className={`bg-teal-600/90 hover:bg-teal-600 rounded-lg
-                  text-neutral-100 cursor-pointer text-sm py-1 px-4
-                  border-b border-teal-800 ring ring-teal-600/90`}
-              >
-                Login
-              </Link>
+              {session ? 
+              (
+                <div>
+                  Menu profile
+                </div>
+              )
+              :
+              (
+                <Link
+                  href="/auth/login"
+                  prefetch
+                  className={`bg-teal-600/90 hover:bg-teal-600 rounded-lg
+                    text-neutral-100 cursor-pointer text-sm py-1 px-4
+                    border-b border-teal-800 ring ring-teal-600/90`}
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
         </div>

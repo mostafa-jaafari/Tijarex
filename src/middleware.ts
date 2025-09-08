@@ -76,9 +76,11 @@ async function handleAuthAndRouting(request: NextRequest): Promise<NextResponse>
     } else if (userRole === 'affiliate') {
       return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
     } else if (userRole === 'customer') {
-      return NextResponse.redirect(new URL(`/${locale}`, request.url));
+      // العميل يبقى في الـ landing بدون redirect
+      return NextResponse.next();
     }
   }
+
 
   // السماح بالوصول للصفحات العامة إذا غير مسجل دخول
   if (isPublicPage || isAuthPage || isLandingPage) {
