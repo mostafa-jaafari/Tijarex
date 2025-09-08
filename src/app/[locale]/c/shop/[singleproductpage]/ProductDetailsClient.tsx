@@ -92,7 +92,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
       {/* --- Section 2: Description, Options, and Actions --- */}
       <div className="space-y-6">
         <div>
-          <h3 className="text-sm font-medium text-gray-800">Description</h3>
+          <h3 className="text-sm font-semibold text-neutral-800">Description :</h3>
           <p className="mt-2 text-base text-gray-600">{description}</p>
         </div>
 
@@ -108,8 +108,8 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             {/* Color Selector */}
             {product.colors && product.colors.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-gray-800">
-                  Color: <span className="font-normal text-gray-600">{selectedColor}</span>
+                <h3 className="text-sm font-semibold text-neutral-800">
+                  Color : <span className="font-normal text-gray-600">{selectedColor}</span>
                 </h3>
                 <div className="flex items-center gap-3">
                   {product.colors.map((col) => (
@@ -140,8 +140,8 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             {/* Size Selector */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-gray-800">
-                    Size: <span className="font-normal text-gray-600">{selectedSize}</span>
+                <h3 className="text-sm font-semibold text-neutral-800">
+                    Size : <span className="font-normal text-gray-600">{selectedSize}</span>
                 </h3>
                 <div className="flex flex-wrap items-center gap-3">
                   {product.sizes.map((size) => (

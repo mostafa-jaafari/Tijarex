@@ -70,7 +70,7 @@ export default async function ProductPage({
     <div className="bg-gray-50">
       {/* --- ⭐️ FIXED: All page content should be inside <main> --- */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-6">
-        <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12">
+        <div className="lg:grid lg:grid-cols-12 lg:items-start">
           {/* --- Left Column: Image Gallery --- */}
           <div className="lg:col-span-7 lg:sticky lg:top-20">
             <ProductImageGallery
