@@ -41,6 +41,7 @@ const StarRatingInput = ({ rating, setRating }: { rating: number; setRating: (r:
 };
 
 // --- Main Reviews Component ---
+const REVIEWS_PER_PAGE = 6;
 export function ProductReviews({
   id,
   initialReviews,
@@ -48,61 +49,56 @@ export function ProductReviews({
 }: ProductReviewsProps) {
   const { userInfos } = useUserInfos();
   const [reviews, setReviews] = useState<ReviewTypes[]>(initialReviews);
+
+  // --- ⭐️ STEP 1: State to manage how many reviews are visible ---
+  const [visibleReviewCount, setVisibleReviewCount] = useState(REVIEWS_PER_PAGE);
+
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
-  e.preventDefault();
-  // --- Client-side validation remains the same ---
-  if (newRating === 0) {
-    setError("Please select a star rating.");
-    return;
-  }
-  if (!newComment.trim()) {
-    setError("Please write a comment.");
-    return;
-  }
-  
-  setIsSubmitting(true);
-  setError(null);
-
-  try {
-    // API call to the backend we just created
-    const response = await fetch(`/api/products/${id}/reviews`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rating: newRating, comment: newComment.trim() }),
-    });
-
-    // --- ⭐️ Improved Error Handling ---
-    // Check if the response was not successful
-    if (!response.ok) {
-      // Try to parse the error message from the API, or use a default
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to submit review.");
-    }
+    e.preventDefault();
+    if (newRating === 0) return setError("Please select a star rating.");
+    if (!newComment.trim()) return setError("Please write a comment.");
     
-    // The API returns the successfully created review object
-    const submittedReview: ReviewTypes = await response.json();
+    setIsSubmitting(true);
+    setError(null);
 
-    // Optimistic UI update: Add the new review to the top of the list
-    setReviews((currentReviews) => [submittedReview, ...currentReviews]);
-    toast.success("Thank you! Your review has been submitted.");
+    try {
+      const response = await fetch(`/api/products/${id}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating: newRating, comment: newComment.trim() }),
+      });
 
-    // Reset form state
-    setNewRating(0);
-    setNewComment("");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit review.");
+      }
+      
+      const submittedReview: ReviewTypes = await response.json();
+      
+      // A new review is added to the start of the list and will be instantly visible.
+      setReviews((currentReviews) => [submittedReview, ...currentReviews]);
+      toast.success("Thank you! Your review has been submitted.");
+      setNewRating(0);
+      setNewComment("");
 
-  } catch (err: unknown) { // Use `unknown` for better type safety
-    const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-    setError(errorMessage);
-    toast.error(errorMessage);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // --- ⭐️ STEP 2: Handler to show more reviews ---
+  const handleLoadMore = () => {
+    setVisibleReviewCount(prevCount => prevCount + REVIEWS_PER_PAGE);
+  };
 
   return (
     <section id="reviews" className="scroll-mt-20 bg-white py-12 sm:py-16">
@@ -111,7 +107,7 @@ export function ProductReviews({
           Customer Reviews
         </h2>
 
-        {/* --- Review Summary --- */}
+        {/* --- Review Summary (now correctly references the total number of reviews) --- */}
         <div className="mt-4 flex items-center">
           <p className="text-sm text-gray-700">{averageRating.toFixed(1)}</p>
           <div className="ml-2 flex items-center">
@@ -168,10 +164,10 @@ export function ProductReviews({
         {/* --- List of Existing Reviews --- */}
         <div className="space-y-10">
           {reviews.length > 0 ? (
-            reviews.map((review, index) => (
+            // --- ⭐️ STEP 3: Render only the visible portion of reviews ---
+            reviews.slice(0, visibleReviewCount).map((review, index) => (
               <div key={index} className="flex gap-4">
                 <div className="flex-shrink-0">
-                  {/* --- UPDATED: User Image with Fallback --- */}
                   <div className="relative h-10 w-10 overflow-hidden rounded-full bg-gray-200 flex items-center justify-center">
                     {review.image ? (
                       <Image src={review.image} alt={review.fullname || 'User avatar'} fill className="object-cover" />
@@ -204,6 +200,16 @@ export function ProductReviews({
             <p className="text-center text-sm text-gray-500">No reviews yet. Be the first to share your thoughts!</p>
           )}
         </div>
+        {visibleReviewCount < reviews.length && (
+          <div className="mt-12 text-center">
+            <button
+              onClick={handleLoadMore}
+              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            >
+              Load More Reviews
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
