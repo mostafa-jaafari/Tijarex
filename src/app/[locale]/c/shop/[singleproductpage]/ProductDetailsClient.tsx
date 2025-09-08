@@ -194,7 +194,15 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             <div className="flex flex-col items-center gap-2">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
+                  <Star 
+                    key={i} 
+                    className={`h-5 w-5 flex-shrink-0 
+                      ${averageRating > i ?
+                        "text-yellow-400 fill-yellow-400"
+                        :
+                        "text-neutral-300"}`} 
+                    aria-hidden="true"
+                  />
                 ))}
               </div>
               <a 
