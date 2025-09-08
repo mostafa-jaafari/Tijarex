@@ -6,6 +6,7 @@ import ProductImageGallery from "@/components/SingleProductPage/ProductImageGall
 import { fetchProductById } from "./fetchProductById";
 import { AffiliateProductType, ProductType } from "@/types/product";
 import { ProductDetailsClient } from "./ProductDetailsClient"; // Assuming client component is in its own file
+import { ProductReviews } from "./ProductReviews";
 
 // --- Helper type guard ---
 function isAffiliateProduct(
@@ -66,6 +67,16 @@ export default async function ProductPage({
           <ProductDetailsClient key={product.id} product={product} />
         </div>
       </main>
+      {/* --- Reviews Section --- */}
+      {!isAffiliateProduct(product) && (
+        <div className="mt-16">
+          <ProductReviews
+            productId={product.id}
+            initialReviews={product.reviews || []} // This now expects ReviewTypes[]
+            averageRating={product.rating || 0}
+          />
+        </div>
+      )}
     </div>
   );
 }
