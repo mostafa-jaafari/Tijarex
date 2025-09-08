@@ -7,6 +7,7 @@ import { fetchProductById } from "./fetchProductById";
 import { AffiliateProductType, ProductType } from "@/types/product";
 import { ProductDetailsClient } from "./ProductDetailsClient"; // Assuming client component is in its own file
 import { ProductReviews } from "./ProductReviews";
+import { RelatedProducts } from "./RelatedProducts";
 
 // --- Helper type guard ---
 function isAffiliateProduct(
@@ -44,6 +45,24 @@ export default async function ProductPage({
     notFound();
   }
 
+  // --- ⭐️ Fetch Related Products on the Server ---
+  let relatedProducts: ProductType[] = [];
+  // Only find related products if the current one is a standard product with a category
+  if (!isAffiliateProduct(product) && product.category) {
+    const Res = await fetch("/api/products");
+    const data = await Res.json();
+    relatedProducts = data.products
+      // 1. Filter by the same category
+      .filter((p: ProductType) => p.category === product.category)
+      // 2. Exclude the current product from the list
+      .filter((p: ProductType) => p.id !== product.id)
+      // 3. (Optional but recommended) Exclude out-of-stock products
+      .filter((p: ProductType) => p.stock > 0)
+      // 4. Shuffle the results for variety on each page load
+      .sort(() => 0.5 - Math.random())
+      // 5. Take the first 8 products from the shuffled list
+      .slice(0, 8);
+  }
   // This logic stays on the server as it's a prop for a server component
   const title = isAffiliateProduct(product)
     ? product.AffiliateTitle
@@ -69,13 +88,19 @@ export default async function ProductPage({
       </main>
       {/* --- Reviews Section --- */}
       {!isAffiliateProduct(product) && (
-        <div className="mt-16">
-          <ProductReviews
-            productId={product.id}
-            initialReviews={product.reviews || []} // This now expects ReviewTypes[]
-            averageRating={product.rating || 0}
-          />
-        </div>
+        <>
+          {/* 1. Related Products Section */}
+          <RelatedProducts products={relatedProducts} />
+          
+          {/* 2. Reviews Section */}
+          <div className="mt-16">
+            <ProductReviews
+              productId={product.id}
+              initialReviews={product.reviews || []}
+              averageRating={product.rating || 0}
+            />
+          </div>
+        </>
       )}
     </div>
   );
