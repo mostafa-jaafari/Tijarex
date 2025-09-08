@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion"; // <-- Import framer-motion
 
@@ -14,7 +14,9 @@ export default function ProductImageGallery({
   productName,
 }: ProductImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(images[0]);
-
+  useEffect(() => {
+    setSelectedImage(images[0]);
+  }, [images]);
   // Animation variants for the fade-in/fade-out effect
   const imageVariants = {
     initial: { opacity: 0 },
