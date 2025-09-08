@@ -4,7 +4,7 @@ import { Check, Star, ShieldCheck } from "lucide-react";
 import { AffiliateProductType, ProductType } from "@/types/product";
 import { AddToCartButton } from "@/components/UI/Add-To-Cart/AddToCartButton";
 import { QuantitySelector } from "@/components/UI/Add-To-Cart/QuantitySelector";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 
 // You would pass these props into the component
@@ -141,6 +141,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
   const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;
   const isOnSale = regularPrice && salePrice < regularPrice;
+  const Reviews = isAffiliateProduct(product) ? null : product.reviews;
 
   // --- Effect to set default color/size on load only for standard products ---
   useEffect(() => {
@@ -155,6 +156,13 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
     }
   }, [product, selectedColor, selectedSize]);
 
+  const averageRating = useMemo(() => {
+    if(!Reviews) return;
+    if (Reviews.length === 0) return 0;
+    const sum = Reviews.reduce((acc, r) => acc + r.rating, 0);
+    return sum / Reviews.length;
+  }, [Reviews]);
+  
   const highlights = [
     "Crafted with premium materials",
     "Designed for modern aesthetics",
@@ -185,11 +193,11 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             <div className="flex items-center">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${product.rating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
+                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${(averageRating) && averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
                 ))}
               </div>
               <a href="#reviews" className="ml-2 text-sm font-medium text-neutral-500 hover:text-neutral-700">
-                ({product.reviews?.length || 0} reviews)
+                ({Reviews?.length || 0} reviews)
               </a>
             </div>
           )}
