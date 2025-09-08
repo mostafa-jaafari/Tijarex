@@ -25,10 +25,11 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
         setIsShowQuickViewProduct(true)
     }
     const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setCurrentImage((prev) => (prev + direction + (PRODUCTIMAGES?.length || 1)) % (PRODUCTIMAGES?.length || 1));
-        };
+        e.preventDefault();
+        e.stopPropagation();
+        setCurrentImage((prev) => (prev + direction + (PRODUCTIMAGES?.length || 1)) % (PRODUCTIMAGES?.length || 1));
+    };
+
     return (
         <section
             className='relative w-full max-w-[220px]
@@ -127,6 +128,7 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                     </del>
                 </span>
                 <button
+                    onClick={HandleQuickView}
                     className='flex items-center gap-2 cursor-pointer 
                         justify-center mt-2 bg-teal-700/90 rounded-lg 
                         w-full py-1.5 text-white text-sm hover:bg-teal-700'

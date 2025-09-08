@@ -2,12 +2,14 @@
 import { useQuickViewProduct } from "@/context/QuickViewProductContext";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { AffiliateProductType, ProductType } from "@/types/product";
-import { BadgeCheck, Heart, ShoppingCart, Star, X, Check, Minus, Plus, Copy } from "lucide-react";
+import { BadgeCheck, Heart, Star, X, Check, Copy } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { HandleGetRefLink } from "./Functions/GetAffiliateLink";
 import { useFirstAffiliateLink } from "@/context/FirstAffiliateLinkContext";
 import { useParams } from "next/navigation";
+import { QuantitySelector } from "./UI/Add-To-Cart/QuantitySelector";
+import { AddToCartButton } from "./UI/Add-To-Cart/AddToCartButton";
 
 // Helper function
 const CalculateDiscount = (salePrice?: number, regularPrice?: number) => {
@@ -316,35 +318,23 @@ export function QuickViewProduct() {
               <div className="space-y-2 pt-4">
                 {(userInfos?.UserRole !== "affiliate" && userInfos?.UserRole !== "seller") ? (
                   <div className="flex items-center gap-4 mt-auto">
-                    <div
-                      className="flex items-center border-b border-gray-400 
-                                            ring ring-neutral-200 rounded-lg overflow-hidden"
-                    >
-                      <button
-                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
-                      >
-                        <Minus size={16} />
-                      </button>
-                      <span className="px-4 font-semibold">{quantity}</span>
-                      <button
-                        onClick={() => setQuantity((q) => q + 1)}
-                        className="p-3 text-gray-600 hover:bg-gray-200 cursor-pointer"
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                    <button
-                      className={`flex-1 flex items-center justify-center 
-                        gap-2 cursor-pointer text-purple-100
-                        text-sm
-                        border-b border-neutral-600 ring ring-neutral-600
-                        py-2 rounded-lg bg-neutral-800 hover:bg-neutral-900
-                        transition-all duration-200
-                      `}
-                    >
-                      <ShoppingCart size={18} /> Add to Cart
-                    </button>
+                    {/* 1. Replace the old quantity buttons with the new component */}
+                    <QuantitySelector
+                      quantity={quantity}
+                      setQuantity={setQuantity}
+                      stock={selectedProductDetails.stock}
+                    />
+                    
+                    {/* 2. Replace the old button with the new component */}
+                    <AddToCartButton
+                      productId={selectedProductDetails.id}
+                      quantity={quantity}
+                      stock={selectedProductDetails.stock}
+                      availableColors={productColors}
+                      selectedColor={selectedColor}
+                      availableSizes={productSizes}
+                      selectedSize={selectedSize}
+                    />
                   </div>
                 )
                 :
