@@ -186,7 +186,7 @@ export function ProductReviews({
                       <p className="font-medium text-gray-900">{review.fullname}</p>
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`h-4 w-4 ${3 > i ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
+                          <Star key={i} className={`h-4 w-4 ${review.rating > i ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
                         ))}
                       </div>
                     </div>
