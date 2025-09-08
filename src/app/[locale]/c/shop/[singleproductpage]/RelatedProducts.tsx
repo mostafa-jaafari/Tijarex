@@ -86,7 +86,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
 
   return (
     <section className="bg-gray-50 py-12 sm:py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-neutral-700">
             You Might Also Like
