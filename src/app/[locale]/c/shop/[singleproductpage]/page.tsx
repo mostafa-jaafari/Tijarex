@@ -56,13 +56,14 @@ export default async function ProductPage({
           {/* --- Left Column: Image Gallery (Server Component) --- */}
           <div className="lg:col-span-7 lg:sticky lg:top-20">
             <ProductImageGallery
+              key={product.id}
               images={product.product_images}
               productName={title}
             />
           </div>
 
           {/* --- Right Column: Renders the Client Component for interactivity --- */}
-          <ProductDetailsClient product={product} />
+          <ProductDetailsClient key={product.id} product={product} />
         </div>
       </main>
     </div>
