@@ -69,8 +69,7 @@ export async function POST(request: Request) {
                 // --- Also apply the same logic for the image for consistency ---
                 image: userData?.profileimage || decodedToken.picture || `https://avatar.vercel.sh/${decodedToken.email}`,
             },
-            rating: 0,
-            reviews: 0, // This should likely be an empty array []
+            reviews: [],
             sales: 0,
             productrevenu: 0,
         };

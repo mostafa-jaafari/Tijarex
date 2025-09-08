@@ -17,7 +17,6 @@ export type ProductType = {
   sales: number;
   lastUpdated: string;
   createdAt: string;
-  rating: number;
   currency: string;
   reviews: ReviewTypes[];
   description: string;
