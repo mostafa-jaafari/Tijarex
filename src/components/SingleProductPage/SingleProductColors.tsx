@@ -1,5 +1,5 @@
 "use client";
-import { Check, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { Check, Minus, Plus } from 'lucide-react';
 import React, { useState } from 'react'
 
 export function SingleProductColors({ ProductColors }: { ProductColors: string[]; }) {

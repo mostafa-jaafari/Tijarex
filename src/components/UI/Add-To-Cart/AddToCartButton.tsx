@@ -72,9 +72,9 @@ export function AddToCartButton({
       disabled={isAdding || stock <= 0}
       className={`flex-1 flex items-center justify-center gap-2 
         text-white text-sm font-semibold py-3 rounded-lg 
-         transition-all 
+         transition-all w-full cursor-pointer
         duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed
-        ${isCustomerSide ? "bg-teal-700 hover:bg-teal-800" : "bg-purple-700 hover:bg-purple-800"}`}
+        ${!isCustomerSide ? "bg-teal-700 hover:bg-teal-800" : "bg-purple-700 hover:bg-purple-800"}`}
     >
       {isAdding ? (
         <>

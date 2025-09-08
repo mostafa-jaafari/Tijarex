@@ -138,13 +138,14 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
               <QuantitySelector quantity={quantity} setQuantity={setQuantity} stock={product.stock} />
               <div className="flex-grow">
                 <AddToCartButton
-                  productId={product.id} // Correctly uses _id
-                  quantity={quantity}
-                  stock={product.stock}
-                  availableColors={product.colors || []}
-                  selectedColor={selectedColor}
-                  availableSizes={product.sizes || []}
-                  selectedSize={selectedSize}
+                    isCustomerSide={false}
+                    productId={product.id} // Correctly uses _id
+                    quantity={quantity}
+                    stock={product.stock}
+                    availableColors={product.colors || []}
+                    selectedColor={selectedColor}
+                    availableSizes={product.sizes || []}
+                    selectedSize={selectedSize}
                 />
               </div>
             </div>
