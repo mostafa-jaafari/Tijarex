@@ -88,7 +88,7 @@ export function ProductReviews({
   };
 
   return (
-    <section id="reviews" className="scroll-mt-2q0 bg-white py-12 sm:py-16">
+    <section id="reviews" className="scroll-mt-20 bg-white py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-4">
         <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
           Customer Reviews
@@ -117,13 +117,24 @@ export function ProductReviews({
               </div>
               <div>
                 <label htmlFor="comment" className="text-sm font-medium text-gray-800">Your Review</label>
-                <textarea id="comment" name="comment" rows={4} value={newComment} onChange={(e) => setNewComment(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"
+                <textarea 
+                  id="comment" 
+                  name="comment" 
+                  rows={4} 
+                  value={newComment} 
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-neutral-400 
+                    shadow-sm focus:border-b-2 focus:border-teal-600 
+                    sm:text-sm p-3 outline-none border-b ring ring-neutral-200
+                    focus:ring-teal-600 text-teal-700 
+                    placeholder:text-neutral-500"
                   placeholder="Tell us what you liked or disliked..."
                 />
               </div>
               {error && <p className="text-sm text-red-600">{error}</p>}
-              <button type="submit" disabled={isSubmitting}
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400">
                 {isSubmitting ? "Submitting..." : "Submit Review"}
               </button>
