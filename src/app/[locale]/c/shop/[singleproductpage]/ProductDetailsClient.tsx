@@ -1,4 +1,5 @@
 "use client";
+
 import { Check, Star, ShieldCheck } from "lucide-react";
 import { AffiliateProductType, ProductType } from "@/types/product";
 import { AddToCartButton } from "@/components/UI/Add-To-Cart/AddToCartButton";
@@ -140,7 +141,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
   const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;
   const isOnSale = regularPrice && salePrice < regularPrice;
-  const Reviews = isAffiliateProduct(product) ? product?.reviews : product.reviews;
+  const Reviews = isAffiliateProduct(product) ? null : product.reviews;
 
   // --- Effect to set default color/size on load only for standard products ---
   useEffect(() => {
@@ -155,14 +156,13 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
     }
   }, [product, selectedColor, selectedSize]);
 
-
   const averageRating = useMemo(() => {
+    if(!Reviews) return;
     if (Reviews.length === 0) return 0;
     const sum = Reviews.reduce((acc, r) => acc + r.rating, 0);
     return sum / Reviews.length;
   }, [Reviews]);
-
-
+  
   const highlights = [
     "Crafted with premium materials",
     "Designed for modern aesthetics",
@@ -171,45 +171,32 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   ];
 
   return (
-    // --- ⭐️ ENHANCED: Main container ---
-    // Removed specific margins (`lg:ml-10`) and column spans.
-    // Added margin-top for mobile (`mt-10`) which is removed on larger screens (`lg:mt-0`).
-    <div className="mt-10 lg:mt-0">
-      {/* --- Section 1: Header --- */}
-      {/* Increased heading size and spacing for better visual hierarchy */}
-      <div className="flex flex-col gap-3">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+    <div className="mt-8 lg:col-span-5 lg:mt-0">
+      {/* --- Section 1: Header (Title, Price, Reviews) --- */}
+      <div className="flex flex-col gap-4">
+        <h1 
+            className="text-3xl font-extrabold tracking-tight 
+                text-teal-700 sm:text-4xl">
           {title}
         </h1>
         <div className="flex items-center justify-between">
-          <p className="text-3xl tracking-tight text-neutral-900">
+          <p className="text-3xl font-bold tracking-tight text-teal-700">
+            {salePrice.toFixed(2)} dh
             {isOnSale && (
-              <span className="mr-3 text-lg font-medium text-neutral-400 line-through">
+              <span className="ml-3 text-xl font-medium text-neutral-400 line-through">
                 {regularPrice.toFixed(2)} dh
               </span>
             )}
-            {salePrice.toFixed(2)} dh
           </p>
+          {/* Reviews only show for standard products */}
           {!isAffiliateProduct(product) && (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    className={`h-5 w-5 flex-shrink-0 
-                      ${averageRating > i ?
-                        "text-yellow-400 fill-yellow-400"
-                        :
-                        "text-neutral-300"}`} 
-                    aria-hidden="true"
-                  />
+                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${(averageRating) && averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
                 ))}
               </div>
-              <a 
-                href="#reviews" 
-                className="text-sm font-medium text-neutral-500 
-                  hover:text-neutral-400"
-              >
+              <a href="#reviews" className="ml-2 text-sm font-medium text-neutral-500 hover:text-neutral-700">
                 ({Reviews?.length || 0} reviews)
               </a>
             </div>
@@ -217,16 +204,14 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
         </div>
       </div>
 
-      {/* --- Section 2: Options and Actions --- */}
-      {/* Adjusted spacing for a cleaner look */}
-      <div className="space-y-6 mt-6">
+      <hr className="my-6 border-neutral-200" />
+
+      {/* --- Section 2: Description, Options, and Actions --- */}
+      <div className="space-y-6">
         {/* Stock status is common */}
-        <div className="flex items-center gap-3">
-            <h3 className="text-sm font-semibold text-neutral-900">Availability : </h3>
-            <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${product.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                <span className={`h-2 w-2 rounded-full ${product.stock > 0 ? "bg-green-500" : "bg-red-500"}`} />
-                {product.stock > 0 ? `${product.stock} In Stock` : "Out of Stock"}
-            </div>
+        <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${product.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+          <span className={`h-2 w-2 rounded-full ${product.stock > 0 ? "bg-green-500" : "bg-red-500"}`} />
+          {product.stock > 0 ? `${product.stock} In Stock` : "Out of Stock"}
         </div>
 
         {/* --- INTERACTIVE SECTION: Renders only for standard products --- */}

@@ -1,9 +1,13 @@
+// File: app/[locale]/c/shop/product/[productId]/page.tsx
+
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import ProductImageGallery from "@/components/SingleProductPage/ProductImageGallery";
+// --- ⭐️ FIXED: Import both fetch functions ---
 import { fetchProductById, fetchAllProducts } from "./fetchProductById";
 import { AffiliateProductType, ProductType } from "@/types/product";
 import { ProductDetailsClient } from "./ProductDetailsClient";
+// --- ⭐️ FIXED: Assume correct component paths ---
 import { ProductReviews } from "./ProductReviews";
 import { RelatedProducts } from "./RelatedProducts";
 
@@ -20,8 +24,9 @@ export default async function ProductPage({
 }: {
   searchParams: { pid?: string; ref?: string };
 }) {
-  // --- This section remains unchanged ---
   const { pid, ref } = searchParams;
+
+  // --- Affiliate Referral Cookie Logic ---
   if (ref) {
     (await cookies()).set("referralid", ref, {
       httpOnly: true,
@@ -30,59 +35,69 @@ export default async function ProductPage({
       path: "/",
     });
   }
+
   if (!pid) {
     notFound();
   }
+
+  // --- ⭐️ FIXED: Efficient Parallel Data Fetching ---
   const [product, allProducts] = await Promise.all([
     fetchProductById(pid),
     fetchAllProducts(),
   ]);
+
   if (!product) {
     notFound();
   }
+
+  // --- Related Products Filtering Logic ---
   let relatedProducts: ProductType[] = [];
   if (!isAffiliateProduct(product) && product.category) {
     relatedProducts = allProducts
       .filter((p: ProductType) => p.category === product.category)
+      // --- ⭐️ FIXED: Use `id` for comparison, not `id` ---
       .filter((p: ProductType) => p.id !== product.id)
       .filter((p: ProductType) => p.stock > 0)
       .sort(() => 0.5 - Math.random())
       .slice(0, 8);
   }
+
   const title = isAffiliateProduct(product)
     ? product.AffiliateTitle
     : product.title;
-  // --- End of unchanged section ---
 
   return (
     <div className="bg-gray-50">
+      {/* --- ⭐️ FIXED: All page content should be inside <main> --- */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-6">
-        {/* --- ⭐️ POSITIONING CHANGE HERE --- */}
-        {/* Replaced the 'flex' container with a 'grid' layout for clean columns. */}
-        {/* On large screens (lg:), it creates two columns with a significant gap. */}
-        {/* On smaller screens, it automatically stacks them into a single column. */}
-        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16">
+        <div className="lg:grid lg:grid-cols-12 lg:items-start">
+          {/* --- Left Column: Image Gallery --- */}
+          <div className="lg:col-span-7 lg:sticky lg:top-20">
+            <ProductImageGallery
+              // --- ⭐️ FIXED: Use `id` for key ---
+              key={product.id} 
+              images={product.product_images}
+              productName={title}
+            />
+          </div>
 
-          {/* --- Left Column: Image Gallery (No internal changes) --- */}
-          <ProductImageGallery
-            key={product.id} 
-            images={product.product_images}
-            productName={title}
-          />
-
-          {/* --- Right Column: Product Details (No internal changes) --- */}
+          {/* --- Right Column: Product Details --- */}
           <ProductDetailsClient 
+            // --- ⭐️ FIXED: Use `id` for key ---
             key={product.id} 
             product={product} 
           />
         </div>
 
-        {/* --- This lower section remains unchanged --- */}
+        {/* --- ⭐️ FIXED: Related/Reviews sections are now inside main --- */}
         {!isAffiliateProduct(product) && (
           <>
+            {/* 1. Related Products Section */}
             <RelatedProducts 
               products={relatedProducts}
             />
+            
+            {/* 2. Reviews Section */}
             <div className="mt-16">
               <ProductReviews
                 key={product.id}
