@@ -13,6 +13,7 @@ interface AddToCartButtonProps {
   selectedColor: string | null;
   availableSizes: string[];
   selectedSize: string | null;
+  isCustomerSide?: boolean;
 }
 
 export function AddToCartButton({
@@ -23,6 +24,7 @@ export function AddToCartButton({
   selectedColor,
   availableSizes,
   selectedSize,
+  isCustomerSide = false
 }: AddToCartButtonProps) {
   const { addToCart } = useCart(); // Get the addToCart function from your hook
   const [isAdding, setIsAdding] = useState(false);
@@ -68,7 +70,11 @@ export function AddToCartButton({
     <button
       onClick={handleAddToCart}
       disabled={isAdding || stock <= 0}
-      className={`flex-1 flex items-center justify-center gap-2 text-white text-sm font-semibold py-3 rounded-lg bg-purple-700 hover:bg-purple-800 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed`}
+      className={`flex-1 flex items-center justify-center gap-2 
+        text-white text-sm font-semibold py-3 rounded-lg 
+         transition-all 
+        duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed
+        ${isCustomerSide ? "bg-teal-700 hover:bg-teal-800" : "bg-purple-700 hover:bg-purple-800"}`}
     >
       {isAdding ? (
         <>
