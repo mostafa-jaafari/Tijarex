@@ -72,21 +72,27 @@ export function DropDownShoppingCart() {
     };
 
     return (
-        <section ref={menuRef} className="relative">
+        <section 
+            ref={menuRef} 
+            className="relative"
+        >
             {/* Cart Icon Button with Badge */}
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative text-black hover:text-teal-700 p-1 cursor-pointer transition-colors"
-                aria-label={`Open shopping cart with ${cartCount} items`}
+                className="relative text-teal-700 hover:text-teal-600 
+                  cursor-pointer"
+                aria-label={`Open shopping cart with {cartCount} Dh items`}
             >
-                <ShoppingCart size={22} />
+                <ShoppingCart size={20} />
                 <AnimatePresence>
                     {cartCount > 0 && (
                         <motion.span
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}
-                            className="absolute -top-1 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-teal-700 rounded-full"
+                            className="absolute px-1 left-3 -top-2 flex justify-center 
+                                items-center rounded-full bg-teal-700 text-xs
+                                text-neutral-200"
                         >
                             {cartCount}
                         </motion.span>
@@ -102,9 +108,17 @@ export function DropDownShoppingCart() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 top-full p-4 flex flex-col gap-4 mt-3 w-80 sm:w-96 bg-white border border-gray-200 shadow-lg rounded-lg z-20"
+                        className="absolute right-0 top-full p-4 flex 
+                            flex-col gap-4 mt-3 w-80 sm:w-96 bg-white 
+                            border border-gray-200 shadow-lg rounded-lg 
+                            z-20"
                     >
-                        <h3 className="text-lg font-semibold text-black border-b pb-2">Your Cart</h3>
+                        <h3 
+                            className="text-lg font-semibold text-neutral-700 
+                                border-b border-neutral-200 pb-2"
+                        >
+                            Your Cart
+                        </h3>
                         
                         {detailedCartItems.length > 0 ? (
                             <>
@@ -112,7 +126,10 @@ export function DropDownShoppingCart() {
                                 <div className="flex flex-col gap-4 max-h-64 overflow-y-auto pr-2">
                                     {detailedCartItems.map((item) => (
                                         item ? (
-                                            <div key={item.id} className="w-full flex items-start gap-4">
+                                            <div 
+                                                key={item.id} 
+                                                className="w-full flex items-start gap-4"
+                                            >
                                                 <div className="relative flex-shrink-0 w-16 h-16 rounded-md bg-gray-100 overflow-hidden">
                                                     <Image src={item.product_images[0] || '/placeholder.png'} alt={item.title} fill className="object-cover" />
                                                 </div>
@@ -123,7 +140,7 @@ export function DropDownShoppingCart() {
                                                         {item.size && <span>, Size: {item.size}</span>}
                                                     </div>
                                                     <p className="text-sm text-gray-700 mt-1">
-                                                        Qty: {item.quantity} x <span className="font-medium">${(item.original_sale_price || item.original_regular_price).toFixed(2)}</span>
+                                                        Qty: {item.quantity} x <span className="font-medium">{(item.original_sale_price || item.original_regular_price).toFixed(2)} Dh</span>
                                                     </p>
                                                 </div>
                                                 <button onClick={() => handleRemoveItem(item.id)} className="text-gray-400 hover:text-red-500 transition-colors">
@@ -135,10 +152,10 @@ export function DropDownShoppingCart() {
                                 </div>
                                 
                                 {/* Footer with Subtotal and Buttons */}
-                                <div className="border-t pt-4 space-y-4">
-                                    <div className="flex justify-between items-center font-semibold text-black">
+                                <div className="border-t border-neutral-200 pt-4 space-y-4">
+                                    <div className="text-neutral-700 flex justify-between items-center font-semibold">
                                         <span>Subtotal:</span>
-                                        <span>${subtotal.toFixed(2)}</span>
+                                        <span className="text-teal-700">{subtotal.toFixed(2)} Dh</span>
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <Link href="/cart" onClick={() => setIsOpen(false)} className="w-full text-center py-2 px-4 text-sm font-semibold text-teal-700 bg-white border border-teal-700 rounded-md hover:bg-teal-50 transition-colors">
