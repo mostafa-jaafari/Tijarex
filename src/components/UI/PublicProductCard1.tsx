@@ -36,7 +36,7 @@ export function PublicProductCard1({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRO
             >
                 <AnimatePresence initial={false}>
                     <Link
-                        href={`/shop/product?pid=${PRODUCTID}`}
+                        href={`/c/shop/product?pid=${PRODUCTID}`}
                     >
                         <motion.div 
                             key={currentImage} 
@@ -103,7 +103,7 @@ export function PublicProductCard1({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRO
                     </p>
                 </Link>
                 <Link
-                    href={`/shop/product?pid=${PRODUCTID}`}
+                    href={`/c/shop/product?pid=${PRODUCTID}`}
                 >
                     <h1
                         className='font-semibold capitalize text-sm text-neutral-800 
