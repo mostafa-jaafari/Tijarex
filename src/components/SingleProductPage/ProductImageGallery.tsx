@@ -12,7 +12,7 @@ export default function ProductImageGallery({ images, productName }: ProductImag
   const [selectedImage, setSelectedImage] = useState(images[0]);
 
   return (
-    <div className="flex flex-col-reverse">
+    <div className="flex flex-col-reverse sticky top-20">
       {/* Thumbnail Images */}
       <div className="mx-auto mt-3 w-full max-w-2xl sm:block lg:max-w-none">
         <div className="grid grid-cols-5 gap-3">
@@ -40,16 +40,15 @@ export default function ProductImageGallery({ images, productName }: ProductImag
       </div>
 
       {/* Main Image */}
-      <div className="aspect-h-1 aspect-w-1 w-full max-w-150">
-        <div className="overflow-hidden rounded-lg bg-gray-100">
-            <Image
-                src={selectedImage}
-                alt={`Main image of ${productName}`}
-                width={700}
-                height={100}
-                className="h-full w-full object-cover object-center"
-            />
-        </div>
+      <div 
+        className="relative h-120 max-w-150 w-full rounded-lg 
+          overflow-hidden border-b border-neutral-400 shadow-sm ring ring-neutral-200">
+          <Image
+              src={selectedImage}
+              alt={`Main image of ${productName}`}
+              fill
+              className="h-full w-full object-cover object-center"
+          />
       </div>
     </div>
   );
