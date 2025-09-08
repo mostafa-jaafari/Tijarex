@@ -143,7 +143,7 @@ export function ProgressBarClient() {
       description: "Choose your role to get started with a personalized setup.",
       content: (
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          {[ { label: "Become a Seller", role: "seller", roledescription: "Sell your products directly and grow your brand", }, { label: "Become an Affiliate", roledescription: "Earn commissions by promoting Jamla.ma products online", role: "affiliate" }].map((card) => (
+          {[ { label: "Become a Seller", role: "seller", roledescription: "Sell your products directly and grow your brand", }, { label: "Become an Affiliate", roledescription: "Earn commissions by promoting Jamla.ma products online", role: "affiliate" }, { label: "Join as a Customer", role: "customer", roledescription: "Discover amazing products, enjoy exclusive deals, and shop with ease" },].map((card) => (
             <SelectableOption key={card.role} label={card.label} roledescription={card.roledescription} isSelected={selectedRole === card.role} onSelect={() => setSelectedRole(card.role)} />
           ))}
         </div>

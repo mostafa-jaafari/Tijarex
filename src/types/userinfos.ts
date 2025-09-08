@@ -10,7 +10,7 @@ export type UserInfosType = {
     isNewUser: boolean;
     phonenumber: string;
     profileimage: string;
-    UserRole: "seller" | "affiliate" | "admin";
+    UserRole: "seller" | "affiliate" | "customer";
     totalbalance: number;
     favoriteProductIds: string[];
     storeTemplateId?: string;

@@ -73,8 +73,11 @@ async function handleAuthAndRouting(request: NextRequest): Promise<NextResponse>
   if (isAuthenticated && (isLandingPage || isAuthPage || isShopPage)) {
     if (userRole === 'seller') {
       return NextResponse.redirect(new URL(`/${locale}/admin/seller`, request.url));
+    } else if (userRole === 'affiliate') {
+      return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
+    } else if (userRole === 'customer') {
+      return NextResponse.redirect(new URL(`/${locale}`, request.url));
     }
-    return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
   }
 
   // السماح بالوصول للصفحات العامة إذا غير مسجل دخول
@@ -93,30 +96,24 @@ async function handleAuthAndRouting(request: NextRequest): Promise<NextResponse>
   const isAffiliatePath = pathname.startsWith(`/${locale}/admin/affiliate`);
   const isSellerPath = pathname.startsWith(`/${locale}/admin/seller`);
 
-  // --- مسار المحظورات الخاصة بالـ Seller ---
-  const SELLER_BLOCKED_ROUTES = [
-    `/${locale}/admin/seller/my-collection`,
-  ];
   if (userRole === 'seller') {
-    if (SELLER_BLOCKED_ROUTES.includes(pathname)) {
-      return NextResponse.redirect(new URL(`/${locale}/admin/seller`, request.url));
-    }
     if (!isSellerPath) {
       return NextResponse.redirect(new URL(`/${locale}/admin/seller`, request.url));
     }
   }
 
-  // --- مسار المحظورات الخاصة بالـ Affiliate ---
-  const AFFILIATE_BLOCKED_ROUTES = [
-    `/${locale}/admin/affiliate/upload-products`,
-    `/${locale}/admin/affiliate/my-products`,
-  ];
   if (userRole === 'affiliate') {
-    if (AFFILIATE_BLOCKED_ROUTES.includes(pathname)) {
-      return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
-    }
     if (!isAffiliatePath) {
       return NextResponse.redirect(new URL(`/${locale}/admin/affiliate`, request.url));
+    }
+  }
+
+  if (userRole === 'customer') {
+    const isCustomerShopPage =
+      pathname === `/${locale}/c` || pathname.startsWith(`/${locale}/c/`);
+    if (!isCustomerShopPage && !isLandingPage) {
+      // أي محاولة دخول غير مسموحة → redirect للـ landing
+      return NextResponse.redirect(new URL(`/${locale}`, request.url));
     }
   }
 
