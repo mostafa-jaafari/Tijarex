@@ -82,8 +82,9 @@ export default function ProductImageGallery({
       {/* flex-1 allows this container to grow and fill the remaining space. */}
       {/* aspect-square ensures the image container is always a perfect square. */}
       <div 
-        className="relative w-[500px] h-[520px] overflow-hidden bg-neutral-100
-          rounded-xl border-b border-neutral-400 ring ring-neutral-200"
+        className="relative w-[500px] h-[520px] overflow-hidden 
+          bg-neutral-100 rounded-xl border-b 
+          border-neutral-400 ring ring-neutral-200"
       >
         <AnimatePresence mode="wait">
           <motion.div
