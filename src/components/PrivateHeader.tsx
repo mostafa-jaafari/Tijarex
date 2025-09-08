@@ -32,7 +32,7 @@ export function PrivateHeader(){
             iconstyles: "text-green-600"
         },{
             label: "My withdrawls",
-            href: `/${userInfos?.UserRole === "affiliate" ? "affiliate" : "seller"}/my-withdraw`,
+            href: `/admin/${userInfos?.UserRole === "affiliate" ? "affiliate" : "seller"}/my-withdraw`,
             icon: Warehouse,
             iconstyles: "text-yellow-500"
         },
@@ -207,7 +207,7 @@ export function PrivateHeader(){
                         <Link
                             prefetch
                             onClick={() => setIsBalanceOpen(false)}
-                            href={`/${userInfos?.UserRole !== "affiliate" ? "seller" : "affiliate"}/add-balance`}
+                            href={`/admin/${userInfos?.UserRole !== "affiliate" ? "seller" : "affiliate"}/add-balance`}
                             className={`w-full text-center justify-center
                                 bg-gradient-to-r from-[#1A1A1A] via-neutral-800 to-[#1A1A1A]
                                 capitalize text-white
@@ -390,7 +390,7 @@ export function PrivateHeader(){
                                     key={idx}
                                     prefetch
                                     onClick={() => setIsProfileMenuOpen(false)}
-                                    href={`/${userInfos?.UserRole === "affiliate" ? "affiliate" : "seller"}/${item.href.toLowerCase().replace(" ", "")}`}
+                                    href={`/admin/${userInfos?.UserRole === "affiliate" ? "affiliate" : "seller"}/${item.href.toLowerCase().replace(" ", "")}`}
                                     className="group capitalize flex items-center gap-3 px-2 py-2 
                                         rounded-lg text-sm
                                         text-gray-800 hover:bg-gray-100 transition-colors">
