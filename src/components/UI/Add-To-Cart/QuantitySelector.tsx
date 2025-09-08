@@ -27,10 +27,11 @@ export function QuantitySelector({ quantity, setQuantity, stock }: QuantitySelec
       <button
         onClick={handleDecrement}
         disabled={quantity <= 1}
-        className="p-3 text-gray-600 bg-neutral-100 h-full 
-          hover:bg-teal-600/20 cursor-pointer 
+        className="p-3 text-neutral-700 h-full
+          hover:bg-neutral-700/10 cursor-pointer
           disabled:hover:bg-transparent
-          transition-colors disabled:cursor-not-allowed disabled:text-gray-300"
+          transition-colors disabled:cursor-not-allowed
+          disabled:text-gray-300"
         aria-label="Decrease quantity"
       >
         <Minus size={16} />
@@ -41,9 +42,10 @@ export function QuantitySelector({ quantity, setQuantity, stock }: QuantitySelec
       <button
         onClick={handleIncrement}
         disabled={quantity >= stock}
-        className="p-3 text-gray-600 bg-neutral-100 h-full 
-          hover:bg-teal-600/20 cursor-pointer 
-          transition-colors disabled:cursor-not-allowed disabled:text-gray-300"
+        className="p-3 text-neutral-700 h-full 
+          hover:bg-neutral-700/10 cursor-pointer 
+          transition-colors disabled:cursor-not-allowed 
+          disabled:text-gray-300"
         aria-label="Increase quantity"
       >
         <Plus size={16} />

@@ -88,7 +88,7 @@ export function ProductReviews({
   };
 
   return (
-    <section id="reviews" className="scroll-mt-20 bg-white py-12 sm:py-16">
+    <section id="reviews" className="scroll-mt-2q0 bg-white py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-4">
         <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
           Customer Reviews
