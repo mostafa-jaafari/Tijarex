@@ -5,6 +5,7 @@ import { DropDownShoppingCart } from "./DropDownShoppingCart";
 import { SearchPublicHeaderInput } from "./SearchPublicHeaderInput";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import DropDownPublicProfilMenu from "./DropDownPublicProfilMenu";
 
 
 export async function PublicHeader() {
@@ -68,9 +69,7 @@ export async function PublicHeader() {
               {/* --- Login Button --- */}
               {session ? 
               (
-                <div>
-                  Menu profile
-                </div>
+                <DropDownPublicProfilMenu session={session} />
               )
               :
               (
