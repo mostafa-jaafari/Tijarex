@@ -171,16 +171,18 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   ];
 
   return (
-    <div className="mt-8 lg:col-span-5 lg:mt-0">
-      {/* --- Section 1: Header (Title, Price, Reviews) --- */}
-      <div className="flex flex-col gap-4">
-        <h1 
-            className="text-3xl font-extrabold tracking-tight 
-                text-neutral-800">
+    // --- ⭐️ ENHANCED: Main container ---
+    // Removed specific margins (`lg:ml-10`) and column spans.
+    // Added margin-top for mobile (`mt-10`) which is removed on larger screens (`lg:mt-0`).
+    <div className="mt-10 lg:mt-0">
+      {/* --- Section 1: Header --- */}
+      {/* Increased heading size and spacing for better visual hierarchy */}
+      <div className="flex flex-col gap-3">
+        <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
           {title}
         </h1>
         <div className="flex items-center justify-between">
-          <p className="text-2xl font-bold tracking-tight text-neutral-800">
+          <p className="text-3xl tracking-tight text-neutral-900">
             {isOnSale && (
               <span className="mr-3 text-lg font-medium text-neutral-400 line-through">
                 {regularPrice.toFixed(2)} dh
@@ -188,19 +190,14 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             )}
             {salePrice.toFixed(2)} dh
           </p>
-          {/* Reviews only show for standard products */}
           {!isAffiliateProduct(product) && (
-            <div className="flex flex-col items-center">
+            <div className="flex items-center gap-2">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${(averageRating) && averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
+                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
                 ))}
               </div>
-              <a 
-                href="#reviews" 
-                className="text-sm font-medium text-neutral-500 
-                  hover:text-neutral-700"
-              >
+              <a href="#reviews" className="text-sm font-medium text-teal-600 hover:text-teal-500">
                 ({Reviews?.length || 0} reviews)
               </a>
             </div>
@@ -208,12 +205,16 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
         </div>
       </div>
 
-      {/* --- Section 2: Description, Options, and Actions --- */}
-      <div className="space-y-6 mt-3">
+      {/* --- Section 2: Options and Actions --- */}
+      {/* Adjusted spacing for a cleaner look */}
+      <div className="space-y-6 mt-6">
         {/* Stock status is common */}
-        <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${product.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-          <span className={`h-2 w-2 rounded-full ${product.stock > 0 ? "bg-green-500" : "bg-red-500"}`} />
-          {product.stock > 0 ? `${product.stock} In Stock` : "Out of Stock"}
+        <div className="flex items-center gap-3">
+            <h3 className="text-sm font-semibold text-neutral-900">Availability : </h3>
+            <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${product.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                <span className={`h-2 w-2 rounded-full ${product.stock > 0 ? "bg-green-500" : "bg-red-500"}`} />
+                {product.stock > 0 ? `${product.stock} In Stock` : "Out of Stock"}
+            </div>
         </div>
 
         {/* --- INTERACTIVE SECTION: Renders only for standard products --- */}
