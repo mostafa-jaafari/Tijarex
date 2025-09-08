@@ -51,10 +51,10 @@ export default async function ProductPage({
   // --- Render the page ---
   return (
     <div className="bg-gray-50">
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-16 lg:py-6">
+        <div className="lg:grid lg:grid-cols-12 lg:items-start">
           {/* --- Left Column: Image Gallery (Server Component) --- */}
-          <div className="lg:col-span-7 lg:sticky lg:top-24">
+          <div className="lg:col-span-7 lg:sticky lg:top-20">
             <ProductImageGallery
               images={product.product_images}
               productName={title}
