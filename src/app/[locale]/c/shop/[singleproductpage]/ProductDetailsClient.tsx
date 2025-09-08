@@ -5,6 +5,115 @@ import { AffiliateProductType, ProductType } from "@/types/product";
 import { AddToCartButton } from "@/components/UI/Add-To-Cart/AddToCartButton";
 import { QuantitySelector } from "@/components/UI/Add-To-Cart/QuantitySelector";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+
+// You would pass these props into the component
+type ProductInfoTabsProps = {
+  description: string;
+  highlights: string[];
+};
+
+function ProductInfoTabs({ description, highlights }: ProductInfoTabsProps) {
+  // We structure our tabs as an array of objects for better scalability
+  const tabs = [
+    {
+      id: 'description',
+      label: 'Description',
+      // We define the content as JSX right here for cleaner mapping
+      content: (
+        <div>
+          <h3 className="text-lg font-semibold text-neutral-800">Description</h3>
+          <p className="my-4 text-sm text-neutral-600 leading-relaxed prose">
+            {description}
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: 'highlights',
+      label: 'Highlights',
+      content: (
+        <div>
+          <h3 className="text-lg font-semibold text-neutral-800">Product Highlights</h3>
+          <ul className="my-4 space-y-3">
+            {highlights.map((highlight) => (
+              <li key={highlight} className="flex items-center text-sm text-neutral-600">
+                <Check
+                  className="mr-3 h-5 w-5 flex-shrink-0 text-teal-500"
+                  aria-hidden="true"
+                />
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ),
+    },
+  ];
+
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+
+  // Animation variants for the content pane
+  const contentVariants = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+  };
+
+  return (
+    <div className="w-full">
+      {/* Tab Buttons */}
+      <nav>
+        <div role="tablist" aria-label="Product Information" className="flex border-b border-neutral-200">
+          {tabs.map((tab) => (
+            <motion.button
+              key={tab.id}
+              role="tab"
+              aria-selected={selectedTab.id === tab.id}
+              aria-controls={`tabpanel-${tab.id}`}
+              id={`tab-${tab.id}`}
+              className={`relative w-full py-3 px-4 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 ${
+                selectedTab.id === tab.id
+                  ? 'text-teal-600'
+                  : 'text-neutral-500 hover:text-neutral-800 cursor-pointer'
+              }`}
+              onClick={() => setSelectedTab(tab)}
+            >
+              {tab.label}
+              {/* The animated underline */}
+              {selectedTab.id === tab.id && (
+                <motion.div
+                  className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-teal-600"
+                  layoutId="underline"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+            </motion.button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Tab Content */}
+      <main className="mt-6">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedTab.id}
+            id={`tabpanel-${selectedTab.id}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${selectedTab.id}`}
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          >
+            {selectedTab.content}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+    </div>
+  );
+}
 
 // --- Type guard to safely differentiate between product types ---
 function isAffiliateProduct(
@@ -66,7 +175,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
           <p className="text-3xl font-bold tracking-tight text-teal-700">
             {salePrice.toFixed(2)} dh
             {isOnSale && (
-              <span className="ml-3 text-xl font-medium text-gray-400 line-through">
+              <span className="ml-3 text-xl font-medium text-neutral-400 line-through">
                 {regularPrice.toFixed(2)} dh
               </span>
             )}
@@ -76,10 +185,10 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             <div className="flex items-center">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${product.rating > i ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} aria-hidden="true" />
+                  <Star key={i} className={`h-5 w-5 flex-shrink-0 ${product.rating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
                 ))}
               </div>
-              <a href="#reviews" className="ml-2 text-sm font-medium text-gray-500 hover:text-gray-700">
+              <a href="#reviews" className="ml-2 text-sm font-medium text-neutral-500 hover:text-neutral-700">
                 ({product.reviews?.length || 0} reviews)
               </a>
             </div>
@@ -87,15 +196,10 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
         </div>
       </div>
 
-      <hr className="my-6 border-gray-200" />
+      <hr className="my-6 border-neutral-200" />
 
       {/* --- Section 2: Description, Options, and Actions --- */}
       <div className="space-y-6">
-        <div>
-          <h3 className="text-sm font-semibold text-neutral-800">Description :</h3>
-          <p className="mt-2 text-base text-gray-600">{description}</p>
-        </div>
-
         {/* Stock status is common */}
         <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${product.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
           <span className={`h-2 w-2 rounded-full ${product.stock > 0 ? "bg-green-500" : "bg-red-500"}`} />
@@ -109,7 +213,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             {product.colors && product.colors.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-neutral-800">
-                  Color : <span className="font-normal text-gray-600">{selectedColor}</span>
+                  Color : <span className="font-normal text-neutral-600">{selectedColor}</span>
                 </h3>
                 <div className="flex items-center gap-3">
                   {product.colors.map((col) => (
@@ -124,7 +228,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                             ${selectedColor === col ?
                                 "ring-2 border-neutral-200 ring-offset-2 ring-teal-600"
                                 :
-                                "hover:border-gray-400 cursor-pointer"}
+                                "hover:border-neutral-400 cursor-pointer"}
                             `}
                     >
                       {selectedColor === col && 
@@ -141,7 +245,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
             {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-neutral-800">
-                    Size : <span className="font-normal text-gray-600">{selectedSize}</span>
+                    Size : <span className="font-normal text-neutral-600">{selectedSize}</span>
                 </h3>
                 <div className="flex flex-wrap items-center gap-3">
                   {product.sizes.map((size) => (
@@ -153,7 +257,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                             ${selectedSize === size ?
                                 "bg-teal-600 text-white border-teal-700"
                                 :
-                                "bg-white text-neutral-700 cursor-pointer border-gray-300 hover:bg-gray-50"}
+                                "bg-white text-neutral-700 cursor-pointer border-neutral-300 hover:bg-neutral-50"}
                         `}
                     >
                       {size}
@@ -189,22 +293,18 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
       
       {/* --- Section 3: Details & Guarantees (Common to all) --- */}
       <section aria-labelledby="details-heading" className="mt-10">
-        <div className="divide-y divide-gray-200 border-t border-gray-200">
+        <div className="divide-y divide-neutral-200 border-t border-neutral-200">
+          <div 
+          aria-labelledby="details-heading" className="mt-10">
+  <ProductInfoTabs 
+    description={description} 
+    highlights={highlights} 
+  />
+</div>
           <div className="py-6">
-            <h3 className="text-base font-medium text-gray-900">Product Highlights</h3>
-            <ul className="mt-4 space-y-3">
-              {highlights.map((highlight) => (
-                <li key={highlight} className="flex items-center text-sm text-gray-600">
-                  <Check className="mr-3 h-5 w-5 flex-shrink-0 text-green-500" aria-hidden="true" />
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="py-6">
-            <h3 className="text-base font-medium text-gray-900">Our Guarantee</h3>
-            <div className="flex items-center mt-4 text-sm text-gray-600">
-              <ShieldCheck className="mr-3 h-5 w-5 flex-shrink-0 text-gray-500" aria-hidden="true" />
+            <h3 className="text-base font-medium text-neutral-900">Our Guarantee</h3>
+            <div className="flex items-center mt-4 text-sm text-neutral-600">
+              <ShieldCheck className="mr-3 h-5 w-5 flex-shrink-0 text-neutral-500" aria-hidden="true" />
               <span>Secure payments & 30-day money-back guarantee.</span>
             </div>
           </div>
