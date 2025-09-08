@@ -3,6 +3,7 @@ export type ReviewTypes = {
   createdAt: string;
   fullname: string | "unknown";
   reviewtext: string;
+  rating: number;
 }
 export type ProductType = {
   id: string;

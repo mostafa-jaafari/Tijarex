@@ -93,13 +93,15 @@ export default async function ProductPage({
         {!isAffiliateProduct(product) && (
           <>
             {/* 1. Related Products Section */}
-            <RelatedProducts products={relatedProducts} />
+            <RelatedProducts 
+              products={relatedProducts}
+            />
             
             {/* 2. Reviews Section */}
             <div className="mt-16">
               <ProductReviews
                 // --- ⭐️ FIXED: Use `id` for productId prop ---
-                productId={product.id}
+                id={product.id}
                 initialReviews={product.reviews || []}
                 averageRating={product.rating || 0}
               />

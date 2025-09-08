@@ -12,7 +12,7 @@ import { ReviewTypes } from "@/types/product";
 
 // --- Component Props ---
 type ProductReviewsProps = {
-  productId: string;
+  id: string;
   initialReviews: ReviewTypes[]; // This now correctly uses the global type
   averageRating: number;
 };
@@ -42,7 +42,7 @@ const StarRatingInput = ({ rating, setRating }: { rating: number; setRating: (r:
 
 // --- Main Reviews Component ---
 export function ProductReviews({
-  productId,
+  id,
   initialReviews,
   averageRating,
 }: ProductReviewsProps) {
@@ -54,44 +54,61 @@ export function ProductReviews({
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newRating === 0) return setError("Please select a star rating.");
-    if (!newComment.trim()) return setError("Please write a comment.");
-    
-    setIsSubmitting(true);
-    setError(null);
+  e.preventDefault();
+  // --- Client-side validation remains the same ---
+  if (newRating === 0) {
+    setError("Please select a star rating.");
+    return;
+  }
+  if (!newComment.trim()) {
+    setError("Please write a comment.");
+    return;
+  }
+  
+  setIsSubmitting(true);
+  setError(null);
 
-    try {
-      // API call to your backend
-      const response = await fetch(`/api/products/${productId}/reviews`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating: newRating, comment: newComment }),
-      });
+  try {
+    // API call to the backend we just created
+    const response = await fetch(`/api/products/${id}/reviews`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rating: newRating, comment: newComment.trim() }),
+    });
 
-      if (!response.ok) throw new Error("Failed to submit review.");
-      
-      const submittedReview: ReviewTypes = await response.json();
-
-      // Optimistic UI update
-      setReviews([submittedReview, ...reviews]);
-      toast.success("Thank you! Your review has been submitted.");
-      setNewRating(0);
-      setNewComment("");
-
-    } catch (err) {
-      setError((err as { message: string; }).message);
-      toast.error((err as { message: string; }).message);
-    } finally {
-      setIsSubmitting(false);
+    // --- ⭐️ Improved Error Handling ---
+    // Check if the response was not successful
+    if (!response.ok) {
+      // Try to parse the error message from the API, or use a default
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to submit review.");
     }
-  };
+    
+    // The API returns the successfully created review object
+    const submittedReview: ReviewTypes = await response.json();
+
+    // Optimistic UI update: Add the new review to the top of the list
+    setReviews((currentReviews) => [submittedReview, ...currentReviews]);
+    toast.success("Thank you! Your review has been submitted.");
+
+    // Reset form state
+    setNewRating(0);
+    setNewComment("");
+
+  } catch (err: unknown) { // Use `unknown` for better type safety
+    const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
+    setError(errorMessage);
+    toast.error(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <section id="reviews" className="scroll-mt-20 bg-white py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-4">
         <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-          Customer Reviews
+          Customer Reviews {id}
         </h2>
 
         {/* --- Review Summary --- */}
