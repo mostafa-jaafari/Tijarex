@@ -2,7 +2,7 @@
 
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
 import { ProductType } from "@/types/product";
-import { Loader2, Search } from "lucide-react";
+import { ChevronRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -106,16 +106,50 @@ export function SearchPublicHeaderInput() {
               key={item.id} // Assuming the product object has a unique `_id`
               href={`/c/shop/product?pid=${item.id}`}
               onClick={() => setShowSuggestionsMenu(false)}
-              className="w-full flex items-center gap-3 py-2 px-3 text-sm hover:bg-gray-100 rounded-xl transition-colors"
+              className="relative group w-full flex items-center gap-3 py-2 
+                px-3 text-sm hover:bg-neutral-100 shadoow-sm rounded-lg 
+                transition-colors duration-200"
             >
-              <Image
-                src={item.product_images[0] || "/placeholder.png"} // Use a placeholder if no image
-                alt={item.title}
-                width={40}
-                height={40}
-                className="object-cover rounded-md bg-gray-100"
-              />
-              <span className="font-medium text-neutral-800">{item.title}</span>
+              <div
+                className="relative w-12 h-12 rounded-lg overflow-hidden
+                  group-hover:ring-2 group-hover:border-2 ring-teal-600 
+                  border-neutral-200"
+              >
+                <Image
+                  src={item.product_images[0] || "/placeholder.png"} // Use a placeholder if no image
+                  alt={item.title}
+                  fill
+                  className="object-cover rounded-md bg-gray-100"
+                />
+              </div>
+              <div
+                className="flex flex-col "
+              >
+                <span 
+                  className="font-medium text-neutral-800"
+                >
+                  {item.title}
+                </span>
+                <span
+                  className="flex items-end gap-1"
+                >
+                  <b
+                    className="text-teal-600"
+                  >
+                    {item.original_sale_price} Dh
+                  </b>
+                  <del
+                    className="text-neutral-500 text-xs"
+                  >
+                    {item.original_regular_price}Dh
+                  </del>
+                </span>
+              </div>
+              <span
+                  className="absolute right-3 hidden group-hover:flex text-teal-600"
+                >
+                  <ChevronRight size={18}/>
+                </span>
             </Link>
           ))}
           {searchResult.length > visibleCount && (
