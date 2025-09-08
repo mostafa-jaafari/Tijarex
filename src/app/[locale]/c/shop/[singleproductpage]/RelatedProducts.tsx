@@ -12,9 +12,14 @@ function ProductCard({ product }: { product: ProductType }) {
   return (
     <Link 
       href={`/c/shop/product?pid=${product.id}`} 
-      className="group flex-shrink-0 w-64"
+      className="group flex-shrink-0 w-64 rounded-lg border-b
+          border-gray-400 ring ring-neutral-200 
+          overflow-hidden"
     >
-      <div className="flex flex-col h-full bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+      <div 
+        className="flex flex-col h-full bg-white
+          overflow-hidden transition-all duration-300"
+      >
         {/* Image Container */}
         <div className="relative aspect-square w-full overflow-hidden">
           <Image
@@ -83,7 +88,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
     <section className="bg-gray-50 py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
+          <h2 className="text-xl font-semibold text-neutral-700">
             You Might Also Like
           </h2>
           {/* Optional: Add a "View All" link if desired */}
@@ -91,9 +96,12 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
 
         <div className="mt-8">
           <div className="relative">
-            <div className="flex gap-6 pb-4 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-3 pb-4 -mx-4 px-4 overflow-x-auto scrollbar-hide">
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard 
+                  key={product.id} 
+                  product={product}
+                />
               ))}
             </div>
           </div>
