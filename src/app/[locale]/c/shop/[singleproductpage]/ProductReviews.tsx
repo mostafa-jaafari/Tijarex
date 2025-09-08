@@ -8,6 +8,7 @@ import { Loader2, Star, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { ReviewTypes } from "@/types/product";
+import { useRouter } from "next/navigation";
 
 
 // --- Component Props ---
@@ -47,7 +48,7 @@ export function ProductReviews({
 }: ProductReviewsProps) {
   const { userInfos } = useUserInfos();
   const [reviews, setReviews] = useState<ReviewTypes[]>(initialReviews);
-
+  const router = useRouter();
   // --- ⭐️ STEP 1: State to manage how many reviews are visible ---
   const [visibleReviewCount, setVisibleReviewCount] = useState(REVIEWS_PER_PAGE);
 
@@ -89,7 +90,7 @@ export function ProductReviews({
         currentReviews.filter((r) => r.createdAt !== reviewToDelete.createdAt)
       );
       toast.success("Your review has been deleted.");
-
+      router.refresh();
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
       toast.error(errorMessage);
@@ -125,7 +126,7 @@ export function ProductReviews({
       toast.success("Thank you! Your review has been submitted.");
       setNewRating(0);
       setNewComment("");
-
+      router.refresh();
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
       setError(errorMessage);

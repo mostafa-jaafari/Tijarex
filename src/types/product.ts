@@ -48,7 +48,7 @@ export type AffiliateProductType = {
     stock: number; // ADDED
     sales: number; // ADDED
     currency: string;
-
+    reviews: ReviewTypes[];
     // --- Data Specific to the Affiliate's Version ---
     AffiliateOwnerEmail: string;
     AffiliateTitle: string;

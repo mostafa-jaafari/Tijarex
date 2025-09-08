@@ -1,5 +1,4 @@
 "use client";
-
 import { Check, Star, ShieldCheck } from "lucide-react";
 import { AffiliateProductType, ProductType } from "@/types/product";
 import { AddToCartButton } from "@/components/UI/Add-To-Cart/AddToCartButton";
@@ -141,7 +140,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
   const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;
   const isOnSale = regularPrice && salePrice < regularPrice;
-  const Reviews = isAffiliateProduct(product) ? null : product.reviews;
+  const Reviews = isAffiliateProduct(product) ? product?.reviews : product.reviews;
 
   // --- Effect to set default color/size on load only for standard products ---
   useEffect(() => {
@@ -156,13 +155,14 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
     }
   }, [product, selectedColor, selectedSize]);
 
+
   const averageRating = useMemo(() => {
-    if(!Reviews) return;
     if (Reviews.length === 0) return 0;
     const sum = Reviews.reduce((acc, r) => acc + r.rating, 0);
     return sum / Reviews.length;
   }, [Reviews]);
-  
+
+
   const highlights = [
     "Crafted with premium materials",
     "Designed for modern aesthetics",
@@ -196,7 +196,11 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                   <Star key={i} className={`h-5 w-5 flex-shrink-0 ${(averageRating) && averageRating > i ? "text-yellow-400 fill-yellow-400" : "text-neutral-300"}`} aria-hidden="true" />
                 ))}
               </div>
-              <a href="#reviews" className="text-sm font-medium text-neutral-500 hover:text-neutral-700">
+              <a 
+                href="#reviews" 
+                className="text-sm font-medium text-neutral-500 
+                  hover:text-neutral-700"
+              >
                 ({Reviews?.length || 0} reviews)
               </a>
             </div>
