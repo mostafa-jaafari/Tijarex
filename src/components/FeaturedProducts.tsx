@@ -130,7 +130,9 @@ export default function FeaturedProducts() {
                         <Link
                             key={product.id}
                             href={`/c/shop/product?pid=${product.id}`}
-                            className="bg-white rounded-xl shadow-md overflow-hidden flex items-center group transition-all hover:shadow-xl"
+                            className="bg-white rounded-xl overflow-hidden 
+                                flex items-center group transition-all
+                                border-b border-neutral-400 ring ring-neutral-200"
                         >
                             <div className="relative w-1/3 h-full flex-shrink-0">
                                 <Image

@@ -1,3 +1,4 @@
+import Loading from '@/app/loading';
 import { ShopFilter } from '@/components/ShopFilter';
 import { ShopInputSearch } from '@/components/ShopInputSearch';
 import { BestSellingProductUI } from '@/components/UI/BestSellingProductUI';
@@ -5,7 +6,7 @@ import { ProductType } from '@/types/product';
 import { Tag } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import React from 'react'
+import React, { Suspense } from 'react'
 
 interface ShopPageProps{
     searchParams: Promise<{
@@ -99,85 +100,89 @@ export default async function page({ searchParams }: ShopPageProps) {
     const ReadedProducts = FiltredProducts.length === 0 ? Products : FiltredProducts;
     
     return (
-        <section className="w-full flex flex-1 items-start">
-            <aside className="sticky top-14 p-2 h-full">
-                <ShopFilter />
-            </aside>
-            <div
-                className='flex-1 w-full shrink-0 bg-white p-4 shadow-md 
-                    rounded-xl overflow-y-auto ring ring-gray-200'
-            >
-                    <ShopInputSearch />
-                    <div
-                        className='flex items-center gap-3 justify-center py-3'
-                    >
-                        {["sports", "books", "fashion", "electronics"].map((sug, idx) => {
-                            return (
-                                <Link
-                                    key={idx}
-                                    href={`/c/shop?cat=${sug.toLowerCase().replace(" ", "")}`}
-                                >
-                                    <span
-                                        className='text-sm bg-gray-100 ring ring-gray-200 
-                                            rounded-full px-2 flex items-center gap-1
-                                            hover:bg-gray-200'
-                                    >
-                                        <Tag size={12} /> {sug}
-                                    </span>
-                                </Link>
-                            )
-                        })}
-                    </div>
-
-                    <div
-                        className='w-full flex justify-between'
-                    >
-                        <span
-                            className='text-sm text-gray-500'
+        <Suspense
+            fallback={<Loading />}
+        >
+            <section className="w-full flex flex-1 items-start">
+                <aside className="sticky top-14 p-2 h-full">
+                    <ShopFilter />
+                </aside>
+                <div
+                    className='flex-1 w-full shrink-0 bg-white p-4 shadow-md 
+                        rounded-xl overflow-y-auto ring ring-gray-200'
+                >
+                        <ShopInputSearch />
+                        <div
+                            className='flex items-center gap-3 justify-center py-3'
                         >
-                            Showing ({ReadedProducts.length}) Products
-                        </span>
-                        {(resolvedSearchParams.pf || resolvedSearchParams.pt || resolvedSearchParams.cat || resolvedSearchParams.sortby) && (
-                            <Link 
-                                href="/c/shop"
-                                className='text-red-500 text-sm font-semibold'
+                            {["sports", "books", "fashion", "electronics"].map((sug, idx) => {
+                                return (
+                                    <Link
+                                        key={idx}
+                                        href={`/c/shop?cat=${sug.toLowerCase().replace(" ", "")}`}
+                                    >
+                                        <span
+                                            className='text-sm bg-gray-100 ring ring-gray-200 
+                                                rounded-full px-2 flex items-center gap-1
+                                                hover:bg-gray-200'
+                                        >
+                                            <Tag size={12} /> {sug}
+                                        </span>
+                                    </Link>
+                                )
+                            })}
+                        </div>
+
+                        <div
+                            className='w-full flex justify-between'
+                        >
+                            <span
+                                className='text-sm text-gray-500'
+                            >
+                                Showing ({ReadedProducts.length}) Products
+                            </span>
+                            {(resolvedSearchParams.pf || resolvedSearchParams.pt || resolvedSearchParams.cat || resolvedSearchParams.sortby) && (
+                                <Link 
+                                    href="/c/shop"
+                                    className='text-red-500 text-sm font-semibold'
+                                    >
+                                    Clear Filters
+                                </Link>
+                            )}
+                        </div>
+                        {ReadedProducts.length > 0 ? 
+                            (
+                                <div
+                                    className='w-full grid grid-cols-4 gap-x-2 gap-y-6 py-6'
                                 >
-                                Clear Filters
-                            </Link>
-                        )}
-                    </div>
-                    {ReadedProducts.length > 0 ? 
-                        (
-                            <div
-                                className='w-full grid grid-cols-4 gap-x-2 gap-y-6 py-6'
-                            >
-                                {ReadedProducts.map((product: ProductType) => {
-                                    return (
-                                        <BestSellingProductUI
-                                            key={product.id}
-                                            PRODUCTCATEGORIE={product.category}
-                                            PRODUCTID={product.id}
-                                            PRODUCTIMAGES={product.product_images}
-                                            PRODUCTSALEPRICE={product.original_sale_price}
-                                            PRODUCTREGULARPRICE={product.original_regular_price}
-                                            PRODUCTTITLE={product.title || product.title}
-                                            STOCK={product.stock}
-                                            OWNER={product.owner}
-                                        />
-                                    )
-                                })}
-                            </div>
-                        )
-                        :
-                        (
-                            <div
-                                className='w-full min-h-40 flex items-center justify-center text-gray-500'
-                            >
-                                Not Founded
-                            </div>
-                        )
-                    }
-            </div>
-        </section>
+                                    {ReadedProducts.map((product: ProductType) => {
+                                        return (
+                                            <BestSellingProductUI
+                                                key={product.id}
+                                                PRODUCTCATEGORY={product.category}
+                                                PRODUCTID={product.id}
+                                                PRODUCTIMAGES={product.product_images}
+                                                PRODUCTSALEPRICE={product.original_sale_price}
+                                                PRODUCTREGULARPRICE={product.original_regular_price}
+                                                PRODUCTTITLE={product.title || product.title}
+                                                STOCK={product.stock}
+                                                OWNER={product.owner}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                            )
+                            :
+                            (
+                                <div
+                                    className='w-full min-h-40 flex items-center justify-center text-gray-500'
+                                >
+                                    Not Founded
+                                </div>
+                            )
+                        }
+                </div>
+            </section>
+        </Suspense>
     )
 }

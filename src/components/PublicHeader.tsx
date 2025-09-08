@@ -10,7 +10,7 @@ export function PublicHeader() {
       <section
         className="sticky top-0 z-50 bg-white
           transition-all duration-500
-          ease-in-out"
+          ease-in-out border-b border-neutral-200"
       >
         <div
           className="relative w-full py-1 px-6 flex justify-between items-center

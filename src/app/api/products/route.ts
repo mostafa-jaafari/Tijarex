@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limitParam = parseInt(searchParams.get('limit') || '10', 10);
+    const limitParam = parseInt(searchParams.get('limit') || '6', 6);
     const lastVisibleId = searchParams.get('lastVisibleId');
 
     // Base query, ordered by sales for the "Best Selling" feature
