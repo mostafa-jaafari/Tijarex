@@ -79,7 +79,7 @@ export function DropDownShoppingCart() {
             {/* Cart Icon Button with Badge */}
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative text-teal-700 hover:text-teal-600 
+                className="relative mt-2 text-teal-700 hover:text-teal-600 
                   cursor-pointer"
                 aria-label={`Open shopping cart with {cartCount} Dh items`}
             >
