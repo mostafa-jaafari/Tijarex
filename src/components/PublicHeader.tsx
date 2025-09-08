@@ -69,7 +69,11 @@ export async function PublicHeader() {
               {/* --- Login Button --- */}
               {session ? 
               (
-                <DropDownPublicProfilMenu session={session} />
+                <div>
+                  <DropDownPublicProfilMenu 
+                    session={session}
+                  />
+                </div>
               )
               :
               (
