@@ -13,7 +13,7 @@ import {
   useCallback,
 } from "react";
 
-// A custom hook for debouncing input values to prevent excessive re-renders
+// A custom hook for debouncing input values
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -21,54 +21,98 @@ const useDebounce = (value: string, delay: number) => {
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
-
-    // Cleanup the timeout if the value changes before the delay has passed
-    return () => {
-      clearTimeout(handler);
-    }
+    return () => clearTimeout(handler);
   }, [value, delay]);
 
   return debouncedValue;
 };
 
+// --- Reusable sub-component for displaying a product in the suggestions list ---
+const ProductItem = ({
+  item,
+  onClick,
+}: {
+  item: ProductType;
+  onClick: () => void;
+}) => (
+  <Link
+    key={item.id}
+    href={`/c/shop/product?pid=${item.id}`}
+    onClick={onClick}
+    className="relative group w-full flex items-center gap-3 py-2 px-3 text-sm hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+  >
+    <div className="relative w-12 h-12 rounded-lg overflow-hidden ring-1 ring-gray-200 group-hover:ring-2 group-hover:ring-teal-500 transition-all">
+      <Image
+        src={item.product_images[0] || "/placeholder.png"}
+        alt={item.title}
+        fill
+        sizes="50px"
+        className="object-cover bg-gray-100"
+      />
+    </div>
+    <div className="flex flex-col">
+      <span className="text-neutral-900 group-hover:text-teal-600 transition-colors">
+        {item.title}
+      </span>
+      <span className="flex items-end gap-1.5">
+        <b className="text-teal-600 text-base">
+          {item.original_sale_price.toFixed(2)} Dh
+        </b>
+        {item.original_regular_price > item.original_sale_price && (
+          <del className="text-neutral-400 text-xs">
+            {item.original_regular_price.toFixed(2)} Dh
+          </del>
+        )}
+      </span>
+    </div>
+    <span className="absolute right-3 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity">
+      <ChevronRight size={18} />
+    </span>
+  </Link>
+);
+
+
 export function SearchPublicHeaderInput() {
   const [searchInput, setSearchInput] = useState("");
   const [showSuggestionsMenu, setShowSuggestionsMenu] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(10); // Initial number of items to show
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-
-  // Fetching global product data and loading state from context
   const { globalProductsData, isLoadingMore: areProductsLoading } = useGlobalProducts();
 
-  // Debounce search input to optimize performance
   const debouncedSearchInput = useDebounce(searchInput, 300);
 
-  // Memoize search results to avoid re-calculating on every render
-  const searchResult = useMemo(() => {
-    if (!debouncedSearchInput) {
+  // --- ⭐️ Memoize the trending products list for performance ---
+  const trendingProducts = useMemo(() => {
+    if (!globalProductsData || globalProductsData.length === 0) {
       return [];
     }
+    // Create a "trend score" to find the best products based on ratings and reviews
+    return [...globalProductsData]
+      .sort((a, b) => {
+        const scoreA = (a.rating || 0) * 5 + (a.reviews?.length || 0);
+        const scoreB = (b.rating || 0) * 5 + (b.reviews?.length || 0);
+        return scoreB - scoreA; // Sort descending by score
+      })
+      .slice(0, 6); // Take the top 6 products
+  }, [globalProductsData]);
+
+  const searchResult = useMemo(() => {
+    if (!debouncedSearchInput) return [];
     const lowercasedQuery = debouncedSearchInput.toLowerCase();
     return globalProductsData.filter(
-      (product: ProductType) =>
+      (product) =>
         product.title.toLowerCase().includes(lowercasedQuery) ||
         product.category.toLowerCase().includes(lowercasedQuery) ||
         product.owner?.name.toLowerCase().includes(lowercasedQuery)
     );
   }, [debouncedSearchInput, globalProductsData]);
 
-  // Manage loading state based on input changes
   useEffect(() => {
-    if (debouncedSearchInput !== searchInput) {
-      setIsLoading(true);
-    } else {
-      setIsLoading(false);
-    }
+    setIsLoading(debouncedSearchInput !== searchInput);
   }, [searchInput, debouncedSearchInput]);
 
-  // Effect to close the suggestions menu when clicking outside
   useEffect(() => {
     const handleHideMenu = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -79,7 +123,6 @@ export function SearchPublicHeaderInput() {
     return () => document.removeEventListener("mousedown", handleHideMenu);
   }, []);
 
-  // Callback to handle loading more results
   const handleLoadMore = useCallback(() => {
     setVisibleCount((prevCount) => prevCount + 10);
   }, []);
@@ -88,69 +131,19 @@ export function SearchPublicHeaderInput() {
     if (isLoading) {
       return (
         <div className="flex flex-col gap-2 p-2">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-full h-10 animate-pulse flex bg-gray-200 rounded-md"
-            />
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="w-full h-12 animate-pulse bg-gray-200 rounded-md" />
           ))}
         </div>
       );
     }
 
-    if (searchResult.length > 0) {
+    if (debouncedSearchInput && searchResult.length > 0) {
       return (
         <>
+          <div className="px-3 pt-2 pb-1 text-xs font-semibold text-gray-500">Search Results</div>
           {searchResult.slice(0, visibleCount).map((item) => (
-            <Link
-              key={item.id} // Assuming the product object has a unique `_id`
-              href={`/c/shop/product?pid=${item.id}`}
-              onClick={() => setShowSuggestionsMenu(false)}
-              className="relative group w-full flex items-center gap-3 py-2 
-                px-3 text-sm hover:bg-neutral-100 shadoow-sm rounded-lg 
-                transition-colors duration-200"
-            >
-              <div
-                className="relative w-12 h-12 rounded-lg overflow-hidden
-                  group-hover:ring-2 group-hover:border-2 ring-teal-600 
-                  border-neutral-200"
-              >
-                <Image
-                  src={item.product_images[0] || "/placeholder.png"} // Use a placeholder if no image
-                  alt={item.title}
-                  fill
-                  className="object-cover rounded-md bg-gray-100"
-                />
-              </div>
-              <div
-                className="flex flex-col "
-              >
-                <span 
-                  className="font-medium text-neutral-800"
-                >
-                  {item.title}
-                </span>
-                <span
-                  className="flex items-end gap-1"
-                >
-                  <b
-                    className="text-teal-600"
-                  >
-                    {item.original_sale_price} Dh
-                  </b>
-                  <del
-                    className="text-neutral-500 text-xs"
-                  >
-                    {item.original_regular_price}Dh
-                  </del>
-                </span>
-              </div>
-              <span
-                  className="absolute right-3 hidden group-hover:flex text-teal-600"
-                >
-                  <ChevronRight size={18}/>
-                </span>
-            </Link>
+            <ProductItem key={item.id} item={item} onClick={() => setShowSuggestionsMenu(false)} />
           ))}
           {searchResult.length > visibleCount && (
             <button
@@ -172,7 +165,19 @@ export function SearchPublicHeaderInput() {
       );
     }
 
-    // Initial state when the input is empty
+    // --- ⭐️ Show trending products when input is empty ---
+    if (!debouncedSearchInput && trendingProducts.length > 0) {
+      return (
+        <>
+          <div className="px-3 pt-2 pb-1 text-xs font-semibold text-gray-500">Trending Products</div>
+          {trendingProducts.map((item) => (
+            <ProductItem key={item.id} item={item} onClick={() => setShowSuggestionsMenu(false)} />
+          ))}
+        </>
+      );
+    }
+
+    // Fallback if no trending products are available
     return (
       <div className="p-2">
         <p className="text-sm text-gray-500 text-center py-3">
@@ -191,26 +196,20 @@ export function SearchPublicHeaderInput() {
             : "border-neutral-300 ring-neutral-200 hover:border-neutral-400"
         }`}
       >
-        <Search size={18} className="text-neutral-400 mr-2" />
+        {isLoading ? (
+            <Loader2 size={16} className="animate-spin mr-2 text-teal-600" />
+          ) : (
+            <Search size={18} className="text-neutral-500 mr-2" />
+          )}
         <input
           type="text"
           onFocus={() => setShowSuggestionsMenu(true)}
           onChange={(e) => setSearchInput(e.target.value)}
           value={searchInput}
           placeholder="What are you looking for?"
-          className="w-full h-full text-sm outline-none border-none rounded bg-transparent"
+          className="py-2 w-full h-full text-sm outline-none border-none rounded bg-transparent"
           disabled={areProductsLoading}
         />
-        <button
-          className="bg-teal-600 text-white hover:bg-teal-700 cursor-pointer p-2 rounded-md transition-colors"
-          aria-label="Search"
-        >
-          {isLoading ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : (
-            <Search size={16} />
-          )}
-        </button>
       </div>
 
       <div
@@ -220,7 +219,7 @@ export function SearchPublicHeaderInput() {
             : "transform scale-y-95 opacity-0 pointer-events-none"
         }`}
       >
-        <div className="w-full max-h-80 bg-white rounded-xl border p-2 border-gray-200 flex flex-col overflow-auto shadow-lg">
+        <div className="w-full max-h-[70vh] bg-white rounded-xl border p-2 border-gray-200 flex flex-col overflow-auto shadow-lg">
           {renderContent()}
         </div>
       </div>

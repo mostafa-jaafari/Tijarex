@@ -1,7 +1,7 @@
 "use client"
 import React, { useRef, useEffect } from 'react';
 import { HeadlineSection } from './HeadlineSection';
-import { BestSellingProductUI } from './UI/BestSellingProductUI';
+import { PublicProductCard1 } from './UI/PublicProductCard1';
 import { useGlobalProducts } from '@/context/GlobalProductsContext';
 import { Loader2 } from 'lucide-react';
 
@@ -74,8 +74,8 @@ export function BestSellingProducts() {
             >
                 {isLoadingGlobalProducts ? (
                     Array(6).fill(0).map((_, idx) => (
-                        <div key={idx} className='w-full max-w-[250px] min-h-40 rounded-xl space-y-2 flex-shrink-0'>
-                            <div className='w-full h-60 bg-gray-300 animate-pulse'/>
+                        <div key={idx} className='w-full max-w-[220px] min-h-40 space-y-2 flex-shrink-0'>
+                            <div className='w-full h-[220px] bg-gray-300 animate-pulse rounded-xl'/>
                             <span className='block w-3/4 h-4 rounded-full bg-gray-200 animate-pulse' />
                             <span className='block w-1/2 h-4 rounded-full bg-gray-200 animate-pulse' />
                             <div className='flex items-center gap-2 pt-1'>
@@ -86,7 +86,7 @@ export function BestSellingProducts() {
                     ))
                 ) : (
                     trendProducts.map((product) => (
-                        <BestSellingProductUI
+                        <PublicProductCard1
                             key={product.id}
                             PRODUCTCATEGORY={product.category}
                             PRODUCTID={product.id}

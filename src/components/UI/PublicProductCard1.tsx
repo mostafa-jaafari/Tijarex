@@ -1,7 +1,6 @@
 "use client";
-import { useQuickViewProduct } from '@/context/QuickViewProductContext';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Flame, ShoppingBag, Tag } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Flame, Tag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react'
@@ -16,14 +15,9 @@ interface ProductCardProps{
     OWNER?: {email: string; image: string; name: string;};
     STOCK: number;
 }
-export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORY }: ProductCardProps) {
-    const { setIsShowQuickViewProduct, setProductID } = useQuickViewProduct();
+export function PublicProductCard1({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, PRODUCTREGULARPRICE, PRODUCTSALEPRICE, PRODUCTCATEGORY }: ProductCardProps) {
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
-    const HandleQuickView = () => {
-        setProductID(PRODUCTID as string || "");
-        setIsShowQuickViewProduct(true)
-    }
     const handleImageNavigation = (e: React.MouseEvent, direction: number) => {
         e.preventDefault();
         e.stopPropagation();
@@ -41,22 +35,25 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                 className='relative w-full h-[220px] overflow-hidden rounded-lg'
             >
                 <AnimatePresence initial={false}>
-                    <motion.div 
-                        key={currentImage} 
-                        initial={{ opacity: 0 }} 
-                        animate={{ opacity: 1 }} 
-                        exit={{ opacity: 0 }} 
-                        transition={{ duration: 0.3 }} 
-                        className="absolute inset-0"
+                    <Link
+                        href={`/shop/product?pid=${PRODUCTID}`}
                     >
-                        <Image 
-                            onClick={HandleQuickView} 
-                            src={PRODUCTIMAGES?.[currentImage] || '/placeholder-image.png'} 
-                            alt="Product image" 
-                            fill 
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
-                            className="object-cover w-full h-full cursor-pointer"/>
-                    </motion.div>
+                        <motion.div 
+                            key={currentImage} 
+                            initial={{ opacity: 0 }} 
+                            animate={{ opacity: 1 }} 
+                            exit={{ opacity: 0 }} 
+                            transition={{ duration: 0.3 }} 
+                            className="absolute inset-0"
+                        >
+                            <Image 
+                                src={PRODUCTIMAGES?.[currentImage] || '/placeholder-image.png'} 
+                                alt="Product image" 
+                                fill 
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+                                className="object-cover w-full h-full cursor-pointer"/>
+                        </motion.div>
+                    </Link>
                 </AnimatePresence>
                 <div 
                     className={`absolute bottom-1 left-1/2 -translate-x-1/2 
@@ -105,13 +102,16 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                         {PRODUCTCATEGORY}
                     </p>
                 </Link>
-                <h1
-                    onClick={HandleQuickView}
-                    className='font-semibold capitalize text-sm text-neutral-800 
-                    cursor-pointer hover:text-neutral-600'
+                <Link
+                    href={`/shop/product?pid=${PRODUCTID}`}
                 >
-                    {PRODUCTTITLE}
-                </h1>
+                    <h1
+                        className='font-semibold capitalize text-sm text-neutral-800 
+                            cursor-pointer hover:text-neutral-600'
+                        >
+                        {PRODUCTTITLE}
+                    </h1>
+                </Link>
 
                 <span
                     className='flex items-end gap-2'
@@ -127,14 +127,6 @@ export function BestSellingProductUI({ PRODUCTID, PRODUCTTITLE, PRODUCTIMAGES, P
                         {PRODUCTREGULARPRICE} Dh
                     </del>
                 </span>
-                <button
-                    onClick={HandleQuickView}
-                    className='flex items-center gap-2 cursor-pointer 
-                        justify-center mt-2 bg-teal-700/90 rounded-lg 
-                        w-full py-1.5 text-white text-sm hover:bg-teal-700'
-                >
-                    <ShoppingBag size={18}/> Add to Cart
-                </button>
             </div>
         </section>
     )

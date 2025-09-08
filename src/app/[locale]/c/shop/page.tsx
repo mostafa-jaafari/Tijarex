@@ -1,7 +1,7 @@
 import Loading from '@/app/loading';
 import { ShopFilter } from '@/components/ShopFilter';
 import { ShopInputSearch } from '@/components/ShopInputSearch';
-import { BestSellingProductUI } from '@/components/UI/BestSellingProductUI';
+import { BestSellingProductUI } from '@/components/UI/PublicProductCard1';
 import { ProductType } from '@/types/product';
 import { Tag } from 'lucide-react';
 import { Metadata } from 'next';

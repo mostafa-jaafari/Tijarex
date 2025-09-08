@@ -46,3 +46,44 @@ export async function fetchProductById(productId: string): Promise<AffiliateProd
     return null;
   }
 }
+
+/**
+ * Fetches all standard product documents from the 'products' collection in Firestore.
+ * This is highly efficient as it performs a single collection read operation.
+ * The result is a great candidate for caching to further improve performance.
+ *
+ * @returns {Promise<ProductType[]>} A promise that resolves to an array of all standard products.
+ *                                   Returns an empty array if the collection is empty or an error occurs.
+ */
+export async function fetchAllProducts(): Promise<ProductType[]> {
+  try {
+    // 1. Get a reference to the 'products' collection.
+    const productsRef = adminDb.collection('products');
+
+    // 2. Perform a single 'get' operation to retrieve all documents in the collection.
+    const productsSnapshot = await productsRef.get();
+
+    // 3. If the collection is empty, return an empty array immediately.
+    if (productsSnapshot.empty) {
+      console.warn("The 'products' collection is empty.");
+      return [];
+    }
+
+    // 4. Map over the documents, transforming each one into the desired ProductType format.
+    //    We combine the document ID with its data, just like in `fetchProductById`.
+    const allProducts: ProductType[] = productsSnapshot.docs.map((doc) => {
+      // Type assertion ensures TypeScript knows the shape of our final object.
+      return {
+        id: doc.id, // Use _id for consistency with your data model
+        ...doc.data(),
+      } as ProductType;
+    });
+
+    return allProducts;
+
+  } catch (error) {
+    console.error("Error fetching all products from Firestore:", error);
+    // Return an empty array in case of a database error to prevent the page from crashing.
+    return [];
+  }
+}

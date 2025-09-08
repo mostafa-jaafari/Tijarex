@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from 'react'
 import { HeadlineSection } from './HeadlineSection'
-import { BestSellingProductUI } from './UI/BestSellingProductUI'
+import { PublicProductCard1 } from './UI/PublicProductCard1'
 import { useGlobalProducts } from '@/context/GlobalProductsContext';
 
 
@@ -28,10 +28,10 @@ export function BestSummerCollections() {
                     return(
                         <div
                             key={idx}
-                            className='w-full max-w-[250px] min-h-40 rounded-xl 
+                            className='w-full max-w-[220px] min-h-40 rounded-xl 
                                 space-y-2 flex-shrink-0 overflow-hidden'
                         >
-                            <div className='w-full h-60 bg-gray-300 animate-pulse'/>
+                            <div className='w-full h-[220px] bg-gray-300 animate-pulse'/>
                             <span className='flex w-30 h-4 rounded-full bg-gray-200 animate-pulse' />
                             <span className='flex w-50 h-4 rounded-full bg-gray-200 animate-pulse' />
                             <div
@@ -43,7 +43,7 @@ export function BestSummerCollections() {
                         </div>
                     )
                 }) : (summerProducts.length > 0) && summerProducts.map((product) => (
-                        <BestSellingProductUI
+                        <PublicProductCard1
                             key={product.id}
                             PRODUCTCATEGORY={product.category}
                             PRODUCTID={product.id}
