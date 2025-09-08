@@ -295,12 +295,14 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
       <section aria-labelledby="details-heading" className="mt-10">
         <div className="divide-y divide-neutral-200 border-t border-neutral-200">
           <div 
-          aria-labelledby="details-heading" className="mt-10">
-  <ProductInfoTabs 
-    description={description} 
-    highlights={highlights} 
-  />
-</div>
+            aria-labelledby="details-heading" 
+            className="mt-10"
+          >
+            <ProductInfoTabs 
+              description={description} 
+              highlights={highlights} 
+            />
+          </div>
           <div className="py-6">
             <h3 className="text-base font-medium text-neutral-900">Our Guarantee</h3>
             <div className="flex items-center mt-4 text-sm text-neutral-600">
