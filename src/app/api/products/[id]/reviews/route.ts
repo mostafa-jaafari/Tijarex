@@ -8,6 +8,7 @@ import { ReviewTypes } from '@/types/product';
 // --- ⭐️ STEP 1: Import next-auth utilities ---
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { UserInfosType } from '@/types/userinfos';
 
 export async function POST(
   request: Request,
@@ -38,12 +39,12 @@ export async function POST(
     }
 
     const productRef = adminDb.collection('products').doc(id);
-
+    const CurrentuserRef = (await adminDb.collection('users').doc(session.user.email).get()).data() as UserInfosType;
     // --- ⭐️ STEP 4: Construct the new review object using session data ---
     const newReview: ReviewTypes = {
       // Use the name and image from the authenticated session
-      fullname: session.user.name || 'Anonymous User',
-      image: session.user.image || '', // Fallback to an empty string if no image
+      fullname: CurrentuserRef?.fullname || 'Anonymous User',
+      image: CurrentuserRef?.profileimage || '', // Fallback to an empty string if no image
       reviewtext: comment.trim(),
       rating: rating,
       createdAt: new Date().toISOString(),
