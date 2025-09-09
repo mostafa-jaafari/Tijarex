@@ -581,7 +581,11 @@ export default function UploadProducts() {
                             />
                         </AccordionSection>
 
-                        <AccordionSection title="Highlights" isOpen={isHighlightsOpen} setIsOpen={setIsHighlightsOpen}>
+                        <AccordionSection 
+                            title="Highlights" 
+                            isOpen={isHighlightsOpen} 
+                            setIsOpen={setIsHighlightsOpen}
+                        >
                             <Highlights
                                 highlights={highlights}
                                 setHighlights={setHighlights}
