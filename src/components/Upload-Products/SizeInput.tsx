@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 // Props now expect a simple array of strings.
 interface SizeInputProps {
@@ -15,6 +16,10 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Add size on Enter or Comma
+        if(sizes.length === 15) {
+            toast.info("Sorry max length sizes are 15!")
+            return
+        };
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
             const newSize = currentValue.trim().toUpperCase(); // Keep auto-uppercase for consistency
@@ -36,7 +41,7 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
 
     return (
         <div 
-            className="flex items-center gap-1.5 border 
+            className="flex flex-wrap items-center gap-1.5 border 
                 border-neutral-200 focus:border-neutral-400 
                 p-1.5 rounded-md"
         >
