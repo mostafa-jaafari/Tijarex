@@ -30,20 +30,33 @@ interface AccordionProps {
 
 const AccordionSection = ({ title, children, isOpen, setIsOpen }: AccordionProps) => {
     return (
-        <div className="w-full bg-white ring ring-purple-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg">
+        <div 
+            className="w-full bg-white ring ring-neutral-200 
+                rounded-md">
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex justify-between items-center py-2.5 px-6 border-b border-transparent data-[state=open]:border-neutral-200"
+                className="w-full flex justify-start items-center 
+                    py-2.5 border-b border-transparent cursor-pointer
+                    data-[state=open]:border-neutral-200"
                 data-state={isOpen ? 'open' : 'closed'}
             >
-                <h2 className="text-lg font-semibold text-neutral-800">{title}</h2>
                 <motion.div
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
+                    className="px-6"
                 >
-                    <ChevronDown size={20} className="text-neutral-600" />
+                    <ChevronDown 
+                        size={20} 
+                        className="text-neutral-600"
+                    />
                 </motion.div>
+                <h2 
+                    className={`text-md py-2 text-neutral-800
+                        ${isOpen ? "font-semibold" : "font-medium"}`}
+                >
+                    {title}
+                </h2>
             </button>
             <AnimatePresence initial={false}>
                 {isOpen && (
@@ -324,12 +337,16 @@ export default function UploadProducts() {
                 >
                     {/* --- LEFT COLUMN --- */}
                     <div className="lg:col-span-3 space-y-3">
-                        <AccordionSection title="General Information" isOpen={isGeneralOpen} setIsOpen={setIsGeneralOpen}>
+                        <AccordionSection 
+                            title="General Information" 
+                            isOpen={isGeneralOpen} 
+                            setIsOpen={setIsGeneralOpen}
+                        >
                             <div className="space-y-2.5">
                                 <div>
                                     <label 
                                         htmlFor="title" 
-                                        className="block text-sm font-semibold text-neutral-700 mb-1.5"
+                                        className="block text-sm font-medium text-neutral-700 mb-1.5"
                                     >
                                         Title
                                     </label>
@@ -344,7 +361,9 @@ export default function UploadProducts() {
                                 </div>
                                 <div>
                                     <div className="flex justify-between">
-                                    <label htmlFor="description" className="block text-sm font-semibold text-neutral-700 mb-1.5">Description</label>
+                                    <label 
+                                        htmlFor="description" 
+                                        className="block text-sm font-medium text-neutral-700 mb-1.5">Description</label>
                                     <span className="text-xs text-neutral-400">{description.length}/1000</span>
                                     </div>
                                     <textarea 
@@ -385,33 +404,22 @@ export default function UploadProducts() {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                     <div>
-                                        <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (Optional)</label>
-                                        <div
-                                            className="flex items-center border-b border-neutral-400
-                                                ring ring-neutral-200 rounded-lg bg-white 
-                                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                                overflow-hidden gap-3 focus-within:ring-neutral-400
-                                                focus-within:border-violet-600"
+                                        <label
+                                            htmlFor="regularPrice" 
+                                            className="block text-sm font-medium 
+                                            text-neutral-700 mb-1.5"
                                         >
-                                            <span
-                                                className="bg-neutral-800 text-neutral-200 
-                                                    font-semibold h-full flex justify-center 
-                                                    items-center px-4"
-                                            >
-                                                Dh
-                                            </span>
-                                            <input 
-                                                id="regularPrice" 
-                                                type="number" 
-                                                value={regularPrice} 
-                                                onChange={e => setRegularPrice(e.target.value)} 
-                                                placeholder="299.99" 
-                                                className="w-full py-2.5 text-neutral-800 
-                                                    placeholder:text-neutral-400 
-                                                    focus:outline-none 
-                                                    transition-all"
-                                            />
-                                        </div>
+                                            Regular Price (Optional)
+                                        </label>
+                                        <input 
+                                            id="regularPrice" 
+                                            type="number" 
+                                            value={regularPrice} 
+                                            onChange={e => setRegularPrice(e.target.value)} 
+                                            placeholder="299.99 Dh" 
+                                            className="outline-none placeholder:text-neutral-400 border border-neutral-200 
+                                                focus:border-neutral-400 py-2 rounded-md px-3 w-full"
+                                        />
                                     </div>
                                     <div>
                                         <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price</label>
@@ -422,13 +430,6 @@ export default function UploadProducts() {
                                                 overflow-hidden gap-3 focus-within:ring-neutral-400
                                                 focus-within:border-violet-600"
                                         >
-                                            <span
-                                                className="bg-neutral-800 text-neutral-200 
-                                                    font-semibold h-full flex justify-center 
-                                                    items-center px-4"
-                                            >
-                                                Dh
-                                            </span>
                                             <input 
                                                 id="salePrice" 
                                                 type="number" 
