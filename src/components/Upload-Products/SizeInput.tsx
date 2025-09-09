@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { InputStyles } from '@/app/[locale]/page';
 
 // Props now expect a simple array of strings.
 interface SizeInputProps {
@@ -37,7 +36,9 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
 
     return (
         <div 
-            className={InputStyles}
+            className="flex items-center gap-1.5 border 
+                border-neutral-200 focus:border-neutral-400 
+                p-1.5 rounded-md"
         >
             <AnimatePresence>
                 {sizes.map((size) => (
@@ -46,14 +47,16 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
                         initial={{ opacity: 0, scale: 0.5 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.5 }}
-                        className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-md"
+                        className="w-max flex items-center gap-1.5 bg-gray-100 
+                            text-gray-700 text-sm font-medium p-1.5 
+                            rounded-md"
                     >
                         {/* Display the size string directly */}
                         <span>{size}</span>
                         <button 
                             type="button" 
                             onClick={() => removeSize(size)} 
-                            className="text-gray-500 hover:text-gray-800"
+                            className="text-neutral-500 cursor-pointer hover:text-neutral-800"
                         >
                             <X size={14} />
                         </button>
@@ -66,7 +69,7 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
                 onChange={(e) => setCurrentValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={sizes.length === 0 ? "e.g., S, M, XL..." : "+ Add"}
-                // className={InputS}
+                className="outline-none text-sm"
             />
         </div>
     );

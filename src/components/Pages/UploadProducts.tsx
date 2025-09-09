@@ -338,7 +338,7 @@ export default function UploadProducts() {
                     {/* --- LEFT COLUMN --- */}
                     <div className="lg:col-span-3 space-y-3">
                         <AccordionSection 
-                            title="General Information" 
+                            title="Title & Description" 
                             isOpen={isGeneralOpen} 
                             setIsOpen={setIsGeneralOpen}
                         >
@@ -356,7 +356,7 @@ export default function UploadProducts() {
                                         value={title} 
                                         onChange={e => setTitle(e.target.value)} 
                                         placeholder="e.g., Premium Cotton Hoodie" 
-                                        className={`${InputStyles}`}
+                                        className={InputStyles}
                                     />
                                 </div>
                                 <div>
@@ -379,7 +379,11 @@ export default function UploadProducts() {
                             </div>
                         </AccordionSection>
 
-                        <AccordionSection title="Pricing" isOpen={isPricingOpen} setIsOpen={setIsPricingOpen}>
+                        <AccordionSection 
+                            title="Category & Pricing" 
+                            isOpen={isPricingOpen} 
+                            setIsOpen={setIsPricingOpen}
+                        >
                             <div className="space-y-3">
                                 <AnimatePresence>
                                     {isPriceInvalid && (
@@ -395,7 +399,12 @@ export default function UploadProducts() {
                                     )}
                                 </AnimatePresence>
                                 <div>
-                                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Category</label>
+                                    <label 
+                                        className="block text-sm font-medium text-neutral-700 
+                                            mb-1.5"
+                                    >
+                                        Category
+                                    </label>
                                     <CategoryInput 
                                         category={category} 
                                         setCategory={setCategory} 
@@ -417,59 +426,42 @@ export default function UploadProducts() {
                                             value={regularPrice} 
                                             onChange={e => setRegularPrice(e.target.value)} 
                                             placeholder="299.99 Dh" 
-                                            className="outline-none placeholder:text-neutral-400 border border-neutral-200 
-                                                focus:border-neutral-400 py-2 rounded-md px-3 w-full"
+                                            className={InputStyles}
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price</label>
-                                        <div
-                                            className="flex items-center border-b border-neutral-400
-                                                ring ring-neutral-200 rounded-lg bg-white 
-                                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                                overflow-hidden gap-3 focus-within:ring-neutral-400
-                                                focus-within:border-violet-600"
+                                        <label 
+                                            htmlFor="salePrice" 
+                                            className="block text-sm font-medium text-neutral-700 
+                                                mb-1.5"
                                         >
-                                            <input 
-                                                id="salePrice" 
-                                                type="number" 
-                                                value={salePrice} 
-                                                onChange={e => setSalePrice(e.target.value)} 
-                                                placeholder="249.99" 
-                                                className="w-full py-2.5 text-neutral-800 
-                                                    placeholder:text-neutral-400 
-                                                    focus:outline-none 
-                                                    transition-all"
-                                            />
-                                        </div>
+                                            Sale Price
+                                        </label>
+                                        <input 
+                                            id="salePrice" 
+                                            type="number" 
+                                            value={salePrice} 
+                                            onChange={e => setSalePrice(e.target.value)} 
+                                            placeholder="249.99 Dh" 
+                                            className={InputStyles}
+                                        />
                                     </div>
                                     <div>
-                                        <label htmlFor="stock" className="block text-sm font-semibold text-neutral-700 mb-1.5">Stock Quantity</label>
-                                        <div
-                                            className="flex items-center border-b border-neutral-400
-                                                ring ring-neutral-200 rounded-lg bg-white 
-                                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                                overflow-hidden gap-3 focus-within:ring-neutral-400
-                                                focus-within:border-violet-600"
+                                        <label 
+                                            htmlFor="stock" 
+                                            className="block text-sm font-medium text-neutral-700 
+                                                mb-1.5"
                                         >
-                                            <span
-                                                className="bg-neutral-800 text-neutral-200 
-                                                    font-semibold h-full flex justify-center 
-                                                    items-center px-4"
-                                            >
-                                                U
-                                            </span>
-                                            <input 
-                                                id="stock" 
-                                                type="number" 
-                                                value={stock} 
-                                                onChange={e => setStock(e.target.value)} 
-                                                placeholder="99" 
-                                                className="w-full py-2.5 text-neutral-800 
-                                                    placeholder:text-neutral-400 
-                                                    focus:outline-none 
-                                                    transition-all" />
-                                        </div>
+                                            Stock Quantity
+                                        </label>
+                                        <input 
+                                            id="stock" 
+                                            type="number" 
+                                            value={stock} 
+                                            onChange={e => setStock(e.target.value)} 
+                                            placeholder="99 Unit"
+                                            className={InputStyles}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -477,9 +469,15 @@ export default function UploadProducts() {
 
                         <AccordionSection title="Images" isOpen={isImagesOpen} setIsOpen={setIsImagesOpen}>
                             <div>
-                                <label className="block text-sm font-semibold text-neutral-700">Product Photos (Max 5)</label>
+                                <label
+                                    htmlFor="UploadImages"
+                                    className="block text-sm font-medium text-neutral-700"
+                            >
+                                Product Photos (Max 5)
+                            </label>
                                 <div
                                     onClick={() => fileInputRef.current?.click()}
+                                    id="UploadImages"
                                     onDragOver={handleDragOver}
                                     onDragLeave={handleDragLeave}
                                     onDrop={handleDrop}
@@ -541,15 +539,33 @@ export default function UploadProducts() {
                             )}
                         </AnimatePresence>
                         
-                        <AccordionSection title="Variants" isOpen={isVariantsOpen} setIsOpen={setIsVariantsOpen}>
+                        <AccordionSection 
+                            title="Sizes & Colors" 
+                            isOpen={isVariantsOpen} 
+                            setIsOpen={setIsVariantsOpen}
+                        >
                             <div className="space-y-2.5">
                                 <div>
-                                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Size</label>
-                                    <SizeInput sizes={sizes} setSizes={setSizes} />
+                                    <label 
+                                        className="block text-sm font-medium text-neutral-700 mb-1.5"
+                                    >
+                                        Size
+                                    </label>
+                                    <SizeInput 
+                                        sizes={sizes} 
+                                        setSizes={setSizes}
+                                    />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Color</label>
-                                    <ColorInput colors={colors} setColors={setColors} />
+                                    <label 
+                                        className="block text-sm font-medium text-neutral-700 mb-1.5"
+                                    >
+                                        Color
+                                    </label>
+                                    <ColorInput 
+                                        colors={colors} 
+                                        setColors={setColors}
+                                    />
                                 </div>
                             </div>
                         </AccordionSection>

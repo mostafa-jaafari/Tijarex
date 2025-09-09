@@ -10,7 +10,7 @@ import { PublicHeaderCategories } from "@/components/PublicHeaderCategories";
 
 export const PrimaryDark = "bg-gradient-to-tr from-neutral-800 via-neutral-700 to-neutral-800 hover:from-neutral-700 hover:via-neutral-700 hover:to-neutral-700 text-[13px] py-1 px-2 rounded-lg text-neutral-100 border-b border-neutral-400/50 ring ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]";
 export const PrimaryLight = "bg-white hover:bg-neutral-50 border-b border-neutral-400 ring ring-neutral-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] text-neutral-700 cursor-pointer text-[13px] py-1 px-2 rounded-lg";
-export const InputStyles = "w-full px-4 py-2.5 bg-white border border-neutral-200 focus:border-neutral-400 text-neutral-700 rounded-md placeholder:text-neutral-400 placeholder:text-sm focus:outline-none transition-all";
+export const InputStyles = "outline-none placeholder:text-neutral-400 placeholder:text-sm border border-neutral-200 focus:border-neutral-400 py-2 rounded-md px-3 w-full";
 export default function Home() {
   return (
     <main className="w-full bg-white">
