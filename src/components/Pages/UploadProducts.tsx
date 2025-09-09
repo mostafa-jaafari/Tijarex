@@ -570,7 +570,11 @@ export default function UploadProducts() {
                             </div>
                         </AccordionSection>
 
-                        <AccordionSection title="Permissions" isOpen={isPermissionsOpen} setIsOpen={setIsPermissionsOpen}>
+                        <AccordionSection 
+                            title="Permissions" 
+                            isOpen={isPermissionsOpen} 
+                            setIsOpen={setIsPermissionsOpen}
+                        >
                             <PermissionCheckBox 
                                 permissions={permissions}
                                 setPermissions={setPermissions}
