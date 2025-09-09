@@ -96,7 +96,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
     const SubPagesId = useParams().subpagesid;
     const params = SubPagesId ? `${SubPagesId}` : `${userInfos?.UserRole === "seller" ? "seller" : userInfos?.UserRole === "affiliate" ? "affiliate" : ""}`;
     return (
-        <aside className={`group bg-neutral-50 border-r border-gray-200
+        <aside className={`group bg-white z-30 border-r border-gray-200
             ${isCollapsed ? 'w-16' : 'w-60 flex-shrink-0'} 
             h-screen pb-14 transition-all duration-300 
             flex flex-col sticky top-0 overflow-auto

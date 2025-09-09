@@ -37,11 +37,7 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
 
     return (
         <div 
-            className="w-full px-2 py-1 bg-white border-b 
-                border-gray-400 ring ring-neutral-200
-                rounded-lg flex flex-wrap items-center gap-2 
-                focus-within:border-b-2 focus-within:ring-purple-400 
-                focus-within:border-purple-600 transition-all"
+            className={InputStyles}
         >
             <AnimatePresence>
                 {sizes.map((size) => (
@@ -70,7 +66,7 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
                 onChange={(e) => setCurrentValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={sizes.length === 0 ? "e.g., S, M, XL..." : "+ Add"}
-                className={InputStyles}
+                // className={InputS}
             />
         </div>
     );

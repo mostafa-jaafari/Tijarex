@@ -8,16 +8,67 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ColorInput } from "@/components/Upload-Products/ColorInput";
 import { SizeInput } from "@/components/Upload-Products/SizeInput";
 import { CategoryInput } from "@/components/Upload-Products/CategoryInput";
-import { Upload, X, Loader2, Info } from "lucide-react";
+import { Upload, X, Loader2, Info, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
 import { PermissionCheckBox, ProductPermissions } from "../Upload-Products/UploadPermission";
 import { Highlights } from "../Upload-Products/AddHighlights";
+
 // --- Type Definitions ---
 interface ProductFile {
     file: File;
     url: string; // Memoized URL to prevent flicker
 }
+
+// --- Accordion Component ---
+interface AccordionProps {
+    title: string;
+    children: React.ReactNode;
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+}
+
+const AccordionSection = ({ title, children, isOpen, setIsOpen }: AccordionProps) => {
+    return (
+        <div className="w-full bg-white ring ring-purple-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg">
+            <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex justify-between items-center py-2.5 px-6 border-b border-transparent data-[state=open]:border-neutral-200"
+                data-state={isOpen ? 'open' : 'closed'}
+            >
+                <h2 className="text-lg font-semibold text-neutral-800">{title}</h2>
+                <motion.div
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                >
+                    <ChevronDown size={20} className="text-neutral-600" />
+                </motion.div>
+            </button>
+            <AnimatePresence initial={false}>
+                {isOpen && (
+                    <motion.div
+                        key="content"
+                        initial="collapsed"
+                        animate="open"
+                        exit="collapsed"
+                        variants={{
+                            open: { opacity: 1, height: "auto" },
+                            collapsed: { opacity: 0, height: 0 }
+                        }}
+                        transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                        className="overflow-hidden"
+                    >
+                        <div className="py-2.5 px-6">
+                             {children}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
 
 const ImageProcessingSkeleton = ({ count }: { count: number }) => (
     Array.from({ length: count }).map((_, i) => (
@@ -42,16 +93,24 @@ export default function UploadProducts() {
     });
     const [highlights, setHighlights] = useState<string[]>([]);
 
-    const [productFiles, setProductFiles] = useState<ProductFile[]>([]); // <-- UPDATED STATE
+    const [productFiles, setProductFiles] = useState<ProductFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isProcessingImages, setIsProcessingImages] = useState(false);
     const [processingFileCount, setProcessingFileCount] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // --- Accordion State ---
+    const [isGeneralOpen, setIsGeneralOpen] = useState(true);
+    const [isPricingOpen, setIsPricingOpen] = useState(true);
+    const [isImagesOpen, setIsImagesOpen] = useState(true);
+    const [isVariantsOpen, setIsVariantsOpen] = useState(true);
+    const [isPermissionsOpen, setIsPermissionsOpen] = useState(true);
+    const [isHighlightsOpen, setIsHighlightsOpen] = useState(true);
+
+
     // --- CRUCIAL: Cleanup Object URLs to prevent memory leaks ---
     useEffect(() => {
-        // This function will be called when the component unmounts
         return () => {
             productFiles.forEach(productFile => URL.revokeObjectURL(productFile.url));
         };
@@ -95,7 +154,6 @@ export default function UploadProducts() {
             }
             try {
                 const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920 });
-                // Create the URL ONCE and store it
                 newProductFiles.push({ file: compressedFile, url: URL.createObjectURL(compressedFile) });
             } catch (err) {
                 toast.error(`Could not process ${file.name}.`);
@@ -122,7 +180,7 @@ export default function UploadProducts() {
     const removeFile = (indexToRemove: number) => {
         const fileToRemove = productFiles[indexToRemove];
         if (fileToRemove) {
-            URL.revokeObjectURL(fileToRemove.url); // Clean up the specific URL from memory
+            URL.revokeObjectURL(fileToRemove.url);
         }
         setProductFiles(prev => prev.filter((_, index) => index !== indexToRemove));
     };
@@ -154,7 +212,7 @@ export default function UploadProducts() {
         try {
             const uploadedImageUrls = await Promise.all(
                 productFiles.map(productFile => {
-                    const file = productFile.file; // Use the file from our state object
+                    const file = productFile.file;
                     return new Promise<string>(async (resolve, reject) => {
                         const publicId = `products/${user.uid}/${Date.now()}_${file.name}`;
                         const timestamp = Math.round(new Date().getTime() / 1000);
@@ -231,20 +289,14 @@ export default function UploadProducts() {
     };
 
     const isPriceInvalid = useMemo(() => {
-        // Convert string state to numbers for correct comparison
         const regNum = parseFloat(regularPrice);
         const saleNum = parseFloat(salePrice);
-
-        // The sale price is only invalid if it's a number AND it's
-        // greater than or equal to the regular price.
-        // If salePrice is empty or not a number, the condition is not met.
         if (!isNaN(saleNum) && !isNaN(regNum)) {
             return saleNum >= regNum;
         }
-
-        // If either value isn't a valid number yet (e.g., empty), don't show the error.
         return false;
     }, [regularPrice, salePrice]);
+    
     return (
         <motion.section 
             initial={{ opacity: 0 }}
@@ -268,24 +320,12 @@ export default function UploadProducts() {
                 <fieldset 
                     disabled={isSubmitting} 
                     className="max-w-7xl mx-auto grid grid-cols-1 
-                        lg:grid-cols-5 gap-3"
+                        lg:grid-cols-5 gap-3 pb-24"
                 >
                     {/* --- LEFT COLUMN --- */}
                     <div className="lg:col-span-3 space-y-3">
-                        {/* --- Title & Description --- */}
-                        <div
-                            className="w-full bg-white ring ring-purple-200 
-            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
-                        >
-                            <h2 
-                                className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800"
-                            >
-                                Title & Description
-                            </h2>
-                            
-                            <div
-                                className="py-2.5 px-6 space-y-2.5"
-                            >
+                        <AccordionSection title="General Information" isOpen={isGeneralOpen} setIsOpen={setIsGeneralOpen}>
+                            <div className="space-y-2.5">
                                 <div>
                                     <label 
                                         htmlFor="title" 
@@ -318,247 +358,217 @@ export default function UploadProducts() {
                                     </textarea>
                                 </div>
                             </div>
-                        </div>
-                        {/* --- Category --- */}
-                        <AnimatePresence>
-                            {isPriceInvalid && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className="py-2 px-3 rounded-lg bg-yellow-100 border text-yellow-800 border-yellow-300 text-sm flex items-center gap-2"
-                                >
-                                    <Info size={16}/> 
-                                    <span className="font-semibold">Sale Price</span> must be lower than the <span className="font-semibold">Regular Price.</span>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                        <div
-                            className="w-full bg-white ring ring-purple-200 
-                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
-                        >
-                            <h2 
-                                className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800"
-                            >
-                                Category & Price
-                            </h2>
-                            {/* --- Input --- */}
-                            <div className="px-6 pt-2.5">
-                                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Category</label>
-                                <CategoryInput 
-                                    category={category} 
-                                    setCategory={setCategory} 
-                                />
-                            </div>
+                        </AccordionSection>
 
-                            <div className="py-2.5 px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                <div>
-                                    <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (Optional)</label>
-                                    <div
-                                        className="flex items-center border-b border-neutral-400
-                                            ring ring-neutral-200 rounded-lg bg-white 
-                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                            overflow-hidden gap-3 focus-within:ring-neutral-400
-                                            focus-within:border-violet-600"
-                                    >
-                                        <span
-                                            className="bg-neutral-800 text-neutral-200 
-                                                font-semibold h-full flex justify-center 
-                                                items-center px-4"
+                        <AccordionSection title="Pricing" isOpen={isPricingOpen} setIsOpen={setIsPricingOpen}>
+                            <div className="space-y-3">
+                                <AnimatePresence>
+                                    {isPriceInvalid && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            className="py-2 px-3 rounded-lg bg-yellow-100 border text-yellow-800 border-yellow-300 text-sm flex items-center gap-2"
                                         >
-                                            Dh
-                                        </span>
-                                        <input 
-                                            id="regularPrice" 
-                                            type="number" 
-                                            value={regularPrice} 
-                                            onChange={e => setRegularPrice(e.target.value)} 
-                                            placeholder="299.99" 
-                                            className="w-full py-2.5 text-neutral-800 
-                                                placeholder:text-neutral-400 
-                                                focus:outline-none 
-                                                transition-all"
-                                        />
-                                    </div>
+                                            <Info size={16}/> 
+                                            <span className="font-semibold">Sale Price</span> must be lower than the <span className="font-semibold">Regular Price.</span>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                                <div>
+                                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Category</label>
+                                    <CategoryInput 
+                                        category={category} 
+                                        setCategory={setCategory} 
+                                    />
                                 </div>
-                                <div>
-                                    <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price</label>
-                                    <div
-                                        className="flex items-center border-b border-neutral-400
-                                            ring ring-neutral-200 rounded-lg bg-white 
-                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                            overflow-hidden gap-3 focus-within:ring-neutral-400
-                                            focus-within:border-violet-600"
-                                    >
-                                        <span
-                                            className="bg-neutral-800 text-neutral-200 
-                                                font-semibold h-full flex justify-center 
-                                                items-center px-4"
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    <div>
+                                        <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (Optional)</label>
+                                        <div
+                                            className="flex items-center border-b border-neutral-400
+                                                ring ring-neutral-200 rounded-lg bg-white 
+                                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
+                                                overflow-hidden gap-3 focus-within:ring-neutral-400
+                                                focus-within:border-violet-600"
                                         >
-                                            Dh
-                                        </span>
-                                        <input 
-                                            id="salePrice" 
-                                            type="number" 
-                                            value={salePrice} 
-                                            onChange={e => setSalePrice(e.target.value)} 
-                                            placeholder="249.99" 
-                                            className="w-full py-2.5 text-neutral-800 
-                                                placeholder:text-neutral-400 
-                                                focus:outline-none 
-                                                transition-all"
-                                        />
+                                            <span
+                                                className="bg-neutral-800 text-neutral-200 
+                                                    font-semibold h-full flex justify-center 
+                                                    items-center px-4"
+                                            >
+                                                Dh
+                                            </span>
+                                            <input 
+                                                id="regularPrice" 
+                                                type="number" 
+                                                value={regularPrice} 
+                                                onChange={e => setRegularPrice(e.target.value)} 
+                                                placeholder="299.99" 
+                                                className="w-full py-2.5 text-neutral-800 
+                                                    placeholder:text-neutral-400 
+                                                    focus:outline-none 
+                                                    transition-all"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="stock" className="block text-sm font-semibold text-neutral-700 mb-1.5">Stock Quantity</label>
-                                    <div
-                                        className="flex items-center border-b border-neutral-400
-                                            ring ring-neutral-200 rounded-lg bg-white 
-                                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                            overflow-hidden gap-3 focus-within:ring-neutral-400
-                                            focus-within:border-violet-600"
-                                    >
-                                        <span
-                                            className="bg-neutral-800 text-neutral-200 
-                                                font-semibold h-full flex justify-center 
-                                                items-center px-4"
+                                    <div>
+                                        <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price</label>
+                                        <div
+                                            className="flex items-center border-b border-neutral-400
+                                                ring ring-neutral-200 rounded-lg bg-white 
+                                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
+                                                overflow-hidden gap-3 focus-within:ring-neutral-400
+                                                focus-within:border-violet-600"
                                         >
-                                            U
-                                        </span>
-                                        <input 
-                                            id="stock" 
-                                            type="number" 
-                                            value={stock} 
-                                            onChange={e => setStock(e.target.value)} 
-                                            placeholder="99" 
-                                            className="w-full py-2.5 text-neutral-800 
-                                                placeholder:text-neutral-400 
-                                                focus:outline-none 
-                                                transition-all" />
+                                            <span
+                                                className="bg-neutral-800 text-neutral-200 
+                                                    font-semibold h-full flex justify-center 
+                                                    items-center px-4"
+                                            >
+                                                Dh
+                                            </span>
+                                            <input 
+                                                id="salePrice" 
+                                                type="number" 
+                                                value={salePrice} 
+                                                onChange={e => setSalePrice(e.target.value)} 
+                                                placeholder="249.99" 
+                                                className="w-full py-2.5 text-neutral-800 
+                                                    placeholder:text-neutral-400 
+                                                    focus:outline-none 
+                                                    transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="stock" className="block text-sm font-semibold text-neutral-700 mb-1.5">Stock Quantity</label>
+                                        <div
+                                            className="flex items-center border-b border-neutral-400
+                                                ring ring-neutral-200 rounded-lg bg-white 
+                                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
+                                                overflow-hidden gap-3 focus-within:ring-neutral-400
+                                                focus-within:border-violet-600"
+                                        >
+                                            <span
+                                                className="bg-neutral-800 text-neutral-200 
+                                                    font-semibold h-full flex justify-center 
+                                                    items-center px-4"
+                                            >
+                                                U
+                                            </span>
+                                            <input 
+                                                id="stock" 
+                                                type="number" 
+                                                value={stock} 
+                                                onChange={e => setStock(e.target.value)} 
+                                                placeholder="99" 
+                                                className="w-full py-2.5 text-neutral-800 
+                                                    placeholder:text-neutral-400 
+                                                    focus:outline-none 
+                                                    transition-all" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div
-                        className="w-full bg-white ring ring-purple-200 
-                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
-                    >
-                        <h3 
-                            className="py-2.5 px-6 border-b border-neutral-200 
-                                text-lg font-semibold text-neutral-800">
-                                Upload Product Images
-                        </h3>
-                        <div
-                            className="py-2.5 px-6"
-                        >
-                            <label className="block text-sm font-semibold text-neutral-700">Product Photos (Max 5)</label>
-                            <div
-                                onClick={() => fileInputRef.current?.click()}
-                                onDragOver={handleDragOver}
-                                onDragLeave={handleDragLeave}
-                                onDrop={handleDrop}
-                                className={`relative mt-1.5 w-full flex flex-col 
-                                    items-center justify-center p-6 border-2 
-                                    border-dashed rounded-lg transition-colors 
-                                    ${isDragging ? 
-                                        'border-neutral-500 bg-neutral-50'
-                                        :
-                                        'border-neutral-300'} 
-                                        ${isSubmitting || isProcessingImages ? 
-                                            'cursor-not-allowed opacity-60'
+                        </AccordionSection>
+
+                        <AccordionSection title="Images" isOpen={isImagesOpen} setIsOpen={setIsImagesOpen}>
+                            <div>
+                                <label className="block text-sm font-semibold text-neutral-700">Product Photos (Max 5)</label>
+                                <div
+                                    onClick={() => fileInputRef.current?.click()}
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={handleDrop}
+                                    className={`relative mt-1.5 w-full flex flex-col 
+                                        items-center justify-center p-6 border-2 
+                                        border-dashed rounded-lg transition-colors 
+                                        ${isDragging ? 
+                                            'border-neutral-500 bg-neutral-50'
                                             :
-                                            'cursor-pointer hover:border-neutral-400'}
-                                            `}
-                            >
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleFileChange}
-                                accept="image/*"
-                                multiple
-                                className="hidden"
-                                disabled={isSubmitting || isProcessingImages}
-                            />
-                            <div className="text-center text-neutral-500">
-                                <Upload size={24} className="mx-auto mb-2 text-neutral-400" />
-                                <p className="text-sm font-semibold text-neutral-600">Click to upload or drag and drop</p>
-                                <p className="text-xs mt-1">Max 10MB per file. Up to 5 images.</p>
+                                            'border-neutral-300'} 
+                                            ${isSubmitting || isProcessingImages ? 
+                                                'cursor-not-allowed opacity-60'
+                                                :
+                                                'cursor-pointer hover:border-neutral-400'}
+                                                `}
+                                >
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    multiple
+                                    className="hidden"
+                                    disabled={isSubmitting || isProcessingImages}
+                                />
+                                <div className="text-center text-neutral-500">
+                                    <Upload size={24} className="mx-auto mb-2 text-neutral-400" />
+                                    <p className="text-sm font-semibold text-neutral-600">Click to upload or drag and drop</p>
+                                    <p className="text-xs mt-1">Max 10MB per file. Up to 5 images.</p>
+                                </div>
+                                </div>
                             </div>
-                            </div>
-                        </div>
-                    </div>
+                        </AccordionSection>
                     </div>
 
                     {/* --- RIGHT COLUMN --- */}
                     <div className="lg:col-span-2 space-y-3">
-                    <AnimatePresence>
-                        {(productFiles.length > 0 || isProcessingImages) && (
-                        <motion.div layout className="grid grid-cols-4 gap-4">
-                            {productFiles.map((productFile, i) => (
-                            <motion.div 
-                                key={productFile.url}
-                                layout
-                                initial={{ opacity: 0, scale: 0.8 }} 
-                                animate={{ opacity: 1, scale: 1 }} 
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                className="relative group aspect-square border 
-                                    border-neutral-200 rounded-lg overflow-hidden"
-                            >
-                                <Image src={productFile.url} alt="preview" fill sizes="20vw" className="object-cover" />
-                                <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-black/40 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all z-10">
-                                    <X size={14} />
-                                </button>
+                        <AnimatePresence>
+                            {(productFiles.length > 0 || isProcessingImages) && (
+                            <motion.div layout className="grid grid-cols-4 gap-4">
+                                {productFiles.map((productFile, i) => (
+                                <motion.div 
+                                    key={productFile.url}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.8 }} 
+                                    animate={{ opacity: 1, scale: 1 }} 
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    className="relative group aspect-square border 
+                                        border-neutral-200 rounded-lg overflow-hidden"
+                                >
+                                    <Image src={productFile.url} alt="preview" fill sizes="20vw" className="object-cover" />
+                                    <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-black/40 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all z-10">
+                                        <X size={14} />
+                                    </button>
+                                </motion.div>
+                                ))}
+                                {isProcessingImages && <ImageProcessingSkeleton count={processingFileCount} />}
                             </motion.div>
-                            ))}
-                            {isProcessingImages && <ImageProcessingSkeleton count={processingFileCount} />}
-                        </motion.div>
-                        )}
-                    </AnimatePresence>
-                    
-                    <div
-                        className="w-full bg-white ring ring-purple-200 
-                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
-                    >
-                        <h3 
-                            className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800">
-                                Colors & Sizes
-                        </h3>
-                        <div className="px-6 py-2.5 space-y-2.5">
-                            <div>
-                                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Size</label>
-                                <SizeInput sizes={sizes} setSizes={setSizes} />
+                            )}
+                        </AnimatePresence>
+                        
+                        <AccordionSection title="Variants" isOpen={isVariantsOpen} setIsOpen={setIsVariantsOpen}>
+                            <div className="space-y-2.5">
+                                <div>
+                                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Size</label>
+                                    <SizeInput sizes={sizes} setSizes={setSizes} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Color</label>
+                                    <ColorInput colors={colors} setColors={setColors} />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Color</label>
-                                <ColorInput colors={colors} setColors={setColors} />
-                            </div>
-                        </div>
-                    </div>
-                    <AnimatePresence>
-                        {(permissions.availableForAffiliates && permissions.sellInMarketplace) && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                className="py-2 px-3 rounded-lg bg-yellow-100 border text-yellow-800 border-yellow-300 text-sm flex items-center gap-2"
-                            >
-                                <Info size={16}/> 
-                                <span className="font-semibold">Sale Price</span> must be lower than the <span className="font-semibold">Regular Price.</span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                    <PermissionCheckBox 
-                        permissions={permissions}
-                        setPermissions={setPermissions}
-                    />
-                    <Highlights
-                        highlights={highlights}
-                        setHighlights={setHighlights}
-                    />
+                        </AccordionSection>
 
-                    <div className="w-full flex items-center 
-                        justify-end gap-3">
+                        <AccordionSection title="Permissions" isOpen={isPermissionsOpen} setIsOpen={setIsPermissionsOpen}>
+                            <PermissionCheckBox 
+                                permissions={permissions}
+                                setPermissions={setPermissions}
+                            />
+                        </AccordionSection>
+
+                        <AccordionSection title="Highlights" isOpen={isHighlightsOpen} setIsOpen={setIsHighlightsOpen}>
+                            <Highlights
+                                highlights={highlights}
+                                setHighlights={setHighlights}
+                            />
+                        </AccordionSection>
+
+                        <div className="fixed bottom-0 left-0 w-full bg-white py-3 px-4 border-t border-neutral-200 shadow-t-lg z-20">
+                    <div className="max-w-7xl mx-auto flex justify-end">
                         <button
                             type="submit"
                             disabled={
@@ -586,6 +596,7 @@ export default function UploadProducts() {
                             <span>{isSubmitting ? 'Uploading...' : 'Upload Product'}</span>
                         </button>
                     </div>
+                </div>
                     </div>
                 </fieldset>
             </form>
