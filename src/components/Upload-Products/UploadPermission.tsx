@@ -80,11 +80,7 @@ export const PermissionCheckBox: React.FC<PermissionCheckBoxProps> = ({ permissi
 
   return (
     <div 
-        className="w-full bg-white ring ring-purple-200 
-            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg">
-      <h3 className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800">
-        Product Permissions
-      </h3>
+        className="w-full shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]">
       
       <div className="divide-y divide-neutral-200">
         {permissionOptions.map((option) => (
