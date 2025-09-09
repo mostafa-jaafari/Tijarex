@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { InputStyles } from '@/app/[locale]/page';
 
 // Props now expect a simple array of strings.
 interface SizeInputProps {
@@ -69,7 +70,7 @@ export const SizeInput: React.FC<SizeInputProps> = ({ sizes, setSizes }) => {
                 onChange={(e) => setCurrentValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={sizes.length === 0 ? "e.g., S, M, XL..." : "+ Add"}
-                className="flex-grow bg-transparent text-sm p-1.5 focus:outline-none placeholder:text-gray-400"
+                className={InputStyles}
             />
         </div>
     );

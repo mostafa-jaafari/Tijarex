@@ -12,6 +12,7 @@ import { Upload, X, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
 import { PermissionCheckBox, ProductPermissions } from "../Upload-Products/UploadPermission";
+import { Highlights } from "../Upload-Products/AddHighlights";
 // --- Type Definitions ---
 interface ProductFile {
     file: File;
@@ -39,6 +40,8 @@ export default function UploadProducts() {
         availableForAffiliates: false,
         sellInMarketplace: false,
     });
+    const [highlights, setHighlights] = useState<string[]>([]);
+
     const [productFiles, setProductFiles] = useState<ProductFile[]>([]); // <-- UPDATED STATE
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -265,14 +268,14 @@ export default function UploadProducts() {
                 <fieldset 
                     disabled={isSubmitting} 
                     className="max-w-7xl mx-auto grid grid-cols-1 
-                        lg:grid-cols-5 gap-6"
+                        lg:grid-cols-5 gap-3"
                 >
                     {/* --- LEFT COLUMN --- */}
                     <div className="lg:col-span-3 space-y-3">
                         {/* --- Title & Description --- */}
                         <div
-                            className="w-full bg-white border-b border-neutral-400 ring 
-                                    ring-purple-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
+                            className="w-full bg-white ring ring-purple-200 
+            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                         >
                             <h2 
                                 className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800"
@@ -331,9 +334,8 @@ export default function UploadProducts() {
                             )}
                         </AnimatePresence>
                         <div
-                            className="bg-white rounded-lg 
-                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] border-b 
-                                border-neutral-400 ring ring-purple-200"
+                            className="w-full bg-white ring ring-purple-200 
+                                shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                         >
                             <h2 
                                 className="py-2.5 px-6 border-b border-neutral-200 text-lg font-semibold text-neutral-800"
@@ -353,14 +355,14 @@ export default function UploadProducts() {
                                 <div>
                                     <label htmlFor="regularPrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Regular Price (Optional)</label>
                                     <div
-                                        className="flex items-center border-b border-purple-400
-                                            ring ring-purple-200 rounded-lg bg-white 
+                                        className="flex items-center border-b border-neutral-400
+                                            ring ring-neutral-200 rounded-lg bg-white 
                                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                            overflow-hidden gap-3 focus-within:ring-purple-400
+                                            overflow-hidden gap-3 focus-within:ring-neutral-400
                                             focus-within:border-violet-600"
                                     >
                                         <span
-                                            className="bg-purple-600 text-neutral-200 
+                                            className="bg-neutral-800 text-neutral-200 
                                                 font-semibold h-full flex justify-center 
                                                 items-center px-4"
                                         >
@@ -382,14 +384,14 @@ export default function UploadProducts() {
                                 <div>
                                     <label htmlFor="salePrice" className="block text-sm font-semibold text-neutral-700 mb-1.5">Sale Price</label>
                                     <div
-                                        className="flex items-center border-b border-purple-400
-                                            ring ring-purple-200 rounded-lg bg-white 
+                                        className="flex items-center border-b border-neutral-400
+                                            ring ring-neutral-200 rounded-lg bg-white 
                                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                            overflow-hidden gap-3 focus-within:ring-purple-400
+                                            overflow-hidden gap-3 focus-within:ring-neutral-400
                                             focus-within:border-violet-600"
                                     >
                                         <span
-                                            className="bg-purple-600 text-neutral-200 
+                                            className="bg-neutral-800 text-neutral-200 
                                                 font-semibold h-full flex justify-center 
                                                 items-center px-4"
                                         >
@@ -411,14 +413,14 @@ export default function UploadProducts() {
                                 <div>
                                     <label htmlFor="stock" className="block text-sm font-semibold text-neutral-700 mb-1.5">Stock Quantity</label>
                                     <div
-                                        className="flex items-center border-b border-purple-400
-                                            ring ring-purple-200 rounded-lg bg-white 
+                                        className="flex items-center border-b border-neutral-400
+                                            ring ring-neutral-200 rounded-lg bg-white 
                                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] h-10 
-                                            overflow-hidden gap-3 focus-within:ring-purple-400
+                                            overflow-hidden gap-3 focus-within:ring-neutral-400
                                             focus-within:border-violet-600"
                                     >
                                         <span
-                                            className="bg-purple-600 text-neutral-200 
+                                            className="bg-neutral-800 text-neutral-200 
                                                 font-semibold h-full flex justify-center 
                                                 items-center px-4"
                                         >
@@ -438,20 +440,14 @@ export default function UploadProducts() {
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-
-                    {/* --- RIGHT COLUMN --- */}
-                    <div className="lg:col-span-2 space-y-3">
-                    <div
-                        className="bg-white rounded-lg 
-                            border-b border-neutral-400 ring ring-neutral-200 
-                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)]"
+                        <div
+                        className="w-full bg-white ring ring-purple-200 
+                            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                     >
                         <h3 
                             className="py-2.5 px-6 border-b border-neutral-200 
                                 text-lg font-semibold text-neutral-800">
-                                Colors & Sizes
+                                Upload Product Images
                         </h3>
                         <div
                             className="py-2.5 px-6"
@@ -466,13 +462,13 @@ export default function UploadProducts() {
                                     items-center justify-center p-6 border-2 
                                     border-dashed rounded-lg transition-colors 
                                     ${isDragging ? 
-                                        'border-purple-500 bg-purple-50'
+                                        'border-neutral-500 bg-neutral-50'
                                         :
                                         'border-neutral-300'} 
                                         ${isSubmitting || isProcessingImages ? 
                                             'cursor-not-allowed opacity-60'
                                             :
-                                            'cursor-pointer hover:border-purple-400'}
+                                            'cursor-pointer hover:border-neutral-400'}
                                             `}
                             >
                             <input
@@ -492,6 +488,10 @@ export default function UploadProducts() {
                             </div>
                         </div>
                     </div>
+                    </div>
+
+                    {/* --- RIGHT COLUMN --- */}
+                    <div className="lg:col-span-2 space-y-3">
                     <AnimatePresence>
                         {(productFiles.length > 0 || isProcessingImages) && (
                         <motion.div layout className="grid grid-cols-4 gap-4">
@@ -517,8 +517,7 @@ export default function UploadProducts() {
                     </AnimatePresence>
                     
                     <div
-                        className="bg-white border-b 
-                            border-neutral-400 ring ring-neutral-200
+                        className="w-full bg-white ring ring-purple-200 
                             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.04)] rounded-lg"
                     >
                         <h3 
@@ -553,6 +552,11 @@ export default function UploadProducts() {
                         permissions={permissions}
                         setPermissions={setPermissions}
                     />
+                    <Highlights
+                        highlights={highlights}
+                        setHighlights={setHighlights}
+                    />
+
                     <div className="w-full flex items-center 
                         justify-end gap-3">
                         <button
@@ -572,7 +576,7 @@ export default function UploadProducts() {
                                 (permissions.availableForAffiliates && permissions.sellInMarketplace)
                             }
                             className="px-6 py-3 text-sm font-semibold text-white 
-                                cursor-pointer bg-purple-600 rounded-lg hover:bg-purple-700 
+                                cursor-pointer bg-neutral-600 rounded-lg hover:bg-neutral-700 
                                 disabled:bg-neutral-300 
                                 disabled:text-neutral-500 
                                 disabled:cursor-not-allowed 

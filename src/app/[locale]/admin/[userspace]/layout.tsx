@@ -10,7 +10,7 @@ export default function layout({ children }: { children: React.ReactNode; params
       >
         <PrivateHeader />
         <div
-          className='w-full flex flex-1 rounded-t-2xl bg-neutral-100 items-start overflow-hidden'
+          className='w-full flex flex-1 rounded-t-2xl bg-neutral-50 items-start overflow-hidden'
         >
           <Sidebar />
           <div className='flex-1 h-full overflow-y-auto'>
