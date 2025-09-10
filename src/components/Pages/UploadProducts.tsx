@@ -12,7 +12,7 @@ import { Upload, X, Loader2, Info, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
 import { PermissionCheckBox, ProductPermissions } from "../Upload-Products/UploadPermission";
-import { AddHighlights, Highlight } from "../Upload-Products/AddHighlights";
+import { AddHighlights } from "../Upload-Products/AddHighlights";
 
 // --- Type Definitions ---
 interface ProductFile {
@@ -104,7 +104,7 @@ export default function UploadProducts() {
         availableForAffiliates: false,
         sellInMarketplace: false,
     });
-    const [highlights, setHighlights] = useState<Highlight[]>([]);
+    const [highlights, setHighlights] = useState<string[]>([]);
 
     const [productFiles, setProductFiles] = useState<ProductFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
