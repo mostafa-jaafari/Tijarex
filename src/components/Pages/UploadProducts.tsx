@@ -12,7 +12,7 @@ import { Upload, X, Loader2, Info, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
 import { PermissionCheckBox, ProductPermissions } from "../Upload-Products/UploadPermission";
-import { Highlights } from "../Upload-Products/AddHighlights";
+import { AddHighlights, Highlight } from "../Upload-Products/AddHighlights";
 
 // --- Type Definitions ---
 interface ProductFile {
@@ -85,7 +85,7 @@ const AccordionSection = ({ title, children, isOpen, setIsOpen }: AccordionProps
 
 const ImageProcessingSkeleton = ({ count }: { count: number }) => (
     Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="relative aspect-square bg-neutral-200 rounded-lg animate-pulse"></div>
+        <div key={i} className="relative aspect-square max-w-25 bg-neutral-200 rounded-lg animate-pulse"></div>
     ))
 );
 
@@ -104,7 +104,7 @@ export default function UploadProducts() {
         availableForAffiliates: false,
         sellInMarketplace: false,
     });
-    const [highlights, setHighlights] = useState<string[]>([]);
+    const [highlights, setHighlights] = useState<Highlight[]>([]);
 
     const [productFiles, setProductFiles] = useState<ProductFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -510,34 +510,34 @@ export default function UploadProducts() {
                                 </div>
                                 </div>
                             </div>
+                            <AnimatePresence>
+                                {(productFiles.length > 0 || isProcessingImages) && (
+                                <motion.div layout className="grid grid-cols-5 gap-3 mt-3">
+                                    {productFiles.map((productFile, i) => (
+                                    <motion.div 
+                                        key={productFile.url}
+                                        layout
+                                        initial={{ opacity: 0, scale: 0.8 }} 
+                                        animate={{ opacity: 1, scale: 1 }} 
+                                        exit={{ opacity: 0, scale: 0.8 }}
+                                        className="relative group aspect-square max-w-25 border 
+                                            border-neutral-200 rounded-lg overflow-hidden"
+                                    >
+                                        <Image src={productFile.url} alt="preview" fill sizes="20vw" className="object-cover" />
+                                        <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-black/40 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all z-10">
+                                            <X size={14} />
+                                        </button>
+                                    </motion.div>
+                                    ))}
+                                    {isProcessingImages && <ImageProcessingSkeleton count={processingFileCount} />}
+                                </motion.div>
+                                )}
+                            </AnimatePresence>
                         </AccordionSection>
                     </div>
 
                     {/* --- RIGHT COLUMN --- */}
                     <div className="lg:col-span-2 space-y-3">
-                        <AnimatePresence>
-                            {(productFiles.length > 0 || isProcessingImages) && (
-                            <motion.div layout className="grid grid-cols-4 gap-4">
-                                {productFiles.map((productFile, i) => (
-                                <motion.div 
-                                    key={productFile.url}
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.8 }} 
-                                    animate={{ opacity: 1, scale: 1 }} 
-                                    exit={{ opacity: 0, scale: 0.8 }}
-                                    className="relative group aspect-square border 
-                                        border-neutral-200 rounded-lg overflow-hidden"
-                                >
-                                    <Image src={productFile.url} alt="preview" fill sizes="20vw" className="object-cover" />
-                                    <button type="button" onClick={() => removeFile(i)} className="absolute top-1 right-1 p-1 bg-black/40 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all z-10">
-                                        <X size={14} />
-                                    </button>
-                                </motion.div>
-                                ))}
-                                {isProcessingImages && <ImageProcessingSkeleton count={processingFileCount} />}
-                            </motion.div>
-                            )}
-                        </AnimatePresence>
                         
                         <AccordionSection 
                             title="Sizes & Colors" 
@@ -586,7 +586,7 @@ export default function UploadProducts() {
                             isOpen={isHighlightsOpen} 
                             setIsOpen={setIsHighlightsOpen}
                         >
-                            <Highlights
+                            <AddHighlights
                                 highlights={highlights}
                                 setHighlights={setHighlights}
                             />

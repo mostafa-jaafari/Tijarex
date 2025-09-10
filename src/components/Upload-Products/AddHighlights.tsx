@@ -5,15 +5,15 @@ import { useState } from "react";
 import { AnimatePresence, Reorder, useDragControls } from "framer-motion";
 
 // --- Type definition for a highlight item ---
-type Highlight = {
+export type Highlight = {
   id: number;
   text: string;
 };
 
 // --- Props Definition ---
 interface HighlightsProps {
-  highlights: Highlight[]; // Changed from string[] to Highlight[]
-  setHighlights: React.Dispatch<React.SetStateAction<Highlight[]>>; // Changed to match
+  highlights: Highlight[];
+  setHighlights: React.Dispatch<React.SetStateAction<Highlight[]>>;
 }
 
 // --- Draggable Highlight Item Component ---
@@ -60,7 +60,8 @@ const HighlightItem = ({ highlight, onRemove }: { highlight: Highlight; onRemove
 
 
 // --- Main Highlights Component ---
-export const Highlights: React.FC<HighlightsProps> = ({ highlights, setHighlights }) => {
+// CORRECTED: The props type annotation now matches the interface, fixing all type errors.
+export const AddHighlights: React.FC<HighlightsProps> = ({ highlights, setHighlights }) => {
   const [inputValue, setInputValue] = useState('');
   const MAX_HIGHLIGHTS = 10;
   const MAX_CHARS = 100;
@@ -135,11 +136,12 @@ export const Highlights: React.FC<HighlightsProps> = ({ highlights, setHighlight
           className="space-y-1 min-h-[50px]"
         >
           <AnimatePresence>
-            {highlights.map((highlight) => ( // No index needed here
+            {/* CORRECTED: The key is now stable and unique, which is essential for reordering. */}
+            {highlights.map((highlight) => ( 
               <HighlightItem 
-                key={highlight.id} // Use the stable, unique ID for the key
+                key={highlight.id} 
                 highlight={highlight}
-                onRemove={() => handleRemoveHighlight(highlight.id)} // Pass the ID to remove
+                onRemove={() => handleRemoveHighlight(highlight.id)} 
               />
             ))}
           </AnimatePresence>
