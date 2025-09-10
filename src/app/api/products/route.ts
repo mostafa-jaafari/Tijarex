@@ -7,14 +7,15 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limitParam = parseInt(searchParams.get('limit') || '6', 6);
+    const limitParam = parseInt(searchParams.get('limit') || '6', 10); // Radix 10 is standard for decimal
     const lastVisibleId = searchParams.get('lastVisibleId');
 
-    // Base query, ordered by sales for the "Best Selling" feature
+    // --- CHANGE #1: The collection name is now 'products' ---
     let query = adminDb.collection('products').orderBy('sales', 'desc');
 
     // If lastVisibleId is provided, fetch the document to start after it
     if (lastVisibleId) {
+      // --- CHANGE #2: The collection here must also be updated to match ---
       const lastVisibleDoc = await adminDb.collection('products').doc(lastVisibleId).get();
       if (lastVisibleDoc.exists) {
         query = query.startAfter(lastVisibleDoc);

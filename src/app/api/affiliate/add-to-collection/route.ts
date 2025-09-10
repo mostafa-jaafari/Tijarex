@@ -21,12 +21,12 @@ export async function POST(request: Request) {
 
     try {
         const body: ClaimProductRequestBody = await request.json();
-        const { 
-            originalProductId, 
-            affiliateTitle, 
-            affiliateDescription, 
-            affiliateSalePrice, 
-            affiliateRegularPrice 
+        const {
+            originalProductId,
+            affiliateTitle,
+            affiliateDescription,
+            affiliateSalePrice,
+            affiliateRegularPrice
         } = body;
 
         if (!originalProductId || !affiliateTitle || typeof affiliateSalePrice !== 'number' || affiliateSalePrice <= 0) {
@@ -44,15 +44,13 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: 'Original product data is missing.' }, { status: 404 });
         }
 
-        // --- Start Firestore Batch Transaction ---
         const batch = adminDb.batch();
 
-        // 1. Prepare the reference for the new document in the 'AffiliateProducts' collection
-        const affiliateProductsRef = adminDb.collection('AffiliateProducts').doc();
-        const newAffiliateProductId = affiliateProductsRef.id;
+        // --- CHANGE 1: The target collection is now 'MarketplaceProducts' ---
+        const marketplaceProductRef = adminDb.collection('MarketplaceProducts').doc();
+        const newMarketplaceProductId = marketplaceProductRef.id;
+        // --- END OF CHANGE 1 ---
 
-        // --- CHANGE 1: CREATE THE AFFILIATE DETAILS OBJECT ---
-        // Group all affiliate-specific information into a single object.
         const affiliateDetails = {
             AffiliateOwnerEmail: userEmail,
             AffiliateTitle: affiliateTitle,
@@ -62,41 +60,35 @@ export async function POST(request: Request) {
             AffiliateCreatedAt: new Date().toISOString(),
         };
 
-        // --- CHANGE 2: CONSTRUCT THE FINAL PRODUCT DATA ---
-        // This clones the original product and adds the new affiliate info field.
-        const newAffiliateProductData = {
-            // Step A: Copy all fields from the original product "as-is"
+        const newMarketplaceProductData = {
             ...originalProductData,
-
-            // Step B: Overwrite/add new top-level fields for the affiliate version
-            id: newAffiliateProductId, // This is now an affiliate product, so it needs its own unique ID
-            originalProductId: originalProductDoc.id, // Keep a reference to the original
-            
-            // Step C: Add the new field that contains the affiliate info as an array
-            AffiliateInfo: [affiliateDetails]
+            id: newMarketplaceProductId,
+            originalProductId: originalProductDoc.id,
+            AffiliateInfo: affiliateDetails,
         };
-        // --- END OF CHANGES ---
 
-        // 2. Add the creation of the new affiliate product document to the batch
-        batch.set(affiliateProductsRef, newAffiliateProductData);
+        // --- CHANGE 2: Use the new reference to set the document in the correct collection ---
+        batch.set(marketplaceProductRef, newMarketplaceProductData);
+        // --- END OF CHANGE 2 ---
 
-        // 3. Prepare the update for the user's document
         const userRef = adminDb.collection('users').doc(userEmail);
+        // NOTE: You might want a different array for marketplace products, but for now,
+        // we'll keep adding to AffiliateProductsIDs as per the original code.
         batch.update(userRef, {
-            AffiliateProductsIDs: FieldValue.arrayUnion(newAffiliateProductId)
+            AffiliateProductsIDs: FieldValue.arrayUnion(newMarketplaceProductId)
         });
 
-        // --- Commit all operations atomically ---
         await batch.commit();
 
-        return NextResponse.json({ 
-            message: 'Product claimed successfully!',
-            affiliateProductId: newAffiliateProductId,
-            data: newAffiliateProductData, // Return the new structured data
+        return NextResponse.json({
+            // --- CHANGE 3: Update response message and ID field name for clarity ---
+            message: 'Product claimed and listed on marketplace successfully!',
+            marketplaceProductId: newMarketplaceProductId,
+            data: newMarketplaceProductData,
         }, { status: 201 });
+        // --- END OF CHANGE 3 ---
 
-    } catch (error)
-    {
+    } catch (error) {
         console.error('Error claiming product (SERVER SIDE):', error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
