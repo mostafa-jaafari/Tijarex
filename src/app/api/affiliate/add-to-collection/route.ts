@@ -41,36 +41,41 @@ export async function POST(request: Request) {
         }
         const originalProductData = originalProductDoc.data();
         if (!originalProductData) {
-            // This is an important check to ensure we have data to embed
             return NextResponse.json({ message: 'Original product data is missing.' }, { status: 404 });
         }
 
         // --- Start Firestore Batch Transaction ---
         const batch = adminDb.batch();
 
-        // 1. Prepare the new product document for the 'AffiliateProducts' collection
+        // 1. Prepare the reference for the new document in the 'AffiliateProducts' collection
         const affiliateProductsRef = adminDb.collection('AffiliateProducts').doc();
         const newAffiliateProductId = affiliateProductsRef.id;
 
-
-        // --- CHANGE 1: RESTRUCTURE THE DATA FOR THE NEW AFFILIATE PRODUCT ---
-        // This new structure embeds the original product data in an array field
-        // and keeps affiliate information at the top level.
-        const newAffiliateProductData = {
-            // --- Affiliate-specific fields ---
-            id: newAffiliateProductId, // Good practice to store the doc ID within the doc itself
+        // --- CHANGE 1: CREATE THE AFFILIATE DETAILS OBJECT ---
+        // Group all affiliate-specific information into a single object.
+        const affiliateDetails = {
             AffiliateOwnerEmail: userEmail,
             AffiliateTitle: affiliateTitle,
             AffiliateDescription: affiliateDescription,
             AffiliateSalePrice: affiliateSalePrice,
             AffiliateRegularPrice: affiliateRegularPrice,
             AffiliateCreatedAt: new Date().toISOString(),
-
-            // --- Embedded Original Product Data ---
-            // The entire original product's data is placed inside an array named "Product".
-            Product: [originalProductData]
         };
-        // --- END OF CHANGE 1 ---
+
+        // --- CHANGE 2: CONSTRUCT THE FINAL PRODUCT DATA ---
+        // This clones the original product and adds the new affiliate info field.
+        const newAffiliateProductData = {
+            // Step A: Copy all fields from the original product "as-is"
+            ...originalProductData,
+
+            // Step B: Overwrite/add new top-level fields for the affiliate version
+            id: newAffiliateProductId, // This is now an affiliate product, so it needs its own unique ID
+            originalProductId: originalProductDoc.id, // Keep a reference to the original
+            
+            // Step C: Add the new field that contains the affiliate info as an array
+            AffiliateInfo: [affiliateDetails]
+        };
+        // --- END OF CHANGES ---
 
         // 2. Add the creation of the new affiliate product document to the batch
         batch.set(affiliateProductsRef, newAffiliateProductData);
@@ -85,7 +90,6 @@ export async function POST(request: Request) {
         await batch.commit();
 
         return NextResponse.json({ 
-            // --- CHANGE 2: Simplified success message ---
             message: 'Product claimed successfully!',
             affiliateProductId: newAffiliateProductId,
             data: newAffiliateProductData, // Return the new structured data

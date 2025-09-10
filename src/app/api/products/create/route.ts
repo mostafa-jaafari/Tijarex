@@ -19,7 +19,6 @@ export async function POST(request: Request) {
         
         // 2. Get user details from your Firestore 'users' collection
         const userDoc = await adminDb.collection("users").doc(session?.user?.email).get();
-
         let userData: UserInfosType | null = null;
         if (userDoc.exists) {
             userData = userDoc.data() as UserInfosType;
@@ -35,7 +34,7 @@ export async function POST(request: Request) {
             original_sale_price,
             colors,
             sizes,
-            permissions, // This object is still saved, just not used for logic here
+            permissions,
             highlights,
             product_images,
             stock,
@@ -47,7 +46,14 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
         }
         
-        // --- REMOVED: All logic that determines the target collection is gone ---
+        // This logic correctly determines the target collection.
+        let targetCollection: string;
+        
+        if (permissions && permissions.sellInMarketplace) {
+            targetCollection = 'MarketplaceProducts';
+        } else {
+            targetCollection = 'products';
+        }
 
         // 5. Construct the final product object
         const newProduct = {
@@ -76,14 +82,13 @@ export async function POST(request: Request) {
             productrevenu: 0,
         };
 
-        // --- CHANGE: The collection is now hardcoded to 'products' ---
-        await adminDb.collection('products').doc(newProduct.id).set(newProduct);
-        // --- END OF CHANGE ---
+        // This line correctly uses the variable to save to the right collection.
+        await adminDb.collection(targetCollection).doc(newProduct.id).set(newProduct);
 
         return NextResponse.json({
             success: true,
             productId: newProduct.id,
-            message: 'Product created successfully.' // Simplified success message
+            message: `Product created successfully in ${targetCollection}.`
         }, { status: 201 });
 
     } catch (error) {
