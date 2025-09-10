@@ -29,18 +29,19 @@ const HighlightItem = ({ highlight, onRemove }: { highlight: Highlight; onRemove
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20, height: 0, margin: 0, padding: 0 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="flex items-center w-full border
-        border-neutral-200 p-1 rounded-md hover:border-neutral-400 
+      className="group flex items-center w-full border
+        border-neutral-200 rounded-md hover:border-neutral-400 
         transition-colors"
     >
       <div 
         onPointerDown={(e) => dragControls.start(e)}
-        className="cursor-grab touch-none p-1 text-gray-400 hover:text-gray-700"
+        className="cursor-grab touch-none group-hover:border-neutral-400 p-2 text-gray-400 
+          border-r border-neutral-200 hover:text-gray-700"
         aria-label="Drag to reorder"
       >
         <GripVertical size={18} />
       </div>
-      <Check size={18} className="text-green-500 flex-shrink-0 mx-2" />
+      <Check size={18} className="text-green-500 flex-shrink-0 mx-1" />
       <span className="flex-grow truncate pr-2 font-medium text-gray-800">{highlight.text}</span> {/* Display the text property */}
       <button
         type="button"
