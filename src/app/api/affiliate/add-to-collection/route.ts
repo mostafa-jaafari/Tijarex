@@ -41,6 +41,7 @@ export async function POST(request: Request) {
         }
         const originalProductData = originalProductDoc.data();
         if (!originalProductData) {
+            // This is an important check to ensure we have data to embed
             return NextResponse.json({ message: 'Original product data is missing.' }, { status: 404 });
         }
 
@@ -49,38 +50,30 @@ export async function POST(request: Request) {
 
         // 1. Prepare the new product document for the 'AffiliateProducts' collection
         const affiliateProductsRef = adminDb.collection('AffiliateProducts').doc();
-        const newAffiliateProductId = affiliateProductsRef.id; // Get the unique ID for the new product
+        const newAffiliateProductId = affiliateProductsRef.id;
 
-        // 2. (NEW) Prepare the new product document for the 'MarketplaceProducts' collection
-        // We use the same ID as the affiliate product to maintain a clear link between them.
-        const marketplaceProductRef = adminDb.collection('MarketplaceProducts').doc(newAffiliateProductId);
 
-        // --- Construct the final data object ---
-        // This object will be used for both new documents.
-        const newProductData = {
-            // --- Fields from the Original Product ---
-            originalProductId: originalProductDoc.id,
-            owner: originalProductData.owner || null,
-            product_images: originalProductData.product_images || [],
-            category: originalProductData.category || 'Uncategorized',
-            sizes: originalProductData.sizes || [],
-            colors: originalProductData.colors || [],
-            stock: originalProductData.stock || 0,
-            sales: originalProductData.sales || 0,
-            currency: originalProductData.currency || 'USD',
-
-            // --- Fields from the Affiliate ---
+        // --- CHANGE 1: RESTRUCTURE THE DATA FOR THE NEW AFFILIATE PRODUCT ---
+        // This new structure embeds the original product data in an array field
+        // and keeps affiliate information at the top level.
+        const newAffiliateProductData = {
+            // --- Affiliate-specific fields ---
+            id: newAffiliateProductId, // Good practice to store the doc ID within the doc itself
             AffiliateOwnerEmail: userEmail,
             AffiliateTitle: affiliateTitle,
             AffiliateDescription: affiliateDescription,
             AffiliateSalePrice: affiliateSalePrice,
             AffiliateRegularPrice: affiliateRegularPrice,
             AffiliateCreatedAt: new Date().toISOString(),
-        };
 
-        // Add the creation of both documents to the batch
-        batch.set(affiliateProductsRef, newProductData); // Add to AffiliateProducts
-        batch.set(marketplaceProductRef, newProductData); // (NEW) Add to MarketplaceProducts
+            // --- Embedded Original Product Data ---
+            // The entire original product's data is placed inside an array named "Product".
+            Product: [originalProductData]
+        };
+        // --- END OF CHANGE 1 ---
+
+        // 2. Add the creation of the new affiliate product document to the batch
+        batch.set(affiliateProductsRef, newAffiliateProductData);
 
         // 3. Prepare the update for the user's document
         const userRef = adminDb.collection('users').doc(userEmail);
@@ -92,12 +85,14 @@ export async function POST(request: Request) {
         await batch.commit();
 
         return NextResponse.json({ 
-            message: 'Product claimed and listed on marketplace successfully!',
+            // --- CHANGE 2: Simplified success message ---
+            message: 'Product claimed successfully!',
             affiliateProductId: newAffiliateProductId,
-            data: newProductData,
+            data: newAffiliateProductData, // Return the new structured data
         }, { status: 201 });
 
-    } catch (error) {
+    } catch (error)
+    {
         console.error('Error claiming product (SERVER SIDE):', error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
             original_sale_price,
             colors,
             sizes,
-            permissions, // This is the key object
+            permissions, // This object is still saved, just not used for logic here
             highlights,
             product_images,
             stock,
@@ -47,21 +47,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
         }
         
-        // --- CHANGE 1: VALIDATE PERMISSIONS AND DETERMINE COLLECTION ---
-        // First, ensure at least one permission is selected.
-        if (!permissions || (!permissions.availableForAffiliates && !permissions.sellInMarketplace)) {
-             return NextResponse.json({ error: 'A product must be either available for affiliates OR listed in the marketplace.' }, { status: 400 });
-        }
-        
-        // Second, determine the target collection based on the permission.
-        let targetCollection: string;
-        
-        if (permissions.sellInMarketplace) {
-            targetCollection = 'MarketplaceProducts';
-        } else { // Because your frontend ensures only one can be true, an 'else' is sufficient.
-            targetCollection = 'products';
-        }
-        // --- END OF CHANGE 1 ---
+        // --- REMOVED: All logic that determines the target collection is gone ---
 
         // 5. Construct the final product object
         const newProduct = {
@@ -90,15 +76,14 @@ export async function POST(request: Request) {
             productrevenu: 0,
         };
 
-        // --- CHANGE 2: USE THE DYNAMIC COLLECTION NAME ---
-        // Instead of a hardcoded string, use the 'targetCollection' variable.
-        await adminDb.collection(targetCollection).doc(newProduct.id).set(newProduct);
-        // --- END OF CHANGE 2 ---
+        // --- CHANGE: The collection is now hardcoded to 'products' ---
+        await adminDb.collection('products').doc(newProduct.id).set(newProduct);
+        // --- END OF CHANGE ---
 
         return NextResponse.json({
             success: true,
             productId: newProduct.id,
-            message: `Product created successfully in ${targetCollection}.` // Optional: more descriptive message
+            message: 'Product created successfully.' // Simplified success message
         }, { status: 201 });
 
     } catch (error) {
