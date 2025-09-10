@@ -35,6 +35,8 @@ export async function POST(request: Request) {
             original_sale_price,
             colors,
             sizes,
+            permissions, // This is the key object
+            highlights,
             product_images,
             stock,
             currency = 'DH',
@@ -44,8 +46,24 @@ export async function POST(request: Request) {
         if (!title || !original_regular_price || !product_images || product_images.length === 0) {
             return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
         }
+        
+        // --- CHANGE 1: VALIDATE PERMISSIONS AND DETERMINE COLLECTION ---
+        // First, ensure at least one permission is selected.
+        if (!permissions || (!permissions.availableForAffiliates && !permissions.sellInMarketplace)) {
+             return NextResponse.json({ error: 'A product must be either available for affiliates OR listed in the marketplace.' }, { status: 400 });
+        }
+        
+        // Second, determine the target collection based on the permission.
+        let targetCollection: string;
+        
+        if (permissions.sellInMarketplace) {
+            targetCollection = 'MarketplaceProducts';
+        } else { // Because your frontend ensures only one can be true, an 'else' is sufficient.
+            targetCollection = 'products';
+        }
+        // --- END OF CHANGE 1 ---
 
-        // 5. Construct the final product object with the FIX
+        // 5. Construct the final product object
         const newProduct = {
             id: `prod-${uuidv4()}`,
             createdAt: new Date().toISOString(),
@@ -60,13 +78,11 @@ export async function POST(request: Request) {
             colors,
             sizes,
             product_images,
+            permissions,
+            highlights,
             owner: {
                 email: decodedToken.email,
-                // --- THE FIX IS HERE ---
-                // Create a fallback chain: Firestore Doc -> Auth Token -> Generic String
                 name: userData?.fullname || decodedToken.name || "Seller",
-                
-                // --- Also apply the same logic for the image for consistency ---
                 image: userData?.profileimage || decodedToken.picture || `https://avatar.vercel.sh/${decodedToken.email}`,
             },
             reviews: [],
@@ -74,13 +90,15 @@ export async function POST(request: Request) {
             productrevenu: 0,
         };
 
-        // 6. Save to Firestore using the Admin SDK
-        await adminDb.collection('products').doc(newProduct.id).set(newProduct);
+        // --- CHANGE 2: USE THE DYNAMIC COLLECTION NAME ---
+        // Instead of a hardcoded string, use the 'targetCollection' variable.
+        await adminDb.collection(targetCollection).doc(newProduct.id).set(newProduct);
+        // --- END OF CHANGE 2 ---
 
         return NextResponse.json({
             success: true,
             productId: newProduct.id,
-            message: 'Product created successfully.'
+            message: `Product created successfully in ${targetCollection}.` // Optional: more descriptive message
         }, { status: 201 });
 
     } catch (error) {

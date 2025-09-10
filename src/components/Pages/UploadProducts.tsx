@@ -276,6 +276,7 @@ export default function UploadProducts() {
                 product_images: uploadedImageUrls,
                 currency: 'DH',
                 permissions: permissions,
+                highlights: highlights,
             };
 
             const idToken = await user.getIdToken(true);
