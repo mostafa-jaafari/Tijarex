@@ -6,10 +6,12 @@ import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
 import { useGlobalProducts } from "@/context/GlobalProductsContext";
+// --- Import both types to handle the function signature ---
 import { ProductType, AffiliateProductType } from "@/types/product";
 import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 import Link from "next/link";
+import { Timestamp } from "firebase-admin/firestore";
 
 // Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
@@ -35,7 +37,6 @@ export default function ProductsPage() {
     const [selectedPrice, setSelectedPrice] = useState('All Prices');
     const [sortBy, setSortBy] = useState('Relevance');
     
-    // --- NEW: State for managing user's favorite products ---
     const [favoriteProductIds, setFavoriteProductIds] = useState<Set<string>>(new Set());
     const [isLoadingFavorites, setIsLoadingFavorites] = useState(true);
 
@@ -46,16 +47,15 @@ export default function ProductsPage() {
         }
     }, [isLoadingGlobalProducts]);
 
-    // --- NEW: Fetch user's favorite product IDs on component mount ---
+    // Fetch user's favorite product IDs on component mount
     useEffect(() => {
-        if (userInfos) { // Only fetch if the user is logged in
+        if (userInfos) {
             const fetchFavorites = async () => {
                 setIsLoadingFavorites(true);
                 try {
                     const response = await fetch('/api/products/favorites');
                     if (response.ok) {
                         const data = await response.json();
-                        // Store the IDs in a Set for efficient lookups
                         const ids = new Set<string>(data.products.map((p: ProductType) => p.id));
                         setFavoriteProductIds(ids);
                     }
@@ -67,12 +67,10 @@ export default function ProductsPage() {
             };
             fetchFavorites();
         } else {
-            // If user is not logged in, clear favorites and stop loading
             setFavoriteProductIds(new Set());
             setIsLoadingFavorites(false);
         }
-    }, [userInfos]); // Rerun this effect if the user logs in or out
-
+    }, [userInfos]);
 
     const shouldShowLoading = isInitialLoad || isLoadingGlobalProducts || isLoadingFavorites;
 
@@ -122,7 +120,7 @@ export default function ProductsPage() {
         }
         if (selectedPrice !== 'All Prices') {
             products = products.filter(p => {
-                const price = p.original_sale_price;
+                const price = p.originalPrice;
                 if (selectedPrice === 'Dh0 - Dh50') return price >= 0 && price <= 50;
                 if (selectedPrice === 'Dh50 - Dh100') return price > 50 && price <= 100;
                 if (selectedPrice === 'Dh100 - Dh200') return price > 100 && price <= 200;
@@ -132,17 +130,21 @@ export default function ProductsPage() {
         }
         switch (sortBy) {
             case 'Price: Low to High':
-                products.sort((a, b) => a.original_sale_price - b.original_sale_price);
+                products.sort((a, b) => a.originalPrice - b.originalPrice);
                 break;
             case 'Price: High to Low':
-                products.sort((a, b) => b.original_sale_price - a.original_sale_price);
+                products.sort((a, b) => b.originalPrice - a.originalPrice);
                 break;
             case 'Newest':
-                 products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                 products.sort((a, b) => {
+                     const aDate = (a.createdAt as Timestamp).toDate();
+                     const bDate = (b.createdAt as Timestamp).toDate();
+                     return bDate.getTime() - aDate.getTime();
+                 });
                  break;
             case 'Relevance':
             default:
-                products.sort((a, b) => (b.sales || 0) - (a.sales || 0));
+                products.sort((a, b) => b.totalSales - a.totalSales);
                 break;
         }
 
@@ -150,8 +152,17 @@ export default function ProductsPage() {
 
     }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, globalProductsData]);
     
+    // --- ⭐️ FIX IS HERE ⭐️ ---
+    // The function now accepts the union type to match the prop in ProductCardUI.
     const handleClaimClick = (product: ProductType | AffiliateProductType) => {
-        setProductToClaim(product as ProductType);
+        // We use a "type guard" to check if the product has a property that only
+        // exists on ProductType. This assures TypeScript that we are handling the type safely.
+        if ('listingType' in product) {
+            setProductToClaim(product as ProductType);
+        } else {
+            // This case shouldn't happen on this page, but it's good practice to handle it.
+            console.error("Cannot claim this product type from the marketplace.", product);
+        }
     }
     
     return (
@@ -194,7 +205,6 @@ export default function ProductsPage() {
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
                     filteredProducts.map((product) => {
-                        // --- FIX: Determine if the product is a favorite ---
                         const isProductFavorite = favoriteProductIds.has(product.id);
 
                         return (
@@ -202,9 +212,8 @@ export default function ProductsPage() {
                                 key={product.id}
                                 product={product}
                                 isAffiliate={userInfos?.UserRole === "affiliate"}
-                                // --- FIX: Pass the correct favorite status ---
                                 isFavorite={isProductFavorite}
-                                // onToggleFavorite is no longer needed as the card handles it
+                                // Now the handleClaimClick function perfectly matches the expected prop type
                                 onClaimClick={handleClaimClick}
                             />
                         );
@@ -233,23 +242,21 @@ export default function ProductsPage() {
                                     href={`${userInfos?.UserRole === "seller" ? "/admin/seller" : "/admin/affiliate"}`}
                                     prefetch
                             >
-                                <LayoutDashboard
-                                    size={16}
-                                /> Back to Dashboard
+                                <LayoutDashboard size={16} />
+                                Back to Dashboard
                             </Link>
-                            {userInfos?.UserRole !== "affiliate" && (
+                            {userInfos?.UserRole === "seller" && (
                                 <Link 
                                     className={`w-max inline-flex items-center 
                                         gap-2 px-3 py-1.5 rounded-lg 
                                         text-xs bg-neutral-700 border-b border-neutral-800 
                                         text-neutral-100 ring ring-neutral-700
                                         hover:bg-neutral-700/90`}
-                                    href={`${userInfos?.UserRole === "seller" ? "/admin/seller/upload-products" : "/admin/affiliate"}`}
+                                    href="/admin/seller/upload-products"
                                     prefetch
                                 >
-                                    <UploadCloud
-                                        size={16}
-                                    /> Upload Products
+                                    <UploadCloud size={16} />
+                                    Upload Products
                                 </Link>
                             )}
                         </div>

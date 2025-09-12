@@ -1,17 +1,16 @@
 // in /context/GlobalProductsContext.tsx
-
 "use client";
 
-import { ProductType } from "@/types/product";
+import { ProductType } from "@/types/product"; // Uses the revised ProductType
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
 interface GlobalProductsContextTypes {
     globalProductsData: ProductType[];
     isLoadingGlobalProducts: boolean;
-    isLoadingMore: boolean; // For loading next pages
-    hasMore: boolean;       // To know if there are more products to fetch
-    fetchMoreProducts: () => void; // Function to fetch the next page
-    refetch: () => void;      // Function to reset and fetch from the start
+    isLoadingMore: boolean;
+    hasMore: boolean;
+    fetchMoreProducts: () => void;
+    refetch: () => void;
 }
 
 const GlobalProductsContext = createContext<GlobalProductsContextTypes | undefined>(undefined);
@@ -23,7 +22,6 @@ export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) =
     const [nextCursor, setNextCursor] = useState<string | null>(null);
 
     const fetchProducts = useCallback(async (cursor: string | null = null) => {
-        // Set the appropriate loading state
         if (cursor) {
             setIsLoadingMore(true);
         } else {
@@ -31,7 +29,7 @@ export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) =
         }
 
         try {
-            // Build the API URL with query parameters
+            // This API now correctly fetches only marketplace products
             const url = `/api/products?limit=10${cursor ? `&lastVisibleId=${cursor}` : ''}`;
             const res = await fetch(url);
             if (!res.ok) throw new Error("Failed to fetch products data!");
@@ -39,7 +37,6 @@ export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) =
             const data = await res.json();
             const newProducts = (data.products as ProductType[]) || [];
 
-            // If it's an initial fetch, replace the data. Otherwise, append it.
             setGlobalProductsData(prev => cursor ? [...prev, ...newProducts] : newProducts);
             setNextCursor(data.nextCursor);
 
@@ -51,13 +48,11 @@ export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) =
         }
     }, []);
 
-    // Initial fetch on component mount
     useEffect(() => {
         fetchProducts(null);
     }, [fetchProducts]);
 
     const fetchMoreProducts = () => {
-        // Prevent fetching if already loading or no more products
         if (isLoadingMore || !nextCursor) return;
         fetchProducts(nextCursor);
     };
@@ -72,7 +67,7 @@ export const GlobalProductsProvider = ({ children }: { children: ReactNode; }) =
         globalProductsData,
         isLoadingGlobalProducts,
         isLoadingMore,
-        hasMore: nextCursor !== null, // hasMore is true if nextCursor exists
+        hasMore: nextCursor !== null,
         fetchMoreProducts,
         refetch,
     };

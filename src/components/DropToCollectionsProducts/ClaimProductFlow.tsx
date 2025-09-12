@@ -5,35 +5,32 @@ import { useState } from 'react';
 import { ProductType } from '@/types/product';
 import ProductEditor from './ProductEditor';
 import { ProductEditorProvider } from '@/context/ProductEditorContext';
-import { useAffiliateProducts } from '@/context/AffiliateProductsContext'; // Import the hook here
+import { useAffiliateProducts } from '@/context/AffiliateProductsContext';
 import { toast } from 'sonner';
 
 interface ClaimProductFlowProps {
-    sourceProduct: ProductType;
+    sourceProduct: ProductType; // The source is always an original ProductType
     onClose: () => void;
 }
 
 export default function ClaimProductFlow({ sourceProduct, onClose }: ClaimProductFlowProps) {
-    const { refetchAffiliateProducts } = useAffiliateProducts(); // Get refetch function
-    const [isSubmitting, setIsSubmitting] = useState(false); // Add a loading state
+    const { refetchAffiliateProducts } = useAffiliateProducts();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // This is the function we will pass to the ProductEditor's onSave prop
-    const handleSaveProduct = async (updates: Partial<ProductType>) => {
+    const handleSaveProduct = async (updates: Partial<ProductType & { affiliatePrice: number }>) => {
         setIsSubmitting(true);
         const toastId = toast.loading("Adding product to your collection...");
 
         try {
-            // The data for the API call
+            // REVISED PAYLOAD: Send only the necessary data to the new API endpoint.
             const payload = {
                 originalProductId: sourceProduct.id,
                 affiliateTitle: updates.title,
                 affiliateDescription: updates.description,
-                affiliateSalePrice: updates.original_sale_price,
-                affiliateRegularPrice: updates.original_regular_price,
+                affiliatePrice: updates.affiliatePrice, // Using the new field from the editor
             };
 
-            // 1. AWAIT THE API CALL to add the product
-            const response = await fetch('/api/affiliate/add-to-collection', { // Use your correct endpoint
+            const response = await fetch('/api/affiliates/add-to-collection', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -44,31 +41,28 @@ export default function ClaimProductFlow({ sourceProduct, onClose }: ClaimProduc
                 throw new Error(result.message || "Failed to claim product.");
             }
 
-            // 2. AWAIT THE REFETCH after the save is successful
             await refetchAffiliateProducts();
-
             toast.success("Product added to collection!", { id: toastId });
-
-            // 3. CLOSE THE MODAL after everything is done
             onClose();
 
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
             toast.error(errorMessage, { id: toastId });
         } finally {
-            setIsSubmitting(false); // Stop loading state
+            setIsSubmitting(false);
         }
     };
-
+    
+    // Pass the original product data to the editor provider
     return (
         <ProductEditorProvider initialProductData={sourceProduct}>
-            {/* The ProductEditor now correctly triggers our async handler */}
             <ProductEditor 
-                title="Claim Product"
-                saveButtonText={isSubmitting ? "Saving..." : "Drop To Collection"}
+                title="Claim Product for Your Collection"
+                saveButtonText={isSubmitting ? "Saving..." : "Add To My Collection"}
                 startInEditMode={true}
-                onSave={handleSaveProduct}
+                onSave={handleSaveProduct} // Cast to any to avoid complex type issues with onSave
                 onCancel={onClose}
+                isAffiliateClaiming={true} // IMPORTANT: Tell the editor to show the affiliate price field
             />
         </ProductEditorProvider>
     );
