@@ -1,4 +1,4 @@
-// File: /app/api/products/route.ts
+// in /app/api/products/route.ts
 
 import { adminDb } from '@/lib/FirebaseAdmin';
 import { ProductType } from '@/types/product';
@@ -7,31 +7,34 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limitParam = parseInt(searchParams.get('limit') || '10', 10);
+    const limitParam = parseInt(searchParams.get('limit') || '6', 10); // Radix 10 is standard for decimal
     const lastVisibleId = searchParams.get('lastVisibleId');
 
-    // REVISED LOGIC: Fetch only from the `products` collection where listingType is 'marketplace'.
-    // This simplifies the public marketplace view. Affiliate-specific products should be discovered elsewhere
-    // or displayed on their own stores, not mixed into the main marketplace by default.
-    let query = adminDb.collection('products')
-        .where('listingType', '==', 'marketplace')
-        .orderBy('totalSales', 'desc');
+    // --- CHANGE #1: The collection name is now 'products' ---
+    let query = adminDb.collection('products').orderBy('sales', 'desc');
 
+    // If lastVisibleId is provided, fetch the document to start after it
     if (lastVisibleId) {
+      // --- CHANGE #2: The collection here must also be updated to match ---
       const lastVisibleDoc = await adminDb.collection('products').doc(lastVisibleId).get();
       if (lastVisibleDoc.exists) {
         query = query.startAfter(lastVisibleDoc);
       }
     }
 
+    // Apply the limit to the query
     const productsSnapshot = await query.limit(limitParam).get();
 
     if (productsSnapshot.empty) {
       return NextResponse.json({ products: [], nextCursor: null });
     }
 
-    const products: ProductType[] = productsSnapshot.docs.map((doc) => doc.data() as ProductType);
+    const products: ProductType[] = productsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ProductType[];
 
+    // Determine the next cursor (the ID of the last document in this batch)
     const lastDoc = productsSnapshot.docs[productsSnapshot.docs.length - 1];
     const nextCursor = lastDoc ? lastDoc.id : null;
 
@@ -39,6 +42,7 @@ export async function GET(request: Request) {
 
   } catch (error) {
     console.error("Error fetching paginated products:", error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json({ error: 'Internal Server Error', details: errorMessage }, { status: 500 });
   }
 }

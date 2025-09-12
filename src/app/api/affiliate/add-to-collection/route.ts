@@ -1,19 +1,15 @@
-// File: app/api/affiliates/add-to-collection/route.ts
-
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { adminDb } from '@/lib/FirebaseAdmin';
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
-import { ProductType, AffiliateProductType } from '@/types/product';
-import { UserInfosType } from '@/types/userinfos';
-import { v4 as uuidv4 } from 'uuid';
+import { FieldValue } from 'firebase-admin/firestore';
 
 interface ClaimProductRequestBody {
     originalProductId: string;
     affiliateTitle: string;
     affiliateDescription: string;
-    affiliatePrice: number;
+    affiliateSalePrice: number;
+    affiliateRegularPrice: number;
 }
 
 export async function POST(request: Request) {
@@ -24,21 +20,16 @@ export async function POST(request: Request) {
     const userEmail = session.user.email;
 
     try {
-        const userDoc = await adminDb.collection('users').doc(userEmail).get();
-        if (!userDoc.exists || (userDoc.data() as UserInfosType).UserRole !== 'affiliate') {
-            return NextResponse.json({ message: 'Forbidden: User is not an affiliate.' }, { status: 403 });
-        }
-        const affiliateUser = userDoc.data() as UserInfosType;
-        
         const body: ClaimProductRequestBody = await request.json();
         const {
             originalProductId,
             affiliateTitle,
             affiliateDescription,
-            affiliatePrice
+            affiliateSalePrice,
+            affiliateRegularPrice
         } = body;
 
-        if (!originalProductId || !affiliateTitle || typeof affiliatePrice !== 'number' || affiliatePrice <= 0) {
+        if (!originalProductId || !affiliateTitle || typeof affiliateSalePrice !== 'number' || affiliateSalePrice <= 0) {
             return NextResponse.json({ message: 'Invalid input. Missing required fields.' }, { status: 400 });
         }
 
@@ -48,54 +39,57 @@ export async function POST(request: Request) {
         if (!originalProductDoc.exists) {
             return NextResponse.json({ message: 'Original product not found.' }, { status: 404 });
         }
-        const originalProductData = originalProductDoc.data() as ProductType;
-
-        if (affiliatePrice <= originalProductData.originalPrice) {
-            return NextResponse.json({ message: `Affiliate price must be higher than the original price of ${originalProductData.originalPrice}.` }, { status: 400 });
+        const originalProductData = originalProductDoc.data();
+        if (!originalProductData) {
+            return NextResponse.json({ message: 'Original product data is missing.' }, { status: 404 });
         }
 
-        // REVISED LOGIC: Create a new, lightweight document in `affiliateProducts`.
-        const newAffiliateProductId = `aff-${uuidv4()}`;
-        
-        const newAffiliateProduct: AffiliateProductType = {
-            id: newAffiliateProductId,
-            originalProductId: originalProductData.id,
-            sellerId: originalProductData.sellerId,
-            affiliateId: affiliateUser.uniqueuserid,
-            
-            affiliateTitle,
-            affiliateDescription,
-            affiliatePrice,
-            
-            commission: affiliatePrice - originalProductData.originalPrice,
-            totalSales: 0,
-            totalCommissionEarned: 0,
-            
-            createdAt: FieldValue.serverTimestamp() as Timestamp,
+        const batch = adminDb.batch();
+
+        // --- CHANGE 1: The target collection is now 'MarketplaceProducts' ---
+        const marketplaceProductRef = adminDb.collection('MarketplaceProducts').doc();
+        const newMarketplaceProductId = marketplaceProductRef.id;
+        // --- END OF CHANGE 1 ---
+
+        const affiliateDetails = {
+            AffiliateOwnerEmail: userEmail,
+            AffiliateTitle: affiliateTitle,
+            AffiliateDescription: affiliateDescription,
+            AffiliateSalePrice: affiliateSalePrice,
+            AffiliateRegularPrice: affiliateRegularPrice,
+            AffiliateCreatedAt: new Date().toISOString(),
         };
 
-        const batch = adminDb.batch();
-        
-        // 1. Create the new affiliate product document
-        const affiliateProductRef = adminDb.collection('affiliateProducts').doc(newAffiliateProductId);
-        batch.set(affiliateProductRef, newAffiliateProduct);
+        const newMarketplaceProductData = {
+            ...originalProductData,
+            id: newMarketplaceProductId,
+            originalProductId: originalProductDoc.id,
+            AffiliateInfo: affiliateDetails,
+        };
 
-        // 2. Update the user's document with the new ID
+        // --- CHANGE 2: Use the new reference to set the document in the correct collection ---
+        batch.set(marketplaceProductRef, newMarketplaceProductData);
+        // --- END OF CHANGE 2 ---
+
         const userRef = adminDb.collection('users').doc(userEmail);
+        // NOTE: You might want a different array for marketplace products, but for now,
+        // we'll keep adding to AffiliateProductsIDs as per the original code.
         batch.update(userRef, {
-            AffiliateProductsIDs: FieldValue.arrayUnion(newAffiliateProductId)
+            AffiliateProductsIDs: FieldValue.arrayUnion(newMarketplaceProductId)
         });
-        
+
         await batch.commit();
 
         return NextResponse.json({
-            message: 'Product added to your collection successfully!',
-            affiliateProductId: newAffiliateProductId,
-            data: newAffiliateProduct,
+            // --- CHANGE 3: Update response message and ID field name for clarity ---
+            message: 'Product claimed and listed on marketplace successfully!',
+            marketplaceProductId: newMarketplaceProductId,
+            data: newMarketplaceProductData,
         }, { status: 201 });
+        // --- END OF CHANGE 3 ---
 
     } catch (error) {
-        console.error('Error claiming product:', error);
+        console.error('Error claiming product (SERVER SIDE):', error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

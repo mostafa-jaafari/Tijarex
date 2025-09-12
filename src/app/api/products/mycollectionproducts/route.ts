@@ -1,5 +1,3 @@
-// File: app/api/products/mycollectionproducts/route.ts
-
 import { adminDb } from '@/lib/FirebaseAdmin';
 import { ProductType } from '@/types/product';
 import { NextResponse } from 'next/server';

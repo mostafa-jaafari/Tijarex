@@ -1,91 +1,101 @@
-// File: app/api/products/create/route.ts
-
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/FirebaseAdmin';
+import { adminDb, adminAuth } from '@/lib/FirebaseAdmin'; // IMPORTANT: Use ADMIN SDK
 import { v4 as uuidv4 } from 'uuid';
 import { UserInfosType } from '@/types/userinfos';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
-import { ProductType } from '@/types/product';
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
     }
-
+    const idToken = authHeader.split('Bearer ')[1];
+    const session = await getServerSession(authOptions);
+    if(!session) return;
     try {
-        const userDoc = await adminDb.collection("users").doc(session.user.email).get();
-        if (!userDoc.exists || (userDoc.data() as UserInfosType).UserRole !== 'seller') {
-            return NextResponse.json({ error: 'Forbidden: User is not a seller.' }, { status: 403 });
+        // 1. Authenticate user with Admin SDK
+        const decodedToken = await adminAuth.verifyIdToken(idToken);
+        
+        // 2. Get user details from your Firestore 'users' collection
+        const userDoc = await adminDb.collection("users").doc(session?.user?.email).get();
+        let userData: UserInfosType | null = null;
+        if (userDoc.exists) {
+            userData = userDoc.data() as UserInfosType;
         }
-        const userData = userDoc.data() as UserInfosType;
 
+        // 3. Get product data from request body
         const body = await request.json();
         const {
             title,
             description,
             category,
-            originalPrice,
-            compareAtPrice,
+            original_regular_price,
+            original_sale_price,
             colors,
             sizes,
-            listingType, // REVISED: Using listingType instead of permissions
-            productImages,
-            stockQuantity,
+            permissions,
+            highlights,
+            product_images,
+            stock,
             currency = 'DH',
         } = body;
         
-        if (!title || !originalPrice || !stockQuantity || !productImages || productImages.length === 0 || !listingType) {
+        // 4. Basic server-side validation
+        if (!title || !original_regular_price || !product_images || product_images.length === 0) {
             return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
         }
+        
+        // This logic correctly determines the target collection.
+        let targetCollection: string;
+        
+        if (permissions && permissions.sellInMarketplace) {
+            targetCollection = 'MarketplaceProducts';
+        } else {
+            targetCollection = 'products';
+        }
 
-        const newProductId = `prod-${uuidv4()}`;
-
-        // REVISED LOGIC: All products go into ONE 'products' collection.
-        // The 'listingType' field controls visibility.
-        const newProduct: ProductType = {
-            id: newProductId,
-            createdAt: FieldValue.serverTimestamp() as Timestamp, // Use server timestamp
-            lastUpdated: FieldValue.serverTimestamp() as Timestamp,
+        // 5. Construct the final product object
+        const newProduct = {
+            id: `prod-${uuidv4()}`,
+            createdAt: new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
             title,
             description,
             category,
-            originalPrice: Number(originalPrice),
-            compareAtPrice: Number(compareAtPrice) || 0,
-            stockQuantity: Number(stockQuantity),
+            original_regular_price,
+            original_sale_price,
+            stock,
             currency,
             colors,
             sizes,
-            productImages,
-            listingType, // "marketplace" or "affiliateOnly"
-            sellerId: userData.uniqueuserid,
-            sellerInfo: {
-                email: userData.email,
-                name: userData.fullname || "Seller",
-                image: userData.profileimage || "",
+            product_images,
+            permissions,
+            highlights,
+            owner: {
+                email: decodedToken.email,
+                name: userData?.fullname || decodedToken.name || "Seller",
+                image: userData?.profileimage || decodedToken.picture || `https://avatar.vercel.sh/${decodedToken.email}`,
             },
-            // Initial stats
-            totalSales: 0,
-            totalRevenue: 0,
-            averageRating: 0,
-            reviewCount: 0,
+            reviews: [],
+            sales: 0,
+            productrevenu: 0,
         };
 
-        await adminDb.collection('products').doc(newProductId).set(newProduct);
+        // This line correctly uses the variable to save to the right collection.
+        await adminDb.collection(targetCollection).doc(newProduct.id).set(newProduct);
 
         return NextResponse.json({
             success: true,
             productId: newProduct.id,
-            message: `Product created successfully.`
+            message: `Product created successfully in ${targetCollection}.`
         }, { status: 201 });
 
     } catch (error) {
         console.error('Error creating product:', error);
         return NextResponse.json({ 
             error: 'Failed to create product on the server.', 
-            details: (error as Error).message 
+            details: (error as {message: string;}).message 
         }, { status: 500 });
     }
 }

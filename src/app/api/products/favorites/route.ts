@@ -1,5 +1,3 @@
-// File: app/api/products/favorites/route.ts
-
 import { adminDb } from '@/lib/FirebaseAdmin';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
