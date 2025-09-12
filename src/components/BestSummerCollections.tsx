@@ -2,13 +2,13 @@
 import React, { useRef } from 'react'
 import { HeadlineSection } from './HeadlineSection'
 import { PublicProductCard1 } from './UI/PublicProductCard1'
-import { useGlobalProducts } from '@/context/GlobalProductsContext';
+import { useAffiliateAvailableProducts } from '@/context/AffiliateAvailableProductsContext';
 
 
 export function BestSummerCollections() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
-    const summerProducts = globalProductsData.slice(0, 6);
+    const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts } = useAffiliateAvailableProducts();
+    const summerProducts = affiliateAvailableProductsData.slice(0, 6);
     return (
         <section
             id='summer 2025'
@@ -24,7 +24,7 @@ export function BestSummerCollections() {
                 className='w-full flex items-center flex-nowrap 
                     overflow-x-auto hide-scrollbar gap-2'
             >
-                {isLoadingGlobalProducts ? Array(6).fill(0).map((_, idx) => {
+                {isLoadingAffiliateAvailableProducts ? Array(6).fill(0).map((_, idx) => {
                     return(
                         <div
                             key={idx}

@@ -4,8 +4,8 @@ import { Zap } from 'lucide-react';
 import Image from 'next/image';
 import React, { useMemo } from 'react';
 import { Countdown } from './CountDown';
-import { useGlobalProducts } from '@/context/GlobalProductsContext';
 import Link from 'next/link';
+import { useAffiliateAvailableProducts } from '@/context/AffiliateAvailableProductsContext';
 
 // Reusable Loading Skeleton Component (no changes needed here)
 const FeaturedProductsSkeleton = () => (
@@ -28,13 +28,13 @@ const FeaturedProductsSkeleton = () => (
 );
 
 export default function FeaturedProducts() {
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+    const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts } = useAffiliateAvailableProducts();
 
     // Filter and sort products to find the best deals
     const featuredProducts = useMemo(() => {
-        if (!globalProductsData) return [];
+        if (!affiliateAvailableProductsData) return [];
 
-        const onSaleProducts = globalProductsData.filter(p =>
+        const onSaleProducts = affiliateAvailableProductsData.filter(p =>
             p.original_sale_price && p.original_regular_price && p.original_sale_price < p.original_regular_price
         );
 
@@ -47,9 +47,9 @@ export default function FeaturedProducts() {
             // --- FIX: Select 4 products (1 main + 3 side) ---
             .slice(0, 4); 
 
-    }, [globalProductsData]);
+    }, [affiliateAvailableProductsData]);
 
-    if (isLoadingGlobalProducts) {
+    if (isLoadingAffiliateAvailableProducts) {
         return <FeaturedProductsSkeleton />;
     }
 

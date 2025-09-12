@@ -2,8 +2,8 @@
 import React, { useRef, useEffect } from 'react';
 import { HeadlineSection } from './HeadlineSection';
 import { PublicProductCard1 } from './UI/PublicProductCard1';
-import { useGlobalProducts } from '@/context/GlobalProductsContext';
 import { Loader2 } from 'lucide-react';
+import { useAffiliateAvailableProducts } from '@/context/AffiliateAvailableProductsContext';
 
 // A simple spinner component for loading more products
 const LoadMoreSpinner = () => (
@@ -15,7 +15,7 @@ const LoadMoreSpinner = () => (
 export function BestSellingProducts() {
     const scrollRef = useRef<HTMLDivElement | null>(null);
     // Get the new state and functions from the context
-    const { globalProductsData, isLoadingGlobalProducts, fetchMoreProducts, hasMore, isLoadingMore } = useGlobalProducts();
+    const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts, fetchMoreProducts, hasMore, isLoadingMore } = useAffiliateAvailableProducts();
     
     // This useEffect handles drag-to-scroll
     useEffect(() => {
@@ -57,7 +57,7 @@ export function BestSellingProducts() {
     }, [hasMore, isLoadingMore, fetchMoreProducts]);
 
     // No longer need to sort or slice here. The API and context handle it.
-    const trendProducts = globalProductsData;
+    const trendProducts = affiliateAvailableProductsData;
 
     return (
         <section id='best selling' className='scroll-mt-25'>
@@ -72,7 +72,7 @@ export function BestSellingProducts() {
                 className='w-full flex items-center flex-nowrap 
                     overflow-x-auto hide-scrollbar gap-2 cursor-grab'
             >
-                {isLoadingGlobalProducts ? (
+                {isLoadingAffiliateAvailableProducts ? (
                     Array(6).fill(0).map((_, idx) => (
                         <div key={idx} className='w-full max-w-[220px] min-h-40 space-y-2 flex-shrink-0'>
                             <div className='w-full h-[220px] bg-gray-300 animate-pulse rounded-xl'/>

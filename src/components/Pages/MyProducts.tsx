@@ -5,11 +5,11 @@ import { CustomDropdown } from "../UI/CustomDropdown";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
-import { useGlobalProducts } from "@/context/GlobalProductsContext";
 import { ProductType, AffiliateProductType } from "@/types/product";
 import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 import Link from "next/link";
+import { useAffiliateAvailableProducts } from "@/context/AffiliateAvailableProductsContext";
 
 // Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
@@ -23,7 +23,7 @@ const ProductCardSkeleton = () => (
 
 export default function MyProducts() {
     const { userInfos } = useUserInfos();
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+    const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts } = useAffiliateAvailableProducts();
     
     // --- State Management ---
     const [productToClaim, setProductToClaim] = useState<ProductType | null>(null);
@@ -38,10 +38,10 @@ export default function MyProducts() {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     useEffect(() => {
-        if (!isLoadingGlobalProducts) {
+        if (!isLoadingAffiliateAvailableProducts) {
             setIsInitialLoad(false);
         }
-    }, [isLoadingGlobalProducts]);
+    }, [isLoadingAffiliateAvailableProducts]);
 
     useEffect(() => {
         if (userInfos) {
@@ -67,14 +67,14 @@ export default function MyProducts() {
         }
     }, [userInfos]);
 
-    const shouldShowLoading = isInitialLoad || isLoadingGlobalProducts || isLoadingFavorites;
+    const shouldShowLoading = isInitialLoad || isLoadingAffiliateAvailableProducts || isLoadingFavorites;
 
     // --- الإصلاح رقم 1: استخدام useMemo لتجنب إعادة إنشاء المصفوفة في كل مرة ---
-    // هذه المصفوفة لن يتم إنشاؤها من جديد إلا إذا تغيرت `globalProductsData` أو `userInfos`.
+    // هذه المصفوفة لن يتم إنشاؤها من جديد إلا إذا تغيرت `affiliateAvailableProductsData` أو `userInfos`.
     const CurrentUserOwnProducts = useMemo(() => {
         if (!userInfos?.email) return [];
-        return globalProductsData.filter((p: ProductType) => p.owner?.email === userInfos.email);
-    }, [globalProductsData, userInfos]);
+        return affiliateAvailableProductsData.filter((p: ProductType) => p.owner?.email === userInfos.email);
+    }, [affiliateAvailableProductsData, userInfos]);
 
     // --- Generate Dynamic Filter Options ---
     const categories = useMemo(() => {
@@ -134,7 +134,11 @@ export default function MyProducts() {
             switch (sortBy) {
                 case 'Price: Low to High': return a.original_sale_price - b.original_sale_price;
                 case 'Price: High to Low': return b.original_sale_price - a.original_sale_price;
-                case 'Newest': return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                case 'Newest': 
+                    // If createdAt is a Firestore Timestamp, use .toDate()
+                    const bDate = typeof b.createdAt?.toDate === 'function' ? b.createdAt.toDate() : new Date(b.createdAt.toDate());
+                    const aDate = typeof a.createdAt?.toDate === 'function' ? a.createdAt.toDate() : new Date(a.createdAt.toDate());
+                    return bDate.getTime() - aDate.getTime();
                 case 'Relevance': default: return (b.sales || 0) - (a.sales || 0);
             }
         });

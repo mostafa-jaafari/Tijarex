@@ -4,10 +4,10 @@ import { ShoppingCart, X, PackageOpen } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useCart } from "./UI/Add-To-Cart/useCart";
-import { useGlobalProducts } from "@/context/GlobalProductsContext"; // Context to get product details
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useAffiliateAvailableProducts } from "@/context/AffiliateAvailableProductsContext";
 
 // This will be the new, fully-featured dropdown component
 export function DropDownShoppingCart() {
@@ -16,17 +16,17 @@ export function DropDownShoppingCart() {
 
     // Get cart state and functions from your custom hooks
     const { cart, removeFromCart } = useCart();
-    const { globalProductsData } = useGlobalProducts();
+    const { affiliateAvailableProductsData } = useAffiliateAvailableProducts();
 
     // Memoize the calculation of cart details and subtotal for performance.
     // This only recalculates when the cart or product data changes.
     const { detailedCartItems, subtotal } = useMemo(() => {
-        if (!globalProductsData || cart.length === 0) {
+        if (!affiliateAvailableProductsData || cart.length === 0) {
             return { detailedCartItems: [], subtotal: 0 };
         }
 
         const items = cart.map(cartItem => {
-            const productDetails = globalProductsData.find(p => p.id === cartItem.productId);
+            const productDetails = affiliateAvailableProductsData.find(p => p.id === cartItem.productId);
             if (!productDetails) return null; // Handle case where product might not be found
             
             return {
@@ -43,7 +43,7 @@ export function DropDownShoppingCart() {
 
         return { detailedCartItems: items, subtotal: calculatedSubtotal };
 
-    }, [cart, globalProductsData]);
+    }, [cart, affiliateAvailableProductsData]);
     
     // Calculate total number of items for the badge
     const cartCount = useMemo(() => {
