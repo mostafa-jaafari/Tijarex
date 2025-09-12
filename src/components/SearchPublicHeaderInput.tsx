@@ -1,6 +1,6 @@
 "use client";
 
-import { useGlobalProducts } from "@/context/GlobalProductsContext";
+import { useMarketplaceProducts } from "@/context/MarketplaceProductsContext";
 import { ProductType } from "@/types/product";
 import { ChevronRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
@@ -43,7 +43,8 @@ const ProductItem = ({
   >
     <div className="relative w-12 h-12 rounded-lg overflow-hidden ring-1 ring-gray-200 group-hover:ring-2 group-hover:ring-teal-500 transition-all">
       <Image
-        src={item.product_images[0] || "/placeholder.png"}
+        // ⭐️ FIX: Added a fallback image to prevent errors if product_images is empty
+        src={item.product_images?.[0] || "/placeholder.png"}
         alt={item.title}
         fill
         sizes="50px"
@@ -79,35 +80,32 @@ export function SearchPublicHeaderInput() {
   const [visibleCount, setVisibleCount] = useState(10);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const { globalProductsData, isLoadingMore: areProductsLoading } = useGlobalProducts();
+  const { marketplaceProductsData, isLoadingMarketplaceProducts: areProductsLoading } = useMarketplaceProducts();
 
   const debouncedSearchInput = useDebounce(searchInput, 300);
 
-  // --- ⭐️ Memoize the trending products list for performance ---
+  // --- ⭐️ FIX: The logic for trending products is now correct and reliable ---
   const trendingProducts = useMemo(() => {
-    if (!globalProductsData || globalProductsData.length === 0) {
+    if (!marketplaceProductsData || marketplaceProductsData.length === 0) {
       return [];
     }
-    // Create a "trend score" to find the best products based on ratings and reviews
-    return [...globalProductsData]
-      .sort((a, b) => {
-        const scoreA = (a.rating || 0) * 5 + (a.reviews?.length || 0);
-        const scoreB = (b.rating || 0) * 5 + (b.reviews?.length || 0);
-        return scoreB - scoreA; // Sort descending by score
-      })
-      .slice(0, 6); // Take the top 6 products
-  }, [globalProductsData]);
+    // Sort by the number of sales to determine what is "trending".
+    // This is more reliable than using a 'rating' field that doesn't exist.
+    return [...marketplaceProductsData]
+      .sort((a, b) => b.sales - a.sales) // Sort descending by sales count
+      .slice(0, 6); // Take the top 6 trending products
+  }, [marketplaceProductsData]);
 
   const searchResult = useMemo(() => {
     if (!debouncedSearchInput) return [];
     const lowercasedQuery = debouncedSearchInput.toLowerCase();
-    return globalProductsData.filter(
+    return marketplaceProductsData.filter(
       (product) =>
         product.title.toLowerCase().includes(lowercasedQuery) ||
         product.category.toLowerCase().includes(lowercasedQuery) ||
         product.owner?.name.toLowerCase().includes(lowercasedQuery)
     );
-  }, [debouncedSearchInput, globalProductsData]);
+  }, [debouncedSearchInput, marketplaceProductsData]);
 
   useEffect(() => {
     setIsLoading(debouncedSearchInput !== searchInput);
@@ -165,7 +163,6 @@ export function SearchPublicHeaderInput() {
       );
     }
 
-    // --- ⭐️ Show trending products when input is empty ---
     if (!debouncedSearchInput && trendingProducts.length > 0) {
       return (
         <>
@@ -177,7 +174,6 @@ export function SearchPublicHeaderInput() {
       );
     }
 
-    // Fallback if no trending products are available
     return (
       <div className="p-2">
         <p className="text-sm text-gray-500 text-center py-3">

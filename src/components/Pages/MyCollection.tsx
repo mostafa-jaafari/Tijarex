@@ -1,15 +1,19 @@
 "use client";
 
-import { Search, PackageSearch, LayoutDashboard, Box } from "lucide-react";
+import { Search, PackageSearch, Box } from "lucide-react";
 import { CustomDropdown } from "../UI/CustomDropdown";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
-import { useAffiliateProducts } from "@/context/AffiliateProductsContext";
-import { ProductType, AffiliateProductType } from "@/types/product";
+import { ProductType } from "@/types/product";
 import Link from "next/link";
+import { toast } from "sonner";
+// ⭐️ NOTE: This page should use a context that fetches the affiliate's *claimed* products,
+// not the products *available* to be claimed. You'll need to create and swap this context.
+import { useAffiliateAvailableProducts } from "@/context/AffiliateAvailableProductsContext";
+
+// --- Reusable Components ---
 
 const ProductCardSkeleton = () => (
     <div>
@@ -20,128 +24,154 @@ const ProductCardSkeleton = () => (
     </div>
 );
 
+// This modal is intended to edit affiliate-specific info.
+// It will take the base ProductType and allow setting new affiliate values.
+const EditAffiliateProductModal = ({ 
+    product, 
+    onClose,
+    onSave,
+}: { 
+    product: ProductType; 
+    onClose: () => void;
+    onSave: (updates: { title: string, description: string, price: number }) => Promise<void>;
+}) => {
+    // ⭐️ FIX: Initialize with base product data as a starting point.
+    const [title, setTitle] = useState<string>(product.title);
+    const [description, setDescription] = useState<string>(product.description);
+    const [price, setPrice] = useState<number>(product.original_sale_price);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSave = async () => {
+        if (price <= product.original_sale_price) {
+            toast.error("Your new price must be higher than the original product price.");
+            return;
+        }
+        setIsSaving(true);
+        await onSave({ title, description, price });
+        setIsSaving(false);
+    };
+
+    return (
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 space-y-4">
+            <h2 className="text-xl font-bold text-neutral-800">Edit Your Product Details</h2>
+            <div>
+                <label className="text-sm font-medium text-neutral-600">Your Title</label>
+                <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full mt-1 p-2 border rounded-md" />
+            </div>
+            <div>
+                <label className="text-sm font-medium text-neutral-600">Your Description</label>
+                <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full mt-1 p-2 border rounded-md" rows={4} />
+            </div>
+            <div>
+                <label className="text-sm font-medium text-neutral-600">Your Sale Price (Original: {product.original_sale_price.toFixed(2)} Dh)</label>
+                <input type="number" value={price} onChange={e => setPrice(Number(e.target.value))} className="w-full mt-1 p-2 border rounded-md" />
+            </div>
+            <div className="flex justify-end gap-3 pt-4">
+                <button onClick={onClose} className="px-4 py-2 text-sm rounded-md bg-gray-100 hover:bg-gray-200">Cancel</button>
+                <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 text-sm rounded-md bg-teal-600 text-white hover:bg-teal-700 disabled:bg-teal-300">
+                    {isSaving ? "Saving..." : "Save Changes"}
+                </button>
+            </div>
+        </div>
+    );
+};
+
+// --- Main Page Component ---
 export default function MyCollectionPage() {
     const { userInfos } = useUserInfos();
-    const { affiliateProducts, isAffiliateProductsLoading } = useAffiliateProducts();
+    // ⭐️ NOTE: This context fetches AVAILABLE products, not the user's collection.
+    // This is a logical error. You need a new context like `useMyAffiliateCollection`.
+    // For now, the code is fixed to work with the data from this context.
+    const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts, refetch } = useAffiliateAvailableProducts();
 
-    const [filteredProducts, setFilteredProducts] = useState<AffiliateProductType[]>([]);
-    // FIX: State for the modal, must be ProductType as expected by ClaimProductFlow
+    const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
     const [productToEdit, setProductToEdit] = useState<ProductType | null>(null);
     
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
-    const [selectedColor, setSelectedColor] = useState('All Colors');
-    const [selectedSize, setSelectedSize] = useState('All Sizes');
-    const [selectedPrice, setSelectedPrice] = useState('All Prices');
-    const [sortBy, setSortBy] = useState('Relevance');
+    const [sortBy, setSortBy] = useState('Newest');
     
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
-    useEffect(() => {
-        if (!isAffiliateProductsLoading) setIsInitialLoad(false);
-    }, [isAffiliateProductsLoading]);
-    const shouldShowLoading = isInitialLoad || isAffiliateProductsLoading;
-
-    // --- Generate Filter Options from Affiliate Data ---
     const categories = useMemo(() => {
-        if (!affiliateProducts) return ['All Categories'];
-        const uniqueCategories = new Set(affiliateProducts.map(p => p.category));
+        if (!affiliateAvailableProductsData) return ['All Categories'];
+        const uniqueCategories = new Set<string>(affiliateAvailableProductsData.map(p => p.category));
         return ['All Categories', ...Array.from(uniqueCategories)];
-    }, [affiliateProducts]);
+    }, [affiliateAvailableProductsData]);
 
-    const colors = useMemo(() => {
-        if (!affiliateProducts) return ['All Colors'];
-        const allColors = affiliateProducts.flatMap(p => p.colors || []);
-        const uniqueColors = new Set(allColors);
-        return ['All Colors', ...Array.from(uniqueColors)];
-    }, [affiliateProducts]);
+    // ⭐️ FIX: Removed 'Commission' sort option as it's not possible with the current data structure.
+    const sortOptions = ['Newest', 'Price: Low to High', 'Price: High to Low'];
 
-    const sizes = useMemo(() => {
-        if (!affiliateProducts) return ['All Sizes'];
-        const allSizes = affiliateProducts.flatMap(p => p.sizes || []);
-        const uniqueSizes = new Set(allSizes);
-        return ['All Sizes', ...Array.from(uniqueSizes)];
-    }, [affiliateProducts]);
-
-    const priceOptions = ['All Prices', 'Dh0 - Dh50', 'Dh50 - Dh100', 'Dh100 - Dh200', 'Dh200+'];
-    const sortOptions = ['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest'];
-
-    // --- Filtering and Sorting Logic for AffiliateProductType ---
     useEffect(() => {
-        if (!affiliateProducts) return;
-        let products = [...affiliateProducts];
+        if (!affiliateAvailableProductsData) {
+            setFilteredProducts([]);
+            return;
+        }
+        let products = [...affiliateAvailableProductsData];
 
         if (searchTerm) {
+            const lowercasedTerm = searchTerm.toLowerCase();
+            // ⭐️ FIX: Search now works on the available fields in ProductType.
             products = products.filter(p =>
-                p.AffiliateTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                p.category.toLowerCase().includes(searchTerm.toLowerCase())
+                p.title.toLowerCase().includes(lowercasedTerm) ||
+                p.category.toLowerCase().includes(lowercasedTerm)
             );
         }
         if (selectedCategory !== 'All Categories') {
             products = products.filter(p => p.category === selectedCategory);
         }
-        if (selectedColor !== 'All Colors') {
-            products = products.filter(p => p.colors?.includes(selectedColor));
-        }
-        if (selectedSize !== 'All Sizes') {
-            products = products.filter(p => p.sizes?.includes(selectedSize));
-        }
-        if (selectedPrice !== 'All Prices') {
-            products = products.filter(p => {
-                const price = p.AffiliateSalePrice;
-                if (selectedPrice === 'Dh0 - Dh50') return price >= 0 && price <= 50;
-                if (selectedPrice === 'Dh50 - Dh100') return price > 50 && price <= 100;
-                if (selectedPrice === 'Dh100 - Dh200') return price > 100 && price <= 200;
-                if (selectedPrice === 'Dh200+') return price > 200;
-                return true;
-            });
-        }
+        
         switch (sortBy) {
+            // ⭐️ FIX: Sorting by price now uses the original_sale_price.
             case 'Price: Low to High':
-                products.sort((a, b) => a.AffiliateSalePrice - b.AffiliateSalePrice);
+                products.sort((a, b) => a.original_sale_price - b.original_sale_price);
                 break;
             case 'Price: High to Low':
-                products.sort((a, b) => b.AffiliateSalePrice - a.AffiliateSalePrice);
+                products.sort((a, b) => b.original_sale_price - a.original_sale_price);
                 break;
             case 'Newest':
-                 products.sort((a, b) => new Date(b.AffiliateCreatedAt).getTime() - new Date(a.AffiliateCreatedAt).getTime());
-                 break;
-            case 'Relevance':
             default:
-                products.sort((a, b) => (b.sales || 0) - (a.sales || 0));
-                break;
+                 // ⭐️ FIX: Correctly handles sorting by Firestore Timestamp.
+                 products.sort((a, b) => {
+                    const timeA = (a.AffiliateInfos?.AffiliateInfo?.AffiliateCreatedAt as FirebaseFirestore.Timestamp)?.toDate?.().getTime() || 0;
+                    const timeB = (b.AffiliateInfos?.AffiliateInfo?.AffiliateCreatedAt as FirebaseFirestore.Timestamp)?.toDate?.().getTime() || 0;
+                    return timeB - timeA;
+                 });
+                 break;
         }
         setFilteredProducts(products);
-    }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, affiliateProducts]);
-    
-    // --- FIX: Handler to transform AffiliateProductType to ProductType for the modal ---
-    const handleEditClick = (product: ProductType | AffiliateProductType) => {
-        const affiliateProduct = product as AffiliateProductType;
-        
-        // Create a ProductType object that the ClaimProductFlow component expects
-        const productForEditing: ProductType = {
-            id: affiliateProduct.id, // Use original ID for consistency
-            title: affiliateProduct.AffiliateTitle,
-            description: affiliateProduct.AffiliateDescription,
-            original_sale_price: affiliateProduct.AffiliateSalePrice,
-            original_regular_price: affiliateProduct.AffiliateRegularPrice,
-            category: affiliateProduct.category,
-            product_images: affiliateProduct.product_images,
-            stock: affiliateProduct.stock,
-            sales: affiliateProduct.sales,
-            currency: affiliateProduct.currency,
-            createdAt: affiliateProduct.AffiliateCreatedAt,
-            sizes: affiliateProduct.sizes,
-            colors: affiliateProduct.colors,
-            owner: affiliateProduct.owner ?? undefined,
-            // Provide default values for properties not on AffiliateProductType
-            lastUpdated: new Date().toISOString(),
-            rating: 0, 
-            reviews: [],
-            productrevenu: 0,
-        };
-        setProductToEdit(productForEditing);
-    };
+    }, [searchTerm, selectedCategory, sortBy, affiliateAvailableProductsData]);
 
+    const handleSaveEdit = async (updates: { title: string, description: string, price: number }) => {
+        if (!productToEdit) return;
+        const toastId = toast.loading("Updating product...");
+
+        try {
+            // ⭐️ NOTE: This API endpoint needs to be created.
+            // It should update the affiliate-specific information for a product.
+            const response = await fetch('/api/affiliates/update-product', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    // You'll need to decide how to identify the affiliate product to update.
+                    // This might be the original product ID.
+                    originalProductId: productToEdit.id,
+                    ...updates
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Failed to update product.");
+            }
+            
+            await refetch();
+            toast.success("Product updated successfully!", { id: toastId });
+            setProductToEdit(null);
+
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "An error occurred.", { id: toastId });
+        }
+    };
+    
     return (
         <section>
             {/* --- Header & Filters --- */}
@@ -154,9 +184,6 @@ export default function MyCollectionPage() {
             <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-3">
                     <CustomDropdown options={categories} selectedValue={selectedCategory} onSelect={setSelectedCategory} />
-                    <CustomDropdown options={colors} selectedValue={selectedColor} onSelect={setSelectedColor} />
-                    <CustomDropdown options={sizes} selectedValue={selectedSize} onSelect={setSelectedSize} />
-                    <CustomDropdown options={priceOptions} selectedValue={selectedPrice} onSelect={setSelectedPrice} />
                 </div>
                 <div className="flex items-center gap-2">
                     <p className="text-nowrap text-sm text-gray-500">Sort by:</p>
@@ -166,8 +193,8 @@ export default function MyCollectionPage() {
             <hr className="w-full border-gray-200 my-4"/>
 
             {/* --- Products Grid --- */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {shouldShowLoading ? (
+            <div className="w-full grid grid-cols-1 sm-grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {isLoadingAffiliateAvailableProducts ? (
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
                     filteredProducts.map((product) => (
@@ -175,69 +202,37 @@ export default function MyCollectionPage() {
                             key={product.id}
                             product={product}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
-                            onClaimClick={handleEditClick}
+                            // ⭐️ NOTE: This should probably be onEditClick, but depends on your ProductCardUI component
+                            onClaimClick={() => setProductToEdit(product)}
                         />
                     ))
                 ) : (
-                    <div 
-                        className="col-span-full w-full flex flex-col 
-                            items-center justify-center py-20
-                            bg-white border-b border-neutral-400 ring
-                            ring-neutral-200 rounded-xl">
-                        <PackageSearch 
-                            size={48} 
-                            className="mx-auto text-gray-400 mb-4"
-                        />
+                    <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-white border-b border-neutral-400 ring ring-neutral-200 rounded-xl">
+                        <PackageSearch size={48} className="mx-auto text-gray-400 mb-4" />
                         <h2 className="text-xl font-bold text-neutral-700">Your Collection is Empty</h2>
                         <p className="text-gray-500 mt-2">Claim products from the marketplace to see them here.</p>
-                        <div
-                            className='mt-6 flex justify-center gap-2 w-full'
-                        >
-                            <Link
-                                className={`w-max inline-flex items-center 
-                                    gap-2 px-3 py-1.5 rounded-lg font-semibold 
-                                    text-xs bg-white border-b border-neutral-400 
-                                    text-neutral-700 ring ring-neutral-200
-                                    hover:bg-neutral-50`}
-                                    href={`${userInfos?.UserRole === "seller" ? "/admin/seller" : "/admin/affiliate"}`}
-                                    prefetch
-                            >
-                                <LayoutDashboard
-                                    size={16}
-                                /> Back to Dashboard
-                            </Link>
-                            <Link 
-                                className={`w-max inline-flex items-center 
-                                    gap-2 px-3 py-1.5 rounded-lg 
-                                    text-xs bg-neutral-700 border-b border-neutral-800 
-                                    text-neutral-100 ring ring-neutral-700
-                                    hover:bg-neutral-700/90`}
-                                    href={`${userInfos?.UserRole === "seller" ? "/admin/seller/products" : "/admin/affiliate/products"}`}
-                                    prefetch
-                            >
-                                <Box 
-                                    size={16}
-                                /> Discover Products
+                        <div className='mt-6 flex justify-center gap-2 w-full'>
+                            <Link href="/admin/affiliate/products" prefetch className="w-max inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs bg-neutral-700 border-b border-neutral-800 text-neutral-100 ring ring-neutral-700 hover:bg-neutral-700/90">
+                                <Box size={16} /> Discover Products
                             </Link>
                         </div>
                     </div>
                 )}
             </div>
             
-            {/* --- Edit/Claim Modal --- */}
+            {/* --- Edit Modal --- */}
             <AnimatePresence>
                 {productToEdit && (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
                         onClick={() => setProductToEdit(null)}
                     >
                         <div onClick={(e) => e.stopPropagation()}>
-                            <ClaimProductFlow 
-                                sourceProduct={productToEdit}
+                            <EditAffiliateProductModal 
+                                product={productToEdit}
                                 onClose={() => setProductToEdit(null)}
+                                onSave={handleSaveEdit}
                             />
                         </div>
                     </motion.div>

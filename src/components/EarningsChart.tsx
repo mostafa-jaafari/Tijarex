@@ -5,10 +5,7 @@ import {
   Tooltip, CartesianGrid,
 } from 'recharts';
 import { TrendingUp, BarChart3, AlertCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { format, subDays, subMonths } from 'date-fns';
-import { useUserInfos } from '@/context/UserInfosContext';
-
 // ============================================================================
 // Types & Configuration (Modernized with Purple Theme)
 // ============================================================================

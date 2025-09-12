@@ -1,8 +1,8 @@
 // src/hooks/useTrendingProducts.ts
 "use client";
 
+import { useMarketplaceProducts } from '@/context/MarketplaceProductsContext';
 import { useMemo } from 'react';
-import { useGlobalProducts } from '@/context/GlobalProductsContext';
 
 // --- Configuration: You can easily tweak these values to change what "trending" means ---
 
@@ -22,21 +22,22 @@ const MINIMUM_SALES_FOR_TRENDING = 100;
  */
 export const useTrendingProducts = (count: number = 8) => {
     // 1. Get the raw product data from the global context
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+    const { marketplaceProductsData, isLoadingMarketplaceProducts } = useMarketplaceProducts();
 
     // 2. Memoize the calculation to prevent re-running on every render
     const trendingProducts = useMemo(() => {
         // Return an empty array if there's no data to process
-        if (!globalProductsData || globalProductsData.length === 0) {
+        if (!marketplaceProductsData || marketplaceProductsData.length === 0) {
             return [];
         }
 
         // --- Step A: Calculate a "trending score" for every product ---
-        const productsWithScores = globalProductsData.map(product => {
+        const productsWithScores = marketplaceProductsData.map(product => {
             const salesScore = product.sales || 0;
 
             const now = new Date();
-            const createdAt = new Date(product.createdAt);
+            const affiliateCreatedAt = product.AffiliateInfos?.AffiliateInfo?.AffiliateCreatedAt;
+            const createdAt = affiliateCreatedAt ? new Date(affiliateCreatedAt.toDate()) : new Date();
             // Calculate how many days old the product is. Use Math.max to prevent division by zero.
             const daysSinceCreation = Math.max((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24), 1);
             
@@ -70,10 +71,10 @@ export const useTrendingProducts = (count: number = 8) => {
         // 3. Return the final list, ensuring it doesn't exceed the requested count
         return topProducts.slice(0, count);
 
-    }, [globalProductsData, count]); // The dependency array ensures this runs only when data changes
+    }, [marketplaceProductsData, count]); // The dependency array ensures this runs only when data changes
 
     return {
         trendingProducts,
-        isLoading: isLoadingGlobalProducts,
+        isLoading: isLoadingMarketplaceProducts,
     };
 };

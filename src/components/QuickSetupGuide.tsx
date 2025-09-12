@@ -4,8 +4,8 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useUserInfos } from '@/context/UserInfosContext';
 import { useFirstAffiliateLink } from '@/context/FirstAffiliateLinkContext';
-import { useGlobalProducts } from '@/context/GlobalProductsContext';
 import { ProductType } from '@/types/product';
+import { useAffiliateAvailableProducts } from '@/context/AffiliateAvailableProductsContext';
 
 // --- Skeleton Component (no changes needed) ---
 const QuickSetupGuideSkeleton = () => {
@@ -41,11 +41,11 @@ export default function QuickSetupGuide() {
   // --- All your existing logic and hooks remain unchanged ---
   const { userInfos, isLoadingUserInfos, setIsFinishSetup } = useUserInfos();
   const { isLoadingCheckingFirstAffiliateLink, hasGottenFirstLink } = useFirstAffiliateLink();
-  const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+  const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts } = useAffiliateAvailableProducts();
   
   const [isMinimized, setIsMinimized] = useState(false);
 
-  const IsUploadOneProductAtLeast = globalProductsData.find(
+  const IsUploadOneProductAtLeast = affiliateAvailableProductsData.find(
     (p: ProductType) => p.owner?.email.toLowerCase() === userInfos?.email
   );
 
@@ -71,7 +71,7 @@ export default function QuickSetupGuide() {
           title: "Add your first product",
           description: "List your first item to start selling to a wider audience.",
           btntitle: "Add product",
-          isLoadingButton: isLoadingGlobalProducts,
+          isLoadingButton: isLoadingAffiliateAvailableProducts,
           iscompleted: !!IsUploadOneProductAtLeast,
           link: { href: "/upload-products" },
         }
@@ -93,13 +93,13 @@ export default function QuickSetupGuide() {
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimatedWidth(`${progressPercent}%`), 100);
-    if (!isLoadingUserInfos && !isLoadingGlobalProducts && !isLoadingCheckingFirstAffiliateLink) {
+    if (!isLoadingUserInfos && !isLoadingAffiliateAvailableProducts && !isLoadingCheckingFirstAffiliateLink) {
         setIsFinishSetup(IsCompletedAllSteps);
     }
     return () => clearTimeout(timer);
-  }, [IsCompletedAllSteps, progressPercent, setIsFinishSetup, isLoadingUserInfos, isLoadingGlobalProducts, isLoadingCheckingFirstAffiliateLink]);
+  }, [IsCompletedAllSteps, progressPercent, setIsFinishSetup, isLoadingUserInfos, isLoadingAffiliateAvailableProducts, isLoadingCheckingFirstAffiliateLink]);
 
-  const isLoading = isLoadingUserInfos || isLoadingGlobalProducts || isLoadingCheckingFirstAffiliateLink;
+  const isLoading = isLoadingUserInfos || isLoadingAffiliateAvailableProducts || isLoadingCheckingFirstAffiliateLink;
 
   if (isLoading) {
     return <QuickSetupGuideSkeleton />;

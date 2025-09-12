@@ -1,7 +1,7 @@
 import Loading from '@/app/loading';
 import { ShopFilter } from '@/components/ShopFilter';
 import { ShopInputSearch } from '@/components/ShopInputSearch';
-import { BestSellingProductUI } from '@/components/UI/PublicProductCard1';
+import { PublicProductCard1 } from '@/components/UI/PublicProductCard1';
 import { ProductType } from '@/types/product';
 import { Tag } from 'lucide-react';
 import { Metadata } from 'next';
@@ -83,7 +83,7 @@ function filterProducts(products: ProductType[], searchParams: {
                 case 'name':
                     return (a.title || a.title).localeCompare(b.title || b.title);
                 case 'rating':
-                    return (b.rating || 0) - (a.rating || 0);
+                    return (b.reviews || 0) - (a.rating || 0);
                 default:
                     return 0;
             }
@@ -157,7 +157,7 @@ export default async function page({ searchParams }: ShopPageProps) {
                                 >
                                     {ReadedProducts.map((product: ProductType) => {
                                         return (
-                                            <BestSellingProductUI
+                                            <PublicProductCard1
                                                 key={product.id}
                                                 PRODUCTCATEGORY={product.category}
                                                 PRODUCTID={product.id}
