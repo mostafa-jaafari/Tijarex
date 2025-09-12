@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { ProductType } from '@/types/product';
 import ProductEditor from './ProductEditor';
 import { ProductEditorProvider } from '@/context/ProductEditorContext';
-import { useAffiliateProducts } from '@/context/AffiliateProductsContext'; // Import the hook here
 import { toast } from 'sonner';
+import { useAffiliateAvailableProducts } from '@/context/AffiliateAvailableProductsContext';
 
 interface ClaimProductFlowProps {
     sourceProduct: ProductType;
@@ -14,7 +14,7 @@ interface ClaimProductFlowProps {
 }
 
 export default function ClaimProductFlow({ sourceProduct, onClose }: ClaimProductFlowProps) {
-    const { refetchAffiliateProducts } = useAffiliateProducts(); // Get refetch function
+    const { refetch } = useAffiliateAvailableProducts(); // Get refetch function
     const [isSubmitting, setIsSubmitting] = useState(false); // Add a loading state
 
     // This is the function we will pass to the ProductEditor's onSave prop
@@ -45,7 +45,7 @@ export default function ClaimProductFlow({ sourceProduct, onClose }: ClaimProduc
             }
 
             // 2. AWAIT THE REFETCH after the save is successful
-            await refetchAffiliateProducts();
+            await refetch();
 
             toast.success("Product added to collection!", { id: toastId });
 

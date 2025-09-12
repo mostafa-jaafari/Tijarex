@@ -12,7 +12,6 @@ import { Metadata } from "next";
 import { QuickViewProductContextProvider } from "@/context/QuickViewProductContext";
 import { QuickViewProduct } from "@/components/QuickViewProduct";
 import { FirstAffiliateLinkTrackerProvider } from "@/context/FirstAffiliateLinkContext";
-import { AffiliateProductsContextProvider } from "@/context/AffiliateProductsContext";
 import { MyCollectionProductsContextProvider } from "@/context/MyCollectionProductsContext";
 import { MarketplaceProductsProvider } from "@/context/MarketplaceProductsContext";
 import { AffiliateAvailableProductsProvider } from "@/context/AffiliateAvailableProductsContext";
@@ -63,18 +62,16 @@ export default async function RootLayout({
               <AffiliateAvailableProductsProvider>
                 <UserInfosContextProvider>
                   <MyCollectionProductsContextProvider>
-                    <AffiliateProductsContextProvider>
-                      <FirstAffiliateLinkTrackerProvider>
-                        <QuickViewProductContextProvider>
-                              <Toaster position="top-center" />
-                              <NextIntlClientProvider locale={locale} messages={messages}>
-                                  {children}
-                                <QuickViewProduct />
-                              </NextIntlClientProvider>
-                              <ScrollToTop />
-                        </QuickViewProductContextProvider>
-                      </FirstAffiliateLinkTrackerProvider>
-                    </AffiliateProductsContextProvider>
+                    <FirstAffiliateLinkTrackerProvider>
+                      <QuickViewProductContextProvider>
+                            <Toaster position="top-center" />
+                            <NextIntlClientProvider locale={locale} messages={messages}>
+                                {children}
+                              <QuickViewProduct />
+                            </NextIntlClientProvider>
+                            <ScrollToTop />
+                      </QuickViewProductContextProvider>
+                    </FirstAffiliateLinkTrackerProvider>
                   </MyCollectionProductsContextProvider>
                 </UserInfosContextProvider>
               </AffiliateAvailableProductsProvider>

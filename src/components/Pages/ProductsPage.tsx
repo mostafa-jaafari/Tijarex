@@ -5,11 +5,11 @@ import { CustomDropdown } from "../UI/CustomDropdown";
 import { ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
-import { useGlobalProducts } from "@/context/GlobalProductsContext";
-import { ProductType, AffiliateProductType } from "@/types/product";
+import { ProductType } from "@/types/product";
 import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 import Link from "next/link";
+import { useAffiliateAvailableProducts } from "@/context/AffiliateAvailableProductsContext";
 
 // Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
@@ -23,7 +23,7 @@ const ProductCardSkeleton = () => (
 
 export default function ProductsPage() {
     const { userInfos } = useUserInfos();
-    const { globalProductsData, isLoadingGlobalProducts } = useGlobalProducts();
+    const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts } = useAffiliateAvailableProducts();
 
     // --- State Management ---
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
@@ -41,10 +41,10 @@ export default function ProductsPage() {
 
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     useEffect(() => {
-        if (!isLoadingGlobalProducts) {
+        if (!isLoadingAffiliateAvailableProducts) {
             setIsInitialLoad(false);
         }
-    }, [isLoadingGlobalProducts]);
+    }, [isLoadingAffiliateAvailableProducts]);
 
     // --- NEW: Fetch user's favorite product IDs on component mount ---
     useEffect(() => {
@@ -74,36 +74,36 @@ export default function ProductsPage() {
     }, [userInfos]); // Rerun this effect if the user logs in or out
 
 
-    const shouldShowLoading = isInitialLoad || isLoadingGlobalProducts || isLoadingFavorites;
+    const shouldShowLoading = isInitialLoad || isLoadingAffiliateAvailableProducts || isLoadingFavorites;
 
     // --- Generate Dynamic Filter Options ---
     const categories = useMemo(() => {
-        if (!globalProductsData) return ['All Categories'];
-        const uniqueCategories = new Set(globalProductsData.map(p => p.category));
+        if (!affiliateAvailableProductsData) return ['All Categories'];
+        const uniqueCategories = new Set(affiliateAvailableProductsData.map(p => p.category));
         return ['All Categories', ...Array.from(uniqueCategories)];
-    }, [globalProductsData]);
+    }, [affiliateAvailableProductsData]);
 
     const colors = useMemo(() => {
-        if (!globalProductsData) return ['All Colors'];
-        const allColors = globalProductsData.flatMap(p => p.colors || []);
+        if (!affiliateAvailableProductsData) return ['All Colors'];
+        const allColors = affiliateAvailableProductsData.flatMap(p => p.colors || []);
         const uniqueColors = new Set(allColors);
         return ['All Colors', ...Array.from(uniqueColors)];
-    }, [globalProductsData]);
+    }, [affiliateAvailableProductsData]);
 
     const sizes = useMemo(() => {
-        if (!globalProductsData) return ['All Sizes'];
-        const allSizes = globalProductsData.flatMap(p => p.sizes || []);
+        if (!affiliateAvailableProductsData) return ['All Sizes'];
+        const allSizes = affiliateAvailableProductsData.flatMap(p => p.sizes || []);
         const uniqueSizes = new Set(allSizes);
         return ['All Sizes', ...Array.from(uniqueSizes)];
-    }, [globalProductsData]);
+    }, [affiliateAvailableProductsData]);
 
     const priceOptions = ['All Prices', 'Dh0 - Dh50', 'Dh50 - Dh100', 'Dh100 - Dh200', 'Dh200+'];
     const sortOptions = ['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest'];
 
     // --- Main Filtering and Sorting Logic ---
     useEffect(() => {
-        if (!globalProductsData) return;
-        let products = [...globalProductsData];
+        if (!affiliateAvailableProductsData) return;
+        let products = [...affiliateAvailableProductsData];
 
         if (searchTerm) {
             products = products.filter(p =>
@@ -138,7 +138,7 @@ export default function ProductsPage() {
                 products.sort((a, b) => b.original_sale_price - a.original_sale_price);
                 break;
             case 'Newest':
-                 products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                 products.sort((a, b) => new Date(b.createdAt.toDate()).getTime() - new Date(a.createdAt.toDate()).getTime());
                  break;
             case 'Relevance':
             default:
@@ -148,9 +148,9 @@ export default function ProductsPage() {
 
         setFilteredProducts(products);
 
-    }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, globalProductsData]);
+    }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, affiliateAvailableProductsData]);
     
-    const handleClaimClick = (product: ProductType | AffiliateProductType) => {
+    const handleClaimClick = (product: ProductType) => {
         setProductToClaim(product as ProductType);
     }
     

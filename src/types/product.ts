@@ -8,6 +8,19 @@ export type ReviewTypes = {
   reviewtext: string;
   rating: number;
 }
+
+type AffiliateProductType = {
+    AffiliateInfo?: {
+      AffiliateCreatedAt: Timestamp;
+      AffiliateDescription: string;
+      AffiliateOwnerEmail: string;
+      AffiliateRegularPrice: number;
+      AffiliateSalePrice: number;
+      AffiliateTitle: string;
+      AffiliateUniqueId: string;
+    };
+    originalProductId: string;
+};
 export type ProductType = {
   category: string;
   colors: string[];
@@ -34,18 +47,5 @@ export type ProductType = {
   sizes: string[];
   stock: number;
   title: string;
-};
-
-
-export type AffiliateProductType = {
-    AffiliateInfo?: {
-      AffiliateCreatedAt: Timestamp;
-      AffiliateDescription: string;
-      AffiliateOwnerEmail: string;
-      AffiliateRegularPrice: number;
-      AffiliateSalePrice: number;
-      AffiliateTitle: string;
-      AffiliateUniqueId: string;
-    };
-    originalProductId: string;
+  AffiliateInfos?: AffiliateProductType;
 };
