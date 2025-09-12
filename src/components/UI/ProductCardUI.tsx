@@ -170,7 +170,7 @@ export const ProductCardUI = ({
     const { refetchAffiliateProducts } = useAffiliateProducts();
     
     // --- Data Destructuring & Fallbacks ---
-    const { id, product_images, currency, sales = 0, stock = 0 } = product;
+    const { product_images, currency, sales = 0, stock = 0 } = product;
     const title = isAffiliateProduct(product) ? product.AffiliateTitle : product.title;
     const salePrice = isAffiliateProduct(product) ? product.AffiliateSalePrice : product.original_sale_price;
     const regularPrice = isAffiliateProduct(product) ? product.AffiliateRegularPrice : product.original_regular_price;

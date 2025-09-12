@@ -292,7 +292,7 @@ export default function UploadProducts() {
             }
 
             toast.success("Product created successfully!");
-            resetForm();
+            // resetForm();
 
         } catch (error) {
             const message = error instanceof Error ? error.message : "An unexpected error occurred.";

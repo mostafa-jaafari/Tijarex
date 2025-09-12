@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase-admin/firestore";
+
 export type ReviewTypes = {
   email: string;
   image: string;
@@ -7,53 +9,43 @@ export type ReviewTypes = {
   rating: number;
 }
 export type ProductType = {
-  id: string;
   category: string;
-  product_images: string[];
-  original_sale_price: number;
+  colors: string[];
+  createdAt: Timestamp;
+  description: string;
+  highlights: string[];
+  id: string;
+  lastUpdated: Timestamp;
   original_regular_price: number;
+  original_sale_price: number;
+  owner: {
+    email: string;
+    image: string;
+    name: string;
+  };
+  permissions: {
+    availableForAffiliates: boolean;
+    sellInMarketplace: boolean;
+  };
+  product_images: string[];
+  productrevenu: number;
+  reviews: ReviewTypes[];
+  sales: number;
+  sizes: string[];
   stock: number;
   title: string;
-  sales: number;
-  lastUpdated: string;
-  createdAt: string;
-  currency: string;
-  reviews: ReviewTypes[];
-  description: string;
-  sizes: string[];
-  colors: string[];
-  permissions: {
-    availableForAffiliates?: boolean;
-    sellInMarketplace?: boolean;
-  };
-  owner?: {
-    name: string;
-    image: string;
-    email: string;
-  };
-  productrevenu: number;
 };
 
 
 export type AffiliateProductType = {
-    id: string;
-
-    // --- Data Copied from the Original Product ---
+    AffiliateInfo?: {
+      AffiliateCreatedAt: Timestamp;
+      AffiliateDescription: string;
+      AffiliateOwnerEmail: string;
+      AffiliateRegularPrice: number;
+      AffiliateSalePrice: number;
+      AffiliateTitle: string;
+      AffiliateUniqueId: string;
+    };
     originalProductId: string;
-    owner: { name: string; image: string; email: string; } | null;
-    product_images: string[];
-    category: string;
-    sizes: string[];
-    colors: string[];
-    stock: number; // ADDED
-    sales: number; // ADDED
-    currency: string;
-    reviews: ReviewTypes[];
-    // --- Data Specific to the Affiliate's Version ---
-    AffiliateOwnerEmail: string;
-    AffiliateTitle: string;
-    AffiliateDescription: string;
-    AffiliateSalePrice: number;
-    AffiliateRegularPrice: number;
-    AffiliateCreatedAt: string;
 };
