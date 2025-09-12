@@ -18,6 +18,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
     const userEmail = session.user.email;
+    // const AffiliateUniqueId = 
 
     try {
         const body: ClaimProductRequestBody = await request.json();
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
 
         const affiliateDetails = {
             AffiliateOwnerEmail: userEmail,
+            AffiliateUniqueId: session.user.id,
             AffiliateTitle: affiliateTitle,
             AffiliateDescription: affiliateDescription,
             AffiliateSalePrice: affiliateSalePrice,
@@ -61,17 +63,15 @@ export async function POST(request: Request) {
         };
 
         const newMarketplaceProductData = {
-            ...originalProductData,
-            id: newMarketplaceProductId,
             originalProductId: originalProductDoc.id,
             AffiliateInfo: affiliateDetails,
         };
 
         // --- CHANGE 2: Use the new reference to set the document in the correct collection ---
+        const userRef = adminDb.collection('users').doc(userEmail);
         batch.set(marketplaceProductRef, newMarketplaceProductData);
         // --- END OF CHANGE 2 ---
 
-        const userRef = adminDb.collection('users').doc(userEmail);
         // NOTE: You might want a different array for marketplace products, but for now,
         // we'll keep adding to AffiliateProductsIDs as per the original code.
         batch.update(userRef, {

@@ -14,7 +14,6 @@ import Link from 'next/link';
 interface WidgetCardProps {
     product: ProductType;
     userRole: string;
-    UniqueUserId: string;
     onClaimClick: (product: ProductType) => void;
 }
 
@@ -166,7 +165,6 @@ export function TrendingProductsWidget() {
                         <WidgetCard 
                             key={product.id} // Use stable product ID
                             product={product} // Pass the full product object
-                            UniqueUserId={userInfos.uniqueuserid}
                             userRole={userInfos.UserRole}
                             onClaimClick={handleClaimClick} // Pass the handler
                         />
