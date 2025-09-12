@@ -11,10 +11,11 @@ import { UserInfosContextProvider } from "@/context/UserInfosContext";
 import { Metadata } from "next";
 import { QuickViewProductContextProvider } from "@/context/QuickViewProductContext";
 import { QuickViewProduct } from "@/components/QuickViewProduct";
-import { GlobalProductsProvider } from "@/context/GlobalProductsContext";
 import { FirstAffiliateLinkTrackerProvider } from "@/context/FirstAffiliateLinkContext";
 import { AffiliateProductsContextProvider } from "@/context/AffiliateProductsContext";
 import { MyCollectionProductsContextProvider } from "@/context/MyCollectionProductsContext";
+import { MarketplaceProductsProvider } from "@/context/MarketplaceProductsContext";
+import { AffiliateAvailableProductsProvider } from "@/context/AffiliateAvailableProductsContext";
 
 
 export const metadata: Metadata = {
@@ -58,24 +59,26 @@ export default async function RootLayout({
           ${inter.className} antialiased`}
           >
           <NextAuthSessionProvider>
-            <GlobalProductsProvider>
-              <UserInfosContextProvider>
-                <MyCollectionProductsContextProvider>
-                  <AffiliateProductsContextProvider>
-                    <FirstAffiliateLinkTrackerProvider>
-                      <QuickViewProductContextProvider>
-                            <Toaster position="top-center" />
-                            <NextIntlClientProvider locale={locale} messages={messages}>
-                                {children}
-                              <QuickViewProduct />
-                            </NextIntlClientProvider>
-                            <ScrollToTop />
-                      </QuickViewProductContextProvider>
-                    </FirstAffiliateLinkTrackerProvider>
-                  </AffiliateProductsContextProvider>
-                </MyCollectionProductsContextProvider>
-              </UserInfosContextProvider>
-            </GlobalProductsProvider>
+            <MarketplaceProductsProvider>
+              <AffiliateAvailableProductsProvider>
+                <UserInfosContextProvider>
+                  <MyCollectionProductsContextProvider>
+                    <AffiliateProductsContextProvider>
+                      <FirstAffiliateLinkTrackerProvider>
+                        <QuickViewProductContextProvider>
+                              <Toaster position="top-center" />
+                              <NextIntlClientProvider locale={locale} messages={messages}>
+                                  {children}
+                                <QuickViewProduct />
+                              </NextIntlClientProvider>
+                              <ScrollToTop />
+                        </QuickViewProductContextProvider>
+                      </FirstAffiliateLinkTrackerProvider>
+                    </AffiliateProductsContextProvider>
+                  </MyCollectionProductsContextProvider>
+                </UserInfosContextProvider>
+              </AffiliateAvailableProductsProvider>
+            </MarketplaceProductsProvider>
           </NextAuthSessionProvider>
       </body>
     </html>

@@ -10,13 +10,13 @@ import {
   RotateCcw, Heart, UploadCloud, User, Layout, 
   Settings, HelpCircle 
 } from "lucide-react";
-import { useGlobalProducts } from "@/context/GlobalProductsContext";
+import { useAffiliateAvailableProducts } from "@/context/AffiliateAvailableProductsContext";
 interface SideBarClientProps {
     UserRole: string;
 }
 export function SidebarClient({ UserRole }: SideBarClientProps) {
     const { isLoadingUserInfos, userInfos } = useUserInfos();
-    const { globalProductsData } = useGlobalProducts();
+    const { affiliateAvailableProductsData } = useAffiliateAvailableProducts();
     const [isCollapsed, setIsCollapsed] = useState(true);
     const Navigation_Links = [
         {
@@ -29,7 +29,7 @@ export function SidebarClient({ UserRole }: SideBarClientProps) {
             label: "products",
             icon: ShoppingCart,
             href: "products",
-            badge: globalProductsData?.length,
+            badge: affiliateAvailableProductsData?.length,
         },
         {
             label: "orders",
