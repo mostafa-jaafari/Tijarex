@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, PackageSearch, LayoutDashboard, UploadCloud, Loader2 } from "lucide-react";
+import { Search, PackageSearch, LayoutDashboard, UploadCloud } from "lucide-react";
 import { CustomDropdown } from "../UI/CustomDropdown";
 // ✅ FIX: Imports are now separated and correct
 import { ConfirmationModal, ProductCardUI } from "../UI/ProductCardUI";
@@ -30,9 +30,6 @@ export default function ProductsPage() {
     const {
         affiliateAvailableProductsData: allProducts,
         isLoadingAffiliateAvailableProducts,
-        isLoadingMore,
-        hasMore,
-        fetchMoreProducts,
         refetch
     } = useAffiliateAvailableProducts();
 
@@ -51,8 +48,6 @@ export default function ProductsPage() {
     const [sortBy, setSortBy] = useState('Relevance');
     
     // --- State for Favorites & UI Loading ---
-    const [favoriteProductIds, setFavoriteProductIds] = useState<Set<string>>(new Set());
-    const [isLoadingFavorites, setIsLoadingFavorites] = useState(true);
     const shouldShowSkeleton = isLoadingAffiliateAvailableProducts && allProducts.length === 0;
 
     // --- Deletion Logic ---
@@ -82,29 +77,6 @@ export default function ProductsPage() {
         }
     };
 
-    // --- Favorites Fetching Logic ---
-    useEffect(() => {
-        if (!userInfos) {
-            setFavoriteProductIds(new Set());
-            setIsLoadingFavorites(false);
-            return;
-        }
-        const fetchFavorites = async () => {
-            setIsLoadingFavorites(true);
-            try {
-                const response = await fetch('/api/products/favorites');
-                if (response.ok) {
-                    const data = await response.json();
-                    setFavoriteProductIds(new Set<string>(data.products.map((p: ProductType) => p.id)));
-                }
-            } catch (error) {
-                console.error("Failed to fetch favorites:", error);
-            } finally {
-                setIsLoadingFavorites(false);
-            }
-        };
-        fetchFavorites();
-    }, [userInfos]);
 
     // --- Generate Dynamic Filter Options ---
     const categories = useMemo(() => ['All Categories', ...Array.from(new Set(allProducts.map((p: ProductType) => p.category)))], [allProducts]);
@@ -207,7 +179,6 @@ export default function ProductsPage() {
                             key={product.id}
                             product={product}
                             isAffiliate={userInfos?.UserRole === "affiliate"}
-                            isFavorite={favoriteProductIds.has(product.id)}
                             onClaimClick={handleClaimClick}
                             // ✅ FIX: Pass the correct function to open the confirmation modal
                             onDeleteClick={handleInitiateDelete}
@@ -241,7 +212,7 @@ export default function ProductsPage() {
             </div>
 
             {/* ✅ Load More Button for Pagination */}
-            <div className="w-full flex justify-center mt-8">
+            {/* <div className="w-full flex justify-center mt-8">
                 {hasMore && (
                     <button
                         onClick={fetchMoreProducts}
@@ -252,7 +223,7 @@ export default function ProductsPage() {
                         {isLoadingMore ? "Loading..." : "Load More"}
                     </button>
                 )}
-            </div>
+            </div> */}
 
             {/* --- Modals --- */}
             <ConfirmationModal

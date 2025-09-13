@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useQuickViewProduct } from "@/context/QuickViewProductContext";
+import { toast } from "sonner";
+import { useUserInfos } from "@/context/UserInfosContext";
 
 // The ConfirmationModal component remains unchanged.
 interface ConfirmationModalProps {
@@ -76,40 +78,77 @@ export function ConfirmationModal({
   );
 }
 
+// ✅ FIX: Re-added the `isFavorite` prop to receive the initial state from the parent.
 interface ProductCardUIProps {
     product: ProductType;
     isAffiliate: boolean;
-    isFavorite: boolean;
     onClaimClick: (product: ProductType) => void;
     onDeleteClick: (product: ProductType) => void;
 }
 
-export function ProductCardUI({ product, isAffiliate, isFavorite, onClaimClick, onDeleteClick }: ProductCardUIProps) {
-    const [isFav, setIsFav] = useState(isFavorite);
+export function ProductCardUI({ product, isAffiliate, onClaimClick, onDeleteClick }: ProductCardUIProps) {
+    // ✅ FIX: The refetch function is destructured to update the global user state.
+    const { refetch: refetchUserInfos, userInfos } = useUserInfos();
+    
+    // ✅ FIX: The local favorite state is now initialized from the `isFavorite` prop.
+    const [isFav, setIsFav] = useState(userInfos?.favoriteProductIds.includes(product.id));
+    const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
     const { data: session } = useSession();
     const { setProductID, setIsShowQuickViewProduct } = useQuickViewProduct();
+
+    // ✅ FIX: This effect ensures the card's heart icon updates if the prop changes from the parent.
+    // This is important for when the global user info is refetched.
+
     const HandleShowQuickViewProduct = (ProductId: string) => {
         setIsShowQuickViewProduct(true);
         setProductID(ProductId);
     }
-    // ✅ NEW: State to track the current image index
+    
     const [imageIndex, setImageIndex] = useState(0);
-
     const images = product.product_images || [];
     const hasMultipleImages = images.length > 1;
 
-    // Early return if session is loading or not available
-    if (session === undefined) return null; // Or a skeleton loader
+    if (session === undefined) return null;
     
     const isOwner = product.owner?.email === session?.user?.email;
 
     const handleToggleFavorite = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         e.preventDefault();
-        setIsFav(!isFav);
+
+        if (isTogglingFavorite) return;
+        if (!session) {
+            toast.error("Please sign in to add products to your favorites.");
+            return;
+        }
+
+        const originalIsFav = isFav;
+        setIsTogglingFavorite(true);
+        setIsFav(!originalIsFav); // Optimistic UI update
+
+        try {
+            const response = await fetch('/api/products/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId: product.id }),
+            });
+
+            if (!response.ok) {
+                setIsFav(originalIsFav); // Revert on API error
+                toast.error("Failed to update favorites. Please try again.");
+            } else {
+                // ✅ FIX: On success, refetch the global user info to sync the state everywhere.
+                refetchUserInfos();
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+            setIsFav(originalIsFav); // Revert on network error
+            toast.error("An error occurred. Please try again.");
+        } finally {
+            setIsTogglingFavorite(false);
+        }
     };
 
-    // ✅ NEW: Functions to navigate images
     const goToNextImage = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         e.preventDefault();
@@ -129,10 +168,12 @@ export function ProductCardUI({ product, isAffiliate, isFavorite, onClaimClick, 
             initial="rest"
             whileHover="hover"
             animate="rest"
-            className="group relative flex flex-col w-full bg-white rounded-lg overflow-hidden border border-neutral-200/80 shadow-sm hover:shadow-xl hover:border-neutral-300 transition-all duration-300"
+            className="group relative flex flex-col w-full bg-white 
+                rounded-lg overflow-hidden border-b border-neutral-200 
+                hover:border-neutral-400 ring ring-neutral-200
+                hover:ring-neutral-300 transition-all duration-300"
         >
             <div className="relative w-full h-52 overflow-hidden">
-                {/* ✅ MODIFIED: Image display with transitions */}
                 <AnimatePresence initial={false}>
                     <motion.div
                         key={imageIndex}
@@ -153,7 +194,6 @@ export function ProductCardUI({ product, isAffiliate, isFavorite, onClaimClick, 
                     </motion.div>
                 </AnimatePresence>
 
-                {/* ✅ NEW: Scroll buttons that appear on hover */}
                 {hasMultipleImages && (
                     <>
                         <motion.button
@@ -173,7 +213,6 @@ export function ProductCardUI({ product, isAffiliate, isFavorite, onClaimClick, 
                     </>
                 )}
                 
-                {/* ✅ NEW: Indicator dots for multiple images */}
                 {hasMultipleImages && (
                     <div className="absolute bottom-3 left-0 right-0 z-20 flex justify-center items-center gap-1.5">
                         {images.map((_, index) => (
@@ -188,8 +227,18 @@ export function ProductCardUI({ product, isAffiliate, isFavorite, onClaimClick, 
                 )}
                 
                 <div className="absolute top-3 right-3 z-30 flex flex-col gap-2">
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={handleToggleFavorite} className="p-2 bg-white/60 backdrop-blur-sm rounded-full text-neutral-600 hover:text-red-500 transition-colors" aria-label="Toggle Favorite">
-                        <Heart size={20} className={isFav ? "text-red-500 fill-red-500" : ""} />
+                    <motion.button 
+                        whileTap={{ scale: 0.9 }} 
+                        onClick={handleToggleFavorite} 
+                        disabled={isTogglingFavorite}
+                        className="p-2 bg-white/60 backdrop-blur-sm rounded-full text-neutral-600 hover:text-red-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50" 
+                        aria-label="Toggle Favorite"
+                    >
+                        <Heart 
+                            size={20} 
+                            className={isFav ? "cursor-pointer text-red-500 fill-red-500"
+                            :
+                            "text-red-500 cursor-pointer"} />
                     </motion.button>
                     
                     {isOwner && (
@@ -208,12 +257,11 @@ export function ProductCardUI({ product, isAffiliate, isFavorite, onClaimClick, 
                 </div>
             </div>
 
-            {/* --- Product Information --- */}
             <div className="flex flex-col p-4">
                  <h3
                     onClick={() => HandleShowQuickViewProduct(product.id)} 
                     className="font-semibold text-neutral-700 leading-tight 
-                        truncate mb-2 cursor-pointer"
+                        truncate mb-2 cursor-pointer w-max"
                     title={product.title}
                 >
                     {product.title}
@@ -224,14 +272,38 @@ export function ProductCardUI({ product, isAffiliate, isFavorite, onClaimClick, 
                         <p className="text-sm text-neutral-400 line-through">{product.original_regular_price.toFixed(2)} Dh</p>
                     )}
                 </div>
-                <div className="flex items-center justify-between text-xs text-neutral-500 border-t border-neutral-200/80 pt-3">
-                    <div className="flex items-center gap-1.5" title={`${product.sales || 0} sales`}><BarChart3 size={14} className="text-neutral-400"/><span>{product.sales || 0}</span></div>
-                    <div className="flex items-center gap-1.5" title={`${affiliateCount} affiliates`}><Users size={14} className="text-neutral-400"/><span>{affiliateCount}</span></div>
-                    <div className="flex items-center gap-1.5" title={`${product.stock} in stock`}><Package size={14} className="text-neutral-400"/><span>{product.stock}</span></div>
+                <div className="flex items-center justify-between text-sm text-neutral-500 border-t border-neutral-200/80 pt-3">
+                    <div 
+                        className="flex flex-col items-center text-xs" 
+                        title={`${product.sales || 0} sales`}
+                    >
+                        <span className="flex items-end gap-1">
+                            <BarChart3 size={18} className="text-neutral-400" />
+                            {product.sales || 0}
+                        </span>
+                        sales
+                    </div>
+                    <div 
+                        className="flex flex-col items-center text-xs" 
+                        title={`${affiliateCount} affiliates`}>
+                        <span className="flex items-end gap-1">
+                            <Users size={18} className="text-neutral-400" />
+                            {affiliateCount}
+                        </span>
+                        affiliate
+                    </div>
+                    <div 
+                        className="flex flex-col items-center text-xs" 
+                        title={`${product.stock} in stock`}>
+                        <span className="flex items-end gap-1">
+                            <Package size={18} className="text-neutral-400" />
+                            {product.stock}
+                        </span>
+                        stock
+                    </div>
                 </div>
             </div>
             
-            {/* --- Hover-to-Reveal Action Button --- */}
             {isAffiliate && (
                  <div className="max-h-0 group-hover:max-h-40 cursor-pointer overflow-hidden transition-all duration-300 ease-in-out">
                     <div className="px-4 pb-4">

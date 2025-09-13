@@ -1,13 +1,16 @@
 "use client";
 
+import { useUserInfos } from "@/context/UserInfosContext";
+
 
 
 
 
 export function FavoritesProducts(){
+    const { userInfos } = useUserInfos();
     return (
         <section>
-            Favorites Products
+            {userInfos?.favoriteProductIds.length}
         </section>
     )
 }
