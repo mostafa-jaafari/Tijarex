@@ -84,6 +84,7 @@ interface ProductCardUIProps {
     isAffiliate: boolean;
     onClaimClick: (product: ProductType) => void;
     onDeleteClick: (product: ProductType) => void;
+    onUnfavorite?: (unfavoritedProductId: string) => void;
 }
 
 export function ProductCardUI({ product, isAffiliate, onClaimClick, onDeleteClick }: ProductCardUIProps) {
