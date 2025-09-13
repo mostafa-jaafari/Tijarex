@@ -151,7 +151,7 @@ export default function ProductsPage() {
                 break;
             case 'Newest':
                  // ✅ FIX: Robust date sorting to prevent crashes
-                 processedProducts.sort((a, b) => new Date(b.createdAt as any).getTime() - new Date(a.createdAt as any).getTime());
+                 processedProducts.sort((a, b) => new Date(b.createdAt.toDate()).getTime() - new Date(a.createdAt.toDate()).getTime());
                  break;
             case 'Relevance':
             default:
