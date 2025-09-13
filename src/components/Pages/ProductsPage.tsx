@@ -219,7 +219,7 @@ export default function ProductsPage() {
                             size={48} 
                             className="mx-auto text-gray-400 mb-4"
                         />
-                        <h2 className="text-xl font-bold text-neutral-700">No Products Found</h2>
+                        <h2 className="text-xl font-bold text-neutral-700">No Products Found {JSON.stringify(affiliateAvailableProductsData)}</h2>
                         <p className="text-gray-500 mt-2">Try adjusting your filters or search criteria.</p>
                         <div
                             className='mt-6 flex justify-center gap-2 w-full'

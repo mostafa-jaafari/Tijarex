@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { InputStyles } from "@/app/[locale]/page";
 import { PermissionCheckBox, ProductPermissions } from "../Upload-Products/UploadPermission";
 import { AddHighlights } from "../Upload-Products/AddHighlights";
+import { useAffiliateAvailableProducts } from "@/context/AffiliateAvailableProductsContext";
 
 // --- Type Definitions ---
 interface ProductFile {
@@ -121,6 +122,7 @@ export default function UploadProducts() {
     const [isPermissionsOpen, setIsPermissionsOpen] = useState(true);
     const [isHighlightsOpen, setIsHighlightsOpen] = useState(true);
 
+    const { refetch } = useAffiliateAvailableProducts();
 
     // --- CRUCIAL: Cleanup Object URLs to prevent memory leaks ---
     useEffect(() => {
@@ -293,6 +295,7 @@ export default function UploadProducts() {
 
             toast.success("Product created successfully!");
             // resetForm();
+            refetch();
 
         } catch (error) {
             const message = error instanceof Error ? error.message : "An unexpected error occurred.";
