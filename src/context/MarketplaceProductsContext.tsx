@@ -25,8 +25,8 @@ export const MarketplaceProductsProvider = ({ children }: { children: ReactNode;
         else setIsLoadingMarketplaceProducts(true);
 
         try {
-            // ⭐️ CHANGE: Hitting the new, specific API endpoint.
-            const url = `/api/products/marketplace-products?limit=10${cursor ? `&lastVisibleId=${cursor}` : ''}`;
+            // ⭐️ FIX: Ensure this URL matches the new API route file name.
+            const url = `/api/marketplace-products?limit=10${cursor ? `&lastVisibleId=${cursor}` : ''}`;
             const res = await fetch(url);
             if (!res.ok) throw new Error("Failed to fetch marketplace products data!");
             

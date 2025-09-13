@@ -1,7 +1,7 @@
 import Loading from "@/app/loading";
 import AddBalance from "@/components/Pages/AddBalance";
 import { FavoritesProducts } from "@/components/Pages/FavoritesProducts";
-import MyCollection from "@/components/Pages/MyCollection";
+import { MyCollection } from "@/components/Pages/MyCollection";
 import { MyProducts } from "@/components/Pages/MyProducts";
 import MyWithdraw from "@/components/Pages/MyWithdraw";
 import OrdersPage from "@/components/Pages/OrdersPage";

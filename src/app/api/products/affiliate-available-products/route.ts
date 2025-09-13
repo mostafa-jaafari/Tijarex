@@ -1,7 +1,12 @@
 import { adminDb } from '@/lib/FirebaseAdmin';
-import { ProductType } from '@/types/product';
 import { NextResponse } from 'next/server';
-// ⭐️ REMOVED: The unused import 'firebase-admin'.
+import {
+  Query,
+  DocumentData,
+  FieldPath,
+  QueryDocumentSnapshot,
+} from 'firebase-admin/firestore';
+import { ProductType } from '@/types/product';
 
 export async function GET(request: Request) {
   try {
@@ -9,34 +14,85 @@ export async function GET(request: Request) {
     const limitParam = parseInt(searchParams.get('limit') || '10', 10);
     const lastVisibleId = searchParams.get('lastVisibleId');
 
-    // Filter for affiliate-available products.
-    let query = adminDb.collection('products')
-      .where('permissions.availableForAffiliates', '==', true)
-      .orderBy('createdAt', 'desc'); // Order by newest for affiliates
+    // ✅ النوع Query<DocumentData>
+    let marketplaceQuery: Query<DocumentData> = adminDb.collection(
+      'MarketplaceProducts'
+    );
 
     if (lastVisibleId) {
-      const lastVisibleDoc = await adminDb.collection('products').doc(lastVisibleId).get();
+      const lastVisibleDoc = await adminDb
+        .collection('MarketplaceProducts')
+        .doc(lastVisibleId)
+        .get();
+
       if (lastVisibleDoc.exists) {
-        query = query.startAfter(lastVisibleDoc);
+        marketplaceQuery = marketplaceQuery.startAfter(lastVisibleDoc);
       }
     }
 
-    const productsSnapshot = await query.limit(limitParam).get();
+    const marketplaceSnapshot = await marketplaceQuery.limit(limitParam).get();
 
-    if (productsSnapshot.empty) {
-      return NextResponse.json({ products: [], nextCursor: null });
+    if (marketplaceSnapshot.empty) {
+      return NextResponse.json({ products: [] as ProductType[], nextCursor: null });
     }
 
-    const products: ProductType[] = productsSnapshot.docs.map((doc) => doc.data() as ProductType);
+    const marketplaceDocs: QueryDocumentSnapshot<DocumentData>[] =
+      marketplaceSnapshot.docs;
 
-    const lastDoc = productsSnapshot.docs[productsSnapshot.docs.length - 1];
+    // ✅ IDs من docs
+    const originalProductIds: string[] = marketplaceDocs
+      .map((doc) => doc.data().originalProductId as string | undefined)
+      .filter((id): id is string => Boolean(id));
+
+    if (originalProductIds.length === 0) {
+      const lastDoc = marketplaceDocs[marketplaceDocs.length - 1];
+      const nextCursor = lastDoc ? lastDoc.id : null;
+      return NextResponse.json({ products: [] as ProductType[], nextCursor });
+    }
+
+    // ✅ Query للـ products حسب IDs
+    const productsSnapshot = await adminDb
+      .collection('products')
+      .where(FieldPath.documentId(), 'in', [...new Set(originalProductIds)])
+      .get();
+
+    // ✅ Map للمنتجات الأصلية
+    const productsMap = new Map<string, ProductType>();
+    productsSnapshot.docs.forEach((doc) => {
+      const data = doc.data() as ProductType;
+      // ✅ فقط المنتجات اللي availableForAffiliates = true
+      if (data.permissions?.availableForAffiliates) {
+        productsMap.set(doc.id, { ...data, id: doc.id });
+      }
+    });
+
+    // ✅ رتّبهم حسب IDs الأصلية
+    const orderedProducts: ProductType[] = originalProductIds
+      .map((id) => productsMap.get(id))
+      .filter((p): p is ProductType => p !== undefined);
+
+    const lastDoc = marketplaceDocs[marketplaceDocs.length - 1];
     const nextCursor = lastDoc ? lastDoc.id : null;
 
-    return NextResponse.json({ products, nextCursor });
-
+    return NextResponse.json(
+      { products: orderedProducts, nextCursor },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Surrogate-Control': 'no-store',
+        },
+      }
+    );
   } catch (error) {
-    console.error("Error fetching affiliate-available products:", error);
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return NextResponse.json({ error: 'Internal Server Error', details: errorMessage }, { status: 500 });
+    console.error('Error fetching products from MarketplaceProducts:', error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json(
+      { error: 'Internal Server Error', details: errorMessage },
+      { status: 500 }
+    );
   }
 }

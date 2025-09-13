@@ -1,12 +1,15 @@
+import { ProductType } from "@/types/product";
 
 
 
 
-
-export function ProductCardUI(){
+interface ProductCardUIProps {
+    product: ProductType;
+}
+export function ProductCardUI({ product }: ProductCardUIProps){
     return (
         <section>
-            Product Card UI
+            {JSON.stringify(product)}
         </section>
     )
 }

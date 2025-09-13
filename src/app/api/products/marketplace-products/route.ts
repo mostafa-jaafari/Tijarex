@@ -8,34 +8,51 @@ export async function GET(request: Request) {
     const limitParam = parseInt(searchParams.get('limit') || '10', 10);
     const lastVisibleId = searchParams.get('lastVisibleId');
 
-    // Dotted notation is used to access nested fields in Firestore.
-    let query = adminDb.collection('products')
-      .where('permissions.sellInMarketplace', '==', true)
-      .orderBy('sales', 'desc');
+    // --- STEP 1: Query the POINTER collection ('MarketplaceProducts') ---
+    let pointerQuery = adminDb.collection('MarketplaceProducts').orderBy('__name__'); // Order by ID for consistent pagination
 
     if (lastVisibleId) {
-      const lastVisibleDoc = await adminDb.collection('products').doc(lastVisibleId).get();
+      const lastVisibleDoc = await adminDb.collection('MarketplaceProducts').doc(lastVisibleId).get();
       if (lastVisibleDoc.exists) {
-        query = query.startAfter(lastVisibleDoc);
+        pointerQuery = pointerQuery.startAfter(lastVisibleDoc);
       }
     }
 
-    const productsSnapshot = await query.limit(limitParam).get();
+    const pointerSnapshot = await pointerQuery.limit(limitParam).get();
 
-    if (productsSnapshot.empty) {
+    if (pointerSnapshot.empty) {
       return NextResponse.json({ products: [], nextCursor: null });
     }
 
-    const products: ProductType[] = productsSnapshot.docs.map((doc) => doc.data() as ProductType);
+    // --- STEP 2: Extract the original product IDs from the pointers ---
+    const originalProductIds = pointerSnapshot.docs
+      .map(doc => doc.data().originalProductId)
+      .filter(id => id); // Filter out any potential empty IDs
 
-    const lastDoc = productsSnapshot.docs[productsSnapshot.docs.length - 1];
-    const nextCursor = lastDoc ? lastDoc.id : null;
+    if (originalProductIds.length === 0) {
+      return NextResponse.json({ products: [], nextCursor: null });
+    }
 
-    return NextResponse.json({ products, nextCursor });
+    // --- STEP 3: Fetch the FULL product details from the 'products' collection ---
+    // Firestore's 'in' query can fetch up to 30 documents at once.
+    const productsSnapshot = await adminDb.collection('products')
+      .where('id', 'in', originalProductIds)
+      .get();
+      
+    const productsData = productsSnapshot.docs.map(doc => doc.data() as ProductType);
+    
+    // Create a map for easy lookup to preserve the original order
+    const productsMap = new Map(productsData.map(p => [p.id, p]));
+    const finalProducts = originalProductIds.map(id => productsMap.get(id)).filter(Boolean) as ProductType[];
+
+    // --- STEP 4: The next cursor is the ID of the LAST POINTER document, not the product document ---
+    const lastPointerDoc = pointerSnapshot.docs[pointerSnapshot.docs.length - 1];
+    const nextCursor = lastPointerDoc ? lastPointerDoc.id : null;
+
+    return NextResponse.json({ products: finalProducts, nextCursor });
 
   } catch (error) {
     console.error("Error fetching marketplace products:", error);
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return NextResponse.json({ error: 'Internal Server Error', details: errorMessage }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
