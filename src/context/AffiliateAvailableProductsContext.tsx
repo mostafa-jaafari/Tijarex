@@ -18,28 +18,50 @@ export const AffiliateAvailableProductsProvider = ({ children }: { children: Rea
     const [affiliateAvailableProductsData, setAffiliateAvailableProductsData] = useState<ProductType[]>([]);
     const [isLoadingAffiliateAvailableProducts, setIsLoadingAffiliateAvailableProducts] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    // ⭐️ FIX: Initialize the cursor as `null` to represent the beginning.
+    // Some logic might treat `undefined` differently than `null`.
     const [nextCursor, setNextCursor] = useState<string | null>(null);
 
     const fetchProducts = useCallback(async (cursor: string | null = null) => {
-        if (cursor) setIsLoadingMore(true);
-        else setIsLoadingAffiliateAvailableProducts(true);
+        // Set the correct loading state based on whether it's an initial fetch or a "load more" action.
+        if (cursor) {
+            setIsLoadingMore(true);
+        } else {
+            setIsLoadingAffiliateAvailableProducts(true);
+        }
 
         try {
-            // ⭐️ FIX: The URL has been corrected to point to the right API endpoint.
-            // Removed the extra "/products" from the path.
-            const url = `/api/products/affiliate-available-products?limit=10${cursor ? `&lastVisibleId=${cursor}` : ''}`;
+            const url = `/api/products/affiliate-available-products?limit=12${cursor ? `&lastVisibleId=${cursor}` : ''}`;
             
-            const res = await fetch(url);
+            const res = await fetch(url, { cache: "no-store" });
+
             if (!res.ok) {
-                // This error will now only be thrown for legitimate server errors (like 500), not 404.
                 throw new Error("Failed to fetch affiliate-available products data!");
             }
             
             const data = await res.json();
-            console.log('Fetched affiliate products:', data);
-            const newProducts = (data.products as ProductType[]) || [];
+            const newProducts: ProductType[] = data.products || [];
 
-            setAffiliateAvailableProductsData(prev => cursor ? [...prev, ...newProducts] : newProducts);
+            // ⭐️ PRIMARY FIX: Add a client-side de-duplication check.
+            // This prevents duplicate products from being added to the state, solving the UI bug.
+            // The root cause is likely the API not correctly using the 'lastVisibleId',
+            // but this makes your context robust against such issues.
+            setAffiliateAvailableProductsData(prevProducts => {
+                if (cursor) {
+                    // This is a "load more" action.
+                    // Create a Set of existing product IDs for a fast lookup.
+                    const existingProductIds = new Set(prevProducts.map(p => p.id));
+                    
+                    // Filter the newly fetched products to only include ones we haven't seen before.
+                    const uniqueNewProducts = newProducts.filter(p => !existingProductIds.has(p.id));
+
+                    return [...prevProducts, ...uniqueNewProducts];
+                } else {
+                    // This is an initial fetch or a refetch, so just replace the data.
+                    return newProducts;
+                }
+            });
+
             setNextCursor(data.nextCursor);
 
         } catch (error) {
@@ -48,24 +70,29 @@ export const AffiliateAvailableProductsProvider = ({ children }: { children: Rea
             setIsLoadingAffiliateAvailableProducts(false);
             setIsLoadingMore(false);
         }
-    }, []);
+    }, []); // useCallback has no dependencies as it's self-contained.
 
+    // Effect for the initial data load.
     useEffect(() => {
         fetchProducts(null);
     }, [fetchProducts]);
 
     const fetchMoreProducts = () => {
-        if (isLoadingMore || !nextCursor) return;
+        // Prevent multiple simultaneous fetches.
+        if (isLoadingMore || !nextCursor) {
+            return;
+        }
         fetchProducts(nextCursor);
     };
     
+    // Resets the state and fetches the first page of data again.
     const refetch = useCallback(() => {
         setAffiliateAvailableProductsData([]);
         setNextCursor(null);
         fetchProducts(null);
     }, [fetchProducts]);
 
-    const contextValue = {
+    const contextValue: AffiliateAvailableProductsContextTypes = {
         affiliateAvailableProductsData,
         isLoadingAffiliateAvailableProducts,
         isLoadingMore,
@@ -81,9 +108,10 @@ export const AffiliateAvailableProductsProvider = ({ children }: { children: Rea
     );
 };
 
+// Custom hook for consuming the context, ensuring it's used within a provider.
 export function useAffiliateAvailableProducts() {
     const context = useContext(AffiliateAvailableProductsContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error("useAffiliateAvailableProducts must be used within an AffiliateAvailableProductsProvider");
     }
     return context;
