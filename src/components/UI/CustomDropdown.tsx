@@ -78,7 +78,7 @@ export const CustomDropdown = ({ label, options, selectedValue, onSelect }: Cust
                         className="absolute top-full left-0 w-max mt-1
                             bg-neutral-50 border-b border-neutral-400/80
                             ring ring-neutral-200 shadow-sm 
-                            rounded z-10 overflow-hidden"
+                            rounded z-20 overflow-hidden"
                     >
                         <ul className="max-h-60 overflow-y-auto" role="listbox">
                             {options.map((option) => (

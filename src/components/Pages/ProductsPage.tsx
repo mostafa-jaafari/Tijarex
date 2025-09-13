@@ -1,8 +1,9 @@
 "use client";
 
-import { Search, PackageSearch, LayoutDashboard, UploadCloud } from "lucide-react";
+import { Search, PackageSearch, LayoutDashboard, UploadCloud, Loader2 } from "lucide-react";
 import { CustomDropdown } from "../UI/CustomDropdown";
-import { ProductCardUI } from "../UI/ProductCardUI";
+// ✅ FIX: Imports are now separated and correct
+import { ConfirmationModal, ProductCardUI } from "../UI/ProductCardUI";
 import { useUserInfos } from "@/context/UserInfosContext";
 import { useEffect, useState, useMemo } from "react";
 import { ProductType } from "@/types/product";
@@ -10,11 +11,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import ClaimProductFlow from "../DropToCollectionsProducts/ClaimProductFlow";
 import Link from "next/link";
 import { useAffiliateAvailableProducts } from "@/context/AffiliateAvailableProductsContext";
+// ✅ FIX: Toaster component is required to show toasts
+import { Toaster, toast } from "sonner";
 
 // Skeleton Component for cleaner code
 const ProductCardSkeleton = () => (
     <div>
-        <div className="w-full h-48 bg-gray-200 rounded-lg animate-pulse" />
+        <div className="w-full h-52 bg-gray-200 rounded-lg animate-pulse" />
         <div className="w-full h-6 bg-gray-200 rounded-md mt-3 animate-pulse" />
         <div className="w-1/2 h-6 bg-gray-200 rounded-md mt-2 animate-pulse" />
         <div className="w-full h-8 bg-gray-200 rounded-md mt-3 animate-pulse" />
@@ -23,11 +26,23 @@ const ProductCardSkeleton = () => (
 
 export default function ProductsPage() {
     const { userInfos } = useUserInfos();
-    const { affiliateAvailableProductsData, isLoadingAffiliateAvailableProducts } = useAffiliateAvailableProducts();
+    // ✅ FIX: Destructure all required values from the context
+    const {
+        affiliateAvailableProductsData: allProducts,
+        isLoadingAffiliateAvailableProducts,
+        isLoadingMore,
+        hasMore,
+        fetchMoreProducts,
+        refetch
+    } = useAffiliateAvailableProducts();
 
-    // --- State Management ---
-    const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+    // --- State for Modals and Actions ---
+    const [productToDelete, setProductToDelete] = useState<ProductType | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [productToClaim, setProductToClaim] = useState<ProductType | null>(null);
+    
+    // --- State for Filtering and Sorting ---
+    const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
     const [selectedColor, setSelectedColor] = useState('All Colors');
@@ -35,93 +50,90 @@ export default function ProductsPage() {
     const [selectedPrice, setSelectedPrice] = useState('All Prices');
     const [sortBy, setSortBy] = useState('Relevance');
     
-    // --- NEW: State for managing user's favorite products ---
+    // --- State for Favorites & UI Loading ---
     const [favoriteProductIds, setFavoriteProductIds] = useState<Set<string>>(new Set());
     const [isLoadingFavorites, setIsLoadingFavorites] = useState(true);
+    const shouldShowSkeleton = isLoadingAffiliateAvailableProducts && allProducts.length === 0;
 
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
-    useEffect(() => {
-        if (!isLoadingAffiliateAvailableProducts) {
-            setIsInitialLoad(false);
+    // --- Deletion Logic ---
+    const handleInitiateDelete = (product: ProductType) => {
+        setProductToDelete(product);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!productToDelete) return;
+        setIsDeleting(true);
+        try {
+            const response = await fetch(`/api/products/${productToDelete.id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to delete product.");
+            }
+            toast.success(`Product "${productToDelete.title}" was deleted.`);
+            // ✅ FIX: refetch() is now called to update the product list
+            refetch();
+        } catch (error) {
+            toast.error((error as Error).message);
+        } finally {
+            setIsDeleting(false);
+            setProductToDelete(null); // Close the modal
         }
-    }, [isLoadingAffiliateAvailableProducts]);
+    };
 
-    // --- NEW: Fetch user's favorite product IDs on component mount ---
+    // --- Favorites Fetching Logic ---
     useEffect(() => {
-        if (userInfos) { // Only fetch if the user is logged in
-            const fetchFavorites = async () => {
-                setIsLoadingFavorites(true);
-                try {
-                    const response = await fetch('/api/products/favorites');
-                    if (response.ok) {
-                        const data = await response.json();
-                        // Store the IDs in a Set for efficient lookups
-                        const ids = new Set<string>(data.products.map((p: ProductType) => p.id));
-                        setFavoriteProductIds(ids);
-                    }
-                } catch (error) {
-                    console.error("Failed to fetch favorites:", error);
-                } finally {
-                    setIsLoadingFavorites(false);
-                }
-            };
-            fetchFavorites();
-        } else {
-            // If user is not logged in, clear favorites and stop loading
+        if (!userInfos) {
             setFavoriteProductIds(new Set());
             setIsLoadingFavorites(false);
+            return;
         }
-    }, [userInfos]); // Rerun this effect if the user logs in or out
-
-
-    const shouldShowLoading = isInitialLoad || isLoadingAffiliateAvailableProducts || isLoadingFavorites;
+        const fetchFavorites = async () => {
+            setIsLoadingFavorites(true);
+            try {
+                const response = await fetch('/api/products/favorites');
+                if (response.ok) {
+                    const data = await response.json();
+                    setFavoriteProductIds(new Set<string>(data.products.map((p: ProductType) => p.id)));
+                }
+            } catch (error) {
+                console.error("Failed to fetch favorites:", error);
+            } finally {
+                setIsLoadingFavorites(false);
+            }
+        };
+        fetchFavorites();
+    }, [userInfos]);
 
     // --- Generate Dynamic Filter Options ---
-    const categories = useMemo(() => {
-        if (!affiliateAvailableProductsData) return ['All Categories'];
-        const uniqueCategories = new Set(affiliateAvailableProductsData.map(p => p.category));
-        return ['All Categories', ...Array.from(uniqueCategories)];
-    }, [affiliateAvailableProductsData]);
-
-    const colors = useMemo(() => {
-        if (!affiliateAvailableProductsData) return ['All Colors'];
-        const allColors = affiliateAvailableProductsData.flatMap(p => p.colors || []);
-        const uniqueColors = new Set(allColors);
-        return ['All Colors', ...Array.from(uniqueColors)];
-    }, [affiliateAvailableProductsData]);
-
-    const sizes = useMemo(() => {
-        if (!affiliateAvailableProductsData) return ['All Sizes'];
-        const allSizes = affiliateAvailableProductsData.flatMap(p => p.sizes || []);
-        const uniqueSizes = new Set(allSizes);
-        return ['All Sizes', ...Array.from(uniqueSizes)];
-    }, [affiliateAvailableProductsData]);
-
+    const categories = useMemo(() => ['All Categories', ...Array.from(new Set(allProducts.map((p: ProductType) => p.category)))], [allProducts]);
+    const colors = useMemo(() => ['All Colors', ...Array.from(new Set(allProducts.flatMap((p: ProductType) => p.colors || [])))], [allProducts]);
+    const sizes = useMemo(() => ['All Sizes', ...Array.from(new Set(allProducts.flatMap((p: ProductType) => p.sizes || [])))], [allProducts]);
     const priceOptions = ['All Prices', 'Dh0 - Dh50', 'Dh50 - Dh100', 'Dh100 - Dh200', 'Dh200+'];
     const sortOptions = ['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest'];
 
     // --- Main Filtering and Sorting Logic ---
     useEffect(() => {
-        if (!affiliateAvailableProductsData) return;
-        let products = [...affiliateAvailableProductsData];
+        let processedProducts = [...allProducts];
 
         if (searchTerm) {
-            products = products.filter(p =>
+            processedProducts = processedProducts.filter(p =>
                 p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 p.category.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
         if (selectedCategory !== 'All Categories') {
-            products = products.filter(p => p.category === selectedCategory);
+            processedProducts = processedProducts.filter(p => p.category === selectedCategory);
         }
         if (selectedColor !== 'All Colors') {
-            products = products.filter(p => p.colors?.includes(selectedColor));
+            processedProducts = processedProducts.filter(p => p.colors?.includes(selectedColor));
         }
         if (selectedSize !== 'All Sizes') {
-            products = products.filter(p => p.sizes?.includes(selectedSize));
+            processedProducts = processedProducts.filter(p => p.sizes?.includes(selectedSize));
         }
         if (selectedPrice !== 'All Prices') {
-            products = products.filter(p => {
+            processedProducts = processedProducts.filter(p => {
                 const price = p.original_sale_price;
                 if (selectedPrice === 'Dh0 - Dh50') return price >= 0 && price <= 50;
                 if (selectedPrice === 'Dh50 - Dh100') return price > 50 && price <= 100;
@@ -132,50 +144,47 @@ export default function ProductsPage() {
         }
         switch (sortBy) {
             case 'Price: Low to High':
-                products.sort((a, b) => a.original_sale_price - b.original_sale_price);
+                processedProducts.sort((a, b) => a.original_sale_price - b.original_sale_price);
                 break;
             case 'Price: High to Low':
-                products.sort((a, b) => b.original_sale_price - a.original_sale_price);
+                processedProducts.sort((a, b) => b.original_sale_price - a.original_sale_price);
                 break;
             case 'Newest':
-                 products.sort((a, b) => new Date(b.createdAt.toDate()).getTime() - new Date(a.createdAt.toDate()).getTime());
+                 // ✅ FIX: Robust date sorting to prevent crashes
+                 processedProducts.sort((a, b) => new Date(b.createdAt as any).getTime() - new Date(a.createdAt as any).getTime());
                  break;
             case 'Relevance':
             default:
-                products.sort((a, b) => (b.sales || 0) - (a.sales || 0));
+                processedProducts.sort((a, b) => (b.sales || 0) - (a.sales || 0));
                 break;
         }
-
-        setFilteredProducts(products);
-
-    }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, affiliateAvailableProductsData]);
+        setFilteredProducts(processedProducts);
+    }, [searchTerm, selectedCategory, selectedColor, selectedSize, selectedPrice, sortBy, allProducts]);
     
     const handleClaimClick = (product: ProductType) => {
-        setProductToClaim(product as ProductType);
+        setProductToClaim(product);
     }
     
     return (
         <section>
+            {/* ✅ FIX: Toaster component is necessary for notifications */}
+            <Toaster position="top-center" richColors />
+
             {/* --- Header & Filters --- */}
             <div className="w-full flex justify-center">
-                <div 
-                    className="group bg-white flex gap-3 items-center 
-                        px-3 grow max-w-[600px] min-w-[400px] border-b 
-                        border-neutral-400 ring ring-neutral-200 
-                        rounded-lg focus-within:ring-neutral-300"
-                >
+                <div className="group bg-white flex gap-3 items-center px-3 grow max-w-[600px] border border-neutral-300 rounded-lg focus-within:ring-2 focus-within:ring-neutral-400 transition-shadow">
                     <Search size={20} className="text-gray-400" />
                     <input 
                         type="text" 
                         placeholder="Search products by name, category..."
-                        className="grow rounded-lg outline-none focus:py-3 transition-all duration-300 py-2.5 text-sm"
+                        className="grow rounded-lg outline-none py-2.5 text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
             </div>
-            <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-y-4 mt-4">
+                <div className="flex items-center gap-3 flex-wrap">
                     <CustomDropdown options={categories} selectedValue={selectedCategory} onSelect={setSelectedCategory} />
                     <CustomDropdown options={colors} selectedValue={selectedColor} onSelect={setSelectedColor} />
                     <CustomDropdown options={sizes} selectedValue={selectedSize} onSelect={setSelectedSize} />
@@ -189,82 +198,79 @@ export default function ProductsPage() {
             <hr className="w-full border-gray-200 my-4"/>
 
             {/* --- Products Grid --- */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {shouldShowLoading ? (
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {shouldShowSkeleton ? (
                     Array(8).fill(0).map((_, idx) => <ProductCardSkeleton key={idx} />)
                 ) : filteredProducts.length > 0 ? (
-                    filteredProducts.map((product) => {
-                        // --- FIX: Determine if the product is a favorite ---
-                        const isProductFavorite = favoriteProductIds.has(product.id);
-
-                        return (
-                            <ProductCardUI
-                                key={product.id}
-                                product={product}
-                                isAffiliate={userInfos?.UserRole === "affiliate"}
-                                // --- FIX: Pass the correct favorite status ---
-                                isFavorite={isProductFavorite}
-                                // onToggleFavorite is no longer needed as the card handles it
-                                onClaimClick={handleClaimClick}
-                            />
-                        );
-                    })
-                ) : (
-                    <div 
-                        className="col-span-full w-full flex flex-col 
-                            items-center justify-center py-20
-                            bg-white border-b border-neutral-400 ring
-                            ring-neutral-200 rounded-xl">
-                        <PackageSearch 
-                            size={48} 
-                            className="mx-auto text-gray-400 mb-4"
+                    filteredProducts.map((product) => (
+                        <ProductCardUI
+                            key={product.id}
+                            product={product}
+                            isAffiliate={userInfos?.UserRole === "affiliate"}
+                            isFavorite={favoriteProductIds.has(product.id)}
+                            onClaimClick={handleClaimClick}
+                            // ✅ FIX: Pass the correct function to open the confirmation modal
+                            onDeleteClick={handleInitiateDelete}
                         />
+                    ))
+                ) : (
+                    <div className="col-span-full w-full flex flex-col items-center justify-center py-20 bg-gray-50 border border-gray-200 rounded-xl">
+                        <PackageSearch size={48} className="mx-auto text-gray-400 mb-4" />
                         <h2 className="text-xl font-bold text-neutral-700">No Products Found</h2>
                         <p className="text-gray-500 mt-2">Try adjusting your filters or search criteria.</p>
-                        <div
-                            className='mt-6 flex justify-center gap-2 w-full'
-                        >
+                        <div className='mt-6 flex justify-center gap-2 w-full'>
                             <Link
-                                className={`w-max inline-flex items-center 
-                                    gap-2 px-3 py-1.5 rounded-lg font-semibold 
-                                    text-xs bg-white border-b border-neutral-400 
-                                    text-neutral-700 ring ring-neutral-200
-                                    hover:bg-neutral-50`}
-                                    href={`${userInfos?.UserRole === "seller" ? "/admin/seller" : "/admin/affiliate"}`}
-                                    prefetch
+                                className="w-max inline-flex items-center gap-2 px-3 py-1.5 rounded-lg font-semibold text-xs bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+                                href={`${userInfos?.UserRole === "seller" ? "/admin/seller" : "/admin/affiliate"}`}
+                                prefetch
                             >
-                                <LayoutDashboard
-                                    size={16}
-                                /> Back to Dashboard
+                                <LayoutDashboard size={16} /> Back to Dashboard
                             </Link>
                             {userInfos?.UserRole !== "affiliate" && (
                                 <Link 
-                                    className={`w-max inline-flex items-center 
-                                        gap-2 px-3 py-1.5 rounded-lg 
-                                        text-xs bg-neutral-700 border-b border-neutral-800 
-                                        text-neutral-100 ring ring-neutral-700
-                                        hover:bg-neutral-700/90`}
+                                    className="w-max inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs bg-neutral-800 text-neutral-100 hover:bg-neutral-900"
                                     href={`${userInfos?.UserRole === "seller" ? "/admin/seller/upload-products" : "/admin/affiliate"}`}
                                     prefetch
                                 >
-                                    <UploadCloud
-                                        size={16}
-                                    /> Upload Products
+                                    <UploadCloud size={16} /> Upload Products
                                 </Link>
                             )}
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* ✅ Load More Button for Pagination */}
+            <div className="w-full flex justify-center mt-8">
+                {hasMore && (
+                    <button
+                        onClick={fetchMoreProducts}
+                        disabled={isLoadingMore}
+                        className="px-6 py-2 bg-neutral-800 text-white font-semibold rounded-lg hover:bg-black disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-2"
+                    >
+                        {isLoadingMore && <Loader2 className="h-4 w-4 animate-spin" />}
+                        {isLoadingMore ? "Loading..." : "Load More"}
+                    </button>
+                )}
+            </div>
+
+            {/* --- Modals --- */}
+            <ConfirmationModal
+                isOpen={!!productToDelete}
+                onClose={() => setProductToDelete(null)}
+                onConfirm={handleConfirmDelete}
+                isLoading={isDeleting}
+                title="Delete Product"
+                description={`Are you sure you want to permanently delete "${productToDelete?.title}"? This action cannot be undone.`}
+            />
             
-            {/* --- Claim Flow Modal --- */}
             <AnimatePresence>
                 {productToClaim && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
                         onClick={() => setProductToClaim(null)}
                     >
                         <div onClick={(e) => e.stopPropagation()}>
